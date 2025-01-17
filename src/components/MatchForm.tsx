@@ -4,29 +4,44 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface Player {
-  id: number;
-  name: string;
-}
+// Sample players data - in a real app, this would come from an API
+const samplePlayers = [
+  { id: 1, name: "John" },
+  { id: 2, name: "Sarah" },
+  { id: 3, name: "Mike" },
+  { id: 4, name: "Emma" },
+  { id: 5, name: "David" },
+  { id: 6, name: "Lisa" },
+];
 
 export const MatchForm = () => {
-  const [player1Score, setPlayer1Score] = useState("");
-  const [player2Score, setPlayer2Score] = useState("");
   const [player1, setPlayer1] = useState("");
   const [player2, setPlayer2] = useState("");
+  const [player3, setPlayer3] = useState("");
+  const [player4, setPlayer4] = useState("");
+  const [player1Score, setPlayer1Score] = useState("");
+  const [player2Score, setPlayer2Score] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!player1 || !player2 || !player1Score || !player2Score) {
+    if (!player1 || !player2 || !player3 || !player4 || !player1Score || !player2Score) {
       toast.error("Please fill in all fields");
       return;
     }
 
-    if (player1 === player2) {
-      toast.error("Players must be different");
+    const players = new Set([player1, player2, player3, player4]);
+    if (players.size !== 4) {
+      toast.error("All players must be different");
       return;
     }
 
@@ -35,6 +50,8 @@ export const MatchForm = () => {
     // Reset form
     setPlayer1("");
     setPlayer2("");
+    setPlayer3("");
+    setPlayer4("");
     setPlayer1Score("");
     setPlayer2Score("");
     setDate(new Date().toISOString().split("T")[0]);
@@ -63,28 +80,73 @@ export const MatchForm = () => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="player1">Player 1</Label>
-            <Input
-              id="player1"
-              placeholder="Name"
-              value={player1}
-              onChange={(e) => setPlayer1(e.target.value)}
-            />
+            <Label htmlFor="player1">Team 1 - Player 1</Label>
+            <Select value={player1} onValueChange={setPlayer1}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select player" />
+              </SelectTrigger>
+              <SelectContent>
+                {samplePlayers.map((player) => (
+                  <SelectItem key={player.id} value={player.name}>
+                    {player.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="player2">Player 2</Label>
-            <Input
-              id="player2"
-              placeholder="Name"
-              value={player2}
-              onChange={(e) => setPlayer2(e.target.value)}
-            />
+            <Label htmlFor="player2">Team 1 - Player 2</Label>
+            <Select value={player2} onValueChange={setPlayer2}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select player" />
+              </SelectTrigger>
+              <SelectContent>
+                {samplePlayers.map((player) => (
+                  <SelectItem key={player.id} value={player.name}>
+                    {player.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="score1">Score P1</Label>
+            <Label htmlFor="player3">Team 2 - Player 1</Label>
+            <Select value={player3} onValueChange={setPlayer3}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select player" />
+              </SelectTrigger>
+              <SelectContent>
+                {samplePlayers.map((player) => (
+                  <SelectItem key={player.id} value={player.name}>
+                    {player.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="player4">Team 2 - Player 2</Label>
+            <Select value={player4} onValueChange={setPlayer4}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select player" />
+              </SelectTrigger>
+              <SelectContent>
+                {samplePlayers.map((player) => (
+                  <SelectItem key={player.id} value={player.name}>
+                    {player.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="score1">Team 1 Score</Label>
             <Input
               id="score1"
               type="number"
@@ -96,7 +158,7 @@ export const MatchForm = () => {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="score2">Score P2</Label>
+            <Label htmlFor="score2">Team 2 Score</Label>
             <Input
               id="score2"
               type="number"
