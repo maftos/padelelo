@@ -29,8 +29,11 @@ export const MatchForm = () => {
   const [player2, setPlayer2] = useState("");
   const [player3, setPlayer3] = useState("");
   const [player4, setPlayer4] = useState("");
-  const [player1Score, setPlayer1Score] = useState("");
-  const [player2Score, setPlayer2Score] = useState("");
+  const [scores, setScores] = useState([
+    { team1: "", team2: "" },
+    { team1: "", team2: "" },
+    { team1: "", team2: "" },
+  ]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   const handleNext = () => {
@@ -51,7 +54,8 @@ export const MatchForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!player1Score || !player2Score) {
+    const hasEmptyScores = scores.some(score => !score.team1 || !score.team2);
+    if (hasEmptyScores) {
       toast.error("Please fill in all score fields");
       return;
     }
@@ -64,8 +68,11 @@ export const MatchForm = () => {
     setPlayer2("");
     setPlayer3("");
     setPlayer4("");
-    setPlayer1Score("");
-    setPlayer2Score("");
+    setScores([
+      { team1: "", team2: "" },
+      { team1: "", team2: "" },
+      { team1: "", team2: "" },
+    ]);
     setDate(new Date().toISOString().split("T")[0]);
   };
 
@@ -164,10 +171,8 @@ export const MatchForm = () => {
       ) : (
         <ScoreForm
           onBack={() => setPage(1)}
-          player1Score={player1Score}
-          player2Score={player2Score}
-          setPlayer1Score={setPlayer1Score}
-          setPlayer2Score={setPlayer2Score}
+          scores={scores}
+          setScores={setScores}
           onSubmit={handleSubmit}
         />
       )}
