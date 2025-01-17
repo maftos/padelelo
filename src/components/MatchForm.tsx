@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ScoreForm } from "./ScoreForm";
 
 // Sample players data - in a real app, this would come from an API
 const samplePlayers = [
@@ -23,6 +24,7 @@ const samplePlayers = [
 ];
 
 export const MatchForm = () => {
+  const [page, setPage] = useState(1);
   const [player1, setPlayer1] = useState("");
   const [player2, setPlayer2] = useState("");
   const [player3, setPlayer3] = useState("");
@@ -31,11 +33,9 @@ export const MatchForm = () => {
   const [player2Score, setPlayer2Score] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!player1 || !player2 || !player3 || !player4 || !player1Score || !player2Score) {
-      toast.error("Please fill in all fields");
+  const handleNext = () => {
+    if (!player1 || !player2 || !player3 || !player4) {
+      toast.error("Please fill in all player fields");
       return;
     }
 
@@ -45,9 +45,21 @@ export const MatchForm = () => {
       return;
     }
 
+    setPage(2);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!player1Score || !player2Score) {
+      toast.error("Please fill in all score fields");
+      return;
+    }
+
     toast.success("Match registered successfully!");
     
     // Reset form
+    setPage(1);
     setPlayer1("");
     setPlayer2("");
     setPlayer3("");
@@ -62,119 +74,103 @@ export const MatchForm = () => {
       <div className="space-y-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight">Register Match</h2>
         <p className="text-sm text-muted-foreground">
-          Enter the match details below
+          {page === 1 ? "Select players" : "Enter match score"}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="date">Date</Label>
-          <Input
-            id="date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+      {page === 1 ? (
+        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="player1">Team 1 - Player 1</Label>
-            <Select value={player1} onValueChange={setPlayer1}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select player" />
-              </SelectTrigger>
-              <SelectContent>
-                {samplePlayers.map((player) => (
-                  <SelectItem key={player.id} value={player.name}>
-                    {player.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="player2">Team 1 - Player 2</Label>
-            <Select value={player2} onValueChange={setPlayer2}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select player" />
-              </SelectTrigger>
-              <SelectContent>
-                {samplePlayers.map((player) => (
-                  <SelectItem key={player.id} value={player.name}>
-                    {player.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="player3">Team 2 - Player 1</Label>
-            <Select value={player3} onValueChange={setPlayer3}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select player" />
-              </SelectTrigger>
-              <SelectContent>
-                {samplePlayers.map((player) => (
-                  <SelectItem key={player.id} value={player.name}>
-                    {player.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="player4">Team 2 - Player 2</Label>
-            <Select value={player4} onValueChange={setPlayer4}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select player" />
-              </SelectTrigger>
-              <SelectContent>
-                {samplePlayers.map((player) => (
-                  <SelectItem key={player.id} value={player.name}>
-                    {player.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="score1">Team 1 Score</Label>
+            <Label htmlFor="date">Date</Label>
             <Input
-              id="score1"
-              type="number"
-              placeholder="0"
-              value={player1Score}
-              onChange={(e) => setPlayer1Score(e.target.value)}
-              min="0"
-              max="99"
+              id="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full"
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="score2">Team 2 Score</Label>
-            <Input
-              id="score2"
-              type="number"
-              placeholder="0"
-              value={player2Score}
-              onChange={(e) => setPlayer2Score(e.target.value)}
-              min="0"
-              max="99"
-            />
-          </div>
-        </div>
 
-        <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-          Register Match
-        </Button>
-      </form>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="player1">Team 1 - Player 1</Label>
+              <Select value={player1} onValueChange={setPlayer1}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select player" />
+                </SelectTrigger>
+                <SelectContent>
+                  {samplePlayers.map((player) => (
+                    <SelectItem key={player.id} value={player.name}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="player2">Team 1 - Player 2</Label>
+              <Select value={player2} onValueChange={setPlayer2}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select player" />
+                </SelectTrigger>
+                <SelectContent>
+                  {samplePlayers.map((player) => (
+                    <SelectItem key={player.id} value={player.name}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="player3">Team 2 - Player 1</Label>
+              <Select value={player3} onValueChange={setPlayer3}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select player" />
+                </SelectTrigger>
+                <SelectContent>
+                  {samplePlayers.map((player) => (
+                    <SelectItem key={player.id} value={player.name}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="player4">Team 2 - Player 2</Label>
+              <Select value={player4} onValueChange={setPlayer4}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select player" />
+                </SelectTrigger>
+                <SelectContent>
+                  {samplePlayers.map((player) => (
+                    <SelectItem key={player.id} value={player.name}>
+                      {player.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Button type="submit" className="w-full">
+            Next
+          </Button>
+        </form>
+      ) : (
+        <ScoreForm
+          onBack={() => setPage(1)}
+          player1Score={player1Score}
+          player2Score={player2Score}
+          setPlayer1Score={setPlayer1Score}
+          setPlayer2Score={setPlayer2Score}
+          onSubmit={handleSubmit}
+        />
+      )}
     </Card>
   );
 };

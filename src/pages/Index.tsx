@@ -1,5 +1,4 @@
 import { MatchForm } from "@/components/MatchForm";
-import { RecentMatches } from "@/components/RecentMatches";
 
 const Index = () => {
   return (
@@ -10,9 +9,8 @@ const Index = () => {
           <p className="text-muted-foreground">Register and track your padel matches</p>
         </div>
         
-        <div className="flex flex-col items-center gap-8 md:gap-12">
+        <div className="flex flex-col items-center">
           <MatchForm />
-          <RecentMatches />
         </div>
       </main>
     </div>
