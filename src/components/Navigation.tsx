@@ -1,9 +1,16 @@
 import { useState } from "react";
-import { LogIn } from "lucide-react";
+import { LogIn, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { AuthModal } from "./AuthModal";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export const Navigation = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -38,6 +45,33 @@ export const Navigation = () => {
                   Sign In
                 </Button>
               )}
+              
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Menu</SheetTitle>
+                  </SheetHeader>
+                  <nav className="flex flex-col gap-4 mt-4">
+                    <Link to="/" className="flex items-center gap-2 text-lg">
+                      Home
+                    </Link>
+                    <Link to="/leaderboard" className="flex items-center gap-2 text-lg">
+                      Leaderboard
+                    </Link>
+                    <Link to="/friends" className="flex items-center gap-2 text-lg">
+                      Friends
+                    </Link>
+                    <Link to="/register-match" className="flex items-center gap-2 text-lg">
+                      Register a Match
+                    </Link>
+                  </nav>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </div>
