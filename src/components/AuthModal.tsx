@@ -29,7 +29,6 @@ export const AuthModal = ({
       const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
       const { error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
-        channel: 'whatsapp'
       });
 
       if (error) throw error;
@@ -37,7 +36,7 @@ export const AuthModal = ({
       setStep("otp");
       toast({
         title: "Verification code sent",
-        description: "Please check your WhatsApp for the verification code",
+        description: "Please check your phone for the verification code",
       });
     } catch (err: any) {
       setError(err.message);
@@ -77,7 +76,7 @@ export const AuthModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {step === "phone" ? "Enter your WhatsApp number" : "Enter verification code"}
+            {step === "phone" ? "Enter your phone number" : "Enter verification code"}
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
@@ -91,7 +90,7 @@ export const AuthModal = ({
             <>
               <Input
                 type="tel"
-                placeholder="WhatsApp number (e.g. +23012345678)"
+                placeholder="Phone number (e.g. +23012345678)"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 className="flex-1"
