@@ -19,17 +19,43 @@ export const AuthModal = ({
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
+
   const handleSignIn = async () => {
     try {
       setLoading(true);
       setError(null);
+
+      if (!validateEmail(email)) {
+        setError("Please enter a valid email address");
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        setError("Password must be at least 6 characters long");
+        return;
+      }
       
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
         password,
       });
 
-      if (error) throw error;
+      if (signInError) {
+        if (signInError.message === "Invalid login credentials") {
+          setError("Invalid email or password");
+        } else {
+          setError(signInError.message);
+        }
+        return;
+      }
 
       toast({
         title: "Success!",
@@ -47,13 +73,29 @@ export const AuthModal = ({
     try {
       setLoading(true);
       setError(null);
+
+      if (!validateEmail(email)) {
+        setError("Please enter a valid email address");
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        setError("Password must be at least 6 characters long");
+        return;
+      }
       
-      const { error } = await supabase.auth.signUp({
-        email,
+      const { error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
         password,
+        options: {
+          emailRedirectTo: window.location.origin,
+        }
       });
 
-      if (error) throw error;
+      if (signUpError) {
+        setError(signUpError.message);
+        return;
+      }
 
       // For testing purposes, proceed to signed in state
       toast({
