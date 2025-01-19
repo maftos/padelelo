@@ -31,153 +31,205 @@ export type Database = {
           status?: string
           user_id?: string | null
         }
-        Relationships: []
-      }
-      leaderboard: {
-        Row: {
-          id: number
-          rank: number | null
-          score: number | null
-          user_id: string | null
-        }
-        Insert: {
-          id?: never
-          rank?: number | null
-          score?: number | null
-          user_id?: string | null
-        }
-        Update: {
-          id?: never
-          rank?: number | null
-          score?: number | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      matches: {
-        Row: {
-          created_at: string | null
-          id: number
-          location: string | null
-          match_date: string | null
-          player1_id: string | null
-          player2_id: string | null
-          player3_id: number | null
-          player4_id: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: never
-          location?: string | null
-          match_date?: string | null
-          player1_id?: string | null
-          player2_id?: string | null
-          player3_id?: number | null
-          player4_id?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: never
-          location?: string | null
-          match_date?: string | null
-          player1_id?: string | null
-          player2_id?: string | null
-          player3_id?: number | null
-          player4_id?: number | null
-          updated_at?: string | null
-        }
         Relationships: [
           {
-            foreignKeyName: "matches_player1_id_fkey"
-            columns: ["player1_id"]
+            foreignKeyName: "friendships_friend_id_fkey"
+            columns: ["friend_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matches_player2_id_fkey"
-            columns: ["player2_id"]
+            foreignKeyName: "friendships_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
       }
-      profiles: {
+      matches: {
         Row: {
-          country: string
           created_at: string | null
+          location: string | null
+          match_date: string | null
+          match_id: string
+          team1_player1_id: string | null
+          team1_player2_id: string | null
+          team1_score: number | null
+          team2_player1_id: string | null
+          team2_player2_id: string | null
+          team2_score: number | null
+          updated_at: string | null
+          winner_team: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          location?: string | null
+          match_date?: string | null
+          match_id?: string
+          team1_player1_id?: string | null
+          team1_player2_id?: string | null
+          team1_score?: number | null
+          team2_player1_id?: string | null
+          team2_player2_id?: string | null
+          team2_score?: number | null
+          updated_at?: string | null
+          winner_team?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          location?: string | null
+          match_date?: string | null
+          match_id?: string
+          team1_player1_id?: string | null
+          team1_player2_id?: string | null
+          team1_score?: number | null
+          team2_player1_id?: string | null
+          team2_player2_id?: string | null
+          team2_score?: number | null
+          updated_at?: string | null
+          winner_team?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_player1_id_fkey"
+            columns: ["team1_player1_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_player2_id_fkey"
+            columns: ["team1_player2_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_player3_id_fkey"
+            columns: ["team2_player1_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_player4_id_fkey"
+            columns: ["team2_player2_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ratings_history: {
+        Row: {
+          change_amount: number
+          change_type: string
+          created_at: string | null
+          id: number
+          match_id: string | null
+          new_mmr: number
+          old_mmr: number
+          partner_id: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          change_amount: number
+          change_type: string
+          created_at?: string | null
+          id?: never
+          match_id?: string | null
+          new_mmr: number
+          old_mmr: number
+          partner_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          change_amount?: number
+          change_type?: string
+          created_at?: string | null
+          id?: never
+          match_id?: string | null
+          new_mmr?: number
+          old_mmr?: number
+          partner_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ratings_history_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["match_id"]
+          },
+          {
+            foreignKeyName: "ratings_history_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          created_at: string | null
+          current_mmr: number | null
           date_of_birth: string | null
           display_name: string
           gender: string | null
           id: string
           languages: string[] | null
           location: string | null
+          nationality: string | null
           preferred_language: string | null
           profile_photo: string | null
-          user_id: string | null
           whatsapp_number: string | null
         }
         Insert: {
-          country: string
           created_at?: string | null
+          current_mmr?: number | null
           date_of_birth?: string | null
           display_name: string
           gender?: string | null
           id?: string
           languages?: string[] | null
           location?: string | null
+          nationality?: string | null
           preferred_language?: string | null
           profile_photo?: string | null
-          user_id?: string | null
           whatsapp_number?: string | null
         }
         Update: {
-          country?: string
           created_at?: string | null
+          current_mmr?: number | null
           date_of_birth?: string | null
           display_name?: string
           gender?: string | null
           id?: string
           languages?: string[] | null
           location?: string | null
+          nationality?: string | null
           preferred_language?: string | null
           profile_photo?: string | null
-          user_id?: string | null
           whatsapp_number?: string | null
         }
         Relationships: []
-      }
-      ratings: {
-        Row: {
-          created_at: string | null
-          id: number
-          player_id: string | null
-          rating: number
-        }
-        Insert: {
-          created_at?: string | null
-          id?: never
-          player_id?: string | null
-          rating: number
-        }
-        Update: {
-          created_at?: string | null
-          id?: never
-          player_id?: string | null
-          rating?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ratings_player_id_fkey"
-            columns: ["player_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
     }
     Views: {
