@@ -8,6 +8,9 @@ import Profile from "./pages/Profile";
 import Leaderboard from "./pages/Leaderboard";
 import Friends from "./pages/Friends";
 import Index from "./pages/Index";
+import ReleaseNotes from "./pages/ReleaseNotes";
+import MatchmakingMath from "./pages/MatchmakingMath";
+import FutureImprovements from "./pages/FutureImprovements";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +26,9 @@ const App = () => (
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/register-match" element={<Index />} />
+          <Route path="/release-notes" element={<ReleaseNotes />} />
+          <Route path="/matchmaking-math" element={<MatchmakingMath />} />
+          <Route path="/future-improvements" element={<FutureImprovements />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

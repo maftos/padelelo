@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
 import { Alert, AlertDescription } from "./ui/alert";
@@ -14,30 +13,29 @@ export const AuthModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const [step, setStep] = useState<"phone" | "otp">("phone");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleSubmitPhone = async () => {
+  const handleSignIn = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
-      const { error } = await supabase.auth.signInWithOtp({
-        phone: formattedPhone,
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
       if (error) throw error;
 
-      setStep("otp");
       toast({
-        title: "Verification code sent",
-        description: "Please check your phone for the verification code",
+        title: "Success!",
+        description: "You have been successfully signed in",
       });
+      onClose();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -45,23 +43,22 @@ export const AuthModal = ({
     }
   };
 
-  const handleVerifyOTP = async () => {
+  const handleSignUp = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const formattedPhone = phoneNumber.startsWith('+') ? phoneNumber : `+${phoneNumber}`;
-      const { error } = await supabase.auth.verifyOtp({
-        phone: formattedPhone,
-        token: otp,
-        type: 'sms'
+      
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
       });
 
       if (error) throw error;
 
+      // For testing purposes, proceed to signed in state
       toast({
-        title: "Success!",
-        description: "You have been successfully authenticated",
+        title: "Welcome!",
+        description: "Account created successfully",
       });
       onClose();
     } catch (err: any) {
@@ -75,9 +72,7 @@ export const AuthModal = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>
-            {step === "phone" ? "Enter your phone number" : "Enter verification code"}
-          </DialogTitle>
+          <DialogTitle>Sign In or Create Account</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           {error && (
@@ -86,46 +81,39 @@ export const AuthModal = ({
             </Alert>
           )}
           
-          {step === "phone" ? (
-            <>
-              <Input
-                type="tel"
-                placeholder="Phone number (e.g. +23012345678)"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="flex-1"
-                disabled={loading}
-              />
-              <Button onClick={handleSubmitPhone} disabled={loading}>
-                {loading ? "Sending..." : "Continue"}
-              </Button>
-            </>
-          ) : (
-            <div className="flex flex-col items-center gap-4">
-              <InputOTP 
-                maxLength={6} 
-                value={otp} 
-                onChange={setOtp}
-                disabled={loading}
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
-              <Button 
-                onClick={handleVerifyOTP} 
-                className="w-full"
-                disabled={loading || otp.length !== 6}
-              >
-                {loading ? "Verifying..." : "Verify Code"}
-              </Button>
-            </div>
-          )}
+          <Input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="flex-1"
+            disabled={loading}
+          />
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="flex-1"
+            disabled={loading}
+          />
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleSignIn} 
+              disabled={loading}
+              className="flex-1"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+            <Button 
+              onClick={handleSignUp}
+              disabled={loading}
+              variant="outline"
+              className="flex-1"
+            >
+              {loading ? "Creating..." : "Sign Up"}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

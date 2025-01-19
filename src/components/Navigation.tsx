@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogIn, Menu } from "lucide-react";
+import { LogIn, Menu, Mail } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { AuthModal } from "./AuthModal";
@@ -58,7 +58,7 @@ export const Navigation = () => {
           <div className="flex flex-1 items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
               <img src="/placeholder.svg" alt="Logo" className="h-8 w-8" />
-              <span className="font-bold">MatchPadel</span>
+              <span className="font-bold text-primary">MatchPadel</span>
             </Link>
 
             <div className="flex items-center gap-4">
@@ -74,6 +74,7 @@ export const Navigation = () => {
                     variant="outline"
                     size="sm"
                     onClick={handleSignOut}
+                    className="border-primary text-primary hover:bg-primary hover:text-white"
                   >
                     Sign Out
                   </Button>
@@ -83,6 +84,7 @@ export const Navigation = () => {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsAuthModalOpen(true)}
+                  className="border-primary text-primary hover:bg-primary hover:text-white"
                 >
                   <LogIn className="mr-2 h-4 w-4" />
                   Sign In
@@ -100,17 +102,26 @@ export const Navigation = () => {
                     <SheetTitle>Menu</SheetTitle>
                   </SheetHeader>
                   <nav className="flex flex-col gap-4 mt-4">
-                    <Link to="/" className="flex items-center gap-2 text-lg">
+                    <Link to="/" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
                       Home
                     </Link>
-                    <Link to="/leaderboard" className="flex items-center gap-2 text-lg">
+                    <Link to="/leaderboard" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
                       Leaderboard
                     </Link>
-                    <Link to="/friends" className="flex items-center gap-2 text-lg">
+                    <Link to="/friends" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
                       Friends
                     </Link>
-                    <Link to="/register-match" className="flex items-center gap-2 text-lg">
+                    <Link to="/register-match" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
                       Register a Match
+                    </Link>
+                    <Link to="/release-notes" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                      Release Notes
+                    </Link>
+                    <Link to="/matchmaking-math" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                      Matchmaking Math
+                    </Link>
+                    <Link to="/future-improvements" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                      Future Improvements
                     </Link>
                   </nav>
                 </SheetContent>
