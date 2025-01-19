@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogIn, Menu, Mail } from "lucide-react";
+import { LogIn, Menu, LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { AuthModal } from "./AuthModal";
@@ -19,36 +19,52 @@ export const Navigation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { toast } = useToast();
 
+  // New state for development auth toggle
+  const [isDevelopmentMode, setIsDevelopmentMode] = useState(false);
+
   useEffect(() => {
-    // Check initial auth state
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
-    });
+    if (!isDevelopmentMode) {
+      // Only check real auth state if not in development mode
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setIsAuthenticated(!!session);
+      });
 
-    // Subscribe to auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
-      
-      if (event === 'SIGNED_IN') {
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in",
-        });
-      } else if (event === 'SIGNED_OUT') {
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully",
-        });
-      }
-    });
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+        setIsAuthenticated(!!session);
+        
+        if (event === 'SIGNED_IN') {
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully signed in",
+          });
+        } else if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Signed out",
+            description: "You have been signed out successfully",
+          });
+        }
+      });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [toast]);
+      return () => {
+        subscription.unsubscribe();
+      };
+    }
+  }, [toast, isDevelopmentMode]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    if (!isDevelopmentMode) {
+      await supabase.auth.signOut();
+    }
+  };
+
+  // Toggle development auth state
+  const toggleDevelopmentAuth = () => {
+    setIsDevelopmentMode(prev => !prev);
+    setIsAuthenticated(prev => !prev);
+    toast({
+      title: "Development Mode",
+      description: `Switched to ${!isAuthenticated ? "authorized" : "unauthorized"} state`,
+    });
   };
 
   return (
@@ -90,6 +106,21 @@ export const Navigation = () => {
                   Sign In
                 </Button>
               )}
+              
+              {/* Development auth toggle button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleDevelopmentAuth}
+                className="hidden md:flex items-center gap-2"
+              >
+                {isAuthenticated ? (
+                  <LogOut className="h-4 w-4" />
+                ) : (
+                  <LogIn className="h-4 w-4" />
+                )}
+                <span className="text-xs">Dev Toggle</span>
+              </Button>
               
               <Sheet>
                 <SheetTrigger asChild>
