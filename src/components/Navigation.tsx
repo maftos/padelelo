@@ -11,6 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
 
@@ -133,27 +134,38 @@ export const Navigation = () => {
                     <SheetTitle>Menu</SheetTitle>
                   </SheetHeader>
                   <nav className="flex flex-col gap-4 mt-4">
-                    <Link to="/" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                      Home
-                    </Link>
-                    <Link to="/leaderboard" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                      Leaderboard
-                    </Link>
-                    <Link to="/friends" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                      Friends
-                    </Link>
-                    <Link to="/register-match" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                    {/* Primary Action */}
+                    <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
                       Register a Match
                     </Link>
-                    <Link to="/release-notes" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                      Release Notes
-                    </Link>
-                    <Link to="/matchmaking-math" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                      Matchmaking Math
-                    </Link>
-                    <Link to="/future-improvements" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                      Future Improvements
-                    </Link>
+                    
+                    {/* Core Features */}
+                    <div className="space-y-2">
+                      <Link to="/friends" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                        Friends
+                      </Link>
+                      <Link to="/leaderboard" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                        Leaderboard
+                      </Link>
+                      <Link to="/matches" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                        My Matches
+                      </Link>
+                    </div>
+                    
+                    <Separator />
+                    
+                    {/* Documentation */}
+                    <div className="space-y-2">
+                      <Link to="/release-notes" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                        Release Notes
+                      </Link>
+                      <Link to="/matchmaking-math" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                        Matchmaking Math
+                      </Link>
+                      <Link to="/future-improvements" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                        Future Improvements
+                      </Link>
+                    </div>
                   </nav>
                 </SheetContent>
               </Sheet>
