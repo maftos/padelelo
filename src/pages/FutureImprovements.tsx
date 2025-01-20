@@ -17,10 +17,17 @@ const FutureImprovements = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
+    const user = await supabase.auth.getUser();
+    const userId = user.data.user?.id;
+
     try {
-      const { error } = await supabase.from('suggestions').insert([
-        { name, suggestion, user_id: (await supabase.auth.getUser()).data.user?.id }
-      ]);
+      const { error } = await supabase
+        .from('suggestions')
+        .insert({
+          name,
+          suggestion,
+          user_id: userId
+        });
 
       if (error) throw error;
 
