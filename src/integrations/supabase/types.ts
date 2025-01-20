@@ -303,6 +303,16 @@ export type Database = {
           team2_win_mmr_change_amount: number
         }[]
       }
+      get_user_friends: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          friend_id: string
+          status: string
+          created_at: string
+        }[]
+      }
       post_match: {
         Args: {
           match_id: string
@@ -314,6 +324,17 @@ export type Database = {
           team2_expected_win_rate: number
           team1_win_mmr_change_amount: number
           team2_win_mmr_change_amount: number
+        }[]
+      }
+      view_my_friends: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          friend_id: string
+          status: string
+          created_at: string
+          display_name: string
         }[]
       }
     }
