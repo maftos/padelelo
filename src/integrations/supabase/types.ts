@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      countries: {
+        Row: {
+          continent: Database["public"]["Enums"]["continents"] | null
+          id: number
+          iso2: string
+          iso3: string | null
+          local_name: string | null
+          name: string | null
+        }
+        Insert: {
+          continent?: Database["public"]["Enums"]["continents"] | null
+          id?: number
+          iso2: string
+          iso3?: string | null
+          local_name?: string | null
+          name?: string | null
+        }
+        Update: {
+          continent?: Database["public"]["Enums"]["continents"] | null
+          id?: number
+          iso2?: string
+          iso3?: string | null
+          local_name?: string | null
+          name?: string | null
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string | null
@@ -52,6 +79,7 @@ export type Database = {
         Row: {
           created_at: string | null
           location: string | null
+          losers: string[] | null
           match_date: string | null
           match_id: string
           status: Database["public"]["Enums"]["match_status"] | null
@@ -62,11 +90,12 @@ export type Database = {
           team2_player2_id: string | null
           team2_score: number | null
           updated_at: string | null
-          winner_team: number | null
+          winners: string[] | null
         }
         Insert: {
           created_at?: string | null
           location?: string | null
+          losers?: string[] | null
           match_date?: string | null
           match_id?: string
           status?: Database["public"]["Enums"]["match_status"] | null
@@ -77,11 +106,12 @@ export type Database = {
           team2_player2_id?: string | null
           team2_score?: number | null
           updated_at?: string | null
-          winner_team?: number | null
+          winners?: string[] | null
         }
         Update: {
           created_at?: string | null
           location?: string | null
+          losers?: string[] | null
           match_date?: string | null
           match_id?: string
           status?: Database["public"]["Enums"]["match_status"] | null
@@ -92,7 +122,7 @@ export type Database = {
           team2_player2_id?: string | null
           team2_score?: number | null
           updated_at?: string | null
-          winner_team?: number | null
+          winners?: string[] | null
         }
         Relationships: [
           {
@@ -127,39 +157,39 @@ export type Database = {
       }
       ratings_history: {
         Row: {
-          change_amount: number
-          change_type: string
+          change_amount: number | null
+          change_type: string | null
           created_at: string | null
           id: number
           match_id: string | null
-          new_mmr: number
-          old_mmr: number
+          new_mmr: number | null
+          old_mmr: number | null
           partner_id: string | null
           status: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
-          change_amount: number
-          change_type: string
+          change_amount?: number | null
+          change_type?: string | null
           created_at?: string | null
           id?: never
           match_id?: string | null
-          new_mmr: number
-          old_mmr: number
+          new_mmr?: number | null
+          old_mmr?: number | null
           partner_id?: string | null
           status?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
-          change_amount?: number
-          change_type?: string
+          change_amount?: number | null
+          change_type?: string | null
           created_at?: string | null
           id?: never
           match_id?: string | null
-          new_mmr?: number
-          old_mmr?: number
+          new_mmr?: number | null
+          old_mmr?: number | null
           partner_id?: string | null
           status?: string | null
           updated_at?: string | null
@@ -303,6 +333,26 @@ export type Database = {
           team2_win_mmr_change_amount: number
         }[]
       }
+      complete_match: {
+        Args: {
+          match_id: string
+          new_team1_score: number
+          new_team2_score: number
+          team1_win_mmr_change_amount: number
+          team2_win_mmr_change_amount: number
+        }
+        Returns: undefined
+      }
+      create_match: {
+        Args: {
+          team1_player1_id: string
+          team1_player2_id: string
+          team2_player1_id: string
+          team2_player2_id: string
+          match_date: string
+        }
+        Returns: undefined
+      }
       get_user_friends: {
         Args: {
           user_id: string
@@ -340,6 +390,14 @@ export type Database = {
     }
     Enums: {
       change_type: "WIN" | "LOSS" | "DRAW" | "MANUAL"
+      continents:
+        | "Africa"
+        | "Antarctica"
+        | "Asia"
+        | "Europe"
+        | "Oceania"
+        | "North America"
+        | "South America"
       friendship_status: "INVITED" | "CONFIRMED" | "RECEIVED" | "DELETED"
       gender: "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY"
       match_status: "PENDING" | "COMPLETED" | "CANCELLED" | "DELETED"
