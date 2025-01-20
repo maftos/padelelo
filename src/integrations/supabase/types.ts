@@ -54,6 +54,7 @@ export type Database = {
           location: string | null
           match_date: string | null
           match_id: string
+          status: Database["public"]["Enums"]["match_status"] | null
           team1_player1_id: string | null
           team1_player2_id: string | null
           team1_score: number | null
@@ -68,6 +69,7 @@ export type Database = {
           location?: string | null
           match_date?: string | null
           match_id?: string
+          status?: Database["public"]["Enums"]["match_status"] | null
           team1_player1_id?: string | null
           team1_player2_id?: string | null
           team1_score?: number | null
@@ -82,6 +84,7 @@ export type Database = {
           location?: string | null
           match_date?: string | null
           match_id?: string
+          status?: Database["public"]["Enums"]["match_status"] | null
           team1_player1_id?: string | null
           team1_player2_id?: string | null
           team1_score?: number | null
@@ -186,30 +189,30 @@ export type Database = {
           },
         ]
       }
-      suggestions: {
+      release_notes: {
         Row: {
+          change_items: string[]
           created_at: string | null
-          id: string
-          name: string
-          status: string | null
-          suggestion: string
-          user_id: string | null
+          id: number
+          release_date: string
+          status: string
+          title: string
         }
         Insert: {
+          change_items: string[]
           created_at?: string | null
-          id?: string
-          name: string
-          status?: string | null
-          suggestion: string
-          user_id?: string | null
+          id?: never
+          release_date: string
+          status: string
+          title: string
         }
         Update: {
+          change_items?: string[]
           created_at?: string | null
-          id?: string
-          name?: string
-          status?: string | null
-          suggestion?: string
-          user_id?: string | null
+          id?: never
+          release_date?: string
+          status?: string
+          title?: string
         }
         Relationships: []
       }
@@ -263,10 +266,38 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_mmr_change: {
+        Args: {
+          match_id: string
+        }
+        Returns: {
+          team1_avg_mmr: number
+          team2_avg_mmr: number
+          team1_expected_win_rate: number
+          team2_expected_win_rate: number
+          team1_win_mmr_change_amount: number
+          team2_win_mmr_change_amount: number
+        }[]
+      }
+      post_match: {
+        Args: {
+          match_id: string
+        }
+        Returns: {
+          team1_avg_mmr: number
+          team2_avg_mmr: number
+          team1_expected_win_rate: number
+          team2_expected_win_rate: number
+          team1_win_mmr_change_amount: number
+          team2_win_mmr_change_amount: number
+        }[]
+      }
     }
     Enums: {
-      [_ in never]: never
+      change_type: "WIN" | "LOSS" | "DRAW" | "MANUAL"
+      friendship_status: "INVITED" | "CONFIRMED" | "RECEIVED" | "DELETED"
+      gender: "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY"
+      match_status: "PENDING" | "COMPLETED" | "CANCELLED" | "DELETED"
     }
     CompositeTypes: {
       [_ in never]: never
