@@ -67,7 +67,6 @@ const Profile = () => {
 
       setUploading(true);
 
-      // Upload directly using Supabase Storage
       const { data, error: uploadError } = await supabase.storage
         .from('user-photos')
         .upload(fileName, file, {
@@ -79,12 +78,10 @@ const Profile = () => {
         throw uploadError;
       }
 
-      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('user-photos')
         .getPublicUrl(fileName);
 
-      // Update form data with new photo URL
       setFormData(prev => ({
         ...prev,
         profile_photo: publicUrl
@@ -113,16 +110,16 @@ const Profile = () => {
   const handleSave = async () => {
     try {
       const { error } = await supabase.rpc('edit_user_profile', {
-        i_user_id: userId,
-        i_display_name: formData.display_name,
-        i_gender: formData.gender,
-        i_date_of_birth: null,
-        i_languages: formData.languages.split(',').map(lang => lang.trim()),
-        i_preferred_language: null,
-        i_profile_photo: formData.profile_photo,
-        i_whatsapp_number: formData.whatsapp_number,
-        i_nationality: formData.nationality,
-        i_location: formData.location
+        user_a_id_auth: userId,
+        new_display_name: formData.display_name,
+        new_gender: formData.gender,
+        new_date_of_birth: null,
+        new_languages: formData.languages.split(',').map(lang => lang.trim()),
+        new_preferred_language: null,
+        new_profile_photo: formData.profile_photo,
+        new_whatsapp_number: formData.whatsapp_number,
+        new_nationality: formData.nationality,
+        new_location: formData.location
       });
 
       if (error) throw error;
