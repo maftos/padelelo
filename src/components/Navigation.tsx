@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LogIn, Menu, LogOut } from "lucide-react";
+import { LogIn, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { AuthModal } from "./AuthModal";
@@ -20,52 +20,34 @@ export const Navigation = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { toast } = useToast();
 
-  // New state for development auth toggle
-  const [isDevelopmentMode, setIsDevelopmentMode] = useState(false);
-
   useEffect(() => {
-    if (!isDevelopmentMode) {
-      // Only check real auth state if not in development mode
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        setIsAuthenticated(!!session);
-      });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
 
-      const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-        setIsAuthenticated(!!session);
-        
-        if (event === 'SIGNED_IN') {
-          toast({
-            title: "Welcome back!",
-            description: "You have successfully signed in",
-          });
-        } else if (event === 'SIGNED_OUT') {
-          toast({
-            title: "Signed out",
-            description: "You have been signed out successfully",
-          });
-        }
-      });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsAuthenticated(!!session);
+      
+      if (event === 'SIGNED_IN') {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully signed in",
+        });
+      } else if (event === 'SIGNED_OUT') {
+        toast({
+          title: "Signed out",
+          description: "You have been signed out successfully",
+        });
+      }
+    });
 
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [toast, isDevelopmentMode]);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [toast]);
 
   const handleSignOut = async () => {
-    if (!isDevelopmentMode) {
-      await supabase.auth.signOut();
-    }
-  };
-
-  // Toggle development auth state
-  const toggleDevelopmentAuth = () => {
-    setIsDevelopmentMode(prev => !prev);
-    setIsAuthenticated(prev => !prev);
-    toast({
-      title: "Development Mode",
-      description: `Switched to ${!isAuthenticated ? "authorized" : "unauthorized"} state`,
-    });
+    await supabase.auth.signOut();
   };
 
   return (
@@ -74,8 +56,12 @@ export const Navigation = () => {
         <div className="container flex h-14 items-center">
           <div className="flex flex-1 items-center justify-between">
             <Link to="/" className="flex items-center space-x-2">
-              <img src="/placeholder.svg" alt="Logo" className="h-8 w-8" />
-              <span className="font-bold text-primary">MatchPadel</span>
+              <img 
+                src="/ui-assets/padelELO_logo.png" 
+                alt="PadelELO Logo" 
+                className="h-8 w-8" 
+              />
+              <span className="font-bold text-primary">PadelELO</span>
             </Link>
 
             <div className="flex items-center gap-4">
@@ -84,7 +70,7 @@ export const Navigation = () => {
                   <Link to="/profile">
                     <Avatar className="h-8 w-8 cursor-pointer">
                       <AvatarImage src="/placeholder.svg" />
-                      <AvatarFallback>MP</AvatarFallback>
+                      <AvatarFallback>PE</AvatarFallback>
                     </Avatar>
                   </Link>
                   <Button
@@ -107,21 +93,6 @@ export const Navigation = () => {
                   Sign In
                 </Button>
               )}
-              
-              {/* Development auth toggle button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggleDevelopmentAuth}
-                className="hidden md:flex items-center gap-2"
-              >
-                {isAuthenticated ? (
-                  <LogOut className="h-4 w-4" />
-                ) : (
-                  <LogIn className="h-4 w-4" />
-                )}
-                <span className="text-xs">Dev Toggle</span>
-              </Button>
               
               <Sheet>
                 <SheetTrigger asChild>
