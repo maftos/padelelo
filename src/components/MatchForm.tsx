@@ -41,11 +41,23 @@ export const MatchForm = () => {
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
     queryKey: ['friends', userId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('view_my_friends', {
-        user_id: userId
-      });
-      if (error) throw error;
-      return data as Friend[];
+      console.log('Fetching friends for user:', userId);
+      try {
+        const { data, error } = await supabase.rpc('view_my_friends', {
+          user_id: userId
+        });
+        
+        if (error) {
+          console.error('Error fetching friends:', error);
+          throw error;
+        }
+        
+        console.log('Friends data received:', data);
+        return data as Friend[];
+      } catch (error) {
+        console.error('Error in query function:', error);
+        throw error;
+      }
     },
   });
 
