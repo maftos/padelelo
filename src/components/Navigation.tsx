@@ -21,14 +21,17 @@ export const Navigation = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Initial session check
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
     });
 
+    // Auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session);
       
-      if (event === 'SIGNED_IN') {
+      // Only show toasts for actual auth state changes
+      if (event === 'SIGNED_IN' && session?.user?.aud === 'authenticated') {
         toast({
           title: "Welcome back!",
           description: "You have successfully signed in",
