@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 interface Friend {
   friend_id: string;
@@ -21,42 +22,27 @@ interface Friend {
 }
 
 const Friends = () => {
-  const [friends, setFriends] = useState<Friend[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchFriends = async () => {
-      try {
-        const { data, error } = await supabase.rpc('view_my_friends', {
-          user_id: "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf" // Hardcoded for now as requested
-        });
+  const { data: friends, isLoading, error } = useQuery({
+    queryKey: ['friends'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('view_my_friends', {
+        user_id: "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf" // Hardcoded for now as requested
+      });
 
-        if (error) {
-          console.error('Error fetching friends:', error);
-          toast({
-            title: "Error",
-            description: "Failed to load friends list",
-            variant: "destructive",
-          });
-          return;
-        }
-
-        setFriends(data || []);
-      } catch (error) {
-        console.error('Error:', error);
+      if (error) {
         toast({
           title: "Error",
-          description: "An unexpected error occurred",
+          description: "Failed to load friends list",
           variant: "destructive",
         });
-      } finally {
-        setIsLoading(false);
+        throw error;
       }
-    };
 
-    fetchFriends();
-  }, [toast]);
+      return data as Friend[];
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -67,7 +53,11 @@ const Friends = () => {
           
           {isLoading ? (
             <div className="text-center">Loading friends...</div>
-          ) : friends.length === 0 ? (
+          ) : error ? (
+            <div className="text-center text-destructive">
+              An error occurred while loading your friends list
+            </div>
+          ) : !friends?.length ? (
             <div className="text-center text-muted-foreground">
               No friends found. Start adding some friends!
             </div>
