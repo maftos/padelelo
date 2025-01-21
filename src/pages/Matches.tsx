@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface MatchHistory {
   match_id: string;
@@ -36,12 +37,15 @@ interface UserInfo {
 const Matches = () => {
   const { toast } = useToast();
   const [page, setPage] = useState(1);
+  const { userId } = useUserProfile();
 
   const { data: matches, isLoading } = useQuery({
-    queryKey: ["matches", page],
+    queryKey: ["matches", page, userId],
     queryFn: async () => {
+      if (!userId) return [];
+
       const { data, error } = await supabase.rpc("get_latest_matches", {
-        p_user_id: "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf", // Hardcoded for now as requested
+        p_user_id: userId,
         page_number: page,
       });
 
@@ -56,6 +60,7 @@ const Matches = () => {
 
       return data as MatchHistory[];
     },
+    enabled: !!userId,
   });
 
   return (

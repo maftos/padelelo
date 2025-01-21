@@ -14,6 +14,7 @@ import {
 import { ScoreForm } from "./ScoreForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface Friend {
   friend_id: string;
@@ -34,17 +35,17 @@ export const MatchForm = () => {
     { team1: "", team2: "" },
   ]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-
-  // Hardcoded userId for development
-  const userId = "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf";
+  const { userId } = useUserProfile();
 
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
     queryKey: ['friends', userId],
     queryFn: async () => {
+      if (!userId) return [];
+      
       console.log('Fetching friends for user:', userId);
       try {
         const { data, error } = await supabase.rpc('view_my_friends', {
-          i_user_id: userId  // Changed from user_id to i_user_id to match the function parameter
+          i_user_id: userId
         });
         
         if (error) {
@@ -59,6 +60,7 @@ export const MatchForm = () => {
         throw error;
       }
     },
+    enabled: !!userId,
   });
 
   // Combine current user and friends for dropdown options
