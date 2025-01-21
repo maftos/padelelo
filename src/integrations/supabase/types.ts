@@ -328,6 +328,7 @@ export type Database = {
       }
       users: {
         Row: {
+          auth_user_id: string | null
           created_at: string | null
           current_mmr: number | null
           date_of_birth: string | null
@@ -342,6 +343,7 @@ export type Database = {
           whatsapp_number: string | null
         }
         Insert: {
+          auth_user_id?: string | null
           created_at?: string | null
           current_mmr?: number | null
           date_of_birth?: string | null
@@ -356,6 +358,7 @@ export type Database = {
           whatsapp_number?: string | null
         }
         Update: {
+          auth_user_id?: string | null
           created_at?: string | null
           current_mmr?: number | null
           date_of_birth?: string | null
