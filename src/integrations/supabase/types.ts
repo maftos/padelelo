@@ -67,10 +67,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "friendships_friend_id_fkey"
+            columns: ["friend_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "friendships_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "friendships_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -133,10 +147,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matches_player1_id_fkey"
+            columns: ["team1_player1_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matches_player2_id_fkey"
             columns: ["team1_player2_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_player2_id_fkey"
+            columns: ["team1_player2_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
           {
@@ -147,10 +175,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matches_player3_id_fkey"
+            columns: ["team2_player1_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matches_player4_id_fkey"
             columns: ["team2_player2_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_player4_id_fkey"
+            columns: ["team2_player2_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -211,10 +253,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ratings_history_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ratings_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ratings_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -317,7 +373,23 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      users_sorted_by_mmr: {
+        Row: {
+          created_at: string | null
+          current_mmr: number | null
+          date_of_birth: string | null
+          display_name: string | null
+          gender: string | null
+          id: string | null
+          languages: string[] | null
+          location: string | null
+          nationality: string | null
+          preferred_language: string | null
+          profile_photo: string | null
+          whatsapp_number: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       calculate_mmr_change: {
@@ -353,6 +425,44 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_latest_completed_matches: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          match_id: string
+          team1_player1_id: string
+          team1_player2_id: string
+          team2_player1_id: string
+          team2_player2_id: string
+          team1_score: number
+          team2_score: number
+          created_at: string
+          team1_player1_display_name: string
+          team1_player1_profile_photo: string
+          team1_player2_display_name: string
+          team1_player2_profile_photo: string
+          team2_player1_display_name: string
+          team2_player1_profile_photo: string
+          team2_player2_display_name: string
+          team2_player2_profile_photo: string
+        }[]
+      }
+      get_latest_matches: {
+        Args: {
+          p_user_id: string
+          page_number: number
+        }
+        Returns: {
+          match_id: string
+          user_id: string
+          old_mmr: number
+          change_amount: number
+          change_type: string
+          created_at: string
+          partner_id: string
+          new_mmr: number
+          status: string
+        }[]
+      }
       get_user_friends: {
         Args: {
           user_id: string
@@ -363,17 +473,23 @@ export type Database = {
           created_at: string
         }[]
       }
-      post_match: {
+      get_user_profile: {
         Args: {
-          match_id: string
+          user_id: string
         }
         Returns: {
-          team1_avg_mmr: number
-          team2_avg_mmr: number
-          team1_expected_win_rate: number
-          team2_expected_win_rate: number
-          team1_win_mmr_change_amount: number
-          team2_win_mmr_change_amount: number
+          id: string
+          display_name: string
+          created_at: string
+          gender: string
+          date_of_birth: string
+          location: string
+          languages: string[]
+          preferred_language: string
+          profile_photo: string
+          whatsapp_number: string
+          current_mmr: number
+          nationality: string
         }[]
       }
       view_my_friends: {

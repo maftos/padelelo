@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
 import { Alert, AlertDescription } from "./ui/alert";
+import { AuthError } from "@supabase/supabase-js";
 
 export const AuthModal = ({
   isOpen,
@@ -19,6 +20,11 @@ export const AuthModal = ({
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Clear error when modal is opened/closed
+  useEffect(() => {
+    setError(null);
+  }, [isOpen]);
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -26,6 +32,19 @@ export const AuthModal = ({
 
   const validatePassword = (password: string) => {
     return password.length >= 6;
+  };
+
+  const handleAuthError = (error: AuthError) => {
+    switch (error.message) {
+      case "Invalid login credentials":
+        return "Invalid email or password";
+      case "User already registered":
+        return "An account with this email already exists";
+      case "Email not confirmed":
+        return "Please verify your email before signing in";
+      default:
+        return error.message;
+    }
   };
 
   const handleSignIn = async () => {
@@ -43,25 +62,24 @@ export const AuthModal = ({
         return;
       }
       
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
       });
 
       if (signInError) {
-        if (signInError.message === "Invalid login credentials") {
-          setError("Invalid email or password");
-        } else {
-          setError(signInError.message);
-        }
+        setError(handleAuthError(signInError));
         return;
       }
 
-      toast({
-        title: "Success!",
-        description: "You have been successfully signed in",
-      });
-      onClose();
+      if (data.session) {
+        // Session contains the JWT token and user information
+        toast({
+          title: "Success!",
+          description: "You have been successfully signed in",
+        });
+        onClose();
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -84,25 +102,26 @@ export const AuthModal = ({
         return;
       }
       
-      const { error: signUpError } = await supabase.auth.signUp({
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
-          emailRedirectTo: window.location.origin,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         }
       });
 
       if (signUpError) {
-        setError(signUpError.message);
+        setError(handleAuthError(signUpError));
         return;
       }
 
-      // For testing purposes, proceed to signed in state
-      toast({
-        title: "Welcome!",
-        description: "Account created successfully",
-      });
-      onClose();
+      if (data.user) {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account",
+        });
+        onClose();
+      }
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -115,6 +134,9 @@ export const AuthModal = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Sign In or Create Account</DialogTitle>
+          <DialogDescription>
+            Enter your email and password to sign in or create a new account.
+          </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
           {error && (
