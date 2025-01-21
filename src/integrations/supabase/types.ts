@@ -529,20 +529,13 @@ export type Database = {
             }
             Returns: undefined
           }
-      send_friend_request:
-        | {
-            Args: {
-              i_email: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              i_email: string
-              user_a_id_public: string
-            }
-            Returns: undefined
-          }
+      send_friend_request: {
+        Args: {
+          i_email: string
+          user_a_id_public: string
+        }
+        Returns: undefined
+      }
       view_friend_requests: {
         Args: {
           user_a_id_public: string
