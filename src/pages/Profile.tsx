@@ -14,6 +14,7 @@ const Profile = () => {
   const { userId } = useUserProfile();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState({
     display_name: "",
     nationality: "",
@@ -21,7 +22,7 @@ const Profile = () => {
     location: "",
     languages: "",
     whatsapp_number: "",
-    profile_photo: "", // Added this field
+    profile_photo: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -40,7 +41,6 @@ const Profile = () => {
     enabled: !!userId,
   });
 
-  // Update form data when profile data is loaded
   useEffect(() => {
     if (profileData) {
       setFormData({
@@ -50,10 +50,57 @@ const Profile = () => {
         location: profileData.location || "",
         languages: profileData.languages ? profileData.languages.join(", ") : "",
         whatsapp_number: profileData.whatsapp_number || "",
-        profile_photo: profileData.profile_photo || "", // Added this field
+        profile_photo: profileData.profile_photo || "",
       });
     }
   }, [profileData]);
+
+  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      if (!event.target.files || event.target.files.length === 0) {
+        return;
+      }
+      const file = event.target.files[0];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${userId}-${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      setUploading(true);
+
+      const { error: uploadError, data } = await supabase.storage
+        .from('user-photos')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('user-photos')
+        .getPublicUrl(filePath);
+
+      // Update form data with new photo URL
+      setFormData(prev => ({
+        ...prev,
+        profile_photo: publicUrl
+      }));
+
+      toast({
+        title: "Photo uploaded",
+        description: "Your profile photo has been updated successfully.",
+      });
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      toast({
+        title: "Upload failed",
+        description: "There was an error uploading your photo. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -65,10 +112,10 @@ const Profile = () => {
         i_user_id: userId,
         i_display_name: formData.display_name,
         i_gender: formData.gender,
-        i_date_of_birth: null, // Added null for optional parameter
+        i_date_of_birth: null,
         i_languages: formData.languages.split(',').map(lang => lang.trim()),
-        i_preferred_language: null, // Added null for optional parameter
-        i_profile_photo: formData.profile_photo, // Added this parameter
+        i_preferred_language: null,
+        i_profile_photo: formData.profile_photo,
         i_whatsapp_number: formData.whatsapp_number,
         i_nationality: formData.nationality,
         i_location: formData.location
@@ -133,12 +180,24 @@ const Profile = () => {
         <div className="space-y-6">
           <div className="flex flex-col items-center gap-4">
             <Avatar className="h-24 w-24">
-              <AvatarImage src={profileData?.profile_photo} />
-              <AvatarFallback>{profileData?.display_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+              <AvatarImage src={formData.profile_photo} />
+              <AvatarFallback>{formData?.display_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
             </Avatar>
-            <Button variant="outline" size="sm">
-              Change Photo
-            </Button>
+            <div className="flex flex-col items-center gap-2">
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                disabled={uploading || !isEditing}
+                className="hidden"
+                id="photo-upload"
+              />
+              <label htmlFor="photo-upload">
+                <Button variant="outline" size="sm" disabled={uploading || !isEditing} asChild>
+                  <span>{uploading ? "Uploading..." : "Change Photo"}</span>
+                </Button>
+              </label>
+            </div>
           </div>
 
           <div className="space-y-4">
