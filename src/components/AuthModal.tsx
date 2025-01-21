@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
 import { Alert, AlertDescription } from "./ui/alert";
-import { AuthError } from "@supabase/supabase-js";
+import { AuthError, AuthApiError } from "@supabase/supabase-js";
 
 export const AuthModal = ({
   isOpen,
@@ -35,16 +35,26 @@ export const AuthModal = ({
   };
 
   const handleAuthError = (error: AuthError) => {
-    switch (error.message) {
-      case "Invalid login credentials":
-        return "Invalid email or password";
-      case "User already registered":
-        return "An account with this email already exists";
-      case "Email not confirmed":
-        return "Please verify your email before signing in";
-      default:
-        return error.message;
+    if (error instanceof AuthApiError) {
+      switch (error.status) {
+        case 400:
+          switch (error.message) {
+            case "Invalid login credentials":
+              return "Invalid email or password. Please check your credentials.";
+            case "Email not confirmed":
+              return "Please verify your email before signing in.";
+            default:
+              return error.message;
+          }
+        case 422:
+          return "Invalid email format.";
+        case 429:
+          return "Too many attempts. Please try again later.";
+        default:
+          return error.message;
+      }
     }
+    return error.message;
   };
 
   const handleSignIn = async () => {
@@ -68,6 +78,7 @@ export const AuthModal = ({
       });
 
       if (signInError) {
+        console.error("Sign in error:", signInError);
         setError(handleAuthError(signInError));
         return;
       }
@@ -81,7 +92,8 @@ export const AuthModal = ({
         onClose();
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error("Unexpected error:", err);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -111,6 +123,7 @@ export const AuthModal = ({
       });
 
       if (signUpError) {
+        console.error("Sign up error:", signUpError);
         setError(handleAuthError(signUpError));
         return;
       }
@@ -123,7 +136,8 @@ export const AuthModal = ({
         onClose();
       }
     } catch (err: any) {
-      setError(err.message);
+      console.error("Unexpected error:", err);
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
