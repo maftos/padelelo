@@ -12,16 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ScoreForm } from "./ScoreForm";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
-// Sample players data - in a real app, this would come from an API
-const samplePlayers = [
-  { id: 1, name: "John" },
-  { id: 2, name: "Sarah" },
-  { id: 3, name: "Mike" },
-  { id: 4, name: "Emma" },
-  { id: 5, name: "David" },
-  { id: 6, name: "Lisa" },
-];
+interface Friend {
+  friend_id: string;
+  display_name: string;
+  status: string;
+  created_at: string;
+}
 
 export const MatchForm = () => {
   const [page, setPage] = useState(1);
@@ -35,6 +35,27 @@ export const MatchForm = () => {
     { team1: "", team2: "" },
   ]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+
+  const { userId, profile } = useUserProfile();
+
+  const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
+    queryKey: ['friends', userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const { data, error } = await supabase.rpc('view_my_friends', {
+        user_id: userId
+      });
+      if (error) throw error;
+      return data as Friend[];
+    },
+    enabled: !!userId,
+  });
+
+  // Combine current user and friends for dropdown options
+  const playerOptions = userId && profile ? [
+    { id: userId, name: "Me" },
+    ...friends.map(friend => ({ id: friend.friend_id, name: friend.display_name }))
+  ] : [];
 
   const handleNext = () => {
     if (!player1 || !player2 || !player3 || !player4) {
@@ -106,8 +127,8 @@ export const MatchForm = () => {
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
-                  {samplePlayers.map((player) => (
-                    <SelectItem key={player.id} value={player.name}>
+                  {playerOptions.map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
                       {player.name}
                     </SelectItem>
                   ))}
@@ -121,8 +142,8 @@ export const MatchForm = () => {
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
-                  {samplePlayers.map((player) => (
-                    <SelectItem key={player.id} value={player.name}>
+                  {playerOptions.map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
                       {player.name}
                     </SelectItem>
                   ))}
@@ -139,8 +160,8 @@ export const MatchForm = () => {
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
-                  {samplePlayers.map((player) => (
-                    <SelectItem key={player.id} value={player.name}>
+                  {playerOptions.map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
                       {player.name}
                     </SelectItem>
                   ))}
@@ -154,8 +175,8 @@ export const MatchForm = () => {
                   <SelectValue placeholder="Select player" />
                 </SelectTrigger>
                 <SelectContent>
-                  {samplePlayers.map((player) => (
-                    <SelectItem key={player.id} value={player.name}>
+                  {playerOptions.map((player) => (
+                    <SelectItem key={player.id} value={player.id}>
                       {player.name}
                     </SelectItem>
                   ))}
