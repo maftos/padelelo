@@ -1,37 +1,22 @@
-import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { format } from "date-fns";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { MatchHistoryCard } from "@/components/match/MatchHistoryCard";
 
 interface MatchHistory {
   match_id: string;
   user_id: string;
   old_mmr: number;
   change_amount: number;
-  change_type: "WIN" | "LOSS";
+  change_type: string;
   created_at: string;
   partner_id: string;
   new_mmr: number;
   status: string;
-}
-
-interface UserInfo {
-  display_name: string;
-  profile_photo: string | null;
 }
 
 const Matches = () => {
@@ -39,7 +24,7 @@ const Matches = () => {
   const [page, setPage] = useState(1);
   const { userId } = useUserProfile();
 
-  const { data: matches, isLoading } = useQuery({
+  const { data: matches = [], isLoading } = useQuery({
     queryKey: ["matches", page, userId],
     queryFn: async () => {
       if (!userId) return [];
@@ -51,8 +36,8 @@ const Matches = () => {
 
       if (error) {
         toast({
-          title: "Error",
-          description: "Failed to load match history",
+          title: "Error fetching matches",
+          description: error.message,
           variant: "destructive",
         });
         throw error;
@@ -66,57 +51,33 @@ const Matches = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold mb-6">My Match History</h1>
-        <Card className="p-4">
+      <main className="container py-8 px-4 space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Match History</h1>
+          <p className="text-muted-foreground">View your recent matches</p>
+        </div>
+
+        <div className="space-y-4 max-w-2xl mx-auto">
           {isLoading ? (
-            <div className="text-center py-8">Loading match history...</div>
-          ) : !matches?.length ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No matches found. Start playing to see your match history!
-            </div>
+            <p className="text-center">Loading matches...</p>
+          ) : matches.length === 0 ? (
+            <p className="text-center text-muted-foreground">No matches found</p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Result</TableHead>
-                  <TableHead>Points</TableHead>
-                  <TableHead>New Rating</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {matches.map((match) => (
-                  <TableRow key={match.match_id}>
-                    <TableCell>
-                      {format(new Date(match.created_at), "MMM d, yyyy HH:mm")}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={match.change_type === "WIN" ? "default" : "destructive"}
-                      >
-                        {match.change_type}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={
-                          match.change_type === "WIN"
-                            ? "text-green-600 dark:text-green-400"
-                            : "text-red-600 dark:text-red-400"
-                        }
-                      >
-                        {match.change_type === "WIN" ? "+" : "-"}
-                        {Math.abs(match.change_amount)}
-                      </span>
-                    </TableCell>
-                    <TableCell>{match.new_mmr}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            matches.map((match) => (
+              <MatchHistoryCard key={match.match_id} {...match} />
+            ))
           )}
-        </Card>
+
+          <div className="flex justify-center pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={matches.length < 10}
+            >
+              Load More
+            </Button>
+          </div>
+        </div>
       </main>
     </div>
   );

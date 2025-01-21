@@ -4,17 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ScoreForm } from "./ScoreForm";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { TeamSelect } from "./match/TeamSelect";
 
 interface Friend {
   friend_id: string;
@@ -63,9 +57,8 @@ export const MatchForm = () => {
     enabled: !!userId,
   });
 
-  // Combine current user and friends for dropdown options
   const playerOptions = [
-    { id: userId, name: "Me" },
+    { id: userId || "", name: "Me" },
     ...friends.map(friend => ({ id: friend.friend_id, name: friend.display_name }))
   ];
 
@@ -95,7 +88,6 @@ export const MatchForm = () => {
 
     toast.success("Match registered successfully!");
     
-    // Reset form
     setPage(1);
     setPlayer1("");
     setPlayer2("");
@@ -131,71 +123,23 @@ export const MatchForm = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="player1">Team 1 - Player 1</Label>
-              <Select value={player1} onValueChange={setPlayer1}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select player" />
-                </SelectTrigger>
-                <SelectContent>
-                  {playerOptions.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="player2">Team 1 - Player 2</Label>
-              <Select value={player2} onValueChange={setPlayer2}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select player" />
-                </SelectTrigger>
-                <SelectContent>
-                  {playerOptions.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <TeamSelect
+            teamNumber={1}
+            player1Value={player1}
+            player2Value={player2}
+            onPlayer1Change={setPlayer1}
+            onPlayer2Change={setPlayer2}
+            players={playerOptions}
+          />
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="player3">Team 2 - Player 1</Label>
-              <Select value={player3} onValueChange={setPlayer3}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select player" />
-                </SelectTrigger>
-                <SelectContent>
-                  {playerOptions.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="player4">Team 2 - Player 2</Label>
-              <Select value={player4} onValueChange={setPlayer4}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select player" />
-                </SelectTrigger>
-                <SelectContent>
-                  {playerOptions.map((player) => (
-                    <SelectItem key={player.id} value={player.id}>
-                      {player.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <TeamSelect
+            teamNumber={2}
+            player1Value={player3}
+            player2Value={player4}
+            onPlayer1Change={setPlayer3}
+            onPlayer2Change={setPlayer4}
+            players={playerOptions}
+          />
 
           <Button type="submit" className="w-full">
             Next
