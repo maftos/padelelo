@@ -471,6 +471,8 @@ export type Database = {
           friend_id: string
           status: string
           created_at: string
+          display_name: string
+          profile_photo: string
         }[]
       }
       get_user_profile: {
