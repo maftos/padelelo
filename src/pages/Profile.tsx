@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const Profile = () => {
   const { userId } = useUserProfile();
@@ -78,26 +79,34 @@ const Profile = () => {
 
       setUploading(true);
 
-      const { data, error: uploadError } = await supabase.storage
-        .from('user-photos')
-        .upload(fileName, file, {
-          upsert: true,
-          cacheControl: '3600'
-        });
+      // Initialize S3 client
+      const s3Client = new S3Client({
+        forcePathStyle: true,
+        region: 'us-east-1', // This is a placeholder, Supabase uses this region
+        endpoint: `https://${process.env.SUPABASE_PROJECT_ID}.supabase.co/storage/v1/s3`,
+        credentials: {
+          accessKeyId: process.env.SUPABASE_PROJECT_ID || '',
+          secretAccessKey: process.env.SUPABASE_ANON_KEY || '',
+          sessionToken: session.access_token,
+        },
+      });
 
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        throw uploadError;
-      }
+      // Create the upload command
+      const uploadCommand = new PutObjectCommand({
+        Bucket: 'user-photos',
+        Key: fileName,
+        Body: file,
+        ContentType: file.type,
+        CacheControl: '3600',
+      });
 
-      if (!data?.path) {
-        throw new Error('Upload successful but no path returned');
-      }
+      // Execute the upload
+      await s3Client.send(uploadCommand);
 
-      // Get public URL
+      // Get public URL using Supabase storage
       const { data: { publicUrl } } = supabase.storage
         .from('user-photos')
-        .getPublicUrl(data.path);
+        .getPublicUrl(fileName);
 
       // Update form data with new photo URL
       setFormData(prev => ({
