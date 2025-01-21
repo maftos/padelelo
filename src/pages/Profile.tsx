@@ -60,6 +60,18 @@ const Profile = () => {
       if (!event.target.files || event.target.files.length === 0) {
         return;
       }
+
+      // Check if user is authenticated
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to upload photos.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
@@ -68,16 +80,24 @@ const Profile = () => {
 
       const { data, error: uploadError } = await supabase.storage
         .from('user-photos')
-        .upload(fileName, file);
+        .upload(fileName, file, {
+          upsert: true,
+          cacheControl: '3600'
+        });
 
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
+      }
+
+      if (!data?.path) {
+        throw new Error('Upload successful but no path returned');
       }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('user-photos')
-        .getPublicUrl(fileName);
+        .getPublicUrl(data.path);
 
       // Update form data with new photo URL
       setFormData(prev => ({
