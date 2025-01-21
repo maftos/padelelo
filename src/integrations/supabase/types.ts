@@ -425,6 +425,49 @@ export type Database = {
         }
         Returns: undefined
       }
+      edit_user_profile:
+        | {
+            Args: {
+              i_display_name: string
+              i_gender: string
+              i_date_of_birth: string
+              i_languages: string[]
+              i_preferred_language: string
+              i_profile_photo: string
+              i_whatsapp_number: string
+              i_nationality: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              i_display_name: string
+              i_gender: string
+              i_date_of_birth: string
+              i_languages: string[]
+              i_preferred_language: string
+              i_profile_photo: string
+              i_whatsapp_number: string
+              i_nationality: string
+              i_location: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              i_user_id: string
+              i_display_name: string
+              i_gender: string
+              i_date_of_birth: string
+              i_languages: string[]
+              i_preferred_language: string
+              i_profile_photo: string
+              i_whatsapp_number: string
+              i_nationality: string
+              i_location: string
+            }
+            Returns: undefined
+          }
       get_latest_completed_matches: {
         Args: Record<PropertyKey, never>
         Returns: {
