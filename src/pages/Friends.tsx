@@ -184,7 +184,7 @@ const Friends = () => {
                       <div className="flex items-center space-x-4">
                         <Avatar className="h-8 w-8">
                           <AvatarImage src={friend.profile_photo || ''} alt={friend.display_name || ''} />
-                          <AvatarFallback>{getInitials(friend.display_name || 'User')}</AvatarFallback>
+                          <AvatarFallback>{friend.display_name ? friend.display_name.charAt(0).toUpperCase() : 'U'}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">{friend.display_name}</p>
