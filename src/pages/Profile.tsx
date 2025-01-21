@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
@@ -39,7 +39,8 @@ const Profile = () => {
     enabled: !!userId,
   });
 
-  const handleEditClick = () => {
+  // Update form data when profile data is loaded
+  useEffect(() => {
     if (profileData) {
       setFormData({
         display_name: profileData.display_name || "",
@@ -50,6 +51,9 @@ const Profile = () => {
         whatsapp_number: profileData.whatsapp_number || "",
       });
     }
+  }, [profileData]);
+
+  const handleEditClick = () => {
     setIsEditing(true);
   };
 
@@ -59,9 +63,9 @@ const Profile = () => {
         i_user_id: userId,
         i_display_name: formData.display_name,
         i_gender: formData.gender,
-        i_date_of_birth: null, // We can add this field later if needed
+        i_date_of_birth: null,
         i_languages: formData.languages.split(',').map(lang => lang.trim()),
-        i_preferred_language: null, // We can add this field later if needed
+        i_preferred_language: null,
         i_profile_photo: profileData?.profile_photo,
         i_whatsapp_number: formData.whatsapp_number,
         i_nationality: formData.nationality,
@@ -76,7 +80,7 @@ const Profile = () => {
       });
 
       setIsEditing(false);
-      refetch(); // Refresh the profile data
+      refetch();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -147,8 +151,9 @@ const Profile = () => {
               ) : (
                 <Input
                   id="displayName"
-                  value={profileData?.display_name || ""}
+                  value={formData.display_name}
                   readOnly
+                  className="bg-muted"
                 />
               )}
             </div>
@@ -164,8 +169,9 @@ const Profile = () => {
               ) : (
                 <Input
                   id="nationality"
-                  value={profileData?.nationality || ""}
+                  value={formData.nationality}
                   readOnly
+                  className="bg-muted"
                 />
               )}
             </div>
@@ -190,20 +196,11 @@ const Profile = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="flex gap-4">
-                  <Button
-                    variant={profileData?.gender === "MALE" ? "default" : "outline"}
-                    disabled
-                  >
-                    Male
-                  </Button>
-                  <Button
-                    variant={profileData?.gender === "FEMALE" ? "default" : "outline"}
-                    disabled
-                  >
-                    Female
-                  </Button>
-                </div>
+                <Input
+                  value={formData.gender}
+                  readOnly
+                  className="bg-muted"
+                />
               )}
             </div>
 
@@ -218,8 +215,9 @@ const Profile = () => {
               ) : (
                 <Input
                   id="location"
-                  value={profileData?.location || ""}
+                  value={formData.location}
                   readOnly
+                  className="bg-muted"
                 />
               )}
             </div>
@@ -236,8 +234,9 @@ const Profile = () => {
               ) : (
                 <Input
                   id="languages"
-                  value={profileData?.languages?.join(", ") || ""}
+                  value={formData.languages}
                   readOnly
+                  className="bg-muted"
                   placeholder="e.g., English, French"
                 />
               )}
@@ -254,7 +253,7 @@ const Profile = () => {
               ) : (
                 <Input
                   id="whatsappNumber"
-                  value={profileData?.whatsapp_number || ""}
+                  value={formData.whatsapp_number}
                   readOnly
                   className="bg-muted"
                 />
