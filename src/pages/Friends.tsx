@@ -23,7 +23,7 @@ interface Friend {
   status: string;
   created_at: string;
   display_name: string;
-  profile_photo: string;
+  profile_photo: string | null;
 }
 
 const Friends = () => {
@@ -47,6 +47,7 @@ const Friends = () => {
         throw error;
       }
 
+      console.log('Friends data:', data); // Add this to debug the response
       return data as Friend[];
     },
   });
@@ -115,8 +116,13 @@ const Friends = () => {
                     <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
                       <div className="flex items-center space-x-4">
                         <Avatar>
-                          <AvatarImage src={friend.profile_photo} alt={friend.display_name} />
-                          <AvatarFallback>{friend.display_name.charAt(0)}</AvatarFallback>
+                          <AvatarImage 
+                            src={friend.profile_photo || ''} 
+                            alt={friend.display_name} 
+                          />
+                          <AvatarFallback>
+                            {friend.display_name?.charAt(0)?.toUpperCase() || '?'}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">{friend.display_name}</p>
