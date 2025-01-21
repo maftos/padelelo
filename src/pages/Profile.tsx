@@ -7,22 +7,85 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const Profile = () => {
   const { userId } = useUserProfile();
+  const { toast } = useToast();
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    display_name: "",
+    nationality: "",
+    gender: "",
+    location: "",
+    languages: "",
+    whatsapp_number: "",
+  });
 
-  const { data: profileData, isLoading } = useQuery({
+  const { data: profileData, isLoading, refetch } = useQuery({
     queryKey: ["profile", userId],
     queryFn: async () => {
+      if (!userId) return null;
+      
       const { data, error } = await supabase.rpc('get_user_profile', {
         user_id: userId
       });
       
       if (error) throw error;
-      return data[0]; // get_user_profile returns an array with one item
+      if (!data || data.length === 0) return null;
+      return data[0];
     },
-    enabled: !!userId, // Only run the query if we have a userId
+    enabled: !!userId,
   });
+
+  const handleEditClick = () => {
+    if (profileData) {
+      setFormData({
+        display_name: profileData.display_name || "",
+        nationality: profileData.nationality || "",
+        gender: profileData.gender || "",
+        location: profileData.location || "",
+        languages: profileData.languages ? profileData.languages.join(", ") : "",
+        whatsapp_number: profileData.whatsapp_number || "",
+      });
+    }
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      const { error } = await supabase.rpc('edit_user_profile', {
+        i_user_id: userId,
+        i_display_name: formData.display_name,
+        i_gender: formData.gender,
+        i_date_of_birth: null, // We can add this field later if needed
+        i_languages: formData.languages.split(',').map(lang => lang.trim()),
+        i_preferred_language: null, // We can add this field later if needed
+        i_profile_photo: profileData?.profile_photo,
+        i_whatsapp_number: formData.whatsapp_number,
+        i_nationality: formData.nationality,
+        i_location: formData.location
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated.",
+      });
+
+      setIsEditing(false);
+      refetch(); // Refresh the profile data
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -75,67 +138,127 @@ const Profile = () => {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="displayName">Display Name</Label>
-              <Input
-                id="displayName"
-                value={profileData?.display_name || ""}
-                readOnly
-              />
+              {isEditing ? (
+                <Input
+                  id="displayName"
+                  value={formData.display_name}
+                  onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
+                />
+              ) : (
+                <Input
+                  id="displayName"
+                  value={profileData?.display_name || ""}
+                  readOnly
+                />
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="country">Nationality</Label>
-              <Input
-                id="country"
-                value={profileData?.nationality || ""}
-                readOnly
-              />
+              <Label htmlFor="nationality">Nationality</Label>
+              {isEditing ? (
+                <Input
+                  id="nationality"
+                  value={formData.nationality}
+                  onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
+                />
+              ) : (
+                <Input
+                  id="nationality"
+                  value={profileData?.nationality || ""}
+                  readOnly
+                />
+              )}
             </div>
 
             <div className="space-y-2">
               <Label>Gender</Label>
-              <div className="flex gap-4">
-                <Button
-                  variant={profileData?.gender === "MALE" ? "default" : "outline"}
-                  disabled
-                >
-                  Male
-                </Button>
-                <Button
-                  variant={profileData?.gender === "FEMALE" ? "default" : "outline"}
-                  disabled
-                >
-                  Female
-                </Button>
-              </div>
+              {isEditing ? (
+                <div className="flex gap-4">
+                  <Button
+                    type="button"
+                    variant={formData.gender === "MALE" ? "default" : "outline"}
+                    onClick={() => setFormData({ ...formData, gender: "MALE" })}
+                  >
+                    Male
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={formData.gender === "FEMALE" ? "default" : "outline"}
+                    onClick={() => setFormData({ ...formData, gender: "FEMALE" })}
+                  >
+                    Female
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-4">
+                  <Button
+                    variant={profileData?.gender === "MALE" ? "default" : "outline"}
+                    disabled
+                  >
+                    Male
+                  </Button>
+                  <Button
+                    variant={profileData?.gender === "FEMALE" ? "default" : "outline"}
+                    disabled
+                  >
+                    Female
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={profileData?.location || ""}
-                readOnly
-              />
+              {isEditing ? (
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                />
+              ) : (
+                <Input
+                  id="location"
+                  value={profileData?.location || ""}
+                  readOnly
+                />
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="languages">Languages</Label>
-              <Input
-                id="languages"
-                value={profileData?.languages?.join(", ") || ""}
-                readOnly
-                placeholder="e.g., English, French"
-              />
+              {isEditing ? (
+                <Input
+                  id="languages"
+                  value={formData.languages}
+                  onChange={(e) => setFormData({ ...formData, languages: e.target.value })}
+                  placeholder="e.g., English, French"
+                />
+              ) : (
+                <Input
+                  id="languages"
+                  value={profileData?.languages?.join(", ") || ""}
+                  readOnly
+                  placeholder="e.g., English, French"
+                />
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
-              <Input
-                id="whatsappNumber"
-                value={profileData?.whatsapp_number || ""}
-                readOnly
-                className="bg-muted"
-              />
+              {isEditing ? (
+                <Input
+                  id="whatsappNumber"
+                  value={formData.whatsapp_number}
+                  onChange={(e) => setFormData({ ...formData, whatsapp_number: e.target.value })}
+                />
+              ) : (
+                <Input
+                  id="whatsappNumber"
+                  value={profileData?.whatsapp_number || ""}
+                  readOnly
+                  className="bg-muted"
+                />
+              )}
             </div>
 
             <div className="space-y-2">
@@ -148,7 +271,14 @@ const Profile = () => {
               />
             </div>
 
-            <Button className="w-full">Edit Profile</Button>
+            {isEditing ? (
+              <div className="flex gap-4">
+                <Button className="flex-1" onClick={handleSave}>Save Changes</Button>
+                <Button className="flex-1" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+              </div>
+            ) : (
+              <Button className="w-full" onClick={handleEditClick}>Edit Profile</Button>
+            )}
           </div>
         </div>
       </main>
