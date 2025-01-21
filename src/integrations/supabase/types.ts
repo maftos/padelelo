@@ -430,16 +430,16 @@ export type Database = {
       }
       edit_user_profile: {
         Args: {
-          i_user_id: string
-          i_display_name: string
-          i_gender: string
-          i_date_of_birth: string
-          i_languages: string[]
-          i_preferred_language: string
-          i_profile_photo: string
-          i_whatsapp_number: string
-          i_nationality: string
-          i_location: string
+          user_a_id_auth: string
+          new_display_name: string
+          new_gender: string
+          new_date_of_birth: string
+          new_languages: string[]
+          new_preferred_language: string
+          new_profile_photo: string
+          new_whatsapp_number: string
+          new_nationality: string
+          new_location: string
         }
         Returns: undefined
       }

@@ -44,7 +44,7 @@ export const MatchForm = () => {
       console.log('Fetching friends for user:', userId);
       try {
         const { data, error } = await supabase.rpc('view_my_friends', {
-          user_id: userId
+          i_user_id: userId  // Changed from user_id to i_user_id to match the function parameter
         });
         
         if (error) {
@@ -52,7 +52,7 @@ export const MatchForm = () => {
           throw error;
         }
         
-        console.log('Friends data received:', data);
+        console.log('Friends data:', data);
         return data as Friend[];
       } catch (error) {
         console.error('Error in query function:', error);
