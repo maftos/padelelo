@@ -43,16 +43,22 @@ export const useUserProfile = () => {
     queryFn: async () => {
       if (!userId) return null;
       
-      const { data, error } = await supabase.rpc('get_user_profile', {
+      // First get the user data from auth
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) throw userError;
+      
+      // Then get the extended profile data from our custom function
+      const { data, error: profileError } = await supabase.rpc('get_user_profile', {
         user_id: userId
       });
       
-      if (error) throw error;
-      return data[0] as UserProfile;
+      if (profileError) throw profileError;
+      
+      // Combine auth user data with profile data
+      return data?.[0] as UserProfile;
     },
-    enabled: !!userId, // Only run query if we have a userId
-    staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-    gcTime: 1000 * 60 * 30, // Keep data in cache for 30 minutes (renamed from cacheTime)
+    enabled: !!userId,
   });
 
   return {
