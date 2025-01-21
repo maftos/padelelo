@@ -45,8 +45,6 @@ export const AuthModal = ({
           switch (error.message) {
             case "Invalid login credentials":
               return "Invalid email or password. Please check your credentials.";
-            case "Email not confirmed":
-              return "Please verify your email before signing in.";
             default:
               return error.message;
           }
