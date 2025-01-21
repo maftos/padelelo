@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import ReleaseNotes from "./pages/ReleaseNotes";
 import MatchmakingMath from "./pages/MatchmakingMath";
 import FutureImprovements from "./pages/FutureImprovements";
+import Matches from "./pages/Matches";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/friends" element={<Friends />} />
+          <Route path="/matches" element={<Matches />} />
           <Route path="/register-match" element={<Index />} />
           <Route path="/release-notes" element={<ReleaseNotes />} />
           <Route path="/matchmaking-math" element={<MatchmakingMath />} />
