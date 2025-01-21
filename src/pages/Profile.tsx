@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 const Profile = () => {
   const { userId } = useUserProfile();
@@ -62,48 +61,25 @@ const Profile = () => {
         return;
       }
 
-      // Check if user is authenticated
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Authentication required",
-          description: "Please log in to upload photos.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
       const fileName = `${Math.random()}.${fileExt}`;
 
       setUploading(true);
 
-      // Initialize S3 client
-      const s3Client = new S3Client({
-        forcePathStyle: true,
-        region: 'us-east-1', // This is a placeholder, Supabase uses this region
-        endpoint: `https://${process.env.SUPABASE_PROJECT_ID}.supabase.co/storage/v1/s3`,
-        credentials: {
-          accessKeyId: process.env.SUPABASE_PROJECT_ID || '',
-          secretAccessKey: process.env.SUPABASE_ANON_KEY || '',
-          sessionToken: session.access_token,
-        },
-      });
+      // Upload directly using Supabase Storage
+      const { data, error: uploadError } = await supabase.storage
+        .from('user-photos')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      // Create the upload command
-      const uploadCommand = new PutObjectCommand({
-        Bucket: 'user-photos',
-        Key: fileName,
-        Body: file,
-        ContentType: file.type,
-        CacheControl: '3600',
-      });
+      if (uploadError) {
+        throw uploadError;
+      }
 
-      // Execute the upload
-      await s3Client.send(uploadCommand);
-
-      // Get public URL using Supabase storage
+      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from('user-photos')
         .getPublicUrl(fileName);
