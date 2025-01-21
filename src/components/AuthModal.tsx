@@ -42,6 +42,10 @@ export const AuthModal = ({
           if (error.message.includes("email_address_invalid")) {
             return "Please enter a valid email address. Example: user@example.com";
           }
+          // Add specific handling for email_not_confirmed
+          if (error.message === "Email not confirmed") {
+            return "Please check your email and click the confirmation link before signing in.";
+          }
           switch (error.message) {
             case "Invalid login credentials":
               return "Invalid email or password. Please check your credentials.";
@@ -152,6 +156,11 @@ export const AuthModal = ({
           <DialogTitle>Sign In or Create Account</DialogTitle>
           <DialogDescription>
             Enter your email and password to sign in or create a new account.
+            {error?.includes("Email not confirmed") && (
+              <p className="mt-2 text-sm text-primary">
+                Please check your email inbox and spam folder for the confirmation link.
+              </p>
+            )}
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
