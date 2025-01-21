@@ -47,20 +47,28 @@ const Friends = () => {
         throw error;
       }
 
-      console.log('Friends data:', data); // Add this to debug the response
+      console.log('Friends data:', data);
       return data as Friend[];
     },
   });
 
   const handleAddFriend = async (e: React.FormEvent) => {
     e.preventDefault();
-    // This is just UI preparation - actual implementation will come later
     toast({
       title: "Friend Request",
       description: `Friend request will be sent to ${friendEmail}`,
     });
     setFriendEmail("");
     setIsAddFriendOpen(false);
+  };
+
+  // Get initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
   };
 
   return (
@@ -115,14 +123,9 @@ const Friends = () => {
                   <DialogTrigger asChild>
                     <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
                       <div className="flex items-center space-x-4">
-                        <Avatar>
-                          <AvatarImage 
-                            src={friend.profile_photo || ''} 
-                            alt={friend.display_name} 
-                          />
-                          <AvatarFallback>
-                            {friend.display_name?.charAt(0)?.toUpperCase() || '?'}
-                          </AvatarFallback>
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={friend.profile_photo || ''} alt={friend.display_name || ''} />
+                          <AvatarFallback>{getInitials(friend.display_name || 'User')}</AvatarFallback>
                         </Avatar>
                         <div>
                           <p className="font-medium">{friend.display_name}</p>
