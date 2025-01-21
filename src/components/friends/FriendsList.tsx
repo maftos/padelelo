@@ -1,4 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Friend {
   friend_id: string;
@@ -8,11 +10,40 @@ interface Friend {
 }
 
 interface FriendsListProps {
-  friends?: Friend[];
-  isLoading: boolean;
+  userId: string | undefined;
 }
 
-export const FriendsList = ({ friends, isLoading }: FriendsListProps) => {
+export const FriendsList = ({ userId }: FriendsListProps) => {
+  const { data: friends, isLoading, error } = useQuery({
+    queryKey: ['friends', userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      
+      console.log('Fetching friends for user:', userId);
+      const { data, error } = await supabase.rpc('view_my_friends', {
+        i_user_id: userId
+      });
+      
+      if (error) {
+        console.error('Error fetching friends:', error);
+        throw error;
+      }
+      
+      console.log('Friends data:', data);
+      return data as Friend[];
+    },
+    enabled: !!userId,
+  });
+
+  if (error) {
+    console.error('Error in FriendsList component:', error);
+    return (
+      <div className="text-red-500">
+        Error loading friends: {(error as Error).message}
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="animate-pulse space-y-4">

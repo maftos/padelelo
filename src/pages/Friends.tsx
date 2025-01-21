@@ -27,23 +27,6 @@ const Friends = () => {
     checkAuth();
   }, []);
 
-  const { data: friends, isLoading, refetch } = useQuery({
-    queryKey: ['friends', userId],
-    queryFn: async () => {
-      if (!userId) return [];
-      const { data, error } = await supabase.rpc('view_my_friends', {
-        i_user_id: userId
-      });
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!userId,
-  });
-
-  const filteredFriends = friends?.filter(friend => 
-    friend.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   if (showAuthAlert) {
     return (
       <AlertDialog open={showAuthAlert}>
@@ -74,7 +57,7 @@ const Friends = () => {
                 <Users className="h-6 w-6 text-primary" />
                 <h1 className="text-2xl font-bold">Friends</h1>
               </div>
-              <AddFriendDialog userId={userId} onFriendAdded={refetch} />
+              <AddFriendDialog userId={userId} onFriendAdded={() => {}} />
             </div>
             
             <div className="relative">
@@ -88,10 +71,7 @@ const Friends = () => {
             </div>
             
             <div className="bg-accent rounded-lg p-4">
-              <FriendsList 
-                friends={filteredFriends} 
-                isLoading={isLoading} 
-              />
+              <FriendsList userId={userId} />
             </div>
           </div>
 
