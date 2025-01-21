@@ -13,7 +13,7 @@ const Home = () => {
           {/* Banner Section */}
           <div className="relative h-[400px] rounded-lg overflow-hidden">
             <img
-              src="/ui-assets/home_banner.jpg"
+              src="https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/ui-assets/home_banner.jpg?t=2025-01-21T08%3A35%3A32.375Z"
               alt="Padel Court"
               className="w-full h-full object-cover"
             />
