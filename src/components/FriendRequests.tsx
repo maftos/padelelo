@@ -24,11 +24,9 @@ export const FriendRequests = () => {
     queryKey: ['friendRequests', userId],
     queryFn: async () => {
       if (!userId) return [];
-
       const { data, error } = await supabase.rpc('view_friend_requests', {
         user_a_id_public: userId
       });
-
       if (error) throw error;
       return data as FriendRequest[];
     },
@@ -50,7 +48,6 @@ export const FriendRequests = () => {
         description: accept ? "You are now friends!" : "Friend request has been declined",
       });
 
-      // Refresh both friend requests and friends lists
       queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
       queryClient.invalidateQueries({ queryKey: ['friends'] });
     } catch (error: any) {
@@ -64,8 +61,24 @@ export const FriendRequests = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <div className="animate-pulse text-muted-foreground">Loading requests...</div>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i} className="p-4">
+            <div className="animate-pulse space-y-4">
+              <div className="flex items-center space-x-4">
+                <div className="h-12 w-12 rounded-full bg-muted"></div>
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-3 bg-muted rounded w-1/2"></div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <div className="h-9 bg-muted rounded flex-1"></div>
+                <div className="h-9 bg-muted rounded flex-1"></div>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
     );
   }

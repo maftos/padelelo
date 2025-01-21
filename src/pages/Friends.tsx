@@ -6,12 +6,14 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import { useNavigate } from "react-router-dom";
 import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
-import { FriendCard } from "@/components/friends/FriendCard";
+import { FriendsList } from "@/components/friends/FriendsList";
 import { AddFriendDialog } from "@/components/friends/AddFriendDialog";
-import { Users } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Search, Users } from "lucide-react";
 
 const Friends = () => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { userId } = useUserProfile();
 
@@ -38,6 +40,10 @@ const Friends = () => {
     enabled: !!userId,
   });
 
+  const filteredFriends = friends?.filter(friend => 
+    friend.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   if (showAuthAlert) {
     return (
       <AlertDialog open={showAuthAlert}>
@@ -59,35 +65,43 @@ const Friends = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="container py-8 px-4">
-        <div className="space-y-6 animate-fade-in">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">My Friends</h1>
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Sidebar */}
+          <div className="lg:w-80 flex-shrink-0 space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Users className="h-6 w-6 text-primary" />
+                <h1 className="text-2xl font-bold">Friends</h1>
+              </div>
+              <AddFriendDialog userId={userId} onFriendAdded={refetch} />
             </div>
-            <AddFriendDialog userId={userId} onFriendAdded={refetch} />
+            
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search friends..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="bg-accent rounded-lg p-4">
+              <FriendsList 
+                friends={filteredFriends} 
+                isLoading={isLoading} 
+              />
+            </div>
           </div>
 
-          <FriendRequests />
-          
-          {isLoading ? (
-            <div className="flex items-center justify-center p-4">
-              <div className="animate-pulse text-muted-foreground">Loading friends...</div>
-            </div>
-          ) : !friends?.length ? (
-            <div className="text-center text-muted-foreground p-8">
-              No friends found. Start adding some friends!
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {friends.map((friend) => (
-                <FriendCard key={friend.friend_id} friend={friend} />
-              ))}
-            </div>
-          )}
+          {/* Main Content Area */}
+          <div className="flex-1 space-y-6">
+            <FriendRequests />
+            {/* Additional content can be added here */}
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
