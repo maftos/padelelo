@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Routes } from "./Routes";
+import { Navigation } from "@/components/Navigation";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -12,6 +13,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <AuthProvider>
+          <Navigation />
           <Routes />
           <Toaster />
         </AuthProvider>
