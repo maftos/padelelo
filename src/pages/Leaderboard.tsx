@@ -26,42 +26,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Sample data - will be replaced with real data later
-const leaderboardData = [
-  { 
-    id: 1, 
-    rank: 1, 
-    displayName: "John Doe", 
-    nationality: "Mauritian",
-    gender: "Male",
-    lastPlayed: "2024-03-15",
-    mmr: 2500 
-  },
-  { 
-    id: 2, 
-    rank: 2, 
-    displayName: "Jane Smith", 
-    nationality: "French",
-    gender: "Female",
-    lastPlayed: "2024-03-14",
-    mmr: 2450 
-  },
-  { 
-    id: 3, 
-    rank: 3, 
-    displayName: "Mike Johnson", 
-    nationality: "Mauritian",
-    gender: "Male",
-    lastPlayed: "2024-03-13",
-    mmr: 2400 
-  },
-];
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Leaderboard = () => {
   const [filters, setFilters] = useState({
     gender: "both",
     friendsOnly: false,
+  });
+
+  const { data: leaderboardData, isLoading } = useQuery({
+    queryKey: ['leaderboard'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('users_sorted_by_mmr')
+        .select('*')
+        .limit(25)
+        .order('current_mmr', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
   });
 
   const handleGenderChange = (value: string) => {
@@ -73,13 +59,23 @@ const Leaderboard = () => {
   };
 
   // Format date to be more readable
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB', { 
       day: 'numeric', 
       month: 'short', 
       year: 'numeric' 
     });
+  };
+
+  // Get initials for avatar fallback
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase();
   };
 
   return (
@@ -141,14 +137,28 @@ const Leaderboard = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {leaderboardData.map((player) => (
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-4">
+                      Loading leaderboard data...
+                    </TableCell>
+                  </TableRow>
+                ) : leaderboardData?.map((player, index) => (
                   <TableRow key={player.id}>
-                    <TableCell className="font-medium">{player.rank}</TableCell>
-                    <TableCell>{player.displayName}</TableCell>
-                    <TableCell>{player.gender}</TableCell>
-                    <TableCell>{player.nationality}</TableCell>
-                    <TableCell>{formatDate(player.lastPlayed)}</TableCell>
-                    <TableCell className="text-right">{player.mmr}</TableCell>
+                    <TableCell className="font-medium">{index + 1}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={player.profile_photo || ''} alt={player.display_name || ''} />
+                          <AvatarFallback>{getInitials(player.display_name || 'User')}</AvatarFallback>
+                        </Avatar>
+                        {player.display_name}
+                      </div>
+                    </TableCell>
+                    <TableCell>{player.gender || 'N/A'}</TableCell>
+                    <TableCell>{player.nationality || 'N/A'}</TableCell>
+                    <TableCell>{formatDate(player.created_at)}</TableCell>
+                    <TableCell className="text-right">{player.current_mmr || 0}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
