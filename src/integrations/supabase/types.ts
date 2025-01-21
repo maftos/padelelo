@@ -58,36 +58,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["friendship_status"]
           user_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "friendships_friend_id_fkey"
-            columns: ["friend_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "friendships_friend_id_fkey"
-            columns: ["friend_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "friendships_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "friendships_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       matches: {
         Row: {
@@ -333,6 +304,7 @@ export type Database = {
           current_mmr: number | null
           date_of_birth: string | null
           display_name: string
+          email: string | null
           gender: string | null
           id: string
           languages: string[] | null
@@ -348,6 +320,7 @@ export type Database = {
           current_mmr?: number | null
           date_of_birth?: string | null
           display_name: string
+          email?: string | null
           gender?: string | null
           id?: string
           languages?: string[] | null
@@ -363,6 +336,7 @@ export type Database = {
           current_mmr?: number | null
           date_of_birth?: string | null
           display_name?: string
+          email?: string | null
           gender?: string | null
           id?: string
           languages?: string[] | null
