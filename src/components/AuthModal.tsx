@@ -26,7 +26,8 @@ export const AuthModal = ({
   }, [isOpen]);
 
   const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // More strict email validation
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return emailRegex.test(email);
   };
 
@@ -38,6 +39,9 @@ export const AuthModal = ({
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
+          if (error.message.includes("email_address_invalid")) {
+            return "Please enter a valid email address. Example: user@example.com";
+          }
           switch (error.message) {
             case "Invalid login credentials":
               return "Invalid email or password. Please check your credentials.";
