@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,20 +6,22 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-
-const HARDCODED_USER_ID = "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 const Profile = () => {
+  const { userId } = useUserProfile();
+
   const { data: profileData, isLoading } = useQuery({
-    queryKey: ["profile", HARDCODED_USER_ID],
+    queryKey: ["profile", userId],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_user_profile', {
-        user_id: HARDCODED_USER_ID
+        user_id: userId
       });
       
       if (error) throw error;
       return data[0]; // get_user_profile returns an array with one item
-    }
+    },
+    enabled: !!userId, // Only run the query if we have a userId
   });
 
   if (isLoading) {
