@@ -41,21 +41,21 @@ export type Database = {
           created_at: string | null
           friend_id: string | null
           id: number
-          status: string
+          status: Database["public"]["Enums"]["friendship_status"]
           user_id: string | null
         }
         Insert: {
           created_at?: string | null
           friend_id?: string | null
           id?: never
-          status: string
+          status: Database["public"]["Enums"]["friendship_status"]
           user_id?: string | null
         }
         Update: {
           created_at?: string | null
           friend_id?: string | null
           id?: never
-          status?: string
+          status?: Database["public"]["Enums"]["friendship_status"]
           user_id?: string | null
         }
         Relationships: [
@@ -512,6 +512,49 @@ export type Database = {
           nationality: string
         }[]
       }
+      respond_friend_request:
+        | {
+            Args: {
+              user_a_id_public: string
+              friendship_id: number
+              accept: boolean
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              user_a_id_public: string
+              friendship_id: string
+              accept: boolean
+            }
+            Returns: undefined
+          }
+      send_friend_request:
+        | {
+            Args: {
+              i_email: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              i_email: string
+              user_a_id_public: string
+            }
+            Returns: undefined
+          }
+      view_friend_requests: {
+        Args: {
+          user_a_id_public: string
+        }
+        Returns: {
+          friend_id: string
+          profile_photo: string
+          display_name: string
+          gender: string
+          current_mmr: number
+        }[]
+      }
       view_my_friends: {
         Args: {
           user_id: string
@@ -534,7 +577,12 @@ export type Database = {
         | "Oceania"
         | "North America"
         | "South America"
-      friendship_status: "INVITED" | "CONFIRMED" | "RECEIVED" | "DELETED"
+      friendship_status:
+        | "INVITED"
+        | "CONFIRMED"
+        | "RECEIVED"
+        | "DELETED"
+        | "IGNORED"
       gender: "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY"
       match_status: "PENDING" | "COMPLETED" | "CANCELLED" | "DELETED"
     }
