@@ -31,7 +31,7 @@ const Profile = () => {
       if (!userId) return null;
       
       const { data, error } = await supabase.rpc('get_user_profile', {
-        user_id: userId
+        user_a_id_auth: userId
       });
       
       if (error) throw error;
