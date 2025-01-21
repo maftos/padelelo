@@ -121,20 +121,26 @@ export const Navigation = () => {
                   </SheetHeader>
                   <nav className="flex flex-col gap-4 mt-4">
                     {/* Primary Action */}
-                    <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
-                      Register a Match
-                    </Link>
+                    {isAuthenticated && (
+                      <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
+                        Register a Match
+                      </Link>
+                    )}
                     
                     {/* Core Features */}
                     <div className="space-y-2">
-                      <Link to="/friends" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                        Friends
-                      </Link>
+                      {isAuthenticated && (
+                        <>
+                          <Link to="/friends" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                            Friends
+                          </Link>
+                          <Link to="/matches" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                            My Matches
+                          </Link>
+                        </>
+                      )}
                       <Link to="/leaderboard" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
                         Leaderboard
-                      </Link>
-                      <Link to="/matches" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
-                        My Matches
                       </Link>
                     </div>
                     

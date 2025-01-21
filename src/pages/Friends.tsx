@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card } from "@/components/ui/card";
-import { RecentMatches } from "@/components/RecentMatches";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +17,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { useNavigate } from "react-router-dom";
+import { FriendRequests } from "@/components/FriendRequests";
 
 interface Friend {
   friend_id: string;
@@ -32,39 +34,69 @@ const Friends = () => {
   const [friendEmail, setFriendEmail] = useState("");
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const { userId } = useUserProfile();
+  const [showAuthAlert, setShowAuthAlert] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setShowAuthAlert(true);
+      }
+    };
+    checkAuth();
+  }, []);
 
   const { data: friends, isLoading, error } = useQuery({
     queryKey: ['friends', userId],
     queryFn: async () => {
       if (!userId) return [];
       
-      const { data, error } = await supabase.rpc('view_my_friends', {
-        i_user_id: userId  // Changed from user_id to i_user_id to match the function parameter
-      });
-
-      if (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load friends list",
-          variant: "destructive",
+      try {
+        const { data, error } = await supabase.rpc('view_my_friends', {
+          i_user_id: userId
         });
+
+        if (error) {
+          console.error('Error fetching friends:', error);
+          throw error;
+        }
+
+        console.log('Friends data:', data);
+        return data as Friend[];
+      } catch (error) {
+        console.error('Error in query function:', error);
         throw error;
       }
-
-      console.log('Friends data:', data);
-      return data as Friend[];
     },
-    enabled: !!userId, // Only run query if we have a userId
+    enabled: !!userId,
   });
 
   const handleAddFriend = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Friend Request",
-      description: `Friend request will be sent to ${friendEmail}`,
-    });
-    setFriendEmail("");
-    setIsAddFriendOpen(false);
+    if (!userId) return;
+
+    try {
+      const { error } = await supabase.rpc('send_friend_request', {
+        i_email: friendEmail,
+        user_a_id_public: userId
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Friend Request Sent",
+        description: `A friend request has been sent to ${friendEmail}`,
+      });
+      setFriendEmail("");
+      setIsAddFriendOpen(false);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   // Get initials for avatar fallback
@@ -75,6 +107,24 @@ const Friends = () => {
       .join('')
       .toUpperCase();
   };
+
+  if (showAuthAlert) {
+    return (
+      <AlertDialog open={showAuthAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Authentication Required</AlertDialogTitle>
+            <AlertDialogDescription>
+              Please log in to view your friends list.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogAction onClick={() => navigate('/')}>
+            Return to Home
+          </AlertDialogAction>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,7 +160,11 @@ const Friends = () => {
               </DialogContent>
             </Dialog>
           </div>
+
+          {/* Friend Requests Section */}
+          <FriendRequests />
           
+          {/* Friends List */}
           {isLoading ? (
             <div className="text-center">Loading friends...</div>
           ) : error ? (
@@ -145,7 +199,7 @@ const Friends = () => {
                     <DialogHeader>
                       <DialogTitle>{friend.display_name}'s Recent Matches</DialogTitle>
                     </DialogHeader>
-                    <RecentMatches />
+                    {/* RecentMatches component would go here */}
                   </DialogContent>
                 </Dialog>
               ))}
