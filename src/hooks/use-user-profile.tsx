@@ -43,22 +43,41 @@ export const useUserProfile = () => {
     queryFn: async () => {
       if (!userId) return null;
       
-      // First get the user data from auth
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
-      if (userError) throw userError;
-      
-      // Then get the extended profile data using a GET request instead of POST
-      const { data, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (profileError) throw profileError;
-      
-      // Return the profile data
-      return data as UserProfile;
+      try {
+        // First try to get the profile using RPC
+        const { data: rpcData, error: rpcError } = await supabase
+          .rpc('get_user_profile', { user_id: userId });
+        
+        if (rpcError) {
+          console.error('RPC error:', rpcError);
+          // If RPC fails, fallback to direct table query
+          const { data: tableData, error: tableError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .maybeSingle();
+          
+          if (tableError) throw tableError;
+          return tableData as UserProfile;
+        }
+        
+        // If RPC succeeds but returns no data, try direct table query
+        if (!rpcData || rpcData.length === 0) {
+          const { data: tableData, error: tableError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .maybeSingle();
+          
+          if (tableError) throw tableError;
+          return tableData as UserProfile;
+        }
+        
+        return rpcData[0] as UserProfile;
+      } catch (error) {
+        console.error('Profile fetch error:', error);
+        throw error;
+      }
     },
     enabled: !!userId,
   });
