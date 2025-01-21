@@ -21,33 +21,41 @@ export const Navigation = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Initial session check
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       setIsAuthenticated(!!session);
-    });
+    };
+    
+    getInitialSession();
 
-    // Auth state change listener
+    // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setIsAuthenticated(!!session);
+      const isAuth = !!session;
       
-      // Only show toasts for actual auth state changes
-      if (event === 'SIGNED_IN' && session?.user?.aud === 'authenticated') {
-        toast({
-          title: "Welcome back!",
-          description: "You have successfully signed in",
-        });
-      } else if (event === 'SIGNED_OUT') {
-        toast({
-          title: "Signed out",
-          description: "You have been signed out successfully",
-        });
+      // Only update state and show toast if auth status actually changed
+      if (isAuth !== isAuthenticated) {
+        setIsAuthenticated(isAuth);
+        
+        // Only show toasts for actual sign in/out events
+        if (event === 'SIGNED_IN') {
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully signed in",
+          });
+        } else if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Signed out",
+            description: "You have been signed out successfully",
+          });
+        }
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [toast]);
+  }, [isAuthenticated, toast]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
