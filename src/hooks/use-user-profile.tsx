@@ -48,15 +48,17 @@ export const useUserProfile = () => {
       
       if (userError) throw userError;
       
-      // Then get the extended profile data from our custom function
-      const { data, error: profileError } = await supabase.rpc('get_user_profile', {
-        user_id: userId
-      });
+      // Then get the extended profile data using a GET request instead of POST
+      const { data, error: profileError } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
       
       if (profileError) throw profileError;
       
-      // Combine auth user data with profile data
-      return data?.[0] as UserProfile;
+      // Return the profile data
+      return data as UserProfile;
     },
     enabled: !!userId,
   });
