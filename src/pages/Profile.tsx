@@ -62,14 +62,13 @@ const Profile = () => {
       }
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      const fileName = `${userId}-${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const fileName = `${Math.random()}.${fileExt}`;
 
       setUploading(true);
 
       const { error: uploadError, data } = await supabase.storage
         .from('user-photos')
-        .upload(filePath, file);
+        .upload(fileName, file);
 
       if (uploadError) {
         throw uploadError;
@@ -78,7 +77,7 @@ const Profile = () => {
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('user-photos')
-        .getPublicUrl(filePath);
+        .getPublicUrl(fileName);
 
       // Update form data with new photo URL
       setFormData(prev => ({
