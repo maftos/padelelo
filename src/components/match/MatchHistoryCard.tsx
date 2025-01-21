@@ -4,22 +4,22 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface MatchHistoryCardProps {
-  matchId: string;
-  oldMmr: number;
-  changeAmount: number;
-  changeType: string;
-  createdAt: string;
-  partnerId: string;
-  newMmr: number;
+  match_id: string;
+  old_mmr: number;
+  change_amount: number;
+  change_type: string;
+  created_at: string;
+  partner_id: string;
+  new_mmr: number;
   status: string;
 }
 
 export const MatchHistoryCard = ({
-  oldMmr,
-  changeAmount,
-  changeType,
-  createdAt,
-  newMmr,
+  old_mmr,
+  change_amount,
+  change_type,
+  created_at,
+  new_mmr,
   status,
 }: MatchHistoryCardProps) => {
   return (
@@ -32,20 +32,20 @@ export const MatchHistoryCard = ({
           </Avatar>
           <div>
             <p className="text-sm font-medium">
-              {changeType === "WIN" ? "Victory" : "Defeat"}
+              {change_type === "WIN" ? "Victory" : "Defeat"}
             </p>
             <p className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}
+              {formatDistanceToNow(new Date(created_at), { addSuffix: true })}
             </p>
           </div>
         </div>
-        <Badge variant={changeType === "WIN" ? "default" : "destructive"}>
-          {changeType === "WIN" ? "+" : "-"}{changeAmount} MMR
+        <Badge variant={change_type === "WIN" ? "default" : "destructive"}>
+          {change_type === "WIN" ? "+" : "-"}{change_amount} MMR
         </Badge>
       </div>
       <div className="flex justify-between text-sm">
-        <span>Previous MMR: {oldMmr}</span>
-        <span>New MMR: {newMmr}</span>
+        <span>Previous MMR: {old_mmr}</span>
+        <span>New MMR: {new_mmr}</span>
       </div>
       <div className="text-xs text-muted-foreground text-right">
         Status: {status}
