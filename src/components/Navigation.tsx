@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LogIn, Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
@@ -12,13 +12,54 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "./ui/use-toast";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { useAuth } from "@/contexts/AuthContext";
 
 export const Navigation = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { toast } = useToast();
   const { profile, isLoading } = useUserProfile();
+
+  useEffect(() => {
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsAuthenticated(!!session);
+    };
+    
+    getInitialSession();
+
+    // Set up the auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      const isAuth = !!session;
+      
+      if (isAuth !== isAuthenticated) {
+        setIsAuthenticated(isAuth);
+        
+        if (event === 'SIGNED_IN') {
+          toast({
+            title: "Welcome back!",
+            description: "You have successfully signed in",
+          });
+        } else if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Signed out",
+            description: "You have been signed out successfully",
+          });
+        }
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [isAuthenticated, toast]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   return (
     <>
@@ -35,7 +76,7 @@ export const Navigation = () => {
             </Link>
 
             <div className="flex items-center gap-4">
-              {user ? (
+              {isAuthenticated ? (
                 <>
                   <Link to="/profile">
                     <Avatar className="h-8 w-8 cursor-pointer">
@@ -50,7 +91,7 @@ export const Navigation = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={signOut}
+                    onClick={handleSignOut}
                     className="border-primary text-primary hover:bg-primary hover:text-white"
                   >
                     Sign Out
@@ -80,7 +121,7 @@ export const Navigation = () => {
                   </SheetHeader>
                   <nav className="flex flex-col gap-4 mt-4">
                     {/* Primary Action */}
-                    {user && (
+                    {isAuthenticated && (
                       <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
                         Register a Match
                       </Link>
@@ -88,7 +129,7 @@ export const Navigation = () => {
                     
                     {/* Core Features */}
                     <div className="space-y-2">
-                      {user && (
+                      {isAuthenticated && (
                         <>
                           <Link to="/friends" className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
                             Friends
