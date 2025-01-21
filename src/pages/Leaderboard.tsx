@@ -30,12 +30,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { RecentMatches } from "@/components/RecentMatches";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Leaderboard = () => {
   const [filters, setFilters] = useState({
     gender: "both",
     friendsOnly: false,
   });
+  const isMobile = useIsMobile();
 
   const { data: leaderboardData, isLoading } = useQuery({
     queryKey: ['leaderboard'],
@@ -59,18 +61,6 @@ const Leaderboard = () => {
     setFilters(prev => ({ ...prev, friendsOnly: checked }));
   };
 
-  // Format date to be more readable
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'N/A';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', { 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  };
-
-  // Get initials for avatar fallback
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -126,16 +116,20 @@ const Leaderboard = () => {
               </Sheet>
             </div>
             
-            <div className="rounded-md border">
+            <div className="rounded-md border bg-card">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[80px]">Rank</TableHead>
-                    <TableHead>Player</TableHead>
-                    <TableHead className="w-[100px]">Gender</TableHead>
-                    <TableHead className="w-[120px]">Nationality</TableHead>
-                    <TableHead className="w-[120px]">Last Played</TableHead>
-                    <TableHead className="text-right">MMR</TableHead>
+                  <TableRow className="hover:bg-transparent">
+                    <TableHead className="w-[60px] font-medium">Rank</TableHead>
+                    {!isMobile && <TableHead className="w-[60px]"></TableHead>}
+                    <TableHead className="font-medium">Player</TableHead>
+                    {!isMobile && (
+                      <>
+                        <TableHead className="font-medium">Gender</TableHead>
+                        <TableHead className="font-medium">Nationality</TableHead>
+                      </>
+                    )}
+                    <TableHead className="text-right font-medium">MMR</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -146,21 +140,38 @@ const Leaderboard = () => {
                       </TableCell>
                     </TableRow>
                   ) : leaderboardData?.map((player, index) => (
-                    <TableRow key={player.id}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
+                    <TableRow key={player.id} className="hover:bg-muted/50">
+                      <TableCell className="font-medium text-muted-foreground">
+                        {index + 1}
+                      </TableCell>
+                      {!isMobile && (
+                        <TableCell>
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={player.profile_photo || ''} alt={player.display_name || ''} />
                             <AvatarFallback>{getInitials(player.display_name || 'User')}</AvatarFallback>
                           </Avatar>
-                          {player.display_name}
+                        </TableCell>
+                      )}
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {isMobile && (
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={player.profile_photo || ''} alt={player.display_name || ''} />
+                              <AvatarFallback>{getInitials(player.display_name || 'User')}</AvatarFallback>
+                            </Avatar>
+                          )}
+                          <span className="font-medium">{player.display_name}</span>
                         </div>
                       </TableCell>
-                      <TableCell>{player.gender || 'N/A'}</TableCell>
-                      <TableCell>{player.nationality || 'N/A'}</TableCell>
-                      <TableCell>{formatDate(player.created_at)}</TableCell>
-                      <TableCell className="text-right">{player.current_mmr || 0}</TableCell>
+                      {!isMobile && (
+                        <>
+                          <TableCell>{player.gender || 'N/A'}</TableCell>
+                          <TableCell>{player.nationality || 'N/A'}</TableCell>
+                        </>
+                      )}
+                      <TableCell className="text-right font-medium">
+                        {player.current_mmr || 0}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
