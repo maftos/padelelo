@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface Friend {
   friend_id: string;
@@ -30,12 +31,15 @@ const Friends = () => {
   const { toast } = useToast();
   const [friendEmail, setFriendEmail] = useState("");
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
+  const { userId } = useUserProfile();
 
   const { data: friends, isLoading, error } = useQuery({
-    queryKey: ['friends'],
+    queryKey: ['friends', userId],
     queryFn: async () => {
+      if (!userId) return [];
+      
       const { data, error } = await supabase.rpc('view_my_friends', {
-        user_id: "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf" // Hardcoded for now as requested
+        user_id: userId
       });
 
       if (error) {
@@ -50,6 +54,7 @@ const Friends = () => {
       console.log('Friends data:', data);
       return data as Friend[];
     },
+    enabled: !!userId, // Only run query if we have a userId
   });
 
   const handleAddFriend = async (e: React.FormEvent) => {
