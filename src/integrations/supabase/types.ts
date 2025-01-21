@@ -557,13 +557,14 @@ export type Database = {
       }
       view_my_friends: {
         Args: {
-          user_id: string
+          i_user_id: string
         }
         Returns: {
           friend_id: string
           status: string
           created_at: string
           display_name: string
+          profile_photo: string
         }[]
       }
     }

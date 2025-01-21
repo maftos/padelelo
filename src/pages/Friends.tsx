@@ -39,7 +39,7 @@ const Friends = () => {
       if (!userId) return [];
       
       const { data, error } = await supabase.rpc('view_my_friends', {
-        user_id: userId
+        i_user_id: userId  // Changed from user_id to i_user_id to match the function parameter
       });
 
       if (error) {
