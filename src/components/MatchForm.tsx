@@ -36,7 +36,6 @@ export const MatchForm = () => {
     queryFn: async () => {
       if (!userId) return [];
       
-      console.log('Fetching friends for user:', userId);
       try {
         const { data, error } = await supabase.rpc('view_my_friends', {
           i_user_id: userId
@@ -47,7 +46,6 @@ export const MatchForm = () => {
           throw error;
         }
         
-        console.log('Friends data:', data);
         return data as Friend[];
       } catch (error) {
         console.error('Error in query function:', error);
@@ -58,7 +56,7 @@ export const MatchForm = () => {
   });
 
   const playerOptions = [
-    { id: userId || "", name: "Me" },
+    { id: userId || "current-user", name: "Me" },
     ...friends.map(friend => ({ id: friend.friend_id, name: friend.display_name }))
   ];
 
@@ -77,7 +75,7 @@ export const MatchForm = () => {
     setPage(2);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const hasEmptyScores = scores.some(score => !score.team1 || !score.team2);
@@ -86,19 +84,34 @@ export const MatchForm = () => {
       return;
     }
 
-    toast.success("Match registered successfully!");
-    
-    setPage(1);
-    setPlayer1("");
-    setPlayer2("");
-    setPlayer3("");
-    setPlayer4("");
-    setScores([
-      { team1: "", team2: "" },
-      { team1: "", team2: "" },
-      { team1: "", team2: "" },
-    ]);
-    setDate(new Date().toISOString().split("T")[0]);
+    try {
+      const { data, error } = await supabase.rpc('create_match', {
+        team1_player1_id: player1,
+        team1_player2_id: player2,
+        team2_player1_id: player3,
+        team2_player2_id: player4,
+        match_date: new Date(date).toISOString()
+      });
+
+      if (error) throw error;
+
+      toast.success("Match registered successfully!");
+      
+      setPage(1);
+      setPlayer1("");
+      setPlayer2("");
+      setPlayer3("");
+      setPlayer4("");
+      setScores([
+        { team1: "", team2: "" },
+        { team1: "", team2: "" },
+        { team1: "", team2: "" },
+      ]);
+      setDate(new Date().toISOString().split("T")[0]);
+    } catch (error) {
+      console.error('Error creating match:', error);
+      toast.error("Failed to register match. Please try again.");
+    }
   };
 
   return (

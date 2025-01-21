@@ -23,13 +23,13 @@ export const PlayerSelect = ({ label, value, onChange, players }: PlayerSelectPr
   return (
     <div className="space-y-2">
       <Label htmlFor={label}>{label}</Label>
-      <Select value={value} onValueChange={onChange}>
+      <Select value={value || undefined} onValueChange={onChange}>
         <SelectTrigger>
           <SelectValue placeholder="Select player" />
         </SelectTrigger>
         <SelectContent>
           {players.map((player) => (
-            <SelectItem key={player.id} value={player.id}>
+            <SelectItem key={player.id} value={player.id || "placeholder"}>
               {player.name}
             </SelectItem>
           ))}
