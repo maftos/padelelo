@@ -14,11 +14,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "./ui/use-toast";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export const Navigation = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const { toast } = useToast();
+  const { profile, isLoading } = useUserProfile();
 
   useEffect(() => {
     // Get initial session
@@ -33,11 +35,9 @@ export const Navigation = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       const isAuth = !!session;
       
-      // Only update state and show toast if auth status actually changed
       if (isAuth !== isAuthenticated) {
         setIsAuthenticated(isAuth);
         
-        // Only show toasts for actual sign in/out events
         if (event === 'SIGNED_IN') {
           toast({
             title: "Welcome back!",
@@ -80,8 +80,12 @@ export const Navigation = () => {
                 <>
                   <Link to="/profile">
                     <Avatar className="h-8 w-8 cursor-pointer">
-                      <AvatarImage src="/placeholder.svg" />
-                      <AvatarFallback>PE</AvatarFallback>
+                      <AvatarImage src={profile?.profile_photo || undefined} />
+                      <AvatarFallback>
+                        {profile?.display_name
+                          ? profile.display_name.substring(0, 2).toUpperCase()
+                          : "PE"}
+                      </AvatarFallback>
                     </Avatar>
                   </Link>
                   <Button
