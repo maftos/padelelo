@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 
 interface Friend {
@@ -115,7 +115,7 @@ const Friends = () => {
                     <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
                       <div className="flex items-center space-x-4">
                         <Avatar>
-                          <AvatarImage src={friend.profile_photo} />
+                          <AvatarImage src={friend.profile_photo} alt={friend.display_name} />
                           <AvatarFallback>{friend.display_name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div>
