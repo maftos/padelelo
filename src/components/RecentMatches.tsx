@@ -65,13 +65,11 @@ export const RecentMatches = () => {
                     addSuffix: true,
                   })}
                 </span>
-                <span className="font-semibold text-foreground">
-                  {match.team1_score} - {match.team2_score}
-                </span>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+              <div className="flex items-center justify-between gap-4">
+                {/* Team 1 */}
+                <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-6 w-6">
                       <AvatarImage src={match.team1_player1_profile_photo} />
@@ -86,9 +84,16 @@ export const RecentMatches = () => {
                     </Avatar>
                     <span className="text-sm">{match.team1_player2_display_name}</span>
                   </div>
+                  <div className="text-right font-semibold text-foreground">
+                    {match.team1_score}
+                  </div>
                 </div>
-                
-                <div className="space-y-2">
+
+                {/* Vertical Divider */}
+                <div className="w-px bg-border self-stretch mx-2"></div>
+
+                {/* Team 2 */}
+                <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-2">
                     <Avatar className="h-6 w-6">
                       <AvatarImage src={match.team2_player1_profile_photo} />
@@ -102,6 +107,9 @@ export const RecentMatches = () => {
                       <AvatarFallback>{getInitials(match.team2_player2_display_name)}</AvatarFallback>
                     </Avatar>
                     <span className="text-sm">{match.team2_player2_display_name}</span>
+                  </div>
+                  <div className="text-left font-semibold text-foreground">
+                    {match.team2_score}
                   </div>
                 </div>
               </div>
