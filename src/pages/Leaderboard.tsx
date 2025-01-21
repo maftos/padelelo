@@ -76,18 +76,23 @@ const Leaderboard = () => {
         <div className="grid md:grid-cols-[1fr,auto] gap-8">
           <div className="space-y-4 animate-fade-in">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold">Mauritius Padel Leaderboard</h1>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  Mauritius Padel Rankings
+                </h1>
+                <p className="text-muted-foreground mt-1">Top 25 players by MMR</p>
+              </div>
               
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="shadow-sm">
                     <Filter className="h-4 w-4 mr-2" />
                     Filters
                   </Button>
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
-                    <SheetTitle>Filter Leaderboard</SheetTitle>
+                    <SheetTitle>Filter Rankings</SheetTitle>
                   </SheetHeader>
                   <div className="space-y-6 mt-6">
                     <div className="space-y-2">
@@ -116,51 +121,69 @@ const Leaderboard = () => {
               </Sheet>
             </div>
             
-            <div className="rounded-md border bg-card">
+            <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
               <Table>
                 <TableHeader>
-                  <TableRow className="hover:bg-transparent">
-                    <TableHead className="w-[60px] font-medium">Rank</TableHead>
+                  <TableRow className="hover:bg-transparent border-b border-accent">
+                    <TableHead className="w-[60px] font-semibold text-foreground">Rank</TableHead>
                     {!isMobile && <TableHead className="w-[60px]"></TableHead>}
-                    <TableHead className="font-medium">Player</TableHead>
+                    <TableHead className="font-semibold text-foreground">Player</TableHead>
                     {!isMobile && (
                       <>
-                        <TableHead className="font-medium">Gender</TableHead>
-                        <TableHead className="font-medium">Nationality</TableHead>
+                        <TableHead className="font-semibold text-foreground">Gender</TableHead>
+                        <TableHead className="font-semibold text-foreground">Nationality</TableHead>
                       </>
                     )}
-                    <TableHead className="text-right font-medium">MMR</TableHead>
+                    <TableHead className="text-right font-semibold text-foreground">MMR</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center py-4">
-                        Loading leaderboard data...
+                      <TableCell colSpan={6} className="text-center py-8">
+                        <div className="flex items-center justify-center space-x-2">
+                          <div className="w-4 h-4 rounded-full bg-primary/20 animate-pulse"></div>
+                          <div className="w-4 h-4 rounded-full bg-primary/20 animate-pulse delay-100"></div>
+                          <div className="w-4 h-4 rounded-full bg-primary/20 animate-pulse delay-200"></div>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ) : leaderboardData?.map((player, index) => (
-                    <TableRow key={player.id} className="hover:bg-muted/50">
-                      <TableCell className="font-medium text-muted-foreground">
-                        {index + 1}
+                    <TableRow key={player.id} className="hover:bg-accent/50 transition-colors">
+                      <TableCell className="font-medium">
+                        <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full 
+                          ${index < 3 ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground'}`}>
+                          {index + 1}
+                        </span>
                       </TableCell>
                       {!isMobile && (
                         <TableCell>
-                          <Avatar className="h-8 w-8">
+                          <Avatar className="h-8 w-8 ring-2 ring-background">
                             <AvatarImage src={player.profile_photo || ''} alt={player.display_name || ''} />
-                            <AvatarFallback>{getInitials(player.display_name || 'User')}</AvatarFallback>
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {getInitials(player.display_name || 'User')}
+                            </AvatarFallback>
                           </Avatar>
                         </TableCell>
                       )}
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {isMobile && (
-                            <Avatar className="h-8 w-8">
+                            <Avatar className="h-8 w-8 ring-2 ring-background">
                               <AvatarImage src={player.profile_photo || ''} alt={player.display_name || ''} />
-                              <AvatarFallback>{getInitials(player.display_name || 'User')}</AvatarFallback>
+                              <AvatarFallback className="bg-primary/10 text-primary">
+                                {getInitials(player.display_name || 'User')}
+                              </AvatarFallback>
                             </Avatar>
                           )}
-                          <span className="font-medium">{player.display_name}</span>
+                          <div>
+                            <p className="font-medium">{player.display_name}</p>
+                            {isMobile && (
+                              <p className="text-xs text-muted-foreground">
+                                {player.nationality || 'N/A'}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </TableCell>
                       {!isMobile && (
@@ -169,8 +192,10 @@ const Leaderboard = () => {
                           <TableCell>{player.nationality || 'N/A'}</TableCell>
                         </>
                       )}
-                      <TableCell className="text-right font-medium">
-                        {player.current_mmr || 0}
+                      <TableCell className="text-right">
+                        <span className="font-semibold bg-accent px-2.5 py-1 rounded-full">
+                          {player.current_mmr || 0}
+                        </span>
                       </TableCell>
                     </TableRow>
                   ))}
