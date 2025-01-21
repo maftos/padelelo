@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserProfile {
   id: string;
@@ -18,35 +18,17 @@ interface UserProfile {
 }
 
 export const useUserProfile = () => {
-  const [userId, setUserId] = useState<string | null>(null);
-
-  // Get the actual authenticated user ID
-  useEffect(() => {
-    const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUserId(session?.user?.id || null);
-    };
-    
-    getInitialSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUserId(session?.user?.id || null);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+  const { user } = useAuth();
 
   const { data: profile, isLoading, error } = useQuery({
-    queryKey: ['userProfile', userId],
+    queryKey: ['userProfile', user?.id],
     queryFn: async () => {
-      if (!userId) return null;
+      if (!user?.id) return null;
       
       try {
-        // First try to get the profile using RPC with the correct parameter name
+        // First try to get the profile using RPC
         const { data: rpcData, error: rpcError } = await supabase
-          .rpc('get_user_profile', { user_a_id_auth: userId });
+          .rpc('get_user_profile', { user_a_id_auth: user.id });
         
         if (rpcError) {
           console.error('RPC error:', rpcError);
@@ -54,7 +36,7 @@ export const useUserProfile = () => {
           const { data: tableData, error: tableError } = await supabase
             .from('users')
             .select('*')
-            .eq('id', userId)
+            .eq('id', user.id)
             .maybeSingle();
           
           if (tableError) throw tableError;
@@ -66,7 +48,7 @@ export const useUserProfile = () => {
           const { data: tableData, error: tableError } = await supabase
             .from('users')
             .select('*')
-            .eq('id', userId)
+            .eq('id', user.id)
             .maybeSingle();
           
           if (tableError) throw tableError;
@@ -79,13 +61,13 @@ export const useUserProfile = () => {
         throw error;
       }
     },
-    enabled: !!userId,
+    enabled: !!user?.id,
   });
 
   return {
     profile,
     isLoading,
     error,
-    userId
+    userId: user?.id
   };
 };

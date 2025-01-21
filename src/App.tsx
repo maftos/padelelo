@@ -1,40 +1,23 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import Profile from "./pages/Profile";
-import Leaderboard from "./pages/Leaderboard";
-import Friends from "./pages/Friends";
-import Index from "./pages/Index";
-import ReleaseNotes from "./pages/ReleaseNotes";
-import MatchmakingMath from "./pages/MatchmakingMath";
-import FutureImprovements from "./pages/FutureImprovements";
-import Matches from "./pages/Matches";
+import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { Routes } from "./Routes";
 
+// Create a client
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
-          <Route path="/friends" element={<Friends />} />
-          <Route path="/matches" element={<Matches />} />
-          <Route path="/register-match" element={<Index />} />
-          <Route path="/release-notes" element={<ReleaseNotes />} />
-          <Route path="/matchmaking-math" element={<MatchmakingMath />} />
-          <Route path="/future-improvements" element={<FutureImprovements />} />
-        </Routes>
+        <AuthProvider>
+          <Routes />
+          <Toaster />
+        </AuthProvider>
       </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </QueryClientProvider>
+  );
+}
 
 export default App;
