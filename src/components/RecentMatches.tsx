@@ -1,49 +1,109 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { formatDistanceToNow } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-interface Match {
-  id: number;
-  date: string;
-  player1: string;
-  player2: string;
-  score1: number;
-  score2: number;
+interface MatchData {
+  match_id: string;
+  team1_score: number;
+  team2_score: number;
+  created_at: string;
+  team1_player1_display_name: string;
+  team1_player1_profile_photo: string;
+  team1_player2_display_name: string;
+  team1_player2_profile_photo: string;
+  team2_player1_display_name: string;
+  team2_player1_profile_photo: string;
+  team2_player2_display_name: string;
+  team2_player2_profile_photo: string;
 }
 
-const sampleMatches: Match[] = [
-  {
-    id: 1,
-    date: "2024-03-20",
-    player1: "John",
-    player2: "Sarah",
-    score1: 6,
-    score2: 4,
-  },
-  {
-    id: 2,
-    date: "2024-03-19",
-    player1: "Mike",
-    player2: "Emma",
-    score1: 7,
-    score2: 5,
-  },
-];
-
 export const RecentMatches = () => {
+  const { data: matches, isLoading } = useQuery({
+    queryKey: ["recentMatches"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_latest_completed_matches");
+      if (error) throw error;
+      return data as MatchData[];
+    },
+  });
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4 w-full max-w-md animate-pulse">
+        <h2 className="text-xl font-semibold">Latest Matches</h2>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="p-4">
+              <div className="h-16 bg-gray-200 rounded"></div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4 w-full max-w-md animate-slide-up">
-      <h2 className="text-xl font-semibold">Recent Matches</h2>
+      <h2 className="text-xl font-semibold">Latest Matches</h2>
       <div className="space-y-3">
-        {sampleMatches.map((match) => (
-          <Card key={match.id} className="p-4 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-center">
-              <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">{match.date}</p>
-                <p className="font-medium">
-                  {match.player1} vs {match.player2}
-                </p>
+        {matches?.map((match) => (
+          <Card key={match.match_id} className="p-4 hover:shadow-md transition-shadow">
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-sm text-muted-foreground">
+                <span>
+                  {formatDistanceToNow(new Date(match.created_at), {
+                    addSuffix: true,
+                  })}
+                </span>
+                <span className="font-semibold text-foreground">
+                  {match.team1_score} - {match.team2_score}
+                </span>
               </div>
-              <div className="text-lg font-semibold">
-                {match.score1} - {match.score2}
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={match.team1_player1_profile_photo} />
+                      <AvatarFallback>{getInitials(match.team1_player1_display_name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">{match.team1_player1_display_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={match.team1_player2_profile_photo} />
+                      <AvatarFallback>{getInitials(match.team1_player2_display_name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">{match.team1_player2_display_name}</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={match.team2_player1_profile_photo} />
+                      <AvatarFallback>{getInitials(match.team2_player1_display_name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">{match.team2_player1_display_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={match.team2_player2_profile_photo} />
+                      <AvatarFallback>{getInitials(match.team2_player2_display_name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">{match.team2_player2_display_name}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </Card>
