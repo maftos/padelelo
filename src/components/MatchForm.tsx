@@ -36,7 +36,7 @@ export const MatchForm = () => {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   // Hardcoded userId for development
-  const userId = "a7012d4c-60fc-46af-aa2b-1f977b7d243c";
+  const userId = "1cf886ac-aaf3-4dbd-98ce-0b1717fb19cf";
 
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
     queryKey: ['friends', userId],

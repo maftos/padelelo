@@ -465,7 +465,7 @@ export type Database = {
       }
       get_user_friends: {
         Args: {
-          user_id: string
+          i_user_id: string
         }
         Returns: {
           friend_id: string
