@@ -44,9 +44,9 @@ export const useUserProfile = () => {
       if (!userId) return null;
       
       try {
-        // First try to get the profile using RPC
+        // First try to get the profile using RPC with the correct parameter name
         const { data: rpcData, error: rpcError } = await supabase
-          .rpc('get_user_profile', { user_id: userId });
+          .rpc('get_user_profile', { user_a_id_auth: userId });
         
         if (rpcError) {
           console.error('RPC error:', rpcError);

@@ -495,7 +495,7 @@ export type Database = {
       }
       get_user_profile: {
         Args: {
-          user_id: string
+          user_a_id_auth: string
         }
         Returns: {
           id: string
