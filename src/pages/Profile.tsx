@@ -66,7 +66,7 @@ const Profile = () => {
 
       setUploading(true);
 
-      const { error: uploadError, data } = await supabase.storage
+      const { data, error: uploadError } = await supabase.storage
         .from('user-photos')
         .upload(fileName, file);
 
