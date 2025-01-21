@@ -20,37 +20,51 @@ export const FriendRequests = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: requests, isLoading } = useQuery({
+  const { data: requests, isLoading, error } = useQuery({
     queryKey: ['friendRequests', userId],
     queryFn: async () => {
       if (!userId) return [];
+      
+      console.log('Fetching friend requests for user:', userId);
       const { data, error } = await supabase.rpc('view_friend_requests', {
         user_a_id_public: userId
       });
-      if (error) throw error;
+      
+      if (error) {
+        console.error('Error fetching friend requests:', error);
+        throw error;
+      }
+      
+      console.log('Friend requests data:', data);
       return data as FriendRequest[];
     },
     enabled: !!userId,
   });
 
-  const handleRequestResponse = async (friendshipId: string, accept: boolean) => {
+  const handleRequestResponse = async (friendId: string, accept: boolean) => {
     try {
+      console.log('Responding to friend request:', { friendId, accept });
       const { error } = await supabase.rpc('respond_friend_request', {
         user_a_id_public: userId,
-        friendship_id: friendshipId,
+        friendship_id: friendId,
         accept: accept
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error responding to friend request:', error);
+        throw error;
+      }
 
       toast({
         title: accept ? "Friend Request Accepted" : "Friend Request Declined",
         description: accept ? "You are now friends!" : "Friend request has been declined",
       });
 
+      // Invalidate both friend requests and friends lists
       queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
       queryClient.invalidateQueries({ queryKey: ['friends'] });
     } catch (error: any) {
+      console.error('Error in handleRequestResponse:', error);
       toast({
         title: "Error",
         description: error.message,
@@ -58,6 +72,15 @@ export const FriendRequests = () => {
       });
     }
   };
+
+  if (error) {
+    console.error('Error in FriendRequests component:', error);
+    return (
+      <div className="text-red-500">
+        Error loading friend requests: {error.message}
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -83,7 +106,9 @@ export const FriendRequests = () => {
     );
   }
 
-  if (!requests?.length) return null;
+  if (!requests?.length) {
+    return null;
+  }
 
   return (
     <div className="space-y-4 animate-fade-in">
