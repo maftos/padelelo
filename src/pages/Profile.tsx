@@ -21,6 +21,7 @@ const Profile = () => {
     location: "",
     languages: "",
     whatsapp_number: "",
+    profile_photo: "", // Added this field
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -49,6 +50,7 @@ const Profile = () => {
         location: profileData.location || "",
         languages: profileData.languages ? profileData.languages.join(", ") : "",
         whatsapp_number: profileData.whatsapp_number || "",
+        profile_photo: profileData.profile_photo || "", // Added this field
       });
     }
   }, [profileData]);
@@ -63,10 +65,10 @@ const Profile = () => {
         i_user_id: userId,
         i_display_name: formData.display_name,
         i_gender: formData.gender,
-        i_date_of_birth: null,
+        i_date_of_birth: null, // Added null for optional parameter
         i_languages: formData.languages.split(',').map(lang => lang.trim()),
-        i_preferred_language: null,
-        i_profile_photo: profileData?.profile_photo,
+        i_preferred_language: null, // Added null for optional parameter
+        i_profile_photo: formData.profile_photo, // Added this parameter
         i_whatsapp_number: formData.whatsapp_number,
         i_nationality: formData.nationality,
         i_location: formData.location
