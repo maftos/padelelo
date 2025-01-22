@@ -52,11 +52,11 @@ export const FriendRequests = () => {
         accept: accept
       });
 
-      // If there's an error, try with the bigint version
+      // If there's an error, try with the original version using user_a_id
       if (response.error) {
-        console.log('First attempt failed, trying bigint version:', response.error);
+        console.log('First attempt failed, trying original version:', response.error);
         response = await supabase.rpc('respond_friend_request', {
-          user_a_id_public: userId,
+          user_a_id: userId,
           friendship_id: parseInt(friendId),
           accept: accept
         });
