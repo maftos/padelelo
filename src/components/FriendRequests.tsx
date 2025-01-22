@@ -13,7 +13,7 @@ interface FriendRequest {
   display_name: string;
   gender: string;
   current_mmr: number;
-  friendship_id: number;
+  id: number;  // This is the friendship_id from the database
 }
 
 export const FriendRequests = () => {
@@ -146,7 +146,7 @@ export const FriendRequests = () => {
             <div className="flex gap-2">
               <Button 
                 className="flex-1 bg-primary hover:bg-primary/90" 
-                onClick={() => handleRequestResponse(request.friend_id, request.friendship_id, true)}
+                onClick={() => handleRequestResponse(request.friend_id, request.id, true)}
               >
                 <Check className="h-4 w-4 mr-2" />
                 Accept
@@ -154,7 +154,7 @@ export const FriendRequests = () => {
               <Button 
                 variant="outline" 
                 className="flex-1"
-                onClick={() => handleRequestResponse(request.friend_id, request.friendship_id, false)}
+                onClick={() => handleRequestResponse(request.friend_id, request.id, false)}
               >
                 <X className="h-4 w-4 mr-2" />
                 Decline
