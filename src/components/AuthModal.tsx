@@ -26,7 +26,6 @@ export const AuthModal = ({
   }, [isOpen]);
 
   const validateEmail = (email: string) => {
-    // More strict email validation
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     return emailRegex.test(email);
   };
@@ -42,7 +41,6 @@ export const AuthModal = ({
           if (error.message.includes("email_address_invalid")) {
             return "Please enter a valid email address. Example: user@example.com";
           }
-          // Add specific handling for email_not_confirmed
           if (error.message === "Email not confirmed") {
             return "Please check your email and click the confirmation link before signing in.";
           }
@@ -77,7 +75,7 @@ export const AuthModal = ({
         setError("Password must be at least 6 characters long");
         return;
       }
-      
+
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
@@ -90,7 +88,6 @@ export const AuthModal = ({
       }
 
       if (data.session) {
-        // Session contains the JWT token and user information
         toast({
           title: "Success!",
           description: "You have been successfully signed in",
@@ -119,8 +116,8 @@ export const AuthModal = ({
         setError("Password must be at least 6 characters long");
         return;
       }
-      
-      const { data, error: signUpError } = await supabase.auth.signUp({
+
+      const signUpResponse = await supabase.auth.signUp({
         email: email.trim(),
         password,
         options: {
@@ -128,13 +125,14 @@ export const AuthModal = ({
         }
       });
 
-      if (signUpError) {
-        console.error("Sign up error:", signUpError);
-        setError(handleAuthError(signUpError));
+      // Handle the response in a single block
+      if (signUpResponse.error) {
+        console.error("Sign up error:", signUpResponse.error);
+        setError(handleAuthError(signUpResponse.error));
         return;
       }
 
-      if (data.user) {
+      if (signUpResponse.data.user) {
         toast({
           title: "Account created!",
           description: "Please check your email to verify your account",
