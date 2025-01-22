@@ -13,6 +13,7 @@ interface FriendRequest {
   display_name: string;
   gender: string;
   current_mmr: number;
+  friendship_id: number;  // Added this field to store the friendship ID
 }
 
 export const FriendRequests = () => {
@@ -41,45 +42,20 @@ export const FriendRequests = () => {
     enabled: !!userId,
   });
 
-  const handleRequestResponse = async (friendId: string, accept: boolean) => {
+  const handleRequestResponse = async (friendId: string, friendshipId: number, accept: boolean) => {
     try {
-      if (!userId || !friendId) {
-        console.error('Missing required IDs:', { userId, friendId });
-        throw new Error('Missing required IDs');
+      if (!userId) {
+        console.error('Missing user ID');
+        throw new Error('User ID is required');
       }
 
-      console.log('Responding to friend request:', { userId, friendId, accept });
+      console.log('Responding to friend request:', { userId, friendshipId, accept });
       
-      // Try with the UUID version first
-      let response = await supabase.rpc('respond_friend_request', {
-        user_a_id_public: userId,
-        friendship_id: friendId,
+      const response = await supabase.rpc('respond_friend_request', {
+        user_a_id: userId,
+        friendship_id: friendshipId,
         accept: accept
       });
-
-      // If there's an error with the UUID version, try with the bigint version
-      if (response.error) {
-        console.log('UUID version failed, trying bigint version:', response.error);
-        
-        // Get the numeric ID from the friendships table
-        const { data: friendshipData, error: friendshipError } = await supabase
-          .from('friendships')
-          .select('id')
-          .eq('friend_id', friendId)
-          .eq('user_id', userId)
-          .single();
-
-        if (friendshipError || !friendshipData) {
-          console.error('Error getting friendship ID:', friendshipError);
-          throw friendshipError || new Error('Friendship not found');
-        }
-
-        response = await supabase.rpc('respond_friend_request', {
-          user_a_id: userId,
-          friendship_id: friendshipData.id,
-          accept: accept
-        });
-      }
 
       if (response.error) {
         console.error('Error responding to friend request:', response.error);
@@ -165,7 +141,7 @@ export const FriendRequests = () => {
             <div className="flex gap-2">
               <Button 
                 className="flex-1 bg-primary hover:bg-primary/90" 
-                onClick={() => handleRequestResponse(request.friend_id, true)}
+                onClick={() => handleRequestResponse(request.friend_id, request.friendship_id, true)}
               >
                 <Check className="h-4 w-4 mr-2" />
                 Accept
@@ -173,7 +149,7 @@ export const FriendRequests = () => {
               <Button 
                 variant="outline" 
                 className="flex-1"
-                onClick={() => handleRequestResponse(request.friend_id, false)}
+                onClick={() => handleRequestResponse(request.friend_id, request.friendship_id, false)}
               >
                 <X className="h-4 w-4 mr-2" />
                 Decline

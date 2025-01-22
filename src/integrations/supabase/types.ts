@@ -484,23 +484,14 @@ export type Database = {
           email: string
         }[]
       }
-      respond_friend_request:
-        | {
-            Args: {
-              user_a_id: string
-              friendship_id: number
-              accept: boolean
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              user_a_id_public: string
-              friendship_id: string
-              accept: boolean
-            }
-            Returns: undefined
-          }
+      respond_friend_request: {
+        Args: {
+          user_a_id: string
+          friendship_id: number
+          accept: boolean
+        }
+        Returns: undefined
+      }
       send_friend_request: {
         Args: {
           i_email: string
