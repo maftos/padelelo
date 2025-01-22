@@ -401,7 +401,7 @@ export type Database = {
       }
       edit_user_profile: {
         Args: {
-          user_a_id_auth: string
+          user_a_id: string
           new_display_name: string
           new_gender: string
           new_date_of_birth: string

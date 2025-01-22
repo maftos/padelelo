@@ -31,7 +31,7 @@ const Profile = () => {
       if (!userId) return null;
       
       const { data, error } = await supabase.rpc('get_user_profile', {
-        user_a_id_auth: userId
+        user_a_id: userId
       });
       
       if (error) throw error;
@@ -110,7 +110,7 @@ const Profile = () => {
   const handleSave = async () => {
     try {
       const { error } = await supabase.rpc('edit_user_profile', {
-        user_a_id_auth: userId,
+        user_a_id: userId,
         new_display_name: formData.display_name,
         new_gender: formData.gender,
         new_date_of_birth: null,
