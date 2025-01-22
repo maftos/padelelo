@@ -12,6 +12,7 @@ interface ScoreFormProps {
   scores: Score[];
   setScores: (scores: Score[]) => void;
   onSubmit: (e: React.FormEvent) => void;
+  isSubmitting?: boolean;
 }
 
 export const ScoreForm = ({
@@ -19,6 +20,7 @@ export const ScoreForm = ({
   scores,
   setScores,
   onSubmit,
+  isSubmitting = false,
 }: ScoreFormProps) => {
   const handleScoreChange = (index: number, team: 'team1' | 'team2', value: string) => {
     const newScores = [...scores];
@@ -64,11 +66,12 @@ export const ScoreForm = ({
           variant="outline"
           className="w-full"
           onClick={onBack}
+          disabled={isSubmitting}
         >
           Back
         </Button>
-        <Button type="submit" className="w-full">
-          Register Match
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Registering..." : "Register Match"}
         </Button>
       </div>
     </form>

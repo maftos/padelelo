@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { TeamSelect } from "./match/TeamSelect";
+import { TeamPreview } from "./match/TeamPreview";
 
 interface Friend {
   friend_id: string;
@@ -23,30 +24,26 @@ export const MatchForm = () => {
   const [player2, setPlayer2] = useState("");
   const [player3, setPlayer3] = useState("");
   const [player4, setPlayer4] = useState("");
-  const [scores, setScores] = useState([
-    { team1: "", team2: "" } // Only one set of scores
-  ]);
+  const [scores, setScores] = useState([{ team1: "", team2: "" }]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [matchId, setMatchId] = useState<string | null>(null);
+  const [mmrData, setMmrData] = useState<any>(null);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = useUserProfile();
 
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
     queryKey: ['friends', userId],
     queryFn: async () => {
       if (!userId) return [];
-      
       try {
         const { data, error } = await supabase.rpc('view_my_friends', {
           i_user_id: userId
         });
-        
-        if (error) {
-          console.error('Error fetching friends:', error);
-          throw error;
-        }
-        
+        if (error) throw error;
         return data as Friend[];
       } catch (error) {
-        console.error('Error in query function:', error);
+        console.error('Error fetching friends:', error);
         throw error;
       }
     },
@@ -58,7 +55,13 @@ export const MatchForm = () => {
     ...friends.map(friend => ({ id: friend.friend_id, name: friend.display_name }))
   ];
 
-  const handleNext = () => {
+  const getPlayerName = (playerId: string) => {
+    if (playerId === userId) return "Me";
+    const friend = friends.find(f => f.friend_id === playerId);
+    return friend ? friend.display_name : "Unknown";
+  };
+
+  const handleNext = async () => {
     if (!player1 || !player2 || !player3 || !player4) {
       toast.error("Please fill in all player fields");
       return;
@@ -70,19 +73,8 @@ export const MatchForm = () => {
       return;
     }
 
-    setPage(2);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const hasEmptyScores = scores.some(score => !score.team1 || !score.team2);
-    if (hasEmptyScores) {
-      toast.error("Please fill in all score fields");
-      return;
-    }
-
     try {
+      setIsCalculating(true);
       // Step 2: Create match
       const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
         team1_player1_id: player1,
@@ -94,35 +86,69 @@ export const MatchForm = () => {
 
       if (matchError) throw matchError;
 
-      console.log('Match created successfully:', matchData);
-      const matchId = matchData;
+      setMatchId(matchData);
 
       // Step 3: Calculate MMR change
-      const { data: mmrData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
-        match_id: matchId
+      const { data: mmrCalcData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
+        match_id: matchData
       });
 
       if (mmrError) throw mmrError;
 
-      console.log('MMR calculation successful:', mmrData);
+      setMmrData(mmrCalcData[0]); // Store MMR data for later use
+      setPage(2);
+    } catch (error) {
+      console.error('Error preparing match:', error);
+      toast.error("Failed to prepare match. Please try again.");
+    } finally {
+      setIsCalculating(false);
+    }
+  };
 
-      // Store the MMR data for later use with complete_match
-      // We'll implement Step 4 (complete_match) later
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!matchId || !mmrData) {
+      toast.error("Match data not ready. Please try again.");
+      return;
+    }
+
+    const hasEmptyScores = scores.some(score => !score.team1 || !score.team2);
+    if (hasEmptyScores) {
+      toast.error("Please fill in all score fields");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      // Step 4: Complete match with scores and MMR data
+      const { error: completeError } = await supabase.rpc('complete_match', {
+        match_id: matchId,
+        new_team1_score: parseInt(scores[0].team1),
+        new_team2_score: parseInt(scores[0].team2),
+        team1_win_mmr_change_amount: mmrData.team1_win_mmr_change_amount,
+        team2_win_mmr_change_amount: mmrData.team2_win_mmr_change_amount
+      });
+
+      if (completeError) throw completeError;
 
       toast.success("Match registered successfully!");
       
+      // Reset form
       setPage(1);
       setPlayer1("");
       setPlayer2("");
       setPlayer3("");
       setPlayer4("");
-      setScores([
-        { team1: "", team2: "" } // Reset to one set of scores
-      ]);
+      setScores([{ team1: "", team2: "" }]);
       setDate(new Date().toISOString().split("T")[0]);
+      setMatchId(null);
+      setMmrData(null);
     } catch (error) {
-      console.error('Error creating match:', error);
+      console.error('Error completing match:', error);
       toast.error("Failed to register match. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -166,17 +192,27 @@ export const MatchForm = () => {
             players={playerOptions}
           />
 
-          <Button type="submit" className="w-full">
-            Next
+          <Button type="submit" className="w-full" disabled={isCalculating}>
+            {isCalculating ? "Calculating..." : "Next"}
           </Button>
         </form>
       ) : (
-        <ScoreForm
-          onBack={() => setPage(1)}
-          scores={scores}
-          setScores={setScores}
-          onSubmit={handleSubmit}
-        />
+        <>
+          <TeamPreview
+            team1Player1Name={getPlayerName(player1)}
+            team1Player2Name={getPlayerName(player2)}
+            team2Player1Name={getPlayerName(player3)}
+            team2Player2Name={getPlayerName(player4)}
+            mmrData={mmrData}
+          />
+          <ScoreForm
+            onBack={() => setPage(1)}
+            scores={scores}
+            setScores={setScores}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+          />
+        </>
       )}
     </Card>
   );
