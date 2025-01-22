@@ -461,7 +461,7 @@ export type Database = {
         }
         Returns: {
           friend_id: string
-          status: Database["public"]["Enums"]["friendship_status"]
+          status: string
           created_at: string
           display_name: string
           profile_photo: string
