@@ -54,7 +54,7 @@ const Profile = () => {
     },
     enabled: !!userId,
     staleTime: 0, // Disable caching
-    cacheTime: 0, // Disable caching
+    gcTime: 0, // Use gcTime instead of cacheTime in v5
     refetchOnMount: true, // Always refetch on mount
     refetchOnWindowFocus: true, // Refetch when window gains focus
   });
