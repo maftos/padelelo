@@ -397,7 +397,7 @@ export type Database = {
           team2_player2_id: string
           match_date: string
         }
-        Returns: undefined
+        Returns: string
       }
       edit_user_profile: {
         Args: {

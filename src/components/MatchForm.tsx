@@ -25,8 +25,7 @@ export const MatchForm = () => {
   const [player4, setPlayer4] = useState("");
   const [scores, setScores] = useState([
     { team1: "", team2: "" },
-    { team1: "", team2: "" },
-    { team1: "", team2: "" },
+    { team1: "", team2: "" }
   ]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const { userId } = useUserProfile();
@@ -85,7 +84,8 @@ export const MatchForm = () => {
     }
 
     try {
-      const { data, error } = await supabase.rpc('create_match', {
+      // Step 2: Create match
+      const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
         team1_player1_id: player1,
         team1_player2_id: player2,
         team2_player1_id: player3,
@@ -93,7 +93,22 @@ export const MatchForm = () => {
         match_date: new Date(date).toISOString()
       });
 
-      if (error) throw error;
+      if (matchError) throw matchError;
+
+      console.log('Match created successfully:', matchData);
+      const matchId = matchData;
+
+      // Step 3: Calculate MMR change
+      const { data: mmrData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
+        match_id: matchId
+      });
+
+      if (mmrError) throw mmrError;
+
+      console.log('MMR calculation successful:', mmrData);
+
+      // Store the MMR data for later use with complete_match
+      // We'll implement Step 4 (complete_match) later
 
       toast.success("Match registered successfully!");
       
@@ -104,8 +119,7 @@ export const MatchForm = () => {
       setPlayer4("");
       setScores([
         { team1: "", team2: "" },
-        { team1: "", team2: "" },
-        { team1: "", team2: "" },
+        { team1: "", team2: "" }
       ]);
       setDate(new Date().toISOString().split("T")[0]);
     } catch (error) {
