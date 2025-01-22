@@ -31,7 +31,7 @@ const Profile = () => {
       if (!userId) return null;
       
       const { data, error } = await supabase.rpc('get_user_profile', {
-        user_a_id: userId
+        user_a_id: userId  // Pass the current user's ID
       });
       
       if (error) throw error;
@@ -53,10 +53,10 @@ const Profile = () => {
       return profileInfo;
     },
     enabled: !!userId,
-    staleTime: 0, // Disable caching
-    gcTime: 0, // Use gcTime instead of cacheTime in v5
-    refetchOnMount: true, // Always refetch on mount
-    refetchOnWindowFocus: true, // Refetch when window gains focus
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,8 +123,17 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
+      if (!userId) {
+        toast({
+          title: "Error",
+          description: "User ID not found. Please try logging in again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { data, error } = await supabase.rpc('edit_user_profile', {
-        user_a_id: userId,
+        user_a_id: userId,  // Pass the current user's ID
         new_display_name: formData.display_name,
         new_gender: formData.gender,
         new_date_of_birth: null,
