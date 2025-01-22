@@ -22,7 +22,7 @@ const Profile = () => {
     languages: "",
     whatsapp_number: "",
     profile_photo: "",
-    current_mmr: 0, // Added current_mmr with default value
+    current_mmr: 0,
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -121,7 +121,7 @@ const Profile = () => {
 
   const handleSave = async () => {
     try {
-      const { error } = await supabase.rpc('edit_user_profile', {
+      const { data, error } = await supabase.rpc('edit_user_profile', {
         user_a_id: userId,
         new_display_name: formData.display_name,
         new_gender: formData.gender,
@@ -136,13 +136,27 @@ const Profile = () => {
 
       if (error) throw error;
 
+      // Update form data with the returned values
+      if (data && data.length > 0) {
+        const updatedProfile = data[0];
+        setFormData({
+          display_name: updatedProfile.display_name || "",
+          nationality: updatedProfile.nationality || "",
+          gender: updatedProfile.gender || "",
+          location: updatedProfile.location || "",
+          languages: Array.isArray(updatedProfile.languages) ? updatedProfile.languages.join(", ") : "",
+          whatsapp_number: updatedProfile.whatsapp_number || "",
+          profile_photo: updatedProfile.profile_photo || "",
+          current_mmr: updatedProfile.current_mmr || 0,
+        });
+      }
+
       toast({
         title: "Profile updated",
         description: "Your profile has been successfully updated.",
       });
 
       setIsEditing(false);
-      refetch();
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
@@ -193,7 +207,7 @@ const Profile = () => {
         <div className="space-y-6">
           <ProfileAvatar
             profilePhoto={formData.profile_photo}
-            displayName={formData?.display_name}
+            displayName={formData.display_name}
             isEditing={isEditing}
             uploading={uploading}
             onPhotoUpload={handlePhotoUpload}
