@@ -75,7 +75,8 @@ export const MatchForm = () => {
 
     try {
       setIsCalculating(true);
-      // Step 2: Create match
+      
+      // Step 1: Create match
       const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
         team1_player1_id: player1,
         team1_player2_id: player2,
@@ -84,18 +85,32 @@ export const MatchForm = () => {
         match_date: new Date(date).toISOString()
       });
 
-      if (matchError) throw matchError;
+      if (matchError) {
+        console.error('Match creation error:', matchError);
+        throw matchError;
+      }
+
+      if (!matchData) {
+        throw new Error('No match ID returned from create_match');
+      }
 
       setMatchId(matchData);
 
-      // Step 3: Calculate MMR change
+      // Step 2: Calculate MMR change
       const { data: mmrCalcData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
         match_id: matchData
       });
 
-      if (mmrError) throw mmrError;
+      if (mmrError) {
+        console.error('MMR calculation error:', mmrError);
+        throw mmrError;
+      }
 
-      setMmrData(mmrCalcData[0]); // Store MMR data for later use
+      if (!mmrCalcData || mmrCalcData.length === 0) {
+        throw new Error('No MMR data returned from calculate_mmr_change');
+      }
+
+      setMmrData(mmrCalcData[0]);
       setPage(2);
     } catch (error) {
       console.error('Error preparing match:', error);
@@ -121,7 +136,6 @@ export const MatchForm = () => {
 
     try {
       setIsSubmitting(true);
-      // Step 4: Complete match with scores and MMR data
       const { error: completeError } = await supabase.rpc('complete_match', {
         match_id: matchId,
         new_team1_score: parseInt(scores[0].team1),
