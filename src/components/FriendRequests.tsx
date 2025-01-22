@@ -49,6 +49,11 @@ export const FriendRequests = () => {
         throw new Error('User ID is required');
       }
 
+      if (typeof friendshipId !== 'number') {
+        console.error('Invalid friendship ID:', friendshipId);
+        throw new Error('Invalid friendship ID');
+      }
+
       console.log('Responding to friend request:', { userId, friendshipId, accept });
       
       const { data, error } = await supabase.rpc('respond_friend_request', {
