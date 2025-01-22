@@ -487,7 +487,7 @@ export type Database = {
       respond_friend_request:
         | {
             Args: {
-              user_a_id_public: string
+              user_a_id: string
               friendship_id: number
               accept: boolean
             }

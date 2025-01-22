@@ -44,15 +44,27 @@ export const FriendRequests = () => {
   const handleRequestResponse = async (friendId: string, accept: boolean) => {
     try {
       console.log('Responding to friend request:', { friendId, accept });
-      const { error } = await supabase.rpc('respond_friend_request', {
+      
+      // First attempt with the UUID version of the function
+      let response = await supabase.rpc('respond_friend_request', {
         user_a_id_public: userId,
         friendship_id: friendId,
         accept: accept
       });
 
-      if (error) {
-        console.error('Error responding to friend request:', error);
-        throw error;
+      // If there's an error, try with the bigint version
+      if (response.error) {
+        console.log('First attempt failed, trying bigint version:', response.error);
+        response = await supabase.rpc('respond_friend_request', {
+          user_a_id_public: userId,
+          friendship_id: parseInt(friendId),
+          accept: accept
+        });
+      }
+
+      if (response.error) {
+        console.error('Error responding to friend request:', response.error);
+        throw response.error;
       }
 
       toast({
