@@ -136,7 +136,7 @@ const Profile = () => {
         formData
       });
 
-      const { data, error } = await supabase.rpc('edit_user_profile', {
+      const { error } = await supabase.rpc('edit_user_profile', {
         user_a_id: userId,
         new_display_name: formData.display_name,
         new_gender: formData.gender,
@@ -154,6 +154,7 @@ const Profile = () => {
         throw error;
       }
 
+      // After successful update, refetch the profile data
       await refetch();
 
       toast({

@@ -412,19 +412,7 @@ export type Database = {
           new_nationality: string
           new_location: string
         }
-        Returns: {
-          id: string
-          display_name: string
-          gender: string
-          date_of_birth: string
-          location: string
-          languages: string[]
-          preferred_language: string
-          profile_photo: string
-          whatsapp_number: string
-          nationality: string
-          current_mmr: number
-        }[]
+        Returns: undefined
       }
       get_latest_completed_matches: {
         Args: Record<PropertyKey, never>
