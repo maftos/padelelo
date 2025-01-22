@@ -1,14 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { ProfileHeader } from "@/components/profile/ProfileHeader";
+import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
+import { ProfileForm } from "@/components/profile/ProfileForm";
+import { useQuery } from "@tanstack/react-query";
 
 const Profile = () => {
   const { userId } = useUserProfile();
@@ -39,21 +38,10 @@ const Profile = () => {
       return data[0];
     },
     enabled: !!userId,
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
-
-  useEffect(() => {
-    if (profileData) {
-      setFormData({
-        display_name: profileData.display_name || "",
-        nationality: profileData.nationality || "",
-        gender: profileData.gender || "",
-        location: profileData.location || "",
-        languages: profileData.languages ? profileData.languages.join(", ") : "",
-        whatsapp_number: profileData.whatsapp_number || "",
-        profile_photo: profileData.profile_photo || "",
-      });
-    }
-  }, [profileData]);
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -103,8 +91,18 @@ const Profile = () => {
     }
   };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
+  const handleFormChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleGenderSelect = (gender: string) => {
+    setFormData(prev => ({
+      ...prev,
+      gender
+    }));
   };
 
   const handleSave = async () => {
@@ -173,174 +171,29 @@ const Profile = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container max-w-2xl py-8 px-4 space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
-          <p className="text-muted-foreground">Manage your profile information</p>
-        </div>
+        <ProfileHeader 
+          title="My Profile"
+          description="Manage your profile information"
+        />
 
         <div className="space-y-6">
-          <div className="flex flex-col items-center gap-4">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={formData.profile_photo} />
-              <AvatarFallback>{formData?.display_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-center gap-2">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                disabled={uploading || !isEditing}
-                className="hidden"
-                id="photo-upload"
-              />
-              <label htmlFor="photo-upload">
-                <Button variant="outline" size="sm" disabled={uploading || !isEditing} asChild>
-                  <span>{uploading ? "Uploading..." : "Change Photo"}</span>
-                </Button>
-              </label>
-            </div>
-          </div>
+          <ProfileAvatar
+            profilePhoto={formData.profile_photo}
+            displayName={formData?.display_name}
+            isEditing={isEditing}
+            uploading={uploading}
+            onPhotoUpload={handlePhotoUpload}
+          />
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="displayName">Display Name</Label>
-              {isEditing ? (
-                <Input
-                  id="displayName"
-                  value={formData.display_name}
-                  onChange={(e) => setFormData({ ...formData, display_name: e.target.value })}
-                />
-              ) : (
-                <Input
-                  id="displayName"
-                  value={formData.display_name}
-                  readOnly
-                  className="bg-muted"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="nationality">Nationality</Label>
-              {isEditing ? (
-                <Input
-                  id="nationality"
-                  value={formData.nationality}
-                  onChange={(e) => setFormData({ ...formData, nationality: e.target.value })}
-                />
-              ) : (
-                <Input
-                  id="nationality"
-                  value={formData.nationality}
-                  readOnly
-                  className="bg-muted"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label>Gender</Label>
-              {isEditing ? (
-                <div className="flex gap-4">
-                  <Button
-                    type="button"
-                    variant={formData.gender === "MALE" ? "default" : "outline"}
-                    onClick={() => setFormData({ ...formData, gender: "MALE" })}
-                  >
-                    Male
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={formData.gender === "FEMALE" ? "default" : "outline"}
-                    onClick={() => setFormData({ ...formData, gender: "FEMALE" })}
-                  >
-                    Female
-                  </Button>
-                </div>
-              ) : (
-                <Input
-                  value={formData.gender}
-                  readOnly
-                  className="bg-muted"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              {isEditing ? (
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                />
-              ) : (
-                <Input
-                  id="location"
-                  value={formData.location}
-                  readOnly
-                  className="bg-muted"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="languages">Languages</Label>
-              {isEditing ? (
-                <Input
-                  id="languages"
-                  value={formData.languages}
-                  onChange={(e) => setFormData({ ...formData, languages: e.target.value })}
-                  placeholder="e.g., English, French"
-                />
-              ) : (
-                <Input
-                  id="languages"
-                  value={formData.languages}
-                  readOnly
-                  className="bg-muted"
-                  placeholder="e.g., English, French"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
-              {isEditing ? (
-                <Input
-                  id="whatsappNumber"
-                  value={formData.whatsapp_number}
-                  onChange={(e) => setFormData({ ...formData, whatsapp_number: e.target.value })}
-                />
-              ) : (
-                <Input
-                  id="whatsappNumber"
-                  value={formData.whatsapp_number}
-                  readOnly
-                  className="bg-muted"
-                />
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="mmr">Current MMR</Label>
-              <Input
-                id="mmr"
-                value={profileData?.current_mmr || ""}
-                readOnly
-                className="bg-muted"
-              />
-            </div>
-
-            {isEditing ? (
-              <div className="flex gap-4">
-                <Button className="flex-1" onClick={handleSave}>Save Changes</Button>
-                <Button className="flex-1" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
-              </div>
-            ) : (
-              <Button className="w-full" onClick={handleEditClick}>Edit Profile</Button>
-            )}
-          </div>
+          <ProfileForm
+            formData={formData}
+            isEditing={isEditing}
+            onFormChange={handleFormChange}
+            onGenderSelect={handleGenderSelect}
+            onSave={handleSave}
+            onEdit={() => setIsEditing(true)}
+            onCancel={() => setIsEditing(false)}
+          />
         </div>
       </main>
     </div>
