@@ -43,21 +43,40 @@ export const FriendRequests = () => {
 
   const handleRequestResponse = async (friendId: string, accept: boolean) => {
     try {
-      console.log('Responding to friend request:', { friendId, accept });
+      if (!userId || !friendId) {
+        console.error('Missing required IDs:', { userId, friendId });
+        throw new Error('Missing required IDs');
+      }
+
+      console.log('Responding to friend request:', { userId, friendId, accept });
       
-      // First attempt with the UUID version of the function
+      // Try with the UUID version first
       let response = await supabase.rpc('respond_friend_request', {
         user_a_id_public: userId,
         friendship_id: friendId,
         accept: accept
       });
 
-      // If there's an error, try with the original version using user_a_id
+      // If there's an error with the UUID version, try with the bigint version
       if (response.error) {
-        console.log('First attempt failed, trying original version:', response.error);
+        console.log('UUID version failed, trying bigint version:', response.error);
+        
+        // Get the numeric ID from the friendships table
+        const { data: friendshipData, error: friendshipError } = await supabase
+          .from('friendships')
+          .select('id')
+          .eq('friend_id', friendId)
+          .eq('user_id', userId)
+          .single();
+
+        if (friendshipError || !friendshipData) {
+          console.error('Error getting friendship ID:', friendshipError);
+          throw friendshipError || new Error('Friendship not found');
+        }
+
         response = await supabase.rpc('respond_friend_request', {
           user_a_id: userId,
-          friendship_id: parseInt(friendId),
+          friendship_id: friendshipData.id,
           accept: accept
         });
       }
