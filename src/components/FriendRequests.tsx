@@ -52,9 +52,9 @@ export const FriendRequests = () => {
       console.log('Responding to friend request:', { userId, friendshipId, accept });
       
       const response = await supabase.rpc('respond_friend_request', {
-        user_a_id: userId,
+        accept: accept,
         friendship_id: friendshipId,
-        accept: accept
+        user_a_id: userId
       });
 
       if (response.error) {
