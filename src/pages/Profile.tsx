@@ -38,23 +38,25 @@ const Profile = () => {
       if (!data || data.length === 0) return null;
       
       // Update form data when profile data is fetched
+      const profileInfo = data[0];
       setFormData({
-        display_name: data[0].display_name || "",
-        nationality: data[0].nationality || "",
-        gender: data[0].gender || "",
-        location: data[0].location || "",
-        languages: Array.isArray(data[0].languages) ? data[0].languages.join(", ") : "",
-        whatsapp_number: data[0].whatsapp_number || "",
-        profile_photo: data[0].profile_photo || "",
-        current_mmr: data[0].current_mmr || 0,
+        display_name: profileInfo.display_name || "",
+        nationality: profileInfo.nationality || "",
+        gender: profileInfo.gender || "",
+        location: profileInfo.location || "",
+        languages: Array.isArray(profileInfo.languages) ? profileInfo.languages.join(", ") : "",
+        whatsapp_number: profileInfo.whatsapp_number || "",
+        profile_photo: profileInfo.profile_photo || "",
+        current_mmr: profileInfo.current_mmr || 0,
       });
       
-      return data[0];
+      return profileInfo;
     },
     enabled: !!userId,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-    staleTime: 0,
+    staleTime: 0, // Disable caching
+    cacheTime: 0, // Disable caching
+    refetchOnMount: true, // Always refetch on mount
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +138,7 @@ const Profile = () => {
 
       if (error) throw error;
 
-      // Update form data with the returned values
+      // Immediately update form data with the returned values
       if (data && data.length > 0) {
         const updatedProfile = data[0];
         setFormData({
@@ -150,6 +152,9 @@ const Profile = () => {
           current_mmr: updatedProfile.current_mmr || 0,
         });
       }
+
+      // Refetch to ensure data consistency
+      await refetch();
 
       toast({
         title: "Profile updated",
@@ -220,7 +225,10 @@ const Profile = () => {
             onGenderSelect={handleGenderSelect}
             onSave={handleSave}
             onEdit={() => setIsEditing(true)}
-            onCancel={() => setIsEditing(false)}
+            onCancel={() => {
+              setIsEditing(false);
+              refetch(); // Refetch data when canceling edits
+            }}
           />
         </div>
       </main>
