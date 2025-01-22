@@ -51,15 +51,15 @@ export const FriendRequests = () => {
 
       console.log('Responding to friend request:', { userId, friendshipId, accept });
       
-      const response = await supabase.rpc('respond_friend_request', {
+      const { data, error } = await supabase.rpc('respond_friend_request', {
         user_a_id: userId,
         friendship_id: friendshipId,
         accept: accept
       });
 
-      if (response.error) {
-        console.error('Error responding to friend request:', response.error);
-        throw response.error;
+      if (error) {
+        console.error('Error responding to friend request:', error);
+        throw error;
       }
 
       toast({
