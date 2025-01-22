@@ -51,7 +51,6 @@ export const FriendRequests = () => {
 
       console.log('Responding to friend request:', { userId, friendshipId, accept });
       
-      // Updated parameter order to match the function signature
       const response = await supabase.rpc('respond_friend_request', {
         user_a_id: userId,
         friendship_id: friendshipId,
