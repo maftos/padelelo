@@ -31,13 +31,12 @@ const Profile = () => {
       if (!userId) return null;
       
       const { data, error } = await supabase.rpc('get_user_profile', {
-        user_a_id: userId  // Pass the current user's ID
+        user_a_id: userId
       });
       
       if (error) throw error;
       if (!data || data.length === 0) return null;
       
-      // Update form data when profile data is fetched
       const profileInfo = data[0];
       setFormData({
         display_name: profileInfo.display_name || "",
@@ -133,7 +132,7 @@ const Profile = () => {
       }
 
       const { data, error } = await supabase.rpc('edit_user_profile', {
-        user_a_id: userId,  // Pass the current user's ID
+        user_a_id: userId,
         new_display_name: formData.display_name,
         new_gender: formData.gender,
         new_date_of_birth: null,
@@ -145,24 +144,11 @@ const Profile = () => {
         new_location: formData.location
       });
 
-      if (error) throw error;
-
-      // Immediately update form data with the returned values
-      if (data && data.length > 0) {
-        const updatedProfile = data[0];
-        setFormData({
-          display_name: updatedProfile.display_name || "",
-          nationality: updatedProfile.nationality || "",
-          gender: updatedProfile.gender || "",
-          location: updatedProfile.location || "",
-          languages: Array.isArray(updatedProfile.languages) ? updatedProfile.languages.join(", ") : "",
-          whatsapp_number: updatedProfile.whatsapp_number || "",
-          profile_photo: updatedProfile.profile_photo || "",
-          current_mmr: updatedProfile.current_mmr || 0,
-        });
+      if (error) {
+        console.error('Error updating profile:', error);
+        throw error;
       }
 
-      // Refetch to ensure data consistency
       await refetch();
 
       toast({
@@ -236,7 +222,7 @@ const Profile = () => {
             onEdit={() => setIsEditing(true)}
             onCancel={() => {
               setIsEditing(false);
-              refetch(); // Refetch data when canceling edits
+              refetch();
             }}
           />
         </div>
