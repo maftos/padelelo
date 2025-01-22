@@ -11,6 +11,7 @@ interface ProfileFormData {
   languages: string;
   whatsapp_number: string;
   current_mmr: string | number;
+  profile_photo?: string;
 }
 
 interface ProfileFormProps {

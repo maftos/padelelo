@@ -22,6 +22,7 @@ const Profile = () => {
     languages: "",
     whatsapp_number: "",
     profile_photo: "",
+    current_mmr: 0, // Added current_mmr with default value
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -35,6 +36,19 @@ const Profile = () => {
       
       if (error) throw error;
       if (!data || data.length === 0) return null;
+      
+      // Update form data when profile data is fetched
+      setFormData({
+        display_name: data[0].display_name || "",
+        nationality: data[0].nationality || "",
+        gender: data[0].gender || "",
+        location: data[0].location || "",
+        languages: Array.isArray(data[0].languages) ? data[0].languages.join(", ") : "",
+        whatsapp_number: data[0].whatsapp_number || "",
+        profile_photo: data[0].profile_photo || "",
+        current_mmr: data[0].current_mmr || 0,
+      });
+      
       return data[0];
     },
     enabled: !!userId,
