@@ -131,6 +131,11 @@ const Profile = () => {
         return;
       }
 
+      console.log('Updating profile with data:', {
+        userId,
+        formData
+      });
+
       const { data, error } = await supabase.rpc('edit_user_profile', {
         user_a_id: userId,
         new_display_name: formData.display_name,
