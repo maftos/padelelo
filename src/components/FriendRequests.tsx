@@ -13,7 +13,7 @@ interface FriendRequest {
   display_name: string;
   gender: string;
   current_mmr: number;
-  friendship_id: number;  // Added this field to store the friendship ID
+  friendship_id: number;
 }
 
 export const FriendRequests = () => {
@@ -52,7 +52,7 @@ export const FriendRequests = () => {
       console.log('Responding to friend request:', { userId, friendshipId, accept });
       
       const response = await supabase.rpc('respond_friend_request', {
-        accept: accept,
+        accept,
         friendship_id: friendshipId,
         user_a_id: userId
       });
