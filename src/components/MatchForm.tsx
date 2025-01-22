@@ -24,8 +24,7 @@ export const MatchForm = () => {
   const [player3, setPlayer3] = useState("");
   const [player4, setPlayer4] = useState("");
   const [scores, setScores] = useState([
-    { team1: "", team2: "" },
-    { team1: "", team2: "" }
+    { team1: "", team2: "" } // Only one set of scores
   ]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const { userId } = useUserProfile();
@@ -118,8 +117,7 @@ export const MatchForm = () => {
       setPlayer3("");
       setPlayer4("");
       setScores([
-        { team1: "", team2: "" },
-        { team1: "", team2: "" }
+        { team1: "", team2: "" } // Reset to one set of scores
       ]);
       setDate(new Date().toISOString().split("T")[0]);
     } catch (error) {
