@@ -299,7 +299,6 @@ export type Database = {
       }
       users: {
         Row: {
-          auth_user_id: string | null
           created_at: string | null
           current_mmr: number | null
           date_of_birth: string | null
@@ -315,14 +314,13 @@ export type Database = {
           whatsapp_number: string | null
         }
         Insert: {
-          auth_user_id?: string | null
           created_at?: string | null
           current_mmr?: number | null
           date_of_birth?: string | null
           display_name: string
           email?: string | null
           gender?: string | null
-          id?: string
+          id: string
           languages?: string[] | null
           location?: string | null
           nationality?: string | null
@@ -331,7 +329,6 @@ export type Database = {
           whatsapp_number?: string | null
         }
         Update: {
-          auth_user_id?: string | null
           created_at?: string | null
           current_mmr?: number | null
           date_of_birth?: string | null
@@ -469,7 +466,7 @@ export type Database = {
       }
       get_user_profile: {
         Args: {
-          user_a_id_auth: string
+          user_a_id: string
         }
         Returns: {
           id: string
@@ -484,6 +481,7 @@ export type Database = {
           whatsapp_number: string
           current_mmr: number
           nationality: string
+          email: string
         }[]
       }
       respond_friend_request:
