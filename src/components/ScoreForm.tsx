@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface Score {
   team1: string;
@@ -31,8 +32,20 @@ export const ScoreForm = ({
     setScores(newScores);
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate that scores are not equal
+    if (scores[0].team1 === scores[0].team2) {
+      toast.error("Scores cannot be equal - there must be a winner!");
+      return;
+    }
+    
+    onSubmit(e);
+  };
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="score1">Team 1 Score</Label>

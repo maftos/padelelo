@@ -1,4 +1,5 @@
 import { PlayerSelect } from "./PlayerSelect";
+import { Separator } from "@/components/ui/separator";
 
 interface TeamSelectProps {
   teamNumber: number;
@@ -18,19 +19,22 @@ export const TeamSelect = ({
   players,
 }: TeamSelectProps) => {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      <PlayerSelect
-        label={`Team ${teamNumber} - Player 1`}
-        value={player1Value}
-        onChange={onPlayer1Change}
-        players={players}
-      />
-      <PlayerSelect
-        label={`Team ${teamNumber} - Player 2`}
-        value={player2Value}
-        onChange={onPlayer2Change}
-        players={players}
-      />
+    <div className="space-y-2">
+      <h3 className="font-semibold text-lg">Team {teamNumber}</h3>
+      <div className="grid grid-cols-2 gap-4 items-start">
+        <PlayerSelect
+          label="Left"
+          value={player1Value}
+          onChange={onPlayer1Change}
+          players={players}
+        />
+        <PlayerSelect
+          label="Right"
+          value={player2Value}
+          onChange={onPlayer2Change}
+          players={players}
+        />
+      </div>
     </div>
   );
 };

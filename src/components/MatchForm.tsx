@@ -10,6 +10,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { TeamSelect } from "./match/TeamSelect";
 import { TeamPreview } from "./match/TeamPreview";
+import { Separator } from "@/components/ui/separator";
+import { format, isToday } from "date-fns";
 
 interface Friend {
   friend_id: string;
@@ -166,6 +168,11 @@ export const MatchForm = () => {
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return isToday(date) ? "Today" : format(date, "PPP");
+  };
+
   return (
     <Card className="w-full max-w-md p-6 space-y-6 animate-fade-in">
       <div className="space-y-2 text-center">
@@ -176,7 +183,7 @@ export const MatchForm = () => {
       </div>
 
       {page === 1 ? (
-        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="date">Date</Label>
             <Input
@@ -186,25 +193,35 @@ export const MatchForm = () => {
               onChange={(e) => setDate(e.target.value)}
               className="w-full"
             />
+            <p className="text-sm text-muted-foreground mt-1">
+              {formatDate(date)}
+            </p>
           </div>
 
-          <TeamSelect
-            teamNumber={1}
-            player1Value={player1}
-            player2Value={player2}
-            onPlayer1Change={setPlayer1}
-            onPlayer2Change={setPlayer2}
-            players={playerOptions}
-          />
-
-          <TeamSelect
-            teamNumber={2}
-            player1Value={player3}
-            player2Value={player4}
-            onPlayer1Change={setPlayer3}
-            onPlayer2Change={setPlayer4}
-            players={playerOptions}
-          />
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <TeamSelect
+                teamNumber={1}
+                player1Value={player1}
+                player2Value={player2}
+                onPlayer1Change={setPlayer1}
+                onPlayer2Change={setPlayer2}
+                players={playerOptions}
+              />
+            </div>
+            
+            <div className="relative">
+              <Separator orientation="vertical" className="absolute left-[-1rem] h-full" />
+              <TeamSelect
+                teamNumber={2}
+                player1Value={player3}
+                player2Value={player4}
+                onPlayer1Change={setPlayer3}
+                onPlayer2Change={setPlayer4}
+                players={playerOptions}
+              />
+            </div>
+          </div>
 
           <Button type="submit" className="w-full" disabled={isCalculating}>
             {isCalculating ? "Calculating..." : "Next"}
