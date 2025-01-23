@@ -10,6 +10,7 @@ import { useMatchForm } from "@/hooks/use-match-form";
 export const MatchForm = () => {
   const {
     page,
+    setPage,
     player1,
     setPlayer1,
     player2,
