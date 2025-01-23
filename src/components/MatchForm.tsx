@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { TeamSelect } from "./match/TeamSelect";
 import { TeamPreview } from "./match/TeamPreview";
 import { Separator } from "@/components/ui/separator";
-import { format, isToday } from "date-fns";
+import { isToday, format } from "date-fns";
 
 interface Friend {
   friend_id: string;
@@ -19,6 +19,8 @@ interface Friend {
   status: string;
   created_at: string;
 }
+
+const STORAGE_KEY = "last_match_players";
 
 export const MatchForm = () => {
   const [page, setPage] = useState(1);
@@ -33,6 +35,28 @@ export const MatchForm = () => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { userId } = useUserProfile();
+
+  // Load last selected players from localStorage
+  useEffect(() => {
+    const savedPlayers = localStorage.getItem(STORAGE_KEY);
+    if (savedPlayers) {
+      const { player1, player2, player3, player4 } = JSON.parse(savedPlayers);
+      setPlayer1(player1 || "");
+      setPlayer2(player2 || "");
+      setPlayer3(player3 || "");
+      setPlayer4(player4 || "");
+    }
+  }, []);
+
+  // Save selected players to localStorage whenever they change
+  useEffect(() => {
+    if (player1 || player2 || player3 || player4) {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ player1, player2, player3, player4 })
+      );
+    }
+  }, [player1, player2, player3, player4]);
 
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
     queryKey: ['friends', userId],
@@ -78,7 +102,6 @@ export const MatchForm = () => {
     try {
       setIsCalculating(true);
       
-      // Step 1: Create match
       const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
         team1_player1_id: player1,
         team1_player2_id: player2,
@@ -98,7 +121,6 @@ export const MatchForm = () => {
 
       setMatchId(matchData);
 
-      // Step 2: Calculate MMR change
       const { data: mmrCalcData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
         match_id: matchData
       });
@@ -168,11 +190,6 @@ export const MatchForm = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return isToday(date) ? "Today" : format(date, "PPP");
-  };
-
   return (
     <Card className="w-full max-w-md p-6 space-y-6 animate-fade-in">
       <div className="space-y-2 text-center">
@@ -194,11 +211,11 @@ export const MatchForm = () => {
               className="w-full"
             />
             <p className="text-sm text-muted-foreground mt-1">
-              {formatDate(date)}
+              {isToday(new Date(date)) ? "Today" : format(new Date(date), "PPP")}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <TeamSelect
                 teamNumber={1}
@@ -211,7 +228,7 @@ export const MatchForm = () => {
             </div>
             
             <div className="relative">
-              <Separator orientation="vertical" className="absolute left-[-1rem] h-full" />
+              <Separator orientation="vertical" className="absolute left-0 h-full hidden md:block" />
               <TeamSelect
                 teamNumber={2}
                 player1Value={player3}
