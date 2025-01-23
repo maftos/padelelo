@@ -1,8 +1,14 @@
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Users, Trophy, History, MessageSquare, Calculator, Rocket, ClipboardList, Github } from "lucide-react";
+import { Users, Trophy, History, Calculator, Rocket, ClipboardList, Github } from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const Home = () => {
   return (
@@ -10,7 +16,7 @@ const Home = () => {
       <Navigation />
       
       {/* Hero Section */}
-      <main className="container py-8 px-4 space-y-32">
+      <main className="container py-8 px-4 space-y-24">
         <div className="max-w-7xl mx-auto animate-fade-in">
           <div className="relative h-[500px] rounded-xl overflow-hidden mb-16 shadow-2xl">
             <img
@@ -20,10 +26,10 @@ const Home = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-r from-background/95 to-transparent flex items-center">
               <div className="p-8 max-w-2xl">
-                <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
+                <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
                   Elevate Your <span className="text-primary">Padel Game</span>
                 </h1>
-                <p className="text-xl text-foreground/80 mb-8">
+                <p className="text-lg md:text-xl text-foreground/80 mb-8">
                   Join Mauritius's premier padel community. Track your progress, connect with players, and compete at your level.
                 </p>
                 <div className="flex flex-wrap gap-4">
@@ -39,7 +45,7 @@ const Home = () => {
           </div>
 
           {/* Features Grid */}
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-24">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-24">
             <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent hover:scale-105">
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
                 <Users className="h-6 w-6 text-primary" />
@@ -81,86 +87,66 @@ const Home = () => {
 
             <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent hover:scale-105">
               <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <MessageSquare className="h-6 w-6 text-primary" />
+                <Calculator className="h-6 w-6 text-primary" />
               </div>
-              <h2 className="text-2xl font-semibold">Community</h2>
+              <h2 className="text-2xl font-semibold">Smart Matching</h2>
               <p className="text-muted-foreground">
-                Join a thriving community of padel enthusiasts. Share tips, organize matches, and grow together.
+                Our ELO system ensures fair and competitive matches by pairing players of similar skill levels.
               </p>
               <Button asChild variant="link" className="p-0 text-primary">
-                <Link to="/friends">Join Now →</Link>
+                <Link to="/matchmaking-math">Learn More →</Link>
               </Button>
             </Card>
           </div>
 
-          {/* Matchmaking Math Section */}
-          <section className="mb-32 relative">
-            <div className="absolute inset-0 bg-secondary/20 rounded-2xl backdrop-blur-sm -z-10" />
-            <div className="p-12 space-y-8">
-              <div className="flex items-center gap-3 mb-8">
-                <Calculator className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl font-bold">Matchmaking Mathematics</h2>
-              </div>
-              <div className="grid md:grid-cols-2 gap-8">
-                <Card className="p-8 bg-card/80 backdrop-blur border-accent">
-                  <h3 className="text-xl font-semibold mb-4">ELO Rating System</h3>
-                  <p className="text-muted-foreground mb-6">
-                    Our matchmaking system is based on the ELO rating system, originally developed for chess. 
-                    The system calculates expected win rates and adjusts ratings after each match based on the outcome 
-                    and the relative skill difference between teams.
-                  </p>
-                  <pre className="bg-background/50 p-4 rounded-md text-sm overflow-x-auto text-foreground/90">
-                    E = 1 / (1 + 10^((R2 - R1)/400))
-                  </pre>
-                </Card>
-                <Card className="p-8 bg-card/80 backdrop-blur border-accent">
-                  <h3 className="text-xl font-semibold mb-4">MMR Adjustment</h3>
-                  <p className="text-muted-foreground mb-6">
-                    After each match, ratings are adjusted using a sophisticated algorithm that takes into account
-                    the skill difference between teams and the match outcome.
-                  </p>
-                  <pre className="bg-background/50 p-4 rounded-md text-sm overflow-x-auto text-foreground/90">
-                    New Rating = Old Rating + K * (Actual - Expected)
-                  </pre>
-                </Card>
-              </div>
-            </div>
-          </section>
-
-          {/* Future Improvements Section */}
+          {/* Q&A Section */}
           <section className="mb-32 relative">
             <div className="absolute inset-0 bg-accent/50 rounded-2xl backdrop-blur-sm -z-10" />
-            <div className="p-12 space-y-8">
-              <div className="flex items-center gap-3 mb-8">
-                <Rocket className="h-8 w-8 text-primary" />
-                <h2 className="text-3xl font-bold">Coming Soon</h2>
-              </div>
-              <div className="grid md:grid-cols-3 gap-8">
-                <Card className="p-6 bg-card/50 backdrop-blur border-accent">
-                  <h3 className="text-lg font-semibold mb-2">Advanced Match Statistics</h3>
-                  <p className="text-muted-foreground">Detailed analytics and visualization of match history and performance metrics.</p>
-                  <p className="text-sm text-primary mt-4">Expected: Q2 2024</p>
-                </Card>
+            <div className="p-8 md:p-12">
+              <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>How does the ELO rating work?</AccordionTrigger>
+                  <AccordionContent>
+                    The ELO rating system calculates your skill level based on match outcomes and opponent ratings. 
+                    Win against stronger players, gain more points. Lose against weaker players, lose more points. 
+                    This creates a fair and competitive environment where everyone can find matches at their skill level.
+                  </AccordionContent>
+                </AccordionItem>
 
-                <Card className="p-6 bg-card/50 backdrop-blur border-accent">
-                  <h3 className="text-lg font-semibold mb-2">Tournament System</h3>
-                  <p className="text-muted-foreground">Organize and participate in tournaments with automatic bracket generation.</p>
-                  <p className="text-sm text-primary mt-4">Expected: Q3 2024</p>
-                </Card>
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>How can I sign up?</AccordionTrigger>
+                  <AccordionContent>
+                    Simply click the "Sign In" button in the top right corner and create an account. 
+                    Once registered, you can set up your profile, add friends, and start recording your matches. 
+                    The process takes less than 2 minutes!
+                  </AccordionContent>
+                </AccordionItem>
 
-                <Card className="p-6 bg-card/50 backdrop-blur border-accent">
-                  <h3 className="text-lg font-semibold mb-2">Mobile App</h3>
-                  <p className="text-muted-foreground">Native mobile application for iOS and Android.</p>
-                  <p className="text-sm text-primary mt-4">Expected: Q4 2024</p>
-                </Card>
-              </div>
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>How much does it cost?</AccordionTrigger>
+                  <AccordionContent>
+                    PadelELO is completely free to use! We believe in making padel more accessible and enjoyable for everyone. 
+                    All features, including match tracking, rankings, and friend connections, are available at no cost.
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>What's the big vision?</AccordionTrigger>
+                  <AccordionContent>
+                    We aim to create Mauritius's largest and most engaged padel community. Our vision includes 
+                    organizing tournaments, facilitating player development, and making it easier for players 
+                    to find partners and matches at their skill level. We're building the future of padel in Mauritius!
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </section>
 
           {/* Release Notes Section */}
           <section className="mb-32 relative">
             <div className="absolute inset-0 bg-secondary/20 rounded-2xl backdrop-blur-sm -z-10" />
-            <div className="p-12">
+            <div className="p-8 md:p-12">
               <div className="flex items-center gap-3 mb-8">
                 <ClipboardList className="h-8 w-8 text-primary" />
                 <h2 className="text-3xl font-bold">Latest Updates</h2>
@@ -182,7 +168,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t border-accent mt-24 bg-card/50 backdrop-blur-sm">
         <div className="container py-12 px-4">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid gap-8 md:grid-cols-4">
             <div>
               <h3 className="font-semibold text-lg mb-4">About</h3>
               <p className="text-muted-foreground">

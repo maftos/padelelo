@@ -36,26 +36,16 @@ export const Navigation = () => {
 
             <div className="flex items-center gap-4">
               {user ? (
-                <>
-                  <Link to="/profile">
-                    <Avatar className="h-8 w-8 cursor-pointer">
-                      <AvatarImage src={profile?.profile_photo || undefined} />
-                      <AvatarFallback>
-                        {profile?.display_name
-                          ? profile.display_name.substring(0, 2).toUpperCase()
-                          : "PE"}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={signOut}
-                    className="border-primary text-primary hover:bg-primary hover:text-white"
-                  >
-                    Sign Out
-                  </Button>
-                </>
+                <Link to="/profile">
+                  <Avatar className="h-8 w-8 cursor-pointer">
+                    <AvatarImage src={profile?.profile_photo || undefined} />
+                    <AvatarFallback>
+                      {profile?.display_name
+                        ? profile.display_name.substring(0, 2).toUpperCase()
+                        : "PE"}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
               ) : (
                 <Button
                   variant="outline"
@@ -117,6 +107,20 @@ export const Navigation = () => {
                         Future Improvements
                       </Link>
                     </div>
+
+                    {/* Sign Out Button at bottom */}
+                    {user && (
+                      <div className="mt-auto pt-4">
+                        <Separator />
+                        <Button
+                          variant="ghost"
+                          className="w-full mt-4 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={signOut}
+                        >
+                          Sign Out
+                        </Button>
+                      </div>
+                    )}
                   </nav>
                 </SheetContent>
               </Sheet>
