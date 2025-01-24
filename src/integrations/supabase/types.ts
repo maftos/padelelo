@@ -452,6 +452,29 @@ export type Database = {
           status: string
         }[]
       }
+      get_my_completed_matches: {
+        Args: {
+          user_a_id: string
+        }
+        Returns: {
+          match_id: string
+          team1_player1_id: string
+          team1_player2_id: string
+          team2_player1_id: string
+          team2_player2_id: string
+          team1_score: number
+          team2_score: number
+          created_at: string
+          team1_player1_display_name: string
+          team1_player1_profile_photo: string
+          team1_player2_display_name: string
+          team1_player2_profile_photo: string
+          team2_player1_display_name: string
+          team2_player1_profile_photo: string
+          team2_player2_display_name: string
+          team2_player2_profile_photo: string
+        }[]
+      }
       get_user_friends: {
         Args: {
           i_user_id: string
