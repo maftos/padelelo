@@ -67,13 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             expiresAt: session.expires_at
           }));
         }
-      } else if (event === 'USER_DELETED') {
-        // Handle account deletion
-        await signOut();
-        toast({
-          title: "Account Deleted",
-          description: "Your account has been successfully deleted",
-        });
       }
       
       setLoading(false);
