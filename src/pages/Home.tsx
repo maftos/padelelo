@@ -12,6 +12,12 @@ const Home = () => {
       <Navigation />
       <main className="container py-8 px-4 space-y-8 animate-fade-in">
         <HeroSection />
+        <div className="p-4 bg-secondary/20 rounded-lg text-center">
+          <p className="text-lg">
+            PadelELO is currently invite-only. To join, please contact an existing member from our{" "}
+            <a href="/leaderboard" className="text-primary hover:underline">leaderboard</a>.
+          </p>
+        </div>
         <FeaturesGrid />
         <MatchmakingSection />
         <QASection />

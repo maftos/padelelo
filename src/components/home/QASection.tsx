@@ -13,20 +13,20 @@ export const QASection = () => {
         <h2 className="text-3xl font-bold mb-8">Frequently Asked Questions</h2>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
+            <AccordionTrigger>How can I join PadelELO?</AccordionTrigger>
+            <AccordionContent>
+              PadelELO is currently an invite-only platform. To join, you need to be referred by an existing member. 
+              You can view our current members on the leaderboard and get in touch with them directly to request an invitation.
+              This helps us maintain a high-quality, engaged community of padel enthusiasts.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-2">
             <AccordionTrigger>How does the ELO rating work?</AccordionTrigger>
             <AccordionContent>
               The ELO rating system calculates your skill level based on match outcomes and opponent ratings. 
               Win against stronger players, gain more points. Lose against weaker players, lose more points. 
               This creates a fair and competitive environment where everyone can find matches at their skill level.
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="item-2">
-            <AccordionTrigger>How can I sign up?</AccordionTrigger>
-            <AccordionContent>
-              Simply click the "Sign In" button in the top right corner and create an account. 
-              Once registered, you can set up your profile, add friends, and start recording your matches. 
-              The process takes less than 2 minutes!
             </AccordionContent>
           </AccordionItem>
 
@@ -39,11 +39,11 @@ export const QASection = () => {
           </AccordionItem>
 
           <AccordionItem value="item-4">
-            <AccordionTrigger>What's the big vision?</AccordionTrigger>
+            <AccordionTrigger>What's coming next?</AccordionTrigger>
             <AccordionContent>
-              We aim to create Mauritius's largest and most engaged padel community. Our vision includes 
-              organizing tournaments, facilitating player development, and making it easier for players 
-              to find partners and matches at their skill level. We're building the future of padel in Mauritius!
+              We're working on exciting features including a tournament management system that will help minimize waiting times 
+              between games by providing transparent brackets and scheduling. We're also planning to integrate court booking 
+              in Mauritius and connect players with professional padel coaches for personalized lessons.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
