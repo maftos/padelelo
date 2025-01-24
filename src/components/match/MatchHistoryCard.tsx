@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface MatchHistoryCardProps {
   match_id: string;
@@ -17,6 +18,14 @@ interface MatchHistoryCardProps {
 }
 
 interface MatchDetails {
+  match_id: string;
+  team1_player1_id: string;
+  team1_player2_id: string;
+  team2_player1_id: string;
+  team2_player2_id: string;
+  team1_score: number;
+  team2_score: number;
+  created_at: string;
   team1_player1_display_name: string;
   team1_player1_profile_photo: string;
   team1_player2_display_name: string;
@@ -25,8 +34,6 @@ interface MatchDetails {
   team2_player1_profile_photo: string;
   team2_player2_display_name: string;
   team2_player2_profile_photo: string;
-  team1_score: number;
-  team2_score: number;
 }
 
 export const MatchHistoryCard = ({
@@ -38,15 +45,20 @@ export const MatchHistoryCard = ({
   status,
   match_id,
 }: MatchHistoryCardProps) => {
+  const { userId } = useUserProfile();
+
   const { data: matchDetails } = useQuery({
     queryKey: ["matchDetails", match_id],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_my_completed_matches");
+      if (!userId) throw new Error("User ID is required");
+      const { data, error } = await supabase.rpc("get_my_completed_matches", {
+        user_a_id: userId
+      });
       if (error) throw error;
       const matchDetail = data.find((match) => match.match_id === match_id);
       return matchDetail as MatchDetails;
     },
-    enabled: !!match_id,
+    enabled: !!userId && !!match_id,
   });
 
   const getInitials = (name?: string) => {
