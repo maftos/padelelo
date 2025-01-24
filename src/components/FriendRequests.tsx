@@ -42,23 +42,18 @@ export const FriendRequests = () => {
     enabled: !!userId,
   });
 
-  const handleRequestResponse = async (friendId: string, friendshipId: number, accept: boolean) => {
+  const handleRequestResponse = async (friendId: string, accept: boolean) => {
     try {
       if (!userId) {
         console.error('Missing user ID');
         throw new Error('User ID is required');
       }
 
-      if (typeof friendshipId !== 'number') {
-        console.error('Invalid friendship ID:', friendshipId);
-        throw new Error('Invalid friendship ID');
-      }
-
-      console.log('Responding to friend request:', { userId, friendshipId, accept });
+      console.log('Responding to friend request:', { userId, friendId, accept });
       
       const { data, error } = await supabase.rpc('respond_friend_request', {
         user_a_id: userId,
-        friendship_id: friendshipId,
+        user_b_id: friendId,
         accept: accept
       });
 
@@ -146,7 +141,7 @@ export const FriendRequests = () => {
             <div className="flex gap-2">
               <Button 
                 className="flex-1 bg-primary hover:bg-primary/90" 
-                onClick={() => handleRequestResponse(request.friend_id, request.id, true)}
+                onClick={() => handleRequestResponse(request.friend_id, true)}
               >
                 <Check className="h-4 w-4 mr-2" />
                 Accept
@@ -154,7 +149,7 @@ export const FriendRequests = () => {
               <Button 
                 variant="outline" 
                 className="flex-1"
-                onClick={() => handleRequestResponse(request.friend_id, request.id, false)}
+                onClick={() => handleRequestResponse(request.friend_id, false)}
               >
                 <X className="h-4 w-4 mr-2" />
                 Decline
