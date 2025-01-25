@@ -13,6 +13,8 @@ import ReleaseNotes from "./pages/ReleaseNotes";
 import MatchmakingMath from "./pages/MatchmakingMath";
 import FutureImprovements from "./pages/FutureImprovements";
 import Matches from "./pages/Matches";
+import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
           <Route path="/release-notes" element={<ReleaseNotes />} />
           <Route path="/matchmaking-math" element={<MatchmakingMath />} />
           <Route path="/future-improvements" element={<FutureImprovements />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </AuthProvider>
     </TooltipProvider>
