@@ -1,8 +1,8 @@
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useUserProfile } from "@/hooks/use-user-profile";
 import { ProfileDropdown } from "./ProfileDropdown";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface UserMenuProps {
   profile: ReturnType<typeof useUserProfile>["profile"];
