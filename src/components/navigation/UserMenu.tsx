@@ -1,9 +1,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
-import { UserProfile } from "@/hooks/use-user-profile";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
-interface UserMenuProps {
-  profile: UserProfile | null;
+type UserMenuProps = {
+  profile: NonNullable<ReturnType<typeof useUserProfile>["profile"]> | null;
   onSignInClick: () => void;
 }
 
