@@ -250,29 +250,29 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          referral_link: string
+          referred_user_email: string | null
           referred_user_id: string | null
           referrer_id: string
-          status: Database["public"]["Enums"]["referral_status"] | null
-          used_at: string | null
+          signup_completed_at: string | null
+          status: string | null
         }
         Insert: {
           created_at?: string | null
           id?: string
-          referral_link: string
+          referred_user_email?: string | null
           referred_user_id?: string | null
           referrer_id: string
-          status?: Database["public"]["Enums"]["referral_status"] | null
-          used_at?: string | null
+          signup_completed_at?: string | null
+          status?: string | null
         }
         Update: {
           created_at?: string | null
           id?: string
-          referral_link?: string
+          referred_user_email?: string | null
           referred_user_id?: string | null
           referrer_id?: string
-          status?: Database["public"]["Enums"]["referral_status"] | null
-          used_at?: string | null
+          signup_completed_at?: string | null
+          status?: string | null
         }
         Relationships: [
           {
@@ -551,6 +551,13 @@ export type Database = {
           nationality: string
           email: string
         }[]
+      }
+      insert_referral_temp: {
+        Args: {
+          referrer_id: string
+          referred_user_email: string
+        }
+        Returns: undefined
       }
       respond_friend_request:
         | {

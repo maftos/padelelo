@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,13 @@ export const SignUpForm = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const referrerId = searchParams.get('ref');
+
+  // Save referrerId to session storage when it's available
+  useEffect(() => {
+    if (referrerId) {
+      sessionStorage.setItem('referrerId', referrerId);
+    }
+  }, [referrerId]);
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
@@ -45,6 +52,22 @@ export const SignUpForm = () => {
     return error.message;
   };
 
+  const insertReferralTemp = async (referrerId: string, email: string) => {
+    try {
+      const { error } = await supabase.rpc('insert_referral_temp', {
+        referrer_id: referrerId,
+        referred_user_email: email
+      });
+
+      if (error) {
+        console.error("Error inserting referral:", error);
+        // We don't want to show this error to the user as the signup was successful
+      }
+    } catch (err) {
+      console.error("Unexpected error inserting referral:", err);
+    }
+  };
+
   const handleSignUp = async () => {
     try {
       setLoading(true);
@@ -59,6 +82,9 @@ export const SignUpForm = () => {
         setError("Password must be at least 6 characters long");
         return;
       }
+
+      // Save email to session storage
+      sessionStorage.setItem('signupEmail', email.trim());
 
       const signUpResponse = await supabase.auth.signUp({
         email: email.trim(),
@@ -78,6 +104,12 @@ export const SignUpForm = () => {
       }
 
       if (signUpResponse.data.user) {
+        // If we have a referrerId, call insert_referral_temp
+        const storedReferrerId = sessionStorage.getItem('referrerId');
+        if (storedReferrerId) {
+          await insertReferralTemp(storedReferrerId, email.trim());
+        }
+
         toast({
           title: "Account created!",
           description: "Please check your email to verify your account",
