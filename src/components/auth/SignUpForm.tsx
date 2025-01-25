@@ -12,6 +12,7 @@ export const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState(1); // Track the current step
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -53,6 +54,28 @@ export const SignUpForm = () => {
     return error.message;
   };
 
+  const handleNext = () => {
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    
+    // Save email to session storage
+    const trimmedEmail = email.trim();
+    sessionStorage.setItem('signupEmail', trimmedEmail);
+    console.log('Saved email to session storage:', trimmedEmail);
+    
+    setError(null);
+    setStep(2);
+  };
+
+  const handleBack = () => {
+    // Clear the stored email when going back
+    sessionStorage.removeItem('signupEmail');
+    setStep(1);
+    setError(null);
+  };
+
   const insertReferralTemp = async (referrer_id: string, referred_user_email: string) => {
     try {
       console.log('Calling insertReferralTemp with:', { referrer_id, referred_user_email });
@@ -83,21 +106,13 @@ export const SignUpForm = () => {
       setLoading(true);
       setError(null);
 
-      if (!validateEmail(email)) {
-        setError("Please enter a valid email address");
-        return;
-      }
-
       if (!validatePassword(password)) {
         setError("Password must be at least 6 characters long");
         return;
       }
 
-      // Save email to session storage before signup attempt
       const trimmedEmail = email.trim();
-      sessionStorage.setItem('signupEmail', trimmedEmail);
-      console.log('Saved email to session storage:', trimmedEmail);
-
+      
       const signUpResponse = await supabase.auth.signUp({
         email: trimmedEmail,
         password,
@@ -154,25 +169,50 @@ export const SignUpForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full"
-          disabled={loading}
+          disabled={loading || step === 2}
         />
-        <Input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full"
-          disabled={loading}
-        />
+        
+        {step === 2 && (
+          <Input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full"
+            disabled={loading}
+          />
+        )}
       </div>
 
-      <Button 
-        onClick={handleSignUp}
-        disabled={loading}
-        className="w-full"
-      >
-        {loading ? "Creating account..." : "Sign Up"}
-      </Button>
+      <div className="space-y-2">
+        {step === 1 ? (
+          <Button 
+            onClick={handleNext}
+            disabled={loading}
+            className="w-full"
+          >
+            Next
+          </Button>
+        ) : (
+          <div className="space-y-2">
+            <Button 
+              onClick={handleBack}
+              disabled={loading}
+              variant="outline"
+              className="w-full"
+            >
+              Back
+            </Button>
+            <Button 
+              onClick={handleSignUp}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? "Creating account..." : "Sign Up"}
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
