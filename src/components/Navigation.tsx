@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, Menu } from "lucide-react";
+import { LogIn, Menu, UserPlus } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { AuthModal } from "./AuthModal";
@@ -14,11 +14,22 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "./ui/use-toast";
 
 export const Navigation = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { profile, isLoading } = useUserProfile();
   const { user, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleCopyReferralLink = () => {
+    const referralLink = `${window.location.origin}/signup?ref=${user?.id}`;
+    navigator.clipboard.writeText(referralLink);
+    toast({
+      title: "Referral link copied!",
+      description: "Share this link with friends to invite them to PadelELO",
+    });
+  };
 
   return (
     <>
@@ -69,11 +80,21 @@ export const Navigation = () => {
                     <SheetTitle>Menu</SheetTitle>
                   </SheetHeader>
                   <nav className="flex flex-col gap-4 mt-4">
-                    {/* Primary Action */}
+                    {/* Primary Actions */}
                     {user && (
-                      <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
-                        Register a Match
-                      </Link>
+                      <>
+                        <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
+                          Register a Match
+                        </Link>
+                        <Button
+                          variant="outline"
+                          className="w-full bg-secondary/10 text-secondary hover:bg-secondary/20"
+                          onClick={handleCopyReferralLink}
+                        >
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Copy Referral Link
+                        </Button>
+                      </>
                     )}
                     
                     {/* Core Features */}
