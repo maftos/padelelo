@@ -2,15 +2,15 @@ import { Route, Routes } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { Navigation } from "@/components/Navigation";
 import { AuthProvider } from "@/contexts/AuthContext";
-import Home from "@/pages/Home";
-import Profile from "@/pages/Profile";
-import RegisterMatch from "@/pages/RegisterMatch";
-import Leaderboard from "@/pages/Leaderboard";
-import Friends from "@/pages/Friends";
-import Matches from "@/pages/Matches";
-import ReleaseNotes from "@/pages/ReleaseNotes";
-import MatchmakingMath from "@/pages/MatchmakingMath";
-import FutureImprovements from "@/pages/FutureImprovements";
+import { Home } from "@/pages/Home";
+import { Profile } from "@/pages/Profile";
+import { RegisterMatch } from "@/pages/RegisterMatch";
+import { Leaderboard } from "@/pages/Leaderboard";
+import { Friends } from "@/pages/Friends";
+import { Matches } from "@/pages/Matches";
+import { ReleaseNotes } from "@/pages/ReleaseNotes";
+import { MatchmakingMath } from "@/pages/MatchmakingMath";
+import { FutureImprovements } from "@/pages/FutureImprovements";
 import { SignUpPage } from "./pages/SignUp";
 
 function App() {
