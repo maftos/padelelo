@@ -1,25 +1,28 @@
 import { SignInForm } from "@/components/auth/SignInForm";
-import { Link } from "react-router-dom";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 const Login = () => {
   return (
-    <div className="container flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md space-y-6">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-8 animate-fade-in">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Welcome back</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
           <p className="text-muted-foreground">
             Enter your email to sign in to your account
           </p>
         </div>
         
-        <SignInForm />
-        
-        <p className="text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <Link to="/signup" className="underline hover:text-primary">
-            Sign up
-          </Link>
-        </p>
+        <div className="bg-card rounded-lg p-6 shadow-lg space-y-6">
+          <Alert className="bg-accent">
+            <InfoIcon className="h-4 w-4" />
+            <AlertDescription>
+              PadelELO is currently invite-only. You need an invitation link to create an account.
+            </AlertDescription>
+          </Alert>
+          
+          <SignInForm />
+        </div>
       </div>
     </div>
   );
