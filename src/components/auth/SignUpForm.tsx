@@ -52,11 +52,11 @@ export const SignUpForm = () => {
     return error.message;
   };
 
-  const insertReferralTemp = async (referrerId: string, email: string) => {
+  const insertReferralTemp = async (referrer_id: string, referred_user_email: string) => {
     try {
       const { error } = await supabase.rpc('insert_referral_temp', {
-        referrer_id: referrerId,
-        referred_user_email: email
+        referrer_id,
+        referred_user_email
       });
 
       if (error) {
