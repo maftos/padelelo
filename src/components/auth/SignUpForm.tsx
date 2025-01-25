@@ -56,14 +56,22 @@ export const SignUpForm = () => {
   const insertReferralTemp = async (referrer_id: string, referred_user_email: string) => {
     try {
       console.log('Calling insertReferralTemp with:', { referrer_id, referred_user_email });
-      const { error } = await supabase.rpc('insert_referral_temp', {
+      
+      // Make sure we're passing an object with the exact parameter names expected by the function
+      const { data, error } = await supabase.rpc('insert_referral_temp', {
         referrer_id,
         referred_user_email
       });
 
       if (error) {
         console.error("Error inserting referral:", error);
-        // We don't want to show this error to the user as the signup was successful
+        console.error("Error details:", {
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+      } else {
+        console.log("Referral inserted successfully:", data);
       }
     } catch (err) {
       console.error("Unexpected error inserting referral:", err);
