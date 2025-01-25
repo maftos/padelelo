@@ -54,28 +54,6 @@ export const SignUpForm = () => {
     return error.message;
   };
 
-  const handleNext = () => {
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address");
-      return;
-    }
-    
-    // Save email to session storage
-    const trimmedEmail = email.trim();
-    sessionStorage.setItem('signupEmail', trimmedEmail);
-    console.log('Saved email to session storage:', trimmedEmail);
-    
-    setError(null);
-    setStep(2);
-  };
-
-  const handleBack = () => {
-    // Clear the stored email when going back
-    sessionStorage.removeItem('signupEmail');
-    setStep(1);
-    setError(null);
-  };
-
   const insertReferralTemp = async (referrer_id: string, referred_user_email: string) => {
     try {
       console.log('Calling insertReferralTemp with:', { referrer_id, referred_user_email });
@@ -99,6 +77,34 @@ export const SignUpForm = () => {
     } catch (err) {
       console.error("Unexpected error inserting referral:", err);
     }
+  };
+
+  const handleNext = async () => {
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    
+    // Save email to session storage
+    const trimmedEmail = email.trim();
+    sessionStorage.setItem('signupEmail', trimmedEmail);
+    console.log('Saved email to session storage:', trimmedEmail);
+    
+    // Get the stored referrer ID and handle the referral
+    const storedReferrerId = sessionStorage.getItem('referrerId');
+    if (storedReferrerId) {
+      await insertReferralTemp(storedReferrerId, trimmedEmail);
+    }
+    
+    setError(null);
+    setStep(2);
+  };
+
+  const handleBack = () => {
+    // Clear the stored email when going back
+    sessionStorage.removeItem('signupEmail');
+    setStep(1);
+    setError(null);
   };
 
   const handleSignUp = async () => {
@@ -131,15 +137,6 @@ export const SignUpForm = () => {
       }
 
       if (signUpResponse.data.user) {
-        // Get the stored referrer ID from session storage
-        const storedReferrerId = sessionStorage.getItem('referrerId');
-        console.log('Retrieved stored referrerId:', storedReferrerId);
-        
-        if (storedReferrerId) {
-          // Use the stored email and referrer ID for the referral
-          await insertReferralTemp(storedReferrerId, trimmedEmail);
-        }
-
         toast({
           title: "Account created!",
           description: "Please check your email to verify your account",
