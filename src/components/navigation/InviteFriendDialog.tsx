@@ -13,7 +13,8 @@ export const InviteFriendDialog = ({ userId, onOpenChange }: InviteFriendDialogP
   const [hasCopied, setHasCopied] = useState(false);
 
   const handleCopyInviteUrl = async () => {
-    const inviteUrl = `matchpadel-palooza.lovable.app/signup/ref?=${userId}`;
+    // Updated URL format to use proper query parameter syntax
+    const inviteUrl = `matchpadel-palooza.lovable.app/signup?ref=${userId}`;
     try {
       await navigator.clipboard.writeText(inviteUrl);
       setHasCopied(true);
