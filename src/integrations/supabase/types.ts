@@ -246,48 +246,6 @@ export type Database = {
           },
         ]
       }
-      referrals: {
-        Row: {
-          created_at: string | null
-          id: string
-          referred_email: string | null
-          referrer_id: string
-          status: Database["public"]["Enums"]["referral_status"] | null
-          used_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          referred_email?: string | null
-          referrer_id: string
-          status?: Database["public"]["Enums"]["referral_status"] | null
-          used_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          referred_email?: string | null
-          referrer_id?: string
-          status?: Database["public"]["Enums"]["referral_status"] | null
-          used_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "referrals_referrer_id_fkey"
-            columns: ["referrer_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "referrals_referrer_id_fkey"
-            columns: ["referrer_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       release_notes: {
         Row: {
           change_items: string[]
@@ -616,7 +574,6 @@ export type Database = {
         | "IGNORED"
       gender: "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY"
       match_status: "PENDING" | "COMPLETED" | "CANCELLED" | "DELETED"
-      referral_status: "PENDING" | "USED"
     }
     CompositeTypes: {
       [_ in never]: never

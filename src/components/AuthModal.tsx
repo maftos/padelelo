@@ -20,6 +20,7 @@ export const AuthModal = ({
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Clear error when modal is opened/closed
   useEffect(() => {
     setError(null);
   }, [isOpen]);
@@ -101,13 +102,58 @@ export const AuthModal = ({
     }
   };
 
+  const handleSignUp = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (!validateEmail(email)) {
+        setError("Please enter a valid email address");
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        setError("Password must be at least 6 characters long");
+        return;
+      }
+
+      const signUpResponse = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        }
+      });
+
+      // Handle the response in a single block
+      if (signUpResponse.error) {
+        console.error("Sign up error:", signUpResponse.error);
+        setError(handleAuthError(signUpResponse.error));
+        return;
+      }
+
+      if (signUpResponse.data.user) {
+        toast({
+          title: "Account created!",
+          description: "Please check your email to verify your account",
+        });
+        onClose();
+      }
+    } catch (err: any) {
+      console.error("Unexpected error:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Sign In</DialogTitle>
+          <DialogTitle>Sign In or Create Account</DialogTitle>
           <DialogDescription>
-            Enter your email and password to sign in.
+            Enter your email and password to sign in or create a new account.
             {error?.includes("Email not confirmed") && (
               <p className="mt-2 text-sm text-primary">
                 Please check your email inbox and spam folder for the confirmation link.
@@ -138,13 +184,23 @@ export const AuthModal = ({
             className="flex-1"
             disabled={loading}
           />
-          <Button 
-            onClick={handleSignIn} 
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleSignIn} 
+              disabled={loading}
+              className="flex-1"
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </Button>
+            <Button 
+              onClick={handleSignUp}
+              disabled={loading}
+              variant="outline"
+              className="flex-1"
+            >
+              {loading ? "Creating..." : "Sign Up"}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
