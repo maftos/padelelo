@@ -554,8 +554,8 @@ export type Database = {
       }
       insert_referral_temp: {
         Args: {
-          referrer_id: string
-          referred_user_email: string
+          p_referrer_id: string
+          p_referred_user_email: string
         }
         Returns: undefined
       }

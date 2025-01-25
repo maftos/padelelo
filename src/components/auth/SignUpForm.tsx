@@ -54,13 +54,13 @@ export const SignUpForm = () => {
     return error.message;
   };
 
-  const insertReferralTemp = async (referrer_id: string, referred_user_email: string) => {
+  const insertReferralTemp = async (p_referrer_id: string, p_referred_user_email: string) => {
     try {
-      console.log('Calling insertReferralTemp with:', { referrer_id, referred_user_email });
+      console.log('Calling insertReferralTemp with:', { p_referrer_id, p_referred_user_email });
       
       const { data, error } = await supabase.rpc('insert_referral_temp', {
-        referrer_id,
-        referred_user_email
+        p_referrer_id,
+        p_referred_user_email
       });
 
       if (error) {
@@ -70,14 +70,14 @@ export const SignUpForm = () => {
           details: error.details,
           hint: error.hint
         });
-        throw error; // Throw the error to be caught by the caller
+        throw error;
       }
 
       console.log("Referral inserted successfully:", data);
       return true;
     } catch (err) {
       console.error("Unexpected error inserting referral:", err);
-      throw err; // Re-throw the error to be caught by the caller
+      throw err;
     }
   };
 
