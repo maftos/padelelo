@@ -12,7 +12,7 @@ export const SignUpForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState(1); // Track the current step
+  const [step, setStep] = useState(1);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -58,7 +58,6 @@ export const SignUpForm = () => {
     try {
       console.log('Calling insertReferralTemp with:', { referrer_id, referred_user_email });
       
-      // Make sure we're passing an object with the exact parameter names expected by the function
       const { data, error } = await supabase.rpc('insert_referral_temp', {
         referrer_id,
         referred_user_email
@@ -71,33 +70,43 @@ export const SignUpForm = () => {
           details: error.details,
           hint: error.hint
         });
-      } else {
-        console.log("Referral inserted successfully:", data);
+        throw error; // Throw the error to be caught by the caller
       }
+
+      console.log("Referral inserted successfully:", data);
+      return true;
     } catch (err) {
       console.error("Unexpected error inserting referral:", err);
+      throw err; // Re-throw the error to be caught by the caller
     }
   };
 
   const handleNext = async () => {
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email address");
-      return;
+    try {
+      if (!validateEmail(email)) {
+        setError("Please enter a valid email address");
+        return;
+      }
+      
+      setLoading(true);
+      const trimmedEmail = email.trim();
+      sessionStorage.setItem('signupEmail', trimmedEmail);
+      console.log('Saved email to session storage:', trimmedEmail);
+      
+      // Get the stored referrer ID and handle the referral
+      const storedReferrerId = sessionStorage.getItem('referrerId');
+      if (storedReferrerId) {
+        await insertReferralTemp(storedReferrerId, trimmedEmail);
+      }
+      
+      setError(null);
+      setStep(2);
+    } catch (err) {
+      console.error("Error in handleNext:", err);
+      setError("Failed to process referral. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    
-    // Save email to session storage
-    const trimmedEmail = email.trim();
-    sessionStorage.setItem('signupEmail', trimmedEmail);
-    console.log('Saved email to session storage:', trimmedEmail);
-    
-    // Get the stored referrer ID and handle the referral
-    const storedReferrerId = sessionStorage.getItem('referrerId');
-    if (storedReferrerId) {
-      await insertReferralTemp(storedReferrerId, trimmedEmail);
-    }
-    
-    setError(null);
-    setStep(2);
   };
 
   const handleBack = () => {
@@ -188,7 +197,7 @@ export const SignUpForm = () => {
             disabled={loading}
             className="w-full"
           >
-            Next
+            {loading ? "Processing..." : "Next"}
           </Button>
         ) : (
           <div className="space-y-2">
