@@ -31,13 +31,13 @@ export const SignUpForm = () => {
       switch (error.status) {
         case 400:
           if (error.message.includes("email_address_invalid")) {
-            return "Please enter a valid email address. Example: user@example.com";
+            return "Please enter a valid email address";
           }
           return error.message;
         case 422:
-          return "Invalid email format.";
+          return "Invalid email format";
         case 429:
-          return "Too many attempts. Please try again later.";
+          return "Too many attempts. Please try again later";
         default:
           return error.message;
       }
@@ -93,29 +93,32 @@ export const SignUpForm = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 py-4">
+    <div className="space-y-4">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       
-      <Input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="flex-1"
-        disabled={loading}
-      />
-      <Input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="flex-1"
-        disabled={loading}
-      />
+      <div className="space-y-2">
+        <Input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full"
+          disabled={loading}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full"
+          disabled={loading}
+        />
+      </div>
+
       <Button 
         onClick={handleSignUp}
         disabled={loading}
