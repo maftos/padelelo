@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn, Menu } from "lucide-react";
+import { LogIn, Menu, UserPlus, Copy, Check } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { AuthModal } from "./AuthModal";
@@ -11,14 +11,34 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 export const Navigation = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [hasCopied, setHasCopied] = useState(false);
   const { profile, isLoading } = useUserProfile();
   const { user, signOut } = useAuth();
+
+  const handleCopyInviteUrl = async () => {
+    if (!user?.id) return;
+    const inviteUrl = `matchpadel-palooza.lovable.app/signup/ref?=${user.id}`;
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      setHasCopied(true);
+      toast.success("Invite URL copied to clipboard!");
+      setTimeout(() => setHasCopied(false), 2000);
+    } catch (err) {
+      toast.error("Failed to copy invite URL");
+    }
+  };
 
   return (
     <>
@@ -71,9 +91,38 @@ export const Navigation = () => {
                   <nav className="flex flex-col gap-4 mt-4">
                     {/* Primary Action */}
                     {user && (
-                      <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
-                        Register a Match
-                      </Link>
+                      <>
+                        <Link to="/register-match" className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors">
+                          Register a Match
+                        </Link>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className="flex items-center gap-2 text-lg hover:text-primary transition-colors">
+                              <UserPlus className="h-5 w-5" />
+                              Invite Friend
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-80">
+                            <div className="space-y-4">
+                              <h4 className="font-medium leading-none mb-3">Share Invite Link</h4>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  className="w-full"
+                                  variant="outline"
+                                  onClick={handleCopyInviteUrl}
+                                >
+                                  {hasCopied ? (
+                                    <Check className="h-4 w-4 mr-2" />
+                                  ) : (
+                                    <Copy className="h-4 w-4 mr-2" />
+                                  )}
+                                  {hasCopied ? "Copied!" : "Copy Invite URL"}
+                                </Button>
+                              </div>
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </>
                     )}
                     
                     {/* Core Features */}
