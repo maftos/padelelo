@@ -13,7 +13,10 @@ export const InviteFriendDialog = ({ userId, onOpenChange }: InviteFriendDialogP
   const [hasCopied, setHasCopied] = useState(false);
 
   const handleCopyInviteUrl = async () => {
-    const inviteUrl = `padelelo.com/signup?ref=${userId}`;
+    // Get the current hostname, falling back to padelelo.com if not available
+    const hostname = window.location.hostname === 'localhost' ? 'padelelo.com' : window.location.hostname;
+    const inviteUrl = `${window.location.protocol}//${hostname}/signup?ref=${userId}`;
+    
     try {
       await navigator.clipboard.writeText(inviteUrl);
       setHasCopied(true);
