@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
+import { Filter, ChevronRight } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +17,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -31,13 +39,27 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { RecentMatches } from "@/components/RecentMatches";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { useToast } from "@/hooks/use-toast";
+
+interface LeaderboardPlayer {
+  id: string;
+  display_name: string;
+  profile_photo: string | null;
+  current_mmr: number;
+  nationality: string | null;
+  gender: string | null;
+}
 
 const Leaderboard = () => {
   const [filters, setFilters] = useState({
     gender: "both",
     friendsOnly: false,
   });
+  const [selectedPlayer, setSelectedPlayer] = useState<LeaderboardPlayer | null>(null);
   const isMobile = useIsMobile();
+  const { userId } = useUserProfile();
+  const { toast } = useToast();
 
   const { data: leaderboardData, isLoading } = useQuery({
     queryKey: ['leaderboard'],
@@ -59,6 +81,31 @@ const Leaderboard = () => {
 
   const handleFriendsOnlyChange = (checked: boolean) => {
     setFilters(prev => ({ ...prev, friendsOnly: checked }));
+  };
+
+  const handleSendFriendRequest = async () => {
+    if (!userId || !selectedPlayer) return;
+
+    try {
+      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+        user_a_id_public: userId,
+        user_b_id_public: selectedPlayer.id
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Friend Request Sent",
+        description: `A friend request has been sent to ${selectedPlayer.display_name}`,
+      });
+      setSelectedPlayer(null);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   const getInitials = (name: string) => {
@@ -135,6 +182,7 @@ const Leaderboard = () => {
                       </>
                     )}
                     <TableHead className="text-right font-semibold text-foreground">MMR</TableHead>
+                    <TableHead className="w-[40px]"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -149,7 +197,11 @@ const Leaderboard = () => {
                       </TableCell>
                     </TableRow>
                   ) : leaderboardData?.map((player, index) => (
-                    <TableRow key={player.id} className="hover:bg-accent/50 transition-colors">
+                    <TableRow 
+                      key={player.id} 
+                      className="hover:bg-accent/50 transition-colors cursor-pointer group"
+                      onClick={() => userId !== player.id && setSelectedPlayer(player)}
+                    >
                       <TableCell className="font-medium">
                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full 
                           ${index < 3 ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground'}`}>
@@ -197,6 +249,11 @@ const Leaderboard = () => {
                           {player.current_mmr || 0}
                         </span>
                       </TableCell>
+                      <TableCell>
+                        {userId !== player.id && (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -209,6 +266,30 @@ const Leaderboard = () => {
           </div>
         </div>
       </main>
+
+      <Dialog open={!!selectedPlayer} onOpenChange={() => setSelectedPlayer(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Friend</DialogTitle>
+            <DialogDescription>
+              Do you want to add {selectedPlayer?.display_name} as a friend?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              variant="outline"
+              onClick={() => setSelectedPlayer(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSendFriendRequest}
+            >
+              Send Friend Request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -574,6 +574,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      send_friend_request_leaderboard: {
+        Args: {
+          user_a_id_public: string
+          user_b_id_public: string
+        }
+        Returns: undefined
+      }
       view_friend_requests: {
         Args: {
           user_a_id_public: string
