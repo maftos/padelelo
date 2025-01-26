@@ -21,8 +21,8 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Router>
+      <Router>
+        <AuthProvider>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/home" element={<Home />} />
@@ -36,10 +36,10 @@ function App() {
             <Route path="/matchmaking-math" element={<MatchmakingMath />} />
             <Route path="/roadmap" element={<Roadmap />} />
           </Routes>
-        </Router>
-        <Toaster />
-        <SonnerToaster position="bottom-right" />
-      </AuthProvider>
+          <Toaster />
+          <SonnerToaster position="bottom-right" />
+        </AuthProvider>
+      </Router>
     </QueryClientProvider>
   );
 }
