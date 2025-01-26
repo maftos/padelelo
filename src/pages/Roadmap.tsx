@@ -2,12 +2,32 @@ import { Navigation } from "@/components/Navigation";
 import { Card } from "@/components/ui/card";
 import { ClipboardList } from "lucide-react";
 import { Helmet } from "react-helmet";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+interface FeatureUpdate {
+  version_number: string;
+  is_deployed: boolean;
+  release_date: string;
+  islikedby: string[];
+  change_items: string[];
+  title: string;
+}
 
 const Roadmap = () => {
+  const { data: featureUpdates, isLoading } = useQuery({
+    queryKey: ['featureUpdates'],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke<FeatureUpdate[]>('get_feature_updates');
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Roadmap - PadelELO</title>
+        <title>Feature Updates - PadelELO</title>
         <meta name="description" content="Check out our latest updates and upcoming features for PadelELO, the premier padel matchmaking platform in Mauritius." />
       </Helmet>
       <Navigation />
@@ -16,35 +36,38 @@ const Roadmap = () => {
           <section className="space-y-6">
             <div className="flex items-center gap-3">
               <ClipboardList className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold">Latest Updates</h1>
+              <h1 className="text-3xl font-bold">Feature Updates</h1>
             </div>
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Version 1.0.0 - Initial Release</h2>
-              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                <li>Launched PadelELO platform</li>
-                <li>Implemented basic matchmaking system</li>
-                <li>Added friend system</li>
-                <li>Introduced MMR calculations</li>
-              </ul>
-            </Card>
-          </section>
-
-          <section className="space-y-6">
-            <h2 className="text-2xl font-bold">Coming Soon</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Advanced Statistics</h3>
-                <p className="text-muted-foreground">Detailed analytics and visualization of match history and performance metrics.</p>
-              </Card>
-              <Card className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Tournament System</h3>
-                <p className="text-muted-foreground">Organize and participate in tournaments with automatic bracket generation.</p>
-              </Card>
-              <Card className="p-6">
-                <h3 className="text-xl font-semibold mb-4">Mobile App</h3>
-                <p className="text-muted-foreground">Native mobile application for iOS and Android platforms.</p>
-              </Card>
-            </div>
+            {isLoading ? (
+              <div>Loading updates...</div>
+            ) : (
+              featureUpdates?.map((update, index) => (
+                <Card key={index} className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-semibold">{update.title}</h2>
+                    <span className="text-sm text-muted-foreground">
+                      {new Date(update.release_date).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="space-y-4">
+                    {update.is_deployed ? (
+                      <span className="inline-block px-2 py-1 text-sm bg-green-100 text-green-800 rounded">
+                        Deployed
+                      </span>
+                    ) : (
+                      <span className="inline-block px-2 py-1 text-sm bg-yellow-100 text-yellow-800 rounded">
+                        Coming Soon
+                      </span>
+                    )}
+                    <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                      {update.change_items.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </Card>
+              ))
+            )}
           </section>
         </div>
       </main>

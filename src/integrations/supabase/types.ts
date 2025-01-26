@@ -36,6 +36,39 @@ export type Database = {
         }
         Relationships: []
       }
+      feature_updates: {
+        Row: {
+          change_items: string[]
+          created_at: string | null
+          id: number
+          is_deployed: boolean
+          islikedby: string[] | null
+          release_date: string
+          title: string
+          version_number: string | null
+        }
+        Insert: {
+          change_items: string[]
+          created_at?: string | null
+          id?: never
+          is_deployed?: boolean
+          islikedby?: string[] | null
+          release_date: string
+          title: string
+          version_number?: string | null
+        }
+        Update: {
+          change_items?: string[]
+          created_at?: string | null
+          id?: never
+          is_deployed?: boolean
+          islikedby?: string[] | null
+          release_date?: string
+          title?: string
+          version_number?: string | null
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string | null
@@ -291,57 +324,6 @@ export type Database = {
           },
         ]
       }
-      release_notes: {
-        Row: {
-          change_items: string[]
-          created_at: string | null
-          id: number
-          release_date: string
-          status: string
-          title: string
-        }
-        Insert: {
-          change_items: string[]
-          created_at?: string | null
-          id?: never
-          release_date: string
-          status: string
-          title: string
-        }
-        Update: {
-          change_items?: string[]
-          created_at?: string | null
-          id?: never
-          release_date?: string
-          status?: string
-          title?: string
-        }
-        Relationships: []
-      }
-      suggestions: {
-        Row: {
-          created_at: string
-          id: number
-          name: string
-          suggestion: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          name: string
-          suggestion: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          name?: string
-          suggestion?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       users: {
         Row: {
           created_at: string | null
@@ -459,6 +441,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_feature_updates: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          version_number: string
+          is_deployed: boolean
+          release_date: string
+          islikedby: string[]
+          change_items: string[]
+          title: string
+        }[]
+      }
       get_latest_completed_matches: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -551,6 +544,17 @@ export type Database = {
           nationality: string
           email: string
         }[]
+      }
+      insert_feature_update: {
+        Args: {
+          p_version_number: string
+          p_is_deployed: boolean
+          p_release_date: string
+          p_islikedby: string[]
+          p_change_items: string[]
+          p_title: string
+        }
+        Returns: undefined
       }
       insert_referral_temp: {
         Args: {

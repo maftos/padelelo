@@ -70,7 +70,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
           onClick={onClose}
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          On the Roadmap
+          Feature Updates
         </Link>
       </div>
 
