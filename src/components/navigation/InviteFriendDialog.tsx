@@ -13,7 +13,7 @@ export const InviteFriendDialog = ({ userId, onOpenChange }: InviteFriendDialogP
   const [hasCopied, setHasCopied] = useState(false);
 
   const handleCopyInviteUrl = async () => {
-    const inviteUrl = `${window.location.origin}/auth/signup?ref=${userId}`;
+    const inviteUrl = `${window.location.origin}/signup?ref=${userId}`;
     
     try {
       await navigator.clipboard.writeText(inviteUrl);
