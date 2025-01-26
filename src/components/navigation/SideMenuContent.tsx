@@ -58,6 +58,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
             </Link>
           </>
         )}
+        <Separator className="my-2" />
         <Link 
           to="/leaderboard" 
           onClick={onClose}
@@ -71,6 +72,13 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
           Feature Updates
+        </Link>
+        <Link 
+          to="/matchmaking-math" 
+          onClick={onClose}
+          className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          Matchmaking Algorithm
         </Link>
       </div>
 

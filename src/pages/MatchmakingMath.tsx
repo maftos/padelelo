@@ -6,7 +6,7 @@ const MatchmakingMath = () => {
       <Navigation />
       <main className="container py-8 px-4 max-w-4xl mx-auto">
         <div className="space-y-8">
-          <h1 className="text-3xl font-bold text-primary">Matchmaking Mathematics</h1>
+          <h1 className="text-3xl font-bold text-primary">Matchmaking Algorithm</h1>
           
           <div className="space-y-6">
             <section className="p-6 rounded-lg bg-accent">
@@ -28,7 +28,7 @@ const MatchmakingMath = () => {
                     </div>
                     <div className="pt-2">
                       <span>1 + 10</span>
-                      <sup>(R<sub>team2</sub> - R<sub>team1</sub>)/400</sup>
+                      <sup>(R<sub>team2</sub> - R<sub>team1</sub>)/1500</sup>
                     </div>
                   </div>
                 </div>
@@ -47,9 +47,30 @@ const MatchmakingMath = () => {
                     <span>New Rating = Old Rating + K × (Actual - Expected)</span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-4">
-                    Where K is the adjustment factor (32) and Actual is 1 for a win, 0 for a loss
+                    Where K is the adjustment factor (50) and Actual is 1 for a win, 0 for a loss
                   </p>
                 </div>
+              </div>
+            </section>
+
+            <section className="p-6 rounded-lg bg-accent">
+              <h2 className="text-xl font-semibold mb-4">Example Calculation</h2>
+              <div className="space-y-4">
+                <p className="text-muted-foreground">
+                  In an even matchup where both teams have the same average MMR:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+                  <li>Expected win rate would be 50% (0.5) for both teams</li>
+                  <li>When a team wins, their Actual score is 1 (while the losing team gets 0)</li>
+                  <li>MMR Change = 50 × (1 - 0.5) = 25 points</li>
+                  <li>Winners gain 25 MMR points</li>
+                  <li>Losers lose 25 MMR points</li>
+                </ul>
+                <p className="text-muted-foreground mt-4">
+                  The MMR change will be smaller when a higher-rated team wins against a lower-rated team 
+                  (as this was expected) and larger when a lower-rated team wins against a higher-rated team 
+                  (as this was unexpected).
+                </p>
               </div>
             </section>
           </div>
