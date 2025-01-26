@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -45,11 +45,11 @@ interface LeaderboardPlayer {
 }
 
 const Leaderboard = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = React.useState({
     gender: "both",
     friendsOnly: false,
   });
-  const [selectedPlayer, setSelectedPlayer] = useState<LeaderboardPlayer | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = React.useState<LeaderboardPlayer | null>(null);
   const isMobile = useIsMobile();
   const { userId } = useUserProfile();
   const { toast } = useToast();
