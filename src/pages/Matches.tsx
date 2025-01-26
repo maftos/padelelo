@@ -26,6 +26,10 @@ interface MatchDetails {
   team2_player1_profile_photo: string;
   team2_player2_display_name: string;
   team2_player2_profile_photo: string;
+  old_mmr: number;
+  change_amount: number;
+  change_type: string;
+  new_mmr: number;
 }
 
 const Matches = () => {
@@ -95,12 +99,12 @@ const Matches = () => {
               <MatchHistoryCard 
                 key={match.match_id}
                 match_id={match.match_id}
-                old_mmr={0} // These will be fetched by the MatchHistoryCard component
-                change_amount={0}
-                change_type=""
+                old_mmr={match.old_mmr}
+                change_amount={match.change_amount}
+                change_type={match.change_type}
                 created_at={match.created_at}
                 partner_id=""
-                new_mmr={0}
+                new_mmr={match.new_mmr}
                 status="COMPLETED"
               />
             ))

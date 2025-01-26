@@ -511,6 +511,10 @@ export type Database = {
           team2_player1_profile_photo: string
           team2_player2_display_name: string
           team2_player2_profile_photo: string
+          old_mmr: number
+          change_amount: number
+          change_type: string
+          new_mmr: number
         }[]
       }
       get_user_friends: {
