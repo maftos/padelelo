@@ -18,9 +18,11 @@ const Roadmap = () => {
   const { data: featureUpdates, isLoading } = useQuery({
     queryKey: ['featureUpdates'],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke<FeatureUpdate[]>('get_feature_updates');
+      const { data, error } = await supabase
+        .rpc('get_feature_updates');
+      
       if (error) throw error;
-      return data;
+      return data as FeatureUpdate[];
     },
   });
 
