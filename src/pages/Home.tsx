@@ -22,6 +22,26 @@ const Home = () => {
         <MatchmakingSection />
         <QASection />
         <ReleaseNotesSection />
+        <section className="mb-16 relative">
+          <div className="absolute inset-0 bg-accent/50 rounded-2xl backdrop-blur-sm -z-10" />
+          <div className="p-8 md:p-12">
+            <h2 className="text-3xl font-bold mb-8">Coming Soon</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-6 rounded-lg bg-card/50 backdrop-blur border-accent">
+                <h3 className="text-xl font-semibold mb-4">Advanced Statistics</h3>
+                <p className="text-muted-foreground">Detailed analytics and visualization of match history and performance metrics.</p>
+              </div>
+              <div className="p-6 rounded-lg bg-card/50 backdrop-blur border-accent">
+                <h3 className="text-xl font-semibold mb-4">Tournament System</h3>
+                <p className="text-muted-foreground">Organize and participate in tournaments with automatic bracket generation.</p>
+              </div>
+              <div className="p-6 rounded-lg bg-card/50 backdrop-blur border-accent">
+                <h3 className="text-xl font-semibold mb-4">Mobile App</h3>
+                <p className="text-muted-foreground">Native mobile application for iOS and Android platforms.</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
     </div>
