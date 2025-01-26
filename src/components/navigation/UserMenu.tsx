@@ -1,7 +1,7 @@
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ProfileDropdown } from "./ProfileDropdown";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface UserMenuProps {
@@ -13,7 +13,12 @@ export const UserMenu = ({ profile }: UserMenuProps) => {
   const navigate = useNavigate();
 
   if (profile) {
-    return <ProfileDropdown profile={profile} />;
+    return (
+      <Avatar className="h-8 w-8">
+        <AvatarImage src={profile.profile_photo || ''} alt={profile.display_name} />
+        <AvatarFallback>{profile.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+      </Avatar>
+    );
   }
 
   return (

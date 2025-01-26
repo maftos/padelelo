@@ -13,8 +13,7 @@ export const InviteFriendDialog = ({ userId, onOpenChange }: InviteFriendDialogP
   const [hasCopied, setHasCopied] = useState(false);
 
   const handleCopyInviteUrl = async () => {
-    // Updated URL format to use proper query parameter syntax
-    const inviteUrl = `matchpadel-palooza.lovable.app/signup?ref=${userId}`;
+    const inviteUrl = `padelelo.com/signup?ref=${userId}`;
     try {
       await navigator.clipboard.writeText(inviteUrl);
       setHasCopied(true);
@@ -37,7 +36,10 @@ export const InviteFriendDialog = ({ userId, onOpenChange }: InviteFriendDialogP
         <DialogHeader>
           <DialogTitle>Share Invite Link</DialogTitle>
         </DialogHeader>
-        <div className="flex items-center gap-2 pt-4">
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Share this link with friends you would like to invite to padelELO.com. They can only sign up after being referred by one of our existing members.
+          </p>
           <Button
             className="w-full"
             variant="outline"

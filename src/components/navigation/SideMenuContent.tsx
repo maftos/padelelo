@@ -29,6 +29,8 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
         </div>
       )}
       
+      <Separator className="my-2" />
+      
       {/* Core Features */}
       <div className="space-y-2">
         {user && (
@@ -63,32 +65,12 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
         >
           Leaderboard
         </Link>
-      </div>
-      
-      <Separator />
-      
-      {/* Documentation */}
-      <div className="space-y-2">
         <Link 
-          to="/release-notes" 
+          to="/roadmap" 
           onClick={onClose}
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          Release Notes
-        </Link>
-        <Link 
-          to="/matchmaking-math" 
-          onClick={onClose}
-          className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          Matchmaking Math
-        </Link>
-        <Link 
-          to="/future-improvements" 
-          onClick={onClose}
-          className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          Future Improvements
+          On the Roadmap
         </Link>
       </div>
 

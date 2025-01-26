@@ -33,7 +33,7 @@ export const MatchForm = () => {
   } = useMatchForm();
 
   return (
-    <Card className="w-full max-w-md p-4 space-y-4 animate-fade-in">
+    <Card className="w-full max-w-md p-4 space-y-3 animate-fade-in">
       <div className="space-y-1 text-center">
         <h2 className="text-2xl font-semibold tracking-tight">Register Match</h2>
         <p className="text-sm text-muted-foreground">
@@ -42,10 +42,10 @@ export const MatchForm = () => {
       </div>
 
       {page === 1 ? (
-        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
+        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-3">
           <DateSelector value={date} onChange={setDate} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <TeamSelect
                 teamNumber={1}
@@ -57,7 +57,7 @@ export const MatchForm = () => {
               />
             </div>
             
-            <div className="relative">
+            <div className="relative pl-4 md:pl-6">
               <Separator orientation="vertical" className="absolute left-0 h-full hidden md:block" />
               <TeamSelect
                 teamNumber={2}
