@@ -34,6 +34,13 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
         {user && (
           <>
             <Link 
+              to="/profile" 
+              onClick={onClose}
+              className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            >
+              Profile
+            </Link>
+            <Link 
               to="/friends" 
               onClick={onClose}
               className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"

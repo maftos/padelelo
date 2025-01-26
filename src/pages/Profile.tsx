@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -203,6 +204,10 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>My Profile - PadelELO</title>
+        <meta name="description" content="Manage your PadelELO profile, update your information, and track your progress in the Mauritius padel community." />
+      </Helmet>
       <Navigation />
       <main className="container max-w-2xl py-8 px-4 space-y-8">
         <ProfileHeader 
