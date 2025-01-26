@@ -1,13 +1,4 @@
-import { useState } from "react";
-import { Navigation } from "@/components/Navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Filter, ChevronRight } from "lucide-react";
 import {
@@ -17,14 +8,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -34,6 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -92,17 +83,31 @@ const Leaderboard = () => {
         user_b_id_public: selectedPlayer.id
       });
 
-      if (error) throw error;
-
-      toast({
-        title: "Friend Request Sent",
-        description: `A friend request has been sent to ${selectedPlayer.display_name}`,
-      });
+      if (error) {
+        // Check if the error is due to an already sent invitation
+        if (error.message.includes('Invitation sent already')) {
+          toast({
+            title: "Already Friends",
+            description: `You have already sent a friend request to ${selectedPlayer.display_name}`,
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
+      } else {
+        toast({
+          title: "Friend Request Sent",
+          description: `A friend request has been sent to ${selectedPlayer.display_name}`,
+        });
+      }
       setSelectedPlayer(null);
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
     }
