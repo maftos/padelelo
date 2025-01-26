@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { MatchHistoryCard } from "@/components/match/MatchHistoryCard";
@@ -18,14 +17,14 @@ interface MatchDetails {
   team1_score: number;
   team2_score: number;
   created_at: string;
-  team1_player1_display_name: string;
-  team1_player1_profile_photo: string;
-  team1_player2_display_name: string;
-  team1_player2_profile_photo: string;
-  team2_player1_display_name: string;
-  team2_player1_profile_photo: string;
-  team2_player2_display_name: string;
-  team2_player2_profile_photo: string;
+  player1_display_name: string;
+  player1_profile_photo: string;
+  player2_display_name: string;
+  player2_profile_photo: string;
+  player3_display_name: string;
+  player3_profile_photo: string;
+  player4_display_name: string;
+  player4_profile_photo: string;
   old_mmr: number;
   change_amount: number;
   change_type: string;
@@ -106,6 +105,16 @@ const Matches = () => {
                 partner_id=""
                 new_mmr={match.new_mmr}
                 status="COMPLETED"
+                team1_score={match.team1_score}
+                team2_score={match.team2_score}
+                team1_player1_display_name={match.player1_display_name}
+                team1_player1_profile_photo={match.player1_profile_photo}
+                team1_player2_display_name={match.player2_display_name}
+                team1_player2_profile_photo={match.player2_profile_photo}
+                team2_player1_display_name={match.player3_display_name}
+                team2_player1_profile_photo={match.player3_profile_photo}
+                team2_player2_display_name={match.player4_display_name}
+                team2_player2_profile_photo={match.player4_profile_photo}
               />
             ))
           )}

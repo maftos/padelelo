@@ -2,9 +2,6 @@ import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface MatchHistoryCardProps {
   match_id: string;
@@ -15,25 +12,16 @@ interface MatchHistoryCardProps {
   partner_id: string;
   new_mmr: number;
   status: string;
-}
-
-interface MatchDetails {
-  match_id: string;
-  team1_player1_id: string;
-  team1_player2_id: string;
-  team2_player1_id: string;
-  team2_player2_id: string;
-  team1_score: number;
-  team2_score: number;
-  created_at: string;
-  team1_player1_display_name: string;
-  team1_player1_profile_photo: string;
-  team1_player2_display_name: string;
-  team1_player2_profile_photo: string;
-  team2_player1_display_name: string;
-  team2_player1_profile_photo: string;
-  team2_player2_display_name: string;
-  team2_player2_profile_photo: string;
+  team1_score?: number;
+  team2_score?: number;
+  team1_player1_display_name?: string;
+  team1_player1_profile_photo?: string;
+  team1_player2_display_name?: string;
+  team1_player2_profile_photo?: string;
+  team2_player1_display_name?: string;
+  team2_player1_profile_photo?: string;
+  team2_player2_display_name?: string;
+  team2_player2_profile_photo?: string;
 }
 
 export const MatchHistoryCard = ({
@@ -42,25 +30,17 @@ export const MatchHistoryCard = ({
   change_type,
   created_at,
   new_mmr,
-  status,
-  match_id,
+  team1_score,
+  team2_score,
+  team1_player1_display_name,
+  team1_player1_profile_photo,
+  team1_player2_display_name,
+  team1_player2_profile_photo,
+  team2_player1_display_name,
+  team2_player1_profile_photo,
+  team2_player2_display_name,
+  team2_player2_profile_photo,
 }: MatchHistoryCardProps) => {
-  const { userId } = useUserProfile();
-
-  const { data: matchDetails } = useQuery({
-    queryKey: ["matchDetails", match_id],
-    queryFn: async () => {
-      if (!userId) throw new Error("User ID is required");
-      const { data, error } = await supabase.rpc("get_my_completed_matches", {
-        user_a_id: userId
-      });
-      if (error) throw error;
-      const matchDetail = data.find((match) => match.match_id === match_id);
-      return matchDetail as MatchDetails;
-    },
-    enabled: !!userId && !!match_id,
-  });
-
   const getInitials = (name?: string) => {
     if (!name) return "?";
     return name
@@ -98,59 +78,57 @@ export const MatchHistoryCard = ({
         </Badge>
       </div>
       
-      {matchDetails && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between gap-2">
-            {/* Team 1 */}
-            <div className="flex-1">
-              <div className="flex items-center gap-1.5">
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={matchDetails.team1_player1_profile_photo} />
-                  <AvatarFallback>{getInitials(matchDetails.team1_player1_display_name)}</AvatarFallback>
-                </Avatar>
-                <span className="text-xs truncate">{matchDetails.team1_player1_display_name}</span>
-              </div>
-              <div className="flex items-center gap-1.5 mt-1">
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={matchDetails.team1_player2_profile_photo} />
-                  <AvatarFallback>{getInitials(matchDetails.team1_player2_display_name)}</AvatarFallback>
-                </Avatar>
-                <span className="text-xs truncate">{matchDetails.team1_player2_display_name}</span>
-              </div>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          {/* Team 1 */}
+          <div className="flex-1">
+            <div className="flex items-center gap-1.5">
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={team1_player1_profile_photo} />
+                <AvatarFallback>{getInitials(team1_player1_display_name)}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs truncate">{team1_player1_display_name}</span>
             </div>
-
-            {/* Scores */}
-            <div className="flex items-center gap-2 font-semibold">
-              <span>{matchDetails.team1_score}</span>
-              <span className="text-muted-foreground">-</span>
-              <span>{matchDetails.team2_score}</span>
-            </div>
-
-            {/* Team 2 */}
-            <div className="flex-1 text-right">
-              <div className="flex items-center justify-end gap-1.5">
-                <span className="text-xs truncate">{matchDetails.team2_player1_display_name}</span>
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={matchDetails.team2_player1_profile_photo} />
-                  <AvatarFallback>{getInitials(matchDetails.team2_player1_display_name)}</AvatarFallback>
-                </Avatar>
-              </div>
-              <div className="flex items-center justify-end gap-1.5 mt-1">
-                <span className="text-xs truncate">{matchDetails.team2_player2_display_name}</span>
-                <Avatar className="h-5 w-5">
-                  <AvatarImage src={matchDetails.team2_player2_profile_photo} />
-                  <AvatarFallback>{getInitials(matchDetails.team2_player2_display_name)}</AvatarFallback>
-                </Avatar>
-              </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={team1_player2_profile_photo} />
+                <AvatarFallback>{getInitials(team1_player2_display_name)}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs truncate">{team1_player2_display_name}</span>
             </div>
           </div>
 
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Previous MMR: {old_mmr}</span>
-            <span>New MMR: {new_mmr}</span>
+          {/* Scores */}
+          <div className="flex items-center gap-2 font-semibold">
+            <span>{team1_score}</span>
+            <span className="text-muted-foreground">-</span>
+            <span>{team2_score}</span>
+          </div>
+
+          {/* Team 2 */}
+          <div className="flex-1 text-right">
+            <div className="flex items-center justify-end gap-1.5">
+              <span className="text-xs truncate">{team2_player1_display_name}</span>
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={team2_player1_profile_photo} />
+                <AvatarFallback>{getInitials(team2_player1_display_name)}</AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="flex items-center justify-end gap-1.5 mt-1">
+              <span className="text-xs truncate">{team2_player2_display_name}</span>
+              <Avatar className="h-5 w-5">
+                <AvatarImage src={team2_player2_profile_photo} />
+                <AvatarFallback>{getInitials(team2_player2_display_name)}</AvatarFallback>
+              </Avatar>
+            </div>
           </div>
         </div>
-      )}
+
+        <div className="flex justify-between text-sm text-muted-foreground">
+          <span>Previous MMR: {old_mmr}</span>
+          <span>New MMR: {new_mmr}</span>
+        </div>
+      </div>
     </Card>
   );
 };

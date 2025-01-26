@@ -473,48 +473,31 @@ export type Database = {
           team2_player2_profile_photo: string
         }[]
       }
-      get_latest_matches: {
-        Args: {
-          p_user_id: string
-          page_number: number
-        }
-        Returns: {
-          match_id: string
-          user_id: string
-          old_mmr: number
-          change_amount: number
-          change_type: string
-          created_at: string
-          partner_id: string
-          new_mmr: number
-          status: string
-        }[]
-      }
       get_my_completed_matches: {
         Args: {
           user_a_id: string
         }
         Returns: {
+          change_amount: number
+          old_mmr: number
+          change_type: string
+          new_mmr: number
           match_id: string
-          team1_player1_id: string
-          team1_player2_id: string
-          team2_player1_id: string
-          team2_player2_id: string
           team1_score: number
           team2_score: number
           created_at: string
-          team1_player1_display_name: string
-          team1_player1_profile_photo: string
-          team1_player2_display_name: string
-          team1_player2_profile_photo: string
-          team2_player1_display_name: string
-          team2_player1_profile_photo: string
-          team2_player2_display_name: string
-          team2_player2_profile_photo: string
-          old_mmr: number
-          change_amount: number
-          change_type: string
-          new_mmr: number
+          player1_id: string
+          player1_display_name: string
+          player1_profile_photo: string
+          player2_id: string
+          player2_display_name: string
+          player2_profile_photo: string
+          player3_id: string
+          player3_display_name: string
+          player3_profile_photo: string
+          player4_id: string
+          player4_display_name: string
+          player4_profile_photo: string
         }[]
       }
       get_user_friends: {
