@@ -86,10 +86,15 @@ const Leaderboard = () => {
       });
 
       if (error) {
-        // Check if the error is due to an already sent invitation
-        if (error.message.includes('Invitation sent already')) {
+        // Check if the error message contains our friendly message
+        if (error.message.includes("best friends")) {
           toast({
             title: "Already Friends",
+            description: error.message,
+          });
+        } else if (error.message.includes("Invitation sent already")) {
+          toast({
+            title: "Request Pending",
             description: `You have already sent a friend request to ${selectedPlayer.display_name}`,
           });
         } else {
