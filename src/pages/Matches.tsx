@@ -10,25 +10,23 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface MatchDetails {
   match_id: string;
-  team1_player1_id: string;
-  team1_player2_id: string;
-  team2_player1_id: string;
-  team2_player2_id: string;
-  team1_score: number;
-  team2_score: number;
-  created_at: string;
-  player1_display_name: string;
-  player1_profile_photo: string;
-  player2_display_name: string;
-  player2_profile_photo: string;
-  player3_display_name: string;
-  player3_profile_photo: string;
-  player4_display_name: string;
-  player4_profile_photo: string;
   old_mmr: number;
   change_amount: number;
   change_type: string;
+  created_at: string;
+  partner_id: string;
   new_mmr: number;
+  status: string;
+  team1_score: number;
+  team2_score: number;
+  team1_player1_display_name: string;
+  team1_player1_profile_photo: string;
+  team1_player2_display_name: string;
+  team1_player2_profile_photo: string;
+  team2_player1_display_name: string;
+  team2_player1_profile_photo: string;
+  team2_player2_display_name: string;
+  team2_player2_profile_photo: string;
 }
 
 const Matches = () => {
@@ -62,7 +60,27 @@ const Matches = () => {
         throw error;
       }
 
-      return data as MatchDetails[];
+      // Map the returned data to match our MatchDetails interface
+      return data.map((match: any) => ({
+        match_id: match.match_id,
+        old_mmr: match.old_mmr,
+        change_amount: match.change_amount,
+        change_type: match.change_type,
+        created_at: match.created_at,
+        partner_id: "", // This field isn't used in the card
+        new_mmr: match.new_mmr,
+        status: "COMPLETED",
+        team1_score: match.team1_score,
+        team2_score: match.team2_score,
+        team1_player1_display_name: match.player1_display_name,
+        team1_player1_profile_photo: match.player1_profile_photo,
+        team1_player2_display_name: match.player2_display_name,
+        team1_player2_profile_photo: match.player2_profile_photo,
+        team2_player1_display_name: match.player3_display_name,
+        team2_player1_profile_photo: match.player3_profile_photo,
+        team2_player2_display_name: match.player4_display_name,
+        team2_player2_profile_photo: match.player4_profile_photo,
+      }));
     },
     enabled: !!userId && !!session,
   });
@@ -97,24 +115,7 @@ const Matches = () => {
             matches.map((match) => (
               <MatchHistoryCard 
                 key={match.match_id}
-                match_id={match.match_id}
-                old_mmr={match.old_mmr}
-                change_amount={match.change_amount}
-                change_type={match.change_type}
-                created_at={match.created_at}
-                partner_id=""
-                new_mmr={match.new_mmr}
-                status="COMPLETED"
-                team1_score={match.team1_score}
-                team2_score={match.team2_score}
-                team1_player1_display_name={match.player1_display_name}
-                team1_player1_profile_photo={match.player1_profile_photo}
-                team1_player2_display_name={match.player2_display_name}
-                team1_player2_profile_photo={match.player2_profile_photo}
-                team2_player1_display_name={match.player3_display_name}
-                team2_player1_profile_photo={match.player3_profile_photo}
-                team2_player2_display_name={match.player4_display_name}
-                team2_player2_profile_photo={match.player4_profile_photo}
+                {...match}
               />
             ))
           )}
