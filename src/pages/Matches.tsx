@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Navigation } from "@/components/Navigation";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { MatchHistoryCard } from "@/components/match/MatchHistoryCard";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface MatchDetails {
   match_id: string;
@@ -29,6 +31,15 @@ interface MatchDetails {
 const Matches = () => {
   const { toast } = useToast();
   const { userId } = useUserProfile();
+  const navigate = useNavigate();
+  const { session, loading } = useAuth();
+
+  // Check authentication status
+  useEffect(() => {
+    if (!loading && !session) {
+      navigate('/login');
+    }
+  }, [session, loading, navigate]);
 
   const { data: matches = [], isLoading } = useQuery({
     queryKey: ["myCompletedMatches", userId],
@@ -50,8 +61,20 @@ const Matches = () => {
 
       return data as MatchDetails[];
     },
-    enabled: !!userId,
+    enabled: !!userId && !!session,
   });
+
+  // Show loading state while checking auth
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">
+      <p>Loading...</p>
+    </div>;
+  }
+
+  // Don't render anything if not authenticated
+  if (!session) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
