@@ -1,29 +1,13 @@
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { useSearchParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useReferrer } from "@/hooks/use-referrer";
 
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const referrerId = searchParams.get('ref');
-
-  const { data: referrer, isLoading: isLoadingReferrer } = useQuery({
-    queryKey: ['referrer', referrerId],
-    queryFn: async () => {
-      if (!referrerId) return null;
-      const { data, error } = await supabase
-        .from('users')
-        .select('display_name, profile_photo')
-        .eq('id', referrerId)
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!referrerId
-  });
+  const { data: referrer, isLoading: isLoadingReferrer } = useReferrer(referrerId);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
