@@ -7,31 +7,36 @@ import { Navigation } from "@/components/Navigation";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { MatchHistoryCard } from "@/components/match/MatchHistoryCard";
 
-interface MatchHistory {
+interface MatchDetails {
   match_id: string;
-  user_id: string;
-  old_mmr: number;
-  change_amount: number;
-  change_type: string;
+  team1_player1_id: string;
+  team1_player2_id: string;
+  team2_player1_id: string;
+  team2_player2_id: string;
+  team1_score: number;
+  team2_score: number;
   created_at: string;
-  partner_id: string;
-  new_mmr: number;
-  status: string;
+  team1_player1_display_name: string;
+  team1_player1_profile_photo: string;
+  team1_player2_display_name: string;
+  team1_player2_profile_photo: string;
+  team2_player1_display_name: string;
+  team2_player1_profile_photo: string;
+  team2_player2_display_name: string;
+  team2_player2_profile_photo: string;
 }
 
 const Matches = () => {
   const { toast } = useToast();
-  const [page, setPage] = useState(1);
   const { userId } = useUserProfile();
 
   const { data: matches = [], isLoading } = useQuery({
-    queryKey: ["matches", page, userId],
+    queryKey: ["myCompletedMatches", userId],
     queryFn: async () => {
       if (!userId) return [];
 
-      const { data, error } = await supabase.rpc("get_latest_matches", {
-        p_user_id: userId,
-        page_number: page,
+      const { data, error } = await supabase.rpc("get_my_completed_matches", {
+        user_a_id: userId,
       });
 
       if (error) {
@@ -43,7 +48,7 @@ const Matches = () => {
         throw error;
       }
 
-      return data as MatchHistory[];
+      return data as MatchDetails[];
     },
     enabled: !!userId,
   });
@@ -64,19 +69,19 @@ const Matches = () => {
             <p className="text-center text-muted-foreground">No matches found</p>
           ) : (
             matches.map((match) => (
-              <MatchHistoryCard key={match.match_id} {...match} />
+              <MatchHistoryCard 
+                key={match.match_id}
+                match_id={match.match_id}
+                old_mmr={0} // These will be fetched by the MatchHistoryCard component
+                change_amount={0}
+                change_type=""
+                created_at={match.created_at}
+                partner_id=""
+                new_mmr={0}
+                status="COMPLETED"
+              />
             ))
           )}
-
-          <div className="flex justify-center pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setPage((p) => p + 1)}
-              disabled={matches.length < 10}
-            >
-              Load More
-            </Button>
-          </div>
         </div>
       </main>
     </div>
