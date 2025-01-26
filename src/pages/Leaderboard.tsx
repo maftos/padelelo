@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Filter, ChevronRight } from "lucide-react";
