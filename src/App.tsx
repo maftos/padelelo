@@ -15,6 +15,7 @@ import Matches from "@/pages/Matches";
 import Leaderboard from "@/pages/Leaderboard";
 import MatchmakingMath from "@/pages/MatchmakingMath";
 import Roadmap from "@/pages/Roadmap";
+import RegisterMatch from "@/pages/RegisterMatch";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ function App() {
             <Route path="/leaderboard" element={<Leaderboard />} />
             <Route path="/matchmaking-math" element={<MatchmakingMath />} />
             <Route path="/roadmap" element={<Roadmap />} />
+            <Route path="/register-match" element={<RegisterMatch />} />
           </Routes>
           <Toaster />
           <SonnerToaster position="bottom-right" />
