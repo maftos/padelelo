@@ -412,50 +412,28 @@ export type Database = {
           team2_win_mmr_change_amount: number
         }[]
       }
-      complete_match:
-        | {
-            Args: {
-              match_id: string
-              new_team1_score: number
-              new_team2_score: number
-              team1_win_mmr_change_amount: number
-              team2_win_mmr_change_amount: number
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              match_id: string
-              new_team1_score: number
-              new_team2_score: number
-              team1_win_mmr_change_amount: number
-              team2_win_mmr_change_amount: number
-              user_a_id: string
-            }
-            Returns: undefined
-          }
-      create_match:
-        | {
-            Args: {
-              team1_player1_id: string
-              team1_player2_id: string
-              team2_player1_id: string
-              team2_player2_id: string
-              match_date: string
-            }
-            Returns: string
-          }
-        | {
-            Args: {
-              user_a_id: string
-              team1_player1_id: string
-              team1_player2_id: string
-              team2_player1_id: string
-              team2_player2_id: string
-              match_date: string
-            }
-            Returns: string
-          }
+      complete_match: {
+        Args: {
+          match_id: string
+          new_team1_score: number
+          new_team2_score: number
+          team1_win_mmr_change_amount: number
+          team2_win_mmr_change_amount: number
+          user_a_id: string
+        }
+        Returns: undefined
+      }
+      create_match: {
+        Args: {
+          user_a_id: string
+          team1_player1_id: string
+          team1_player2_id: string
+          team2_player1_id: string
+          team2_player2_id: string
+          match_date: string
+        }
+        Returns: string
+      }
       edit_user_profile: {
         Args: {
           user_a_id: string
