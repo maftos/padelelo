@@ -25,6 +25,10 @@ interface MatchHistoryCardProps {
   team2_player2_display_name?: string;
   team2_player2_profile_photo?: string;
   completed_by?: string;
+  player1_id?: string;
+  player2_id?: string;
+  player3_id?: string;
+  player4_id?: string;
 }
 
 export const MatchHistoryCard = ({
@@ -44,6 +48,10 @@ export const MatchHistoryCard = ({
   team2_player2_display_name,
   team2_player2_profile_photo,
   completed_by,
+  player1_id,
+  player2_id,
+  player3_id,
+  player4_id,
 }: MatchHistoryCardProps) => {
   const getInitials = (name?: string) => {
     if (!name) return "?";
@@ -55,9 +63,9 @@ export const MatchHistoryCard = ({
   };
 
   // Function to check if a player is the one who completed the match
-  const isMatchCompleter = (playerPhoto?: string) => {
-    if (!completed_by || !playerPhoto) return false;
-    return completed_by === playerPhoto;
+  const isMatchCompleter = (playerId?: string) => {
+    if (!completed_by || !playerId) return false;
+    return completed_by === playerId;
   };
 
   return (
@@ -98,7 +106,7 @@ export const MatchHistoryCard = ({
                 <AvatarFallback>{getInitials(team1_player1_display_name)}</AvatarFallback>
               </Avatar>
               <span className="text-xs truncate">{team1_player1_display_name}</span>
-              {isMatchCompleter(team1_player1_profile_photo) && (
+              {isMatchCompleter(player1_id) && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -117,7 +125,7 @@ export const MatchHistoryCard = ({
                 <AvatarFallback>{getInitials(team1_player2_display_name)}</AvatarFallback>
               </Avatar>
               <span className="text-xs truncate">{team1_player2_display_name}</span>
-              {isMatchCompleter(team1_player2_profile_photo) && (
+              {isMatchCompleter(player2_id) && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -143,7 +151,7 @@ export const MatchHistoryCard = ({
           <div className="flex-1 text-right">
             <div className="flex items-center justify-end gap-1.5">
               <span className="text-xs truncate">{team2_player1_display_name}</span>
-              {isMatchCompleter(team2_player1_profile_photo) && (
+              {isMatchCompleter(player3_id) && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -162,7 +170,7 @@ export const MatchHistoryCard = ({
             </div>
             <div className="flex items-center justify-end gap-1.5 mt-1">
               <span className="text-xs truncate">{team2_player2_display_name}</span>
-              {isMatchCompleter(team2_player2_profile_photo) && (
+              {isMatchCompleter(player4_id) && (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
