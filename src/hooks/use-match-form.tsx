@@ -72,6 +72,11 @@ export function useMatchForm() {
   };
 
   const handleNext = async () => {
+    if (!userId) {
+      toast.error("You must be logged in to create a match");
+      return;
+    }
+
     if (!player1 || !player2 || !player3 || !player4) {
       toast.error("Please fill in all player fields");
       return;
@@ -87,6 +92,7 @@ export function useMatchForm() {
       setIsCalculating(true);
       
       const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
+        user_a_id: userId,
         team1_player1_id: player1,
         team1_player2_id: player2,
         team2_player1_id: player3,
@@ -131,6 +137,11 @@ export function useMatchForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!userId) {
+      toast.error("You must be logged in to complete a match");
+      return;
+    }
+
     if (!matchId || !mmrData) {
       toast.error("Match data not ready. Please try again.");
       return;
@@ -150,6 +161,7 @@ export function useMatchForm() {
     try {
       setIsSubmitting(true);
       const { error: completeError } = await supabase.rpc('complete_match', {
+        user_a_id: userId,
         match_id: matchId,
         new_team1_score: parseInt(scores[0].team1),
         new_team2_score: parseInt(scores[0].team2),
