@@ -493,6 +493,7 @@ export type Database = {
           match_id: string
           team1_score: number
           team2_score: number
+          completed_by: string
           created_at: string
           player1_id: string
           player1_display_name: string

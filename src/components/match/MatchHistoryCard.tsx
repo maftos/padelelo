@@ -2,6 +2,8 @@ import { formatDistanceToNow } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Crown } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface MatchHistoryCardProps {
   match_id: string;
@@ -22,6 +24,7 @@ interface MatchHistoryCardProps {
   team2_player1_profile_photo?: string;
   team2_player2_display_name?: string;
   team2_player2_profile_photo?: string;
+  completed_by?: string;
 }
 
 export const MatchHistoryCard = ({
@@ -40,6 +43,7 @@ export const MatchHistoryCard = ({
   team2_player1_profile_photo,
   team2_player2_display_name,
   team2_player2_profile_photo,
+  completed_by,
 }: MatchHistoryCardProps) => {
   const getInitials = (name?: string) => {
     if (!name) return "?";
@@ -48,6 +52,19 @@ export const MatchHistoryCard = ({
       .map((n) => n[0])
       .join("")
       .toUpperCase();
+  };
+
+  // Function to check if a player is the one who completed the match
+  const isMatchCompleter = (playerName?: string) => {
+    if (!completed_by || !playerName) return false;
+    const players = [
+      { name: team1_player1_display_name, id: team1_player1_profile_photo },
+      { name: team1_player2_display_name, id: team1_player2_profile_photo },
+      { name: team2_player1_display_name, id: team2_player1_profile_photo },
+      { name: team2_player2_display_name, id: team2_player2_profile_photo },
+    ];
+    const completer = players.find(p => p.id === completed_by);
+    return completer?.name === playerName;
   };
 
   return (
@@ -88,6 +105,18 @@ export const MatchHistoryCard = ({
                 <AvatarFallback>{getInitials(team1_player1_display_name)}</AvatarFallback>
               </Avatar>
               <span className="text-xs truncate">{team1_player1_display_name}</span>
+              {isMatchCompleter(team1_player1_display_name) && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Crown className="h-4 w-4 text-yellow-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>The Honorable Scorekeeper 👑<br />This legend submitted the match results!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               <Avatar className="h-5 w-5">
@@ -95,6 +124,18 @@ export const MatchHistoryCard = ({
                 <AvatarFallback>{getInitials(team1_player2_display_name)}</AvatarFallback>
               </Avatar>
               <span className="text-xs truncate">{team1_player2_display_name}</span>
+              {isMatchCompleter(team1_player2_display_name) && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Crown className="h-4 w-4 text-yellow-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>The Honorable Scorekeeper 👑<br />This legend submitted the match results!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </div>
           </div>
 
@@ -109,6 +150,18 @@ export const MatchHistoryCard = ({
           <div className="flex-1 text-right">
             <div className="flex items-center justify-end gap-1.5">
               <span className="text-xs truncate">{team2_player1_display_name}</span>
+              {isMatchCompleter(team2_player1_display_name) && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Crown className="h-4 w-4 text-yellow-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>The Honorable Scorekeeper 👑<br />This legend submitted the match results!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               <Avatar className="h-5 w-5">
                 <AvatarImage src={team2_player1_profile_photo} />
                 <AvatarFallback>{getInitials(team2_player1_display_name)}</AvatarFallback>
@@ -116,6 +169,18 @@ export const MatchHistoryCard = ({
             </div>
             <div className="flex items-center justify-end gap-1.5 mt-1">
               <span className="text-xs truncate">{team2_player2_display_name}</span>
+              {isMatchCompleter(team2_player2_display_name) && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Crown className="h-4 w-4 text-yellow-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>The Honorable Scorekeeper 👑<br />This legend submitted the match results!</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
               <Avatar className="h-5 w-5">
                 <AvatarImage src={team2_player2_profile_photo} />
                 <AvatarFallback>{getInitials(team2_player2_display_name)}</AvatarFallback>
