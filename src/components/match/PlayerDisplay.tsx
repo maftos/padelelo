@@ -24,8 +24,8 @@ export const PlayerDisplay = ({
       .toUpperCase();
   };
 
-  const content = (
-    <>
+  return (
+    <div className={`flex items-center ${isRightAligned ? 'justify-end' : ''} gap-1.5`}>
       {!isRightAligned && (
         <Avatar className="h-5 w-5">
           <AvatarImage src={profilePhoto} />
@@ -51,12 +51,6 @@ export const PlayerDisplay = ({
           <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
         </Avatar>
       )}
-    </>
-  );
-
-  return (
-    <div className={`flex items-center ${isRightAligned ? 'justify-end' : ''} gap-1.5`}>
-      {content}
     </div>
   );
 };
