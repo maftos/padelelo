@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Crown } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PlayerDisplayProps {
   displayName?: string;
@@ -24,6 +23,10 @@ export const PlayerDisplay = ({
       .toUpperCase();
   };
 
+  if (isMatchCompleter) {
+    console.log('Rendering crown for:', displayName);
+  }
+
   return (
     <div className={`flex items-center ${isRightAligned ? 'justify-end' : ''} gap-1.5`}>
       {!isRightAligned && (
@@ -34,16 +37,7 @@ export const PlayerDisplay = ({
       )}
       <span className="text-xs truncate">{displayName}</span>
       {isMatchCompleter && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Crown className="h-4 w-4 text-yellow-500" />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>The Honorable Scorekeeper 👑<br />This legend submitted the match results!</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <Crown className="h-4 w-4 text-yellow-500" />
       )}
       {isRightAligned && (
         <Avatar className="h-5 w-5">

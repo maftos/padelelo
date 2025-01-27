@@ -4,14 +4,11 @@ import { TeamDisplay } from "./TeamDisplay";
 import { MatchFooter } from "./MatchFooter";
 
 interface MatchHistoryCardProps {
-  match_id: string;
   old_mmr: number;
   change_amount: number;
   change_type: string;
   created_at: string;
-  partner_id: string;
   new_mmr: number;
-  status: string;
   team1_score?: number;
   team2_score?: number;
   team1_player1_display_name?: string;
@@ -51,9 +48,16 @@ export const MatchHistoryCard = ({
   player3_id,
   player4_id,
 }: MatchHistoryCardProps) => {
+  console.log('Match completer ID:', completed_by);
+  console.log('Player IDs:', { player1_id, player2_id, player3_id, player4_id });
+
   const isMatchCompleter = (playerId?: string) => {
     if (!completed_by || !playerId) return false;
-    return completed_by === playerId;
+    const isCompleter = completed_by === playerId;
+    if (isCompleter) {
+      console.log('Found match completer:', playerId);
+    }
+    return isCompleter;
   };
 
   return (
