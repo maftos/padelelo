@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Crown } from "lucide-react";
 
 interface PlayerDisplayProps {
   displayName?: string;
@@ -24,7 +23,7 @@ export const PlayerDisplay = ({
   };
 
   if (isMatchCompleter) {
-    console.log('Rendering crown for:', displayName);
+    console.log('Rendering completed by text for:', displayName);
   }
 
   return (
@@ -35,10 +34,12 @@ export const PlayerDisplay = ({
           <AvatarFallback>{getInitials(displayName)}</AvatarFallback>
         </Avatar>
       )}
-      <span className="text-xs truncate">{displayName}</span>
-      {isMatchCompleter && (
-        <Crown className="h-4 w-4 text-yellow-500" />
-      )}
+      <div className="flex flex-col">
+        <span className="text-xs truncate">{displayName}</span>
+        {isMatchCompleter && (
+          <span className="text-[10px] text-muted-foreground">completed by</span>
+        )}
+      </div>
       {isRightAligned && (
         <Avatar className="h-5 w-5">
           <AvatarImage src={profilePhoto} />
