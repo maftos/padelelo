@@ -5,7 +5,7 @@ export const Footer = () => {
   return (
     <footer className="border-t border-accent bg-card/50 backdrop-blur-sm">
       <div className="container py-12 px-4">
-        <div className="grid gap-8 md:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-3">
           <div>
             <h3 className="font-semibold text-lg mb-4">About</h3>
             <p className="text-muted-foreground">
@@ -25,11 +25,6 @@ export const Footer = () => {
                   Register Match
                 </Link>
               </li>
-              <li>
-                <Link to="/friends" className="text-muted-foreground hover:text-primary transition-colors">
-                  Find Friends
-                </Link>
-              </li>
             </ul>
           </div>
           <div>
@@ -41,24 +36,11 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/future-improvements" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link to="/roadmap" className="text-muted-foreground hover:text-primary transition-colors">
                   Roadmap
                 </Link>
               </li>
             </ul>
-          </div>
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Connect</h3>
-            <div className="flex items-center gap-4">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary transition-colors"
-              >
-                <Github className="h-6 w-6" />
-              </a>
-            </div>
           </div>
         </div>
         <div className="border-t border-accent mt-8 pt-8 text-center text-muted-foreground">
