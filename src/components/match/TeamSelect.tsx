@@ -18,9 +18,9 @@ export const TeamSelect = ({
   players,
 }: TeamSelectProps) => {
   return (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-lg">Team {teamNumber}</h3>
-      <div className="space-y-4">
+    <div className="space-y-3">
+      <h3 className="font-semibold text-base">Team {teamNumber}</h3>
+      <div className="space-y-3">
         <PlayerSelect
           label="Left"
           value={player1Value}

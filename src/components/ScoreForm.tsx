@@ -35,7 +35,6 @@ export const ScoreForm = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate that scores are not equal
     if (scores[0].team1 === scores[0].team2) {
       toast.error("Scores cannot be equal - there must be a winner!");
       return;
@@ -46,8 +45,8 @@ export const ScoreForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1.5">
           <Label htmlFor="score1">Team 1 Score</Label>
           <Input
             id="score1"
@@ -59,7 +58,7 @@ export const ScoreForm = ({
             max="99"
           />
         </div>
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <Label htmlFor="score2">Team 2 Score</Label>
           <Input
             id="score2"
@@ -73,7 +72,7 @@ export const ScoreForm = ({
         </div>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-3">
         <Button
           type="button"
           variant="outline"

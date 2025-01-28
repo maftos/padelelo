@@ -33,8 +33,8 @@ export const MatchForm = () => {
   } = useMatchForm();
 
   return (
-    <Card className="w-full p-4 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm">
-      <div className="space-y-1 text-center">
+    <Card className="w-full p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
+      <div className="text-center">
         <p className="text-sm text-muted-foreground">
           {page === 1 ? "Select players" : "Enter match score"}
         </p>
@@ -44,7 +44,7 @@ export const MatchForm = () => {
         <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
           <DateSelector value={date} onChange={setDate} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <TeamSelect
               teamNumber={1}
               player1Value={player1}

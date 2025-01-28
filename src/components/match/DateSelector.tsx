@@ -9,7 +9,7 @@ interface DateSelectorProps {
 
 export const DateSelector = ({ value, onChange }: DateSelectorProps) => {
   return (
-    <div className="space-y-2">
+    <div className="space-y-1.5">
       <Label htmlFor="date">Date</Label>
       <div className="flex items-center gap-2">
         <Input
