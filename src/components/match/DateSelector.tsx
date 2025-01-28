@@ -9,21 +9,19 @@ interface DateSelectorProps {
 
 export const DateSelector = ({ value, onChange }: DateSelectorProps) => {
   return (
-    <div className="flex items-center gap-4">
-      <Label htmlFor="date" className="flex-shrink-0">Date</Label>
-      <div className="flex-1">
-        <div className="flex items-center gap-2">
-          <Input
-            id="date"
-            type="date"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            className="w-full"
-          />
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            {isToday(new Date(value)) ? "Today" : format(new Date(value), "PPP")}
-          </span>
-        </div>
+    <div className="space-y-2">
+      <Label htmlFor="date">Date</Label>
+      <div className="flex items-center gap-2">
+        <Input
+          id="date"
+          type="date"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1"
+        />
+        <span className="text-sm text-muted-foreground whitespace-nowrap min-w-[80px]">
+          {isToday(new Date(value)) ? "Today" : format(new Date(value), "PPP")}
+        </span>
       </div>
     </div>
   );

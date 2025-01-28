@@ -19,7 +19,7 @@ export const TeamSelect = ({
 }: TeamSelectProps) => {
   return (
     <div className="space-y-4">
-      <h3 className="font-semibold text-lg text-center">Team {teamNumber}</h3>
+      <h3 className="font-semibold text-lg">Team {teamNumber}</h3>
       <div className="space-y-4">
         <PlayerSelect
           label="Left"

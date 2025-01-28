@@ -33,31 +33,28 @@ export const MatchForm = () => {
   } = useMatchForm();
 
   return (
-    <Card className="w-full max-w-md p-4 space-y-3 animate-fade-in">
+    <Card className="w-full p-4 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm">
       <div className="space-y-1 text-center">
-        <h2 className="text-2xl font-semibold tracking-tight">Register Match</h2>
         <p className="text-sm text-muted-foreground">
           {page === 1 ? "Select players" : "Enter match score"}
         </p>
       </div>
 
       {page === 1 ? (
-        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-3">
+        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
           <DateSelector value={date} onChange={setDate} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <TeamSelect
-                teamNumber={1}
-                player1Value={player1}
-                player2Value={player2}
-                onPlayer1Change={setPlayer1}
-                onPlayer2Change={setPlayer2}
-                players={playerOptions}
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TeamSelect
+              teamNumber={1}
+              player1Value={player1}
+              player2Value={player2}
+              onPlayer1Change={setPlayer1}
+              onPlayer2Change={setPlayer2}
+              players={playerOptions}
+            />
             
-            <div className="relative pl-4 md:pl-6">
+            <div className="relative md:pl-6">
               <Separator orientation="vertical" className="absolute left-0 h-full hidden md:block" />
               <TeamSelect
                 teamNumber={2}
