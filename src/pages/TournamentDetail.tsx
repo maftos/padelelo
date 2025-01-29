@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/match/PageHeader";
 import { sampleTournaments } from "@/data/sampleTournaments";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MapPin, Trophy, Users, Image as ImageIcon } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -19,17 +19,88 @@ const statusColors = {
 const sampleBracketData = [
   {
     id: 1,
-    name: "Quarter Finals",
+    name: "Quarter Finals - Match 1",
     nextMatchId: 5,
-    tournamentRoundText: "Quarter Finals",
+    tournamentRoundText: "4",
     startTime: "2024-04-15",
+    state: "DONE",
+    participants: [
+      { id: "p1", resultText: "Won", isWinner: true, status: null, name: "Team 1" },
+      { id: "p2", resultText: "Lost", isWinner: false, status: null, name: "Team 2" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Quarter Finals - Match 2",
+    nextMatchId: 5,
+    tournamentRoundText: "4",
+    startTime: "2024-04-15",
+    state: "DONE",
+    participants: [
+      { id: "p3", resultText: "Lost", isWinner: false, status: null, name: "Team 3" },
+      { id: "p4", resultText: "Won", isWinner: true, status: null, name: "Team 4" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Quarter Finals - Match 3",
+    nextMatchId: 6,
+    tournamentRoundText: "4",
+    startTime: "2024-04-15",
+    state: "DONE",
+    participants: [
+      { id: "p5", resultText: "Won", isWinner: true, status: null, name: "Team 5" },
+      { id: "p6", resultText: "Lost", isWinner: false, status: null, name: "Team 6" }
+    ]
+  },
+  {
+    id: 4,
+    name: "Quarter Finals - Match 4",
+    nextMatchId: 6,
+    tournamentRoundText: "4",
+    startTime: "2024-04-15",
+    state: "DONE",
+    participants: [
+      { id: "p7", resultText: "Lost", isWinner: false, status: null, name: "Team 7" },
+      { id: "p8", resultText: "Won", isWinner: true, status: null, name: "Team 8" }
+    ]
+  },
+  {
+    id: 5,
+    name: "Semi Finals - Match 1",
+    nextMatchId: 7,
+    tournamentRoundText: "2",
+    startTime: "2024-04-16",
+    state: "DONE",
+    participants: [
+      { id: "p1", resultText: "Won", isWinner: true, status: null, name: "Team 1" },
+      { id: "p4", resultText: "Lost", isWinner: false, status: null, name: "Team 4" }
+    ]
+  },
+  {
+    id: 6,
+    name: "Semi Finals - Match 2",
+    nextMatchId: 7,
+    tournamentRoundText: "2",
+    startTime: "2024-04-16",
+    state: "DONE",
+    participants: [
+      { id: "p5", resultText: "Lost", isWinner: false, status: null, name: "Team 5" },
+      { id: "p8", resultText: "Won", isWinner: true, status: null, name: "Team 8" }
+    ]
+  },
+  {
+    id: 7,
+    name: "Finals",
+    nextMatchId: null,
+    tournamentRoundText: "1",
+    startTime: "2024-04-17",
     state: "SCHEDULED",
     participants: [
       { id: "p1", resultText: null, isWinner: false, status: null, name: "Team 1" },
-      { id: "p2", resultText: null, isWinner: false, status: null, name: "Team 2" }
+      { id: "p8", resultText: null, isWinner: false, status: null, name: "Team 8" }
     ]
-  },
-  // ... Add more matches for a complete 8-team bracket
+  }
 ];
 
 export default function TournamentDetail() {
@@ -116,7 +187,7 @@ export default function TournamentDetail() {
           <TabsContent value="bracket" className="mt-4">
             <Card>
               <CardContent className="pt-6">
-                <ScrollArea className="w-full h-[600px] overflow-x-auto">
+                <ScrollArea className="w-full h-[600px]">
                   <div className="min-w-[1000px] p-4">
                     <SingleEliminationBracket
                       matches={sampleBracketData}
