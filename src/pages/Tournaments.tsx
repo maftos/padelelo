@@ -22,13 +22,13 @@ const statusColors = {
 
 export default function Tournaments() {
   return (
-    <PageContainer className="max-w-[1400px]">
+    <PageContainer className="max-w-[1400px] mx-auto">
       <PageHeader 
         title="Tournaments" 
         description="Browse upcoming and ongoing padel tournaments in Mauritius"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
         {sampleTournaments.map((tournament, index) => (
           <Link 
             key={tournament.id} 

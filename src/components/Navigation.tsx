@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
@@ -19,17 +19,9 @@ export const Navigation = () => {
   const { profile } = useUserProfile();
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Ensure navigation is visible on tournament pages
-  const isTransparent = location.pathname === "/" || location.pathname === "/home";
 
   return (
-    <nav className={`sticky top-0 z-50 w-full border-b ${
-      isTransparent 
-        ? "bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
-        : "bg-background"
-    }`}>
+    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">

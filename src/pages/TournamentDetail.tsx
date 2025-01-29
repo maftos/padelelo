@@ -17,7 +17,7 @@ export default function TournamentDetail() {
   }
 
   return (
-    <PageContainer className="max-w-7xl">
+    <PageContainer className="max-w-7xl mx-auto">
       <div className="space-y-6">
         {/* Tournament Header */}
         <Card>
