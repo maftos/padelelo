@@ -80,6 +80,15 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
         >
           Matchmaking Algorithm
         </Link>
+        {user && (
+          <Link 
+            to="/tournaments" 
+            onClick={onClose}
+            className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            Tournaments (In Progress)
+          </Link>
+        )}
       </div>
 
       {/* Sign Out Button at bottom */}

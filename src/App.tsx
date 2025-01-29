@@ -16,6 +16,8 @@ import Leaderboard from "@/pages/Leaderboard";
 import MatchmakingMath from "@/pages/MatchmakingMath";
 import Roadmap from "@/pages/Roadmap";
 import RegisterMatch from "@/pages/RegisterMatch";
+import Tournaments from "@/pages/Tournaments";
+import TournamentDetail from "@/pages/TournamentDetail";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ function App() {
             <Route path="/matchmaking-math" element={<MatchmakingMath />} />
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/register-match" element={<RegisterMatch />} />
+            <Route path="/tournaments" element={<Tournaments />} />
+            <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
           </Routes>
           <Toaster />
           <SonnerToaster position="bottom-right" />
