@@ -8,12 +8,29 @@ import { Calendar, MapPin, Trophy, Users, Image as ImageIcon } from "lucide-reac
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SingleEliminationBracket, Match, SVGViewer } from '@g-loot/react-tournament-brackets';
 
 const statusColors = {
   PENDING: "bg-yellow-500/10 text-yellow-500",
   IN_PROGRESS: "bg-green-500/10 text-green-500",
   COMPLETED: "bg-blue-500/10 text-blue-500",
 };
+
+const sampleBracketData = [
+  {
+    id: 1,
+    name: "Quarter Finals",
+    nextMatchId: 5,
+    tournamentRoundText: "Quarter Finals",
+    startTime: "2024-04-15",
+    state: "SCHEDULED",
+    participants: [
+      { id: "p1", resultText: null, isWinner: false, status: null, name: "Team 1" },
+      { id: "p2", resultText: null, isWinner: false, status: null, name: "Team 2" }
+    ]
+  },
+  // ... Add more matches for a complete 8-team bracket
+];
 
 export default function TournamentDetail() {
   const { tournamentId } = useParams();
@@ -28,14 +45,14 @@ export default function TournamentDetail() {
   }
 
   return (
-    <PageContainer>
+    <PageContainer className="max-w-7xl">
       <PageHeader title={tournament.title} />
       
       <div className="space-y-6">
         {/* Tournament Banner */}
         <AspectRatio ratio={21/9} className="bg-muted rounded-lg overflow-hidden">
           <img 
-            src="/lovable-uploads/04e56511-999f-4c17-b7f5-0b050bfb0722.png" 
+            src="/lovable-uploads/53adfa7a-da8e-47cc-92b3-333428670467.png"
             alt={tournament.title}
             className="object-cover w-full h-full"
           />
@@ -99,12 +116,16 @@ export default function TournamentDetail() {
           <TabsContent value="bracket" className="mt-4">
             <Card>
               <CardContent className="pt-6">
-                <ScrollArea className="w-full overflow-x-auto">
+                <ScrollArea className="w-full h-[600px] overflow-x-auto">
                   <div className="min-w-[1000px] p-4">
-                    <img 
-                      src="/lovable-uploads/04e56511-999f-4c17-b7f5-0b050bfb0722.png" 
-                      alt="Tournament Bracket"
-                      className="w-full"
+                    <SingleEliminationBracket
+                      matches={sampleBracketData}
+                      matchComponent={Match}
+                      svgWrapper={({ children, ...props }) => (
+                        <SVGViewer width={900} height={500} {...props}>
+                          {children}
+                        </SVGViewer>
+                      )}
                     />
                   </div>
                 </ScrollArea>
@@ -119,7 +140,6 @@ export default function TournamentDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {/* Sample Players List - Replace with actual data */}
                   {Array.from({length: 4}).map((_, index) => (
                     <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-4">
@@ -144,11 +164,14 @@ export default function TournamentDetail() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {Array.from({length: 6}).map((_, index) => (
+                  {[
+                    "/lovable-uploads/53adfa7a-da8e-47cc-92b3-333428670467.png",
+                    "/lovable-uploads/6d42bdae-d2d8-4c11-8c04-32104792c127.png",
+                    "/lovable-uploads/ea8dc7fb-5ec2-46e7-b1a5-976716dd832a.png",
+                    "/lovable-uploads/b0769f6f-387a-44ca-bd10-b9cadc7f2d8f.png"
+                  ].map((src, index) => (
                     <AspectRatio key={index} ratio={1} className="bg-muted rounded-lg overflow-hidden">
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                      </div>
+                      <img src={src} alt={`Tournament photo ${index + 1}`} className="object-cover w-full h-full" />
                     </AspectRatio>
                   ))}
                 </div>
