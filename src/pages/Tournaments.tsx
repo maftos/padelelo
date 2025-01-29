@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, MapPin, Trophy, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const statusColors = {
   PENDING: "bg-yellow-500/10 text-yellow-500",
@@ -20,7 +21,7 @@ export default function Tournaments() {
         description="Browse upcoming and ongoing padel tournaments in Mauritius"
       />
 
-      <div className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {sampleTournaments.map((tournament) => (
           <Link 
             key={tournament.id} 
@@ -29,6 +30,13 @@ export default function Tournaments() {
           >
             <Card>
               <CardHeader className="pb-2">
+                <AspectRatio ratio={16/9} className="bg-muted rounded-lg overflow-hidden mb-4">
+                  <img 
+                    src="/lovable-uploads/04e56511-999f-4c17-b7f5-0b050bfb0722.png" 
+                    alt={tournament.title}
+                    className="object-cover w-full h-full"
+                  />
+                </AspectRatio>
                 <div className="flex items-start justify-between">
                   <CardTitle className="text-xl">{tournament.title}</CardTitle>
                   <Badge 
