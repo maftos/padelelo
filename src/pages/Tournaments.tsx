@@ -7,12 +7,6 @@ import { Calendar, MapPin, Trophy, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 
-const statusColors = {
-  PENDING: "bg-yellow-500/10 text-yellow-500",
-  IN_PROGRESS: "bg-green-500/10 text-green-500",
-  COMPLETED: "bg-blue-500/10 text-blue-500",
-};
-
 const tournamentImages = [
   "/lovable-uploads/53adfa7a-da8e-47cc-92b3-333428670467.png",
   "/lovable-uploads/6d42bdae-d2d8-4c11-8c04-32104792c127.png",
@@ -20,15 +14,21 @@ const tournamentImages = [
   "/lovable-uploads/b0769f6f-387a-44ca-bd10-b9cadc7f2d8f.png"
 ];
 
+const statusColors = {
+  PENDING: "bg-yellow-500/10 text-yellow-500",
+  IN_PROGRESS: "bg-green-500/10 text-green-500",
+  COMPLETED: "bg-blue-500/10 text-blue-500",
+};
+
 export default function Tournaments() {
   return (
-    <PageContainer className="max-w-7xl">
+    <PageContainer className="max-w-[1400px]">
       <PageHeader 
         title="Tournaments" 
         description="Browse upcoming and ongoing padel tournaments in Mauritius"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {sampleTournaments.map((tournament, index) => (
           <Link 
             key={tournament.id} 
