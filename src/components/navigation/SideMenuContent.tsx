@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
+import { Trophy, UserPlus, Users, Calendar, Map, RoadMap, Target, Award, Swords } from "lucide-react";
 
 interface SideMenuContentProps {
   user: { id: string } | null;
@@ -21,6 +22,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
             onClick={onClose}
             className="flex items-center gap-2 text-lg bg-primary/10 p-2 rounded-md hover:bg-primary/20 text-primary transition-colors"
           >
+            <Swords className="h-5 w-5" />
             Register a Match
           </Link>
           <SheetClose asChild>
@@ -40,6 +42,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
               onClick={onClose}
               className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
             >
+              <Users className="h-5 w-5" />
               Profile
             </Link>
             <Link 
@@ -47,6 +50,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
               onClick={onClose}
               className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
             >
+              <UserPlus className="h-5 w-5" />
               Friends
             </Link>
             <Link 
@@ -54,6 +58,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
               onClick={onClose}
               className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
             >
+              <Calendar className="h-5 w-5" />
               My Matches
             </Link>
           </>
@@ -64,6 +69,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
           onClick={onClose}
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <Trophy className="h-5 w-5" />
           Leaderboard
         </Link>
         <Link 
@@ -71,6 +77,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
           onClick={onClose}
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <RoadMap className="h-5 w-5" />
           Feature Updates
         </Link>
         <Link 
@@ -78,6 +85,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
           onClick={onClose}
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <Target className="h-5 w-5" />
           Matchmaking Algorithm
         </Link>
         {user && (
@@ -86,6 +94,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
             onClick={onClose}
             className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
           >
+            <Award className="h-5 w-5" />
             Tournaments (In Progress)
           </Link>
         )}
