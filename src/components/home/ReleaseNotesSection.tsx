@@ -34,12 +34,12 @@ export const ReleaseNotesSection = () => {
   const upcomingFeatures = featureUpdates?.filter(update => !update.is_deployed).slice(0, 3) || [];
 
   return (
-    <section className="mb-16 relative">
+    <section className="mb-16 relative animate-fade-in [animation-delay:200ms]">
       <div className="absolute inset-0 bg-secondary/20 rounded-2xl backdrop-blur-sm -z-10" />
       <div className="p-8 md:p-12">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
-            <ClipboardList className="h-8 w-8 text-primary" />
+            <ClipboardList className="h-8 w-8 text-primary animate-pulse-subtle" />
             <h2 className="text-3xl font-bold">Latest Updates</h2>
           </div>
           <Link to="/roadmap">
@@ -49,7 +49,7 @@ export const ReleaseNotesSection = () => {
         {isLoading ? (
           <div>Loading updates...</div>
         ) : latestUpdate ? (
-          <Card className="p-8 bg-card/50 backdrop-blur border-accent">
+          <Card className="p-8 bg-card/50 backdrop-blur border-accent animate-scale-up">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-semibold">{latestUpdate.title}</h3>
               <span className="text-sm text-muted-foreground">
@@ -73,7 +73,11 @@ export const ReleaseNotesSection = () => {
             <h2 className="text-2xl font-bold mb-6">Coming Soon</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {upcomingFeatures.map((feature, index) => (
-                <Card key={index} className="p-6 bg-card/50 backdrop-blur border-accent">
+                <Card 
+                  key={index} 
+                  className="p-6 bg-card/50 backdrop-blur border-accent animate-slide-in-right"
+                  style={{ animationDelay: `${index * 200}ms` }}
+                >
                   <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.change_items[0]}</p>
                 </Card>
