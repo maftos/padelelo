@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
-import { Trophy, UserPlus, Users, Calendar, Map, RoadMap, Target, Award, Swords } from "lucide-react";
+import { Trophy, UserPlus, Users, Calendar, Map, Target, Award, Swords } from "lucide-react";
 
 interface SideMenuContentProps {
   user: { id: string } | null;
@@ -77,7 +77,7 @@ export const SideMenuContent = ({ user, onSignOut, onClose }: SideMenuContentPro
           onClick={onClose}
           className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <RoadMap className="h-5 w-5" />
+          <Map className="h-5 w-5" />
           Feature Updates
         </Link>
         <Link 
