@@ -46,7 +46,7 @@ export const SideMenuContent = ({
           >
             Friends
           </Link>
-          <InviteFriendDialog>
+          <InviteFriendDialog userId={user.id}>
             <SheetClose className="flex w-full items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors">
               Invite Friend
             </SheetClose>
