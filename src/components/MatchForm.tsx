@@ -33,7 +33,7 @@ export const MatchForm = () => {
   } = useMatchForm();
 
   return (
-    <Card className="w-full p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
+    <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
       <div className="text-center">
         <p className="text-sm text-muted-foreground">
           {page === 1 ? "Select players" : "Enter match score"}
@@ -42,7 +42,9 @@ export const MatchForm = () => {
 
       {page === 1 ? (
         <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
-          <DateSelector value={date} onChange={setDate} />
+          <div className="w-full max-w-sm">
+            <DateSelector value={date} onChange={setDate} />
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <TeamSelect
@@ -67,12 +69,14 @@ export const MatchForm = () => {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={isCalculating}>
-            {isCalculating ? "Calculating..." : "Next"}
-          </Button>
+          <div className="w-full max-w-sm">
+            <Button type="submit" className="w-full" disabled={isCalculating}>
+              {isCalculating ? "Calculating..." : "Next"}
+            </Button>
+          </div>
         </form>
       ) : (
-        <>
+        <div className="max-w-sm mx-auto">
           <TeamPreview
             team1Player1Name={getPlayerName(player1)}
             team1Player2Name={getPlayerName(player2)}
@@ -87,7 +91,7 @@ export const MatchForm = () => {
             onSubmit={handleSubmit}
             isSubmitting={isSubmitting}
           />
-        </>
+        </div>
       )}
     </Card>
   );

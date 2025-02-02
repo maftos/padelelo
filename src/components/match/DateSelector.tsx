@@ -9,7 +9,7 @@ interface DateSelectorProps {
 
 export const DateSelector = ({ value, onChange }: DateSelectorProps) => {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-1.5 w-full">
       <Label htmlFor="date">Date</Label>
       <div className="flex items-center gap-2">
         <Input
@@ -19,7 +19,7 @@ export const DateSelector = ({ value, onChange }: DateSelectorProps) => {
           onChange={(e) => onChange(e.target.value)}
           className="flex-1"
         />
-        <span className="text-sm text-muted-foreground whitespace-nowrap min-w-[80px]">
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
           {isToday(new Date(value)) ? "Today" : format(new Date(value), "PPP")}
         </span>
       </div>
