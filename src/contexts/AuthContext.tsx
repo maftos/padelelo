@@ -20,26 +20,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Handle auth state changes and token refresh
   useEffect(() => {
-    // Initialize the session from localStorage if available
-    const savedSession = localStorage.getItem('supabase.auth.token');
-    if (savedSession) {
-      try {
-        const parsed = JSON.parse(savedSession);
-        if (parsed?.currentSession) {
-          setSession(parsed.currentSession);
-          setUser(parsed.currentSession.user);
-        }
-      } catch (error) {
-        console.error('Error parsing saved session:', error);
-        localStorage.removeItem('supabase.auth.token');
-      }
-    }
+    // Clear any stale session data
+    const handleAuthError = () => {
+      setSession(null);
+      setUser(null);
+      localStorage.removeItem('supabase.auth.token');
+      navigate('/login');
+    };
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error);
+        handleAuthError();
+        return;
+      }
+      
+      if (session) {
+        setSession(session);
+        setUser(session.user);
+      }
       setLoading(false);
     });
 
@@ -49,29 +51,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
       
-      if (event === 'SIGNED_OUT') {
-        // Clear local storage and state
-        localStorage.removeItem('supabase.auth.token');
-        setSession(null);
-        setUser(null);
-        navigate('/');
+      if (event === 'SIGNED_OUT' || event === 'USER_DELETED') {
+        handleAuthError();
+        toast({
+          title: "Signed out",
+          description: "You have been signed out of your account",
+        });
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        // Update session and user state
-        setSession(session);
-        setUser(session?.user ?? null);
-        
-        // Save session to localStorage
         if (session) {
+          setSession(session);
+          setUser(session.user);
+          // Save session to localStorage with expiry
           localStorage.setItem('supabase.auth.token', JSON.stringify({
             currentSession: session,
             expiresAt: session.expires_at
           }));
+        }
+      } else if (event === 'USER_UPDATED') {
+        if (session?.user) {
+          setUser(session.user);
         }
       }
       
       setLoading(false);
     });
 
+    // Cleanup subscription
     return () => {
       subscription.unsubscribe();
     };
@@ -80,19 +85,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      // Clear local storage
       localStorage.removeItem('supabase.auth.token');
-      // Clear state
       setSession(null);
       setUser(null);
-      // Show success message
       toast({
         title: "Signed out successfully",
         description: "You have been logged out of your account",
       });
-      // Redirect to home
-      navigate('/');
-    } catch (error) {
+      navigate('/login');
+    } catch (error: any) {
       console.error("Error signing out:", error);
       toast({
         title: "Error signing out",
