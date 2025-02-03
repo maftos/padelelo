@@ -5,19 +5,17 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "./navigation/UserMenu";
-import { SideMenuContent } from "./navigation/SideMenuContent";
+import { AppSidebar } from "./navigation/AppSidebar";
 
 export const Navigation = () => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const { profile } = useUserProfile();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -45,15 +43,8 @@ export const Navigation = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                </SheetHeader>
-                <SideMenuContent 
-                  user={user}
-                  onSignOut={signOut}
-                  onClose={() => setIsSideMenuOpen(false)}
-                />
+              <SheetContent className="p-0">
+                <AppSidebar />
               </SheetContent>
             </Sheet>
           </div>
