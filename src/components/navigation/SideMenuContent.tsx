@@ -2,8 +2,17 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  User, 
+  UserPlus, 
+  ClipboardEdit, 
+  Users, 
+  Trophy,
+  Sparkles,
+  Calculator,
+  LogOut
+} from "lucide-react";
 
 interface SideMenuContentProps {
   user: { id: string } | null;
@@ -37,7 +46,7 @@ export const SideMenuContent = ({
   }
 
   return (
-    <div className="mt-4 flex flex-col h-full">
+    <div className="flex flex-col h-full">
       {/* User Profile Section */}
       <div className="space-y-4 px-2">
         <div className="flex items-center gap-3">
@@ -55,6 +64,7 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <User className="h-4 w-4" />
           My Profile
         </Link>
       </div>
@@ -68,10 +78,12 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
         >
+          <ClipboardEdit className="h-4 w-4" />
           Register Match
         </Link>
         <InviteFriendDialog userId={user.id}>
           <SheetClose className="flex w-full items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
+            <UserPlus className="h-4 w-4" />
             Invite Friend
           </SheetClose>
         </InviteFriendDialog>
@@ -86,6 +98,7 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <ClipboardEdit className="h-4 w-4" />
           My Matches
         </Link>
         <Link
@@ -93,6 +106,7 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <Users className="h-4 w-4" />
           Friends
         </Link>
         <Link
@@ -100,6 +114,7 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <Trophy className="h-4 w-4" />
           Leaderboard
         </Link>
       </div>
@@ -113,6 +128,7 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <Sparkles className="h-4 w-4" />
           Feature Updates
         </Link>
         <Link
@@ -120,23 +136,19 @@ export const SideMenuContent = ({
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
+          <Calculator className="h-4 w-4" />
           Matchmaking Math
         </Link>
-      </div>
-
-      <div className="mt-auto">
-        <Separator className="mb-4" />
-        <div className="px-2">
-          <button
-            onClick={() => {
-              onSignOut();
-              onClose();
-            }}
-            className="flex w-full items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
-          >
-            Sign Out
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            onSignOut();
+            onClose();
+          }}
+          className="flex w-full items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          Sign Out
+        </button>
       </div>
     </div>
   );
