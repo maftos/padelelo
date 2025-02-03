@@ -11,7 +11,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter
+  SidebarFooter,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -22,10 +23,16 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { signOut } = useAuth();
   const { profile, userId } = useUserProfile();
+  const { setOpenMobile } = useSidebar();
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
+  };
+
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    setOpenMobile(false); // Close sidebar on mobile after navigation
   };
 
   if (!profile) return null;
@@ -56,7 +63,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Button 
                     className="w-full justify-start" 
-                    onClick={() => navigate('/register-match')}
+                    onClick={() => handleNavigation('/register-match')}
                   >
                     <Trophy className="mr-2 h-4 w-4" />
                     Register Match
@@ -92,7 +99,7 @@ export function AppSidebar() {
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start"
-                    onClick={() => navigate('/matches')}
+                    onClick={() => handleNavigation('/matches')}
                   >
                     <History className="mr-2 h-4 w-4" />
                     My Matches
@@ -104,7 +111,7 @@ export function AppSidebar() {
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start"
-                    onClick={() => navigate('/friends')}
+                    onClick={() => handleNavigation('/friends')}
                   >
                     <Users className="mr-2 h-4 w-4" />
                     Friends
@@ -116,7 +123,7 @@ export function AppSidebar() {
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start"
-                    onClick={() => navigate('/leaderboard')}
+                    onClick={() => handleNavigation('/leaderboard')}
                   >
                     <Trophy className="mr-2 h-4 w-4" />
                     Leaderboard
@@ -137,7 +144,7 @@ export function AppSidebar() {
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start"
-                    onClick={() => navigate('/roadmap')}
+                    onClick={() => handleNavigation('/roadmap')}
                   >
                     <Sparkles className="mr-2 h-4 w-4" />
                     Feature Updates
@@ -149,7 +156,7 @@ export function AppSidebar() {
                   <Button 
                     variant="ghost" 
                     className="w-full justify-start"
-                    onClick={() => navigate('/matchmaking-math')}
+                    onClick={() => handleNavigation('/matchmaking-math')}
                   >
                     <Calculator className="mr-2 h-4 w-4" />
                     Matchmaking Math
