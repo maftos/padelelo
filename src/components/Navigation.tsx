@@ -2,18 +2,13 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  Sheet,
-  SheetContent,
-} from "@/components/ui/sheet";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "./navigation/UserMenu";
 import { AppSidebar } from "./navigation/AppSidebar";
-import { SidebarProvider } from "./ui/sidebar";
+import { SidebarProvider, SidebarTrigger } from "./ui/sidebar";
 
 export const Navigation = () => {
-  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const { profile } = useUserProfile();
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -38,34 +33,10 @@ export const Navigation = () => {
             />
             
             {/* Mobile Menu */}
-            <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="md:hidden"
-                onClick={() => setIsSideMenuOpen(true)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <SheetContent 
-                side="right" 
-                className="w-[300px] p-0 border-l"
-              >
-                <SidebarProvider defaultOpen={true}>
-                  <AppSidebar />
-                </SidebarProvider>
-              </SheetContent>
-            </Sheet>
+            <SidebarTrigger className="md:hidden" />
 
             {/* Desktop Menu */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="hidden md:inline-flex"
-              onClick={() => setIsSideMenuOpen(!isSideMenuOpen)}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
+            <SidebarTrigger className="hidden md:inline-flex" />
           </div>
         </div>
       </div>
