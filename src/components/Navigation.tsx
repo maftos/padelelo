@@ -11,6 +11,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "./navigation/UserMenu";
 import { AppSidebar } from "./navigation/AppSidebar";
+import { SidebarProvider } from "./ui/sidebar";
 
 export const Navigation = () => {
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -44,7 +45,9 @@ export const Navigation = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent className="p-0">
-                <AppSidebar />
+                <SidebarProvider>
+                  <AppSidebar />
+                </SidebarProvider>
               </SheetContent>
             </Sheet>
           </div>
