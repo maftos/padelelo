@@ -76,13 +76,13 @@ export const SideMenuContent = ({
         <Link
           to="/register-match"
           onClick={onClose}
-          className="inline-flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          className="flex w-full items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <ClipboardEdit className="h-4 w-4" />
           Register Match
         </Link>
         <InviteFriendDialog userId={user.id}>
-          <SheetClose className="inline-flex items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
+          <SheetClose className="flex w-full items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
             <UserPlus className="h-4 w-4" />
             Invite Friend
           </SheetClose>
