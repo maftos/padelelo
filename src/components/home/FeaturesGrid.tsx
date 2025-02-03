@@ -1,6 +1,6 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Users, Trophy, History } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
 export const FeaturesGrid = () => {
@@ -12,10 +12,10 @@ export const FeaturesGrid = () => {
         </div>
         <h2 className="text-2xl font-semibold">Friends</h2>
         <p className="text-muted-foreground">
-          Connect with fellow padel players, build your network, and find partners for your next match.
+          Connect with other players, build your network, and find partners for matches.
         </p>
-        <Button asChild variant="link" className="p-0 text-primary">
-          <Link to="/friends">Find Friends →</Link>
+        <Button asChild variant="outline">
+          <Link to="/friends">View Friends</Link>
         </Button>
       </Card>
 
@@ -25,10 +25,10 @@ export const FeaturesGrid = () => {
         </div>
         <h2 className="text-2xl font-semibold">Leaderboard</h2>
         <p className="text-muted-foreground">
-          Access Mauritius's first ELO rating system for padel. Track your progress and compete with the best.
+          Track your progress and see how you rank against other players in the community.
         </p>
-        <Button asChild variant="link" className="p-0 text-primary">
-          <Link to="/leaderboard">View Rankings →</Link>
+        <Button asChild variant="outline">
+          <Link to="/leaderboard">View Rankings</Link>
         </Button>
       </Card>
 
@@ -38,10 +38,10 @@ export const FeaturesGrid = () => {
         </div>
         <h2 className="text-2xl font-semibold">Match History</h2>
         <p className="text-muted-foreground">
-          Review your match history, analyze your performance, and track your improvement over time.
+          Review your past matches, analyze your performance, and track your improvement.
         </p>
-        <Button asChild variant="link" className="p-0 text-primary">
-          <Link to="/matches">View History →</Link>
+        <Button asChild variant="outline">
+          <Link to="/matches">View Matches</Link>
         </Button>
       </Card>
     </div>
