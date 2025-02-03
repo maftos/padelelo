@@ -46,44 +46,43 @@ const Friends = () => {
   }
 
   return (
-    <>
+    <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="pt-[3.5rem] min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Sidebar */}
-            <div className="lg:w-80 flex-shrink-0 space-y-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Users className="h-6 w-6 text-primary" />
-                  <h1 className="text-2xl font-bold">Friends</h1>
-                </div>
-                <AddFriendDialog userId={userId} onFriendAdded={() => {}} />
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Left Sidebar */}
+          <div className="lg:w-80 flex-shrink-0 space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Users className="h-6 w-6 text-primary" />
+                <h1 className="text-2xl font-bold">Friends</h1>
               </div>
-              
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <Input
-                  placeholder="Search friends..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              
-              <div className="bg-accent rounded-lg p-4">
-                <FriendsList userId={userId} />
-              </div>
+              <AddFriendDialog userId={userId} onFriendAdded={() => {}} />
             </div>
-
-            {/* Main Content Area */}
-            <div className="flex-1 space-y-6">
-              <FriendRequests />
+            
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                placeholder="Search friends..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            
+            <div className="bg-accent rounded-lg p-4">
+              <FriendsList userId={userId} />
             </div>
           </div>
+
+          {/* Main Content Area */}
+          <div className="flex-1 space-y-6">
+            <FriendRequests />
+            {/* Additional content can be added here */}
+          </div>
         </div>
-      </main>
-    </>
+      </div>
+    </div>
   );
 };
 

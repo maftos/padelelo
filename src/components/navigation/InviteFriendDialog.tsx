@@ -7,10 +7,9 @@ import { toast } from "sonner";
 interface InviteFriendDialogProps {
   userId: string;
   onOpenChange?: (open: boolean) => void;
-  children?: React.ReactNode; // Added children prop
 }
 
-export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFriendDialogProps) => {
+export const InviteFriendDialog = ({ userId, onOpenChange }: InviteFriendDialogProps) => {
   const [hasCopied, setHasCopied] = useState(false);
 
   const handleCopyInviteUrl = async () => {
@@ -29,12 +28,10 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
   return (
     <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        {children || (
-          <button className="flex w-full items-center gap-2 rounded-md p-2 text-lg hover:bg-accent hover:text-accent-foreground transition-colors">
-            <UserPlus className="h-5 w-5" />
-            Invite Friend
-          </button>
-        )}
+        <button className="flex w-full items-center gap-2 rounded-md p-2 text-lg hover:bg-accent hover:text-accent-foreground transition-colors">
+          <UserPlus className="h-5 w-5" />
+          Invite Friend
+        </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
