@@ -11,7 +11,7 @@ export const Navigation = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b bg-background">
+    <nav className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background shadow-sm">
       <div className="container flex h-14 items-center">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
