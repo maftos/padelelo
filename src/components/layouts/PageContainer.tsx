@@ -7,8 +7,8 @@ interface PageContainerProps {
 
 export const PageContainer = ({ children, className }: PageContainerProps) => {
   return (
-    <div className={cn("bg-background", className)}>
-      <main className="container mx-auto px-4">
+    <div className={cn("bg-background min-h-screen pt-14", className)}>
+      <main className="container mx-auto px-4 py-8">
         {children}
       </main>
     </div>
