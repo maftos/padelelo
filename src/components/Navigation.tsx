@@ -37,21 +37,23 @@ export const Navigation = () => {
               onSignInClick={() => navigate('/login')} 
             />
             
-            <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="p-0">
-                <SideMenuContent 
-                  user={user}
-                  profile={profile}
-                  onSignOut={signOut}
-                  onClose={() => setIsSideMenuOpen(false)}
-                />
-              </SheetContent>
-            </Sheet>
+            {user && (
+              <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Menu className="h-5 w-5" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="p-0">
+                  <SideMenuContent 
+                    user={user}
+                    profile={profile}
+                    onSignOut={signOut}
+                    onClose={() => setIsSideMenuOpen(false)}
+                  />
+                </SheetContent>
+              </Sheet>
+            )}
           </div>
         </div>
       </div>
