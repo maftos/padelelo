@@ -84,8 +84,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // First clear local storage
-      localStorage.removeItem('supabase.auth.token');
+      // First clear all auth-related data from localStorage
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('supabase.auth.')) {
+          localStorage.removeItem(key);
+        }
+      });
       
       // Then sign out from Supabase
       const { error } = await supabase.auth.signOut();
