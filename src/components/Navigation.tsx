@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
-  SheetTrigger,
 } from "@/components/ui/sheet";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
@@ -40,15 +39,14 @@ export const Navigation = () => {
             
             {/* Mobile Menu */}
             <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
-              <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="md:hidden"
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="md:hidden"
+                onClick={() => setIsSideMenuOpen(true)}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
               <SheetContent 
                 side="right" 
                 className="w-[300px] p-0 border-l"
