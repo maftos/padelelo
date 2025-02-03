@@ -14,32 +14,35 @@ export const Navigation = () => {
   const navigate = useNavigate();
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="flex flex-1 items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <img 
-              src="/lovable-uploads/6c2aa848-d126-4ee6-9af5-78a13698d72c.png" 
-              alt="PadelELO Logo" 
-              className="h-8 w-8" 
-            />
-            <span className="font-bold text-primary">PadelELO</span>
-          </Link>
+    <SidebarProvider>
+      <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container flex h-14 items-center">
+          <div className="flex flex-1 items-center justify-between">
+            <Link to="/" className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/6c2aa848-d126-4ee6-9af5-78a13698d72c.png" 
+                alt="PadelELO Logo" 
+                className="h-8 w-8" 
+              />
+              <span className="font-bold text-primary">PadelELO</span>
+            </Link>
 
-          <div className="flex items-center gap-4">
-            <UserMenu 
-              profile={profile} 
-              onSignInClick={() => navigate('/login')} 
-            />
-            
-            {/* Mobile Menu */}
-            <SidebarTrigger className="md:hidden" />
+            <div className="flex items-center gap-4">
+              <UserMenu 
+                profile={profile} 
+                onSignInClick={() => navigate('/login')} 
+              />
+              
+              {/* Mobile Menu */}
+              <SidebarTrigger className="md:hidden" />
 
-            {/* Desktop Menu */}
-            <SidebarTrigger className="hidden md:inline-flex" />
+              {/* Desktop Menu */}
+              <SidebarTrigger className="hidden md:inline-flex" />
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+      <AppSidebar />
+    </SidebarProvider>
   );
 };
