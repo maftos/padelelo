@@ -40,7 +40,7 @@ export const Navigation = () => {
             
             <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" className="md:hidden">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -50,6 +50,15 @@ export const Navigation = () => {
                 </SidebarProvider>
               </SheetContent>
             </Sheet>
+
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="hidden md:inline-flex"
+              onClick={() => setIsSideMenuOpen(!isSideMenuOpen)}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
           </div>
         </div>
       </div>
