@@ -41,7 +41,7 @@ export const RecentMatches = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 w-full max-w-md animate-pulse">
+      <div className="space-y-4 w-full max-w-md mx-auto animate-pulse">
         <h2 className="text-xl font-semibold">Latest Matches</h2>
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
@@ -55,7 +55,7 @@ export const RecentMatches = () => {
   }
 
   return (
-    <div className="space-y-4 w-full max-w-md animate-slide-up">
+    <div className="space-y-4 w-full max-w-md mx-auto animate-slide-up">
       <h2 className="text-xl font-semibold">Latest Matches</h2>
       <div className="space-y-2">
         {matches?.map((match) => (
