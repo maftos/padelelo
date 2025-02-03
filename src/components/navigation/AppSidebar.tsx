@@ -25,7 +25,6 @@ import {
   LogOut,
   PlusCircle,
   UserPlus,
-  ChevronRight,
 } from "lucide-react";
 
 export function AppSidebar() {
@@ -38,7 +37,9 @@ export function AppSidebar() {
   return (
     <Sidebar side="right">
       <SidebarHeader className="border-b px-6 py-4">
-        <div className="flex items-center gap-4" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
+        <div className="flex items-center gap-4 group hover:bg-accent/50 p-2 rounded-md transition-colors" 
+             onClick={() => navigate('/profile')} 
+             style={{ cursor: 'pointer' }}>
           <Avatar>
             <AvatarImage src={profile.profile_photo || ''} alt={profile.display_name} />
             <AvatarFallback>{profile.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
@@ -47,11 +48,13 @@ export function AppSidebar() {
             <h3 className="font-semibold">{profile.display_name}</h3>
             <p className="text-sm text-muted-foreground">MMR: {profile.current_mmr}</p>
           </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
+            My Profile
+          </span>
         </div>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent className="space-y-6">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -59,7 +62,7 @@ export function AppSidebar() {
                 <SidebarMenuButton asChild>
                   <Button 
                     variant="default" 
-                    className="w-full justify-start" 
+                    className="w-full justify-start hover:bg-accent/50 transition-colors" 
                     onClick={() => navigate('/register-match')}
                   >
                     <PlusCircle className="mr-2 h-4 w-4" />
@@ -72,7 +75,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Button 
                       variant="secondary" 
-                      className="w-full justify-start"
+                      className="w-full justify-start hover:bg-accent/50 transition-colors"
                     >
                       <UserPlus className="mr-2 h-4 w-4" />
                       Invite Friend
@@ -84,14 +87,14 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="my-4" />
+        <Separator />
 
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={() => navigate('/matches')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
                     <CalendarDays className="h-4 w-4" />
                     My Matches
                   </div>
@@ -99,7 +102,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={() => navigate('/friends')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
                     <Users className="h-4 w-4" />
                     Friends
                   </div>
@@ -107,7 +110,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={() => navigate('/leaderboard')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
                     <Trophy className="h-4 w-4" />
                     Leaderboard
                   </div>
@@ -117,14 +120,14 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="my-4" />
+        <Separator />
 
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={() => navigate('/roadmap')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
                     <Rocket className="h-4 w-4" />
                     Feature Updates
                   </div>
@@ -132,7 +135,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={() => navigate('/matchmaking-math')}>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
                     <Calculator className="h-4 w-4" />
                     Matchmaking Math
                   </div>
