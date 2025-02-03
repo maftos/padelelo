@@ -12,7 +12,7 @@ export const Navigation = () => {
   const { openMobile, open } = useSidebar();
 
   return (
-    <nav className={`fixed top-0 z-50 w-full border-b bg-background ${(openMobile || open) ? 'pointer-events-none' : ''}`}>
+    <nav className={`fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${(openMobile || open) ? 'pointer-events-none' : ''}`}>
       <div className="container flex h-14 items-center">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
