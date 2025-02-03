@@ -3,16 +3,15 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserMenu } from "./navigation/UserMenu";
 import { AppSidebar } from "./navigation/AppSidebar";
-import { SidebarTrigger, useSidebar } from "./ui/sidebar";
+import { SidebarTrigger } from "./ui/sidebar";
 
 export const Navigation = () => {
   const { profile } = useUserProfile();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { openMobile, open } = useSidebar();
 
   return (
-    <nav className={`fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 ${(openMobile || open) ? 'pointer-events-none' : ''}`}>
+    <nav className="fixed top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
@@ -29,9 +28,7 @@ export const Navigation = () => {
               profile={profile} 
               onSignInClick={() => navigate('/login')} 
             />
-            <div className="pointer-events-auto">
-              <SidebarTrigger />
-            </div>
+            <SidebarTrigger />
           </div>
         </div>
       </div>

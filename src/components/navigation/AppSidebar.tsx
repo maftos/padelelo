@@ -1,21 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { 
-  Sidebar, 
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarFooter
-} from "@/components/ui/sidebar";
+import { Sidebar } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, History, Sparkles, Calculator, UserPlus, LogOut } from "lucide-react";
+import { Trophy, Users, History, Calculator, UserPlus, LogOut } from "lucide-react";
 import { InviteFriendDialog } from "../navigation/InviteFriendDialog";
 
 export function AppSidebar() {
@@ -31,9 +20,9 @@ export function AppSidebar() {
   if (!profile) return null;
 
   return (
-    <Sidebar side="right" className="z-[60]">
+    <Sidebar>
       {/* User Profile Header */}
-      <SidebarHeader className="border-b p-4">
+      <div className="border-b p-4">
         <div className="flex items-center gap-3">
           <Avatar>
             <AvatarImage src={profile.profile_photo || ''} />
@@ -44,134 +33,72 @@ export function AppSidebar() {
             <span className="text-sm text-muted-foreground">MMR: {profile.current_mmr}</span>
           </div>
         </div>
-      </SidebarHeader>
+      </div>
 
-      <SidebarContent>
+      <div className="flex flex-col gap-2 p-4">
         {/* Primary Actions */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Actions</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button 
-                    className="w-full justify-start" 
-                    onClick={() => navigate('/register-match')}
-                  >
-                    <Trophy className="mr-2 h-4 w-4" />
-                    Register Match
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                {userId && (
-                  <InviteFriendDialog userId={userId}>
-                    <SidebarMenuButton asChild>
-                      <Button 
-                        variant="secondary"
-                        className="w-full justify-start"
-                      >
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Invite Friend
-                      </Button>
-                    </SidebarMenuButton>
-                  </InviteFriendDialog>
-                )}
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <div className="space-y-2">
+          <Button 
+            className="w-full justify-start" 
+            onClick={() => navigate('/register-match')}
+          >
+            <Trophy className="mr-2 h-4 w-4" />
+            Register Match
+          </Button>
 
-        {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start"
-                    onClick={() => navigate('/matches')}
-                  >
-                    <History className="mr-2 h-4 w-4" />
-                    My Matches
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start"
-                    onClick={() => navigate('/friends')}
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Friends
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start"
-                    onClick={() => navigate('/leaderboard')}
-                  >
-                    <Trophy className="mr-2 h-4 w-4" />
-                    Leaderboard
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+          {userId && (
+            <InviteFriendDialog userId={userId}>
+              <Button 
+                variant="secondary"
+                className="w-full justify-start"
+              >
+                <UserPlus className="mr-2 h-4 w-4" />
+                Invite Friend
+              </Button>
+            </InviteFriendDialog>
+          )}
+        </div>
 
-        {/* Info Links */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Information</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start"
-                    onClick={() => navigate('/roadmap')}
-                  >
-                    <Sparkles className="mr-2 h-4 w-4" />
-                    Feature Updates
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="w-full justify-start"
-                    onClick={() => navigate('/matchmaking-math')}
-                  >
-                    <Calculator className="mr-2 h-4 w-4" />
-                    Matchmaking Math
-                  </Button>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+        {/* Navigation */}
+        <div className="space-y-2">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => navigate('/matches')}
+          >
+            <History className="mr-2 h-4 w-4" />
+            My Matches
+          </Button>
 
-      {/* Footer with Sign Out */}
-      <SidebarFooter className="border-t p-4">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => navigate('/friends')}
+          >
+            <Users className="mr-2 h-4 w-4" />
+            Friends
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => navigate('/matchmaking-math')}
+          >
+            <Calculator className="mr-2 h-4 w-4" />
+            Matchmaking Math
+          </Button>
+        </div>
+
+        {/* Sign Out */}
         <Button 
           variant="ghost" 
-          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 mt-auto"
           onClick={handleSignOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </Button>
-      </SidebarFooter>
+      </div>
     </Sidebar>
   );
 }
