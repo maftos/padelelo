@@ -38,19 +38,21 @@ export const Navigation = () => {
               onSignInClick={() => navigate('/login')} 
             />
             
+            {/* Mobile Menu */}
             <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="p-0" side="right">
+              <SheetContent className="w-[300px] p-0" side="right">
                 <SidebarProvider defaultOpen={true}>
                   <AppSidebar />
                 </SidebarProvider>
               </SheetContent>
             </Sheet>
 
+            {/* Desktop Menu */}
             <Button 
               variant="ghost" 
               size="icon" 
