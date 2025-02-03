@@ -38,7 +38,7 @@ export const Navigation = () => {
               onSignInClick={() => navigate('/login')} 
             />
             
-            <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen} side="right">
+            <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Menu className="h-5 w-5" />
