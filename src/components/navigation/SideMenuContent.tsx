@@ -46,7 +46,7 @@ export const SideMenuContent = ({
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full pt-6">
       {/* User Profile Section */}
       <div className="space-y-4 px-2">
         <div className="flex items-center gap-3">
@@ -76,13 +76,13 @@ export const SideMenuContent = ({
         <Link
           to="/register-match"
           onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
         >
           <ClipboardEdit className="h-4 w-4" />
           Register Match
         </Link>
         <InviteFriendDialog userId={user.id}>
-          <SheetClose className="flex w-full items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
+          <SheetClose className="inline-flex items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
             <UserPlus className="h-4 w-4" />
             Invite Friend
           </SheetClose>
@@ -139,6 +139,11 @@ export const SideMenuContent = ({
           <Calculator className="h-4 w-4" />
           Matchmaking Math
         </Link>
+      </div>
+
+      <Separator className="my-4" />
+
+      <div className="px-2">
         <button
           onClick={() => {
             onSignOut();
