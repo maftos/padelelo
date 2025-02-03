@@ -41,11 +41,18 @@ export const Navigation = () => {
             {/* Mobile Menu */}
             <Sheet open={isSideMenuOpen} onOpenChange={setIsSideMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="md:hidden"
+                >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent className="w-[300px] p-0" side="right">
+              <SheetContent 
+                side="right" 
+                className="w-[300px] p-0 border-l"
+              >
                 <SidebarProvider defaultOpen={true}>
                   <AppSidebar />
                 </SidebarProvider>
