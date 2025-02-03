@@ -46,7 +46,7 @@ export const SideMenuContent = ({
   }
 
   return (
-    <div className="flex flex-col h-full pt-6">
+    <div className="flex flex-col h-full pt-8">
       {/* User Profile Section */}
       <div className="space-y-4 px-2">
         <div className="flex items-center gap-3">
@@ -149,7 +149,7 @@ export const SideMenuContent = ({
             onSignOut();
             onClose();
           }}
-          className="flex w-full items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+          className="flex items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
         >
           <LogOut className="h-4 w-4" />
           Sign Out

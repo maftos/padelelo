@@ -6,9 +6,9 @@ import { Link } from "react-router-dom";
 export const FeaturesGrid = () => {
   return (
     <div className="grid gap-6 md:grid-cols-3 mb-16">
-      <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent hover:scale-105 animate-slide-in-left [animation-delay:200ms]">
+      <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent">
         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <Users className="h-6 w-6 text-primary animate-pulse-subtle" />
+          <Users className="h-6 w-6 text-primary" />
         </div>
         <h2 className="text-2xl font-semibold">Friends</h2>
         <p className="text-muted-foreground">
@@ -19,9 +19,9 @@ export const FeaturesGrid = () => {
         </Button>
       </Card>
 
-      <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent hover:scale-105 animate-slide-in-left [animation-delay:400ms]">
+      <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent">
         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <Trophy className="h-6 w-6 text-primary animate-pulse-subtle" />
+          <Trophy className="h-6 w-6 text-primary" />
         </div>
         <h2 className="text-2xl font-semibold">Leaderboard</h2>
         <p className="text-muted-foreground">
@@ -32,9 +32,9 @@ export const FeaturesGrid = () => {
         </Button>
       </Card>
 
-      <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent hover:scale-105 animate-slide-in-left [animation-delay:600ms]">
+      <Card className="p-6 space-y-4 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur border-accent">
         <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-          <History className="h-6 w-6 text-primary animate-pulse-subtle" />
+          <History className="h-6 w-6 text-primary" />
         </div>
         <h2 className="text-2xl font-semibold">Match History</h2>
         <p className="text-muted-foreground">
