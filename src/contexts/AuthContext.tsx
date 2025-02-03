@@ -26,7 +26,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const handleAuthError = () => {
       setSession(null);
       setUser(null);
-      localStorage.removeItem('supabase.auth.token');
+      // Clear all Supabase auth data from localStorage
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('supabase.auth.')) {
+          localStorage.removeItem(key);
+        }
+      });
       navigate('/login');
     };
 
@@ -61,11 +66,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session) {
           setSession(session);
           setUser(session.user);
-          // Save session to localStorage with expiry
-          localStorage.setItem('supabase.auth.token', JSON.stringify({
-            currentSession: session,
-            expiresAt: session.expires_at
-          }));
         }
       } else if (event === 'USER_UPDATED') {
         if (session?.user) {
@@ -84,20 +84,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      // First clear all auth-related data from localStorage
+      // First clear all auth data from localStorage
       Object.keys(localStorage).forEach(key => {
         if (key.startsWith('supabase.auth.')) {
           localStorage.removeItem(key);
         }
       });
       
+      // Clear context state before signing out
+      setSession(null);
+      setUser(null);
+      
       // Then sign out from Supabase
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
-      
-      // Clear context state
-      setSession(null);
-      setUser(null);
       
       // Show success message
       toast({
@@ -109,9 +109,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       navigate('/login');
     } catch (error: any) {
       console.error("Error signing out:", error);
+      // Even if there's an error, we want to clear the local state
+      setSession(null);
+      setUser(null);
+      navigate('/login');
+      
       toast({
-        title: "Error signing out",
-        description: "There was a problem signing out. Please try again.",
+        title: "Signed out",
+        description: "You have been signed out, but there was an error communicating with the server",
         variant: "destructive",
       });
     }
