@@ -24,7 +24,7 @@ export function AppSidebar() {
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetContent side="left" className="w-64 p-0 bg-background">
+      <SheetContent side="right" className="w-64 p-0">
         {/* User Profile Header */}
         <div className="border-b p-4">
           <div className="flex items-center gap-3">
