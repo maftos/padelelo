@@ -73,20 +73,22 @@ export const SideMenuContent = ({
 
       {/* Primary Actions Section */}
       <div className="space-y-2 px-2">
-        <Link
-          to="/register-match"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-        >
-          <ClipboardEdit className="h-4 w-4" />
-          Register Match
-        </Link>
-        <InviteFriendDialog userId={user.id}>
-          <SheetClose className="flex items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
-            <UserPlus className="h-4 w-4" />
-            Invite Friend
-          </SheetClose>
-        </InviteFriendDialog>
+        <div className="flex flex-col gap-2">
+          <Link
+            to="/register-match"
+            onClick={onClose}
+            className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+          >
+            <ClipboardEdit className="h-4 w-4" />
+            Register Match
+          </Link>
+          <InviteFriendDialog userId={user.id}>
+            <SheetClose className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
+              <UserPlus className="h-4 w-4" />
+              Invite Friend
+            </SheetClose>
+          </InviteFriendDialog>
+        </div>
       </div>
 
       <Separator className="my-4" />
