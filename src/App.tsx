@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SidebarProvider } from "@/components/ui/sidebar";
 
 // Pages
 import Index from "@/pages/Index";
@@ -26,23 +27,25 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/friends" element={<Friends />} />
-            <Route path="/matches" element={<Matches />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/matchmaking-math" element={<MatchmakingMath />} />
-            <Route path="/roadmap" element={<Roadmap />} />
-            <Route path="/register-match" element={<RegisterMatch />} />
-            <Route path="/tournaments" element={<Tournaments />} />
-            <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
-          </Routes>
-          <Toaster />
-          <SonnerToaster position="bottom-right" />
+          <SidebarProvider defaultOpen={false}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/friends" element={<Friends />} />
+              <Route path="/matches" element={<Matches />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/matchmaking-math" element={<MatchmakingMath />} />
+              <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/register-match" element={<RegisterMatch />} />
+              <Route path="/tournaments" element={<Tournaments />} />
+              <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
+            </Routes>
+            <Toaster />
+            <SonnerToaster position="bottom-right" />
+          </SidebarProvider>
         </AuthProvider>
       </Router>
     </QueryClientProvider>
