@@ -1,11 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { Sidebar } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, History, Calculator, UserPlus, LogOut } from "lucide-react";
+import { Trophy, Users, History, Calculator, UserPlus, LogOut, Rocket } from "lucide-react";
 import { InviteFriendDialog } from "../navigation/InviteFriendDialog";
+import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export function AppSidebar() {
   if (!profile) return null;
 
   return (
-    <Sidebar>
+    <div className="fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       {/* User Profile Header */}
       <div className="border-b p-4">
         <div className="flex items-center gap-3">
@@ -59,8 +59,19 @@ export function AppSidebar() {
           )}
         </div>
 
-        {/* Navigation */}
+        <Separator className="my-2" />
+
+        {/* Main Navigation */}
         <div className="space-y-2">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => navigate('/profile')}
+          >
+            <Users className="mr-2 h-4 w-4" />
+            My Profile
+          </Button>
+
           <Button 
             variant="ghost" 
             className="w-full justify-start"
@@ -78,6 +89,20 @@ export function AppSidebar() {
             <Users className="mr-2 h-4 w-4" />
             Friends
           </Button>
+        </div>
+
+        <Separator className="my-2" />
+
+        {/* Additional Features */}
+        <div className="space-y-2">
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start"
+            onClick={() => navigate('/roadmap')}
+          >
+            <Rocket className="mr-2 h-4 w-4" />
+            Feature Updates
+          </Button>
 
           <Button 
             variant="ghost" 
@@ -89,16 +114,18 @@ export function AppSidebar() {
           </Button>
         </div>
 
+        <Separator className="my-2" />
+
         {/* Sign Out */}
         <Button 
           variant="ghost" 
-          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 mt-auto"
+          className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
           onClick={handleSignOut}
         >
           <LogOut className="mr-2 h-4 w-4" />
           Sign Out
         </Button>
       </div>
-    </Sidebar>
+    </div>
   );
 }
