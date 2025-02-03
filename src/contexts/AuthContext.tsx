@@ -51,13 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session);
       
-      if (event === 'SIGNED_OUT') {
+      if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
         handleAuthError();
-        toast({
-          title: "Signed out",
-          description: "You have been signed out of your account",
-        });
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        if (event === 'SIGNED_OUT') {
+          toast({
+            title: "Signed out",
+            description: "You have been signed out of your account",
+          });
+        }
+      } else if (event === 'SIGNED_IN') {
         if (session) {
           setSession(session);
           setUser(session.user);
