@@ -37,9 +37,7 @@ export function AppSidebar() {
   return (
     <Sidebar side="right">
       <SidebarHeader className="border-b px-6 py-4">
-        <div className="flex items-center gap-4 group hover:bg-accent/50 p-2 rounded-md transition-colors" 
-             onClick={() => navigate('/profile')} 
-             style={{ cursor: 'pointer' }}>
+        <div className="flex items-center gap-4">
           <Avatar>
             <AvatarImage src={profile.profile_photo || ''} alt={profile.display_name} />
             <AvatarFallback>{profile.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
@@ -48,13 +46,10 @@ export function AppSidebar() {
             <h3 className="font-semibold">{profile.display_name}</h3>
             <p className="text-sm text-muted-foreground">MMR: {profile.current_mmr}</p>
           </div>
-          <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-            My Profile
-          </span>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="space-y-6">
+      <SidebarContent className="space-y-4">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -92,6 +87,14 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild onClick={() => navigate('/profile')}>
+                  <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
+                    <Users className="h-4 w-4" />
+                    My Profile
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild onClick={() => navigate('/matches')}>
                   <div className="flex items-center gap-2 p-2 hover:bg-accent/50 rounded-md transition-colors w-full">
