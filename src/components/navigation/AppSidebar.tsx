@@ -4,7 +4,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Trophy, Users, History, Calculator, UserPlus, LogOut, Rocket } from "lucide-react";
+import { Trophy, Users, History, Calculator, UserPlus, LogOut, Rocket, Medal } from "lucide-react";
 import { InviteFriendDialog } from "../navigation/InviteFriendDialog";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
@@ -95,6 +95,15 @@ export function AppSidebar() {
             >
               <Users className="mr-2 h-4 w-4" />
               Friends
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start"
+              onClick={() => navigate('/leaderboard')}
+            >
+              <Medal className="mr-2 h-4 w-4" />
+              Leaderboard
             </Button>
           </div>
 
