@@ -36,7 +36,7 @@ export function AppSidebar() {
   if (!user || !profile) return null;
 
   return (
-    <Sidebar>
+    <Sidebar side="right">
       <SidebarHeader className="border-b px-6 py-4">
         <div className="flex items-center gap-4" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
           <Avatar>

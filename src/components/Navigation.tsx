@@ -45,7 +45,7 @@ export const Navigation = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent className="p-0" side="right">
-                <SidebarProvider>
+                <SidebarProvider defaultOpen={true}>
                   <AppSidebar />
                 </SidebarProvider>
               </SheetContent>
