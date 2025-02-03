@@ -31,7 +31,7 @@ export function AppSidebar() {
   if (!profile) return null;
 
   return (
-    <Sidebar side="right">
+    <Sidebar variant="floating" side="right">
       {/* User Profile Header */}
       <SidebarHeader className="border-b p-4">
         <div className="flex items-center gap-3">
