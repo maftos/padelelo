@@ -7,7 +7,7 @@ import { toast } from "sonner";
 interface InviteFriendDialogProps {
   userId: string;
   onOpenChange?: (open: boolean) => void;
-  children?: React.ReactNode;  // Added children to props
+  children?: React.ReactNode;
 }
 
 export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFriendDialogProps) => {
