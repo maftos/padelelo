@@ -5,8 +5,6 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
-  SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -45,10 +43,7 @@ export const Navigation = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle>Menu</SheetTitle>
-                </SheetHeader>
+              <SheetContent className="p-0">
                 <SideMenuContent 
                   user={user}
                   profile={profile}
