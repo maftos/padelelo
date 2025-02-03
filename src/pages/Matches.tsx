@@ -33,14 +33,14 @@ const Matches = () => {
   const { toast } = useToast();
   const { userId } = useUserProfile();
   const navigate = useNavigate();
-  const { session, loading } = useAuth();
+  const { session } = useAuth();
 
   // Check authentication status
   useEffect(() => {
-    if (!loading && !session) {
+    if (!session) {
       navigate('/login');
     }
-  }, [session, loading, navigate]);
+  }, [session, navigate]);
 
   const { data: matches = [], isLoading } = useQuery({
     queryKey: ["myCompletedMatches", userId],
@@ -86,7 +86,7 @@ const Matches = () => {
   });
 
   // Show loading state while checking auth
-  if (loading) {
+  if (isLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">
       <p>Loading...</p>
     </div>;
