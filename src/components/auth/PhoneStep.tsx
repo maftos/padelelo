@@ -10,9 +10,13 @@ interface PhoneStepProps {
   setPhoneNumber: (phone: string) => void;
   countryCode: string;
   setCountryCode: (code: string) => void;
+  password: string;
+  setPassword: (password: string) => void;
   onNext: () => void;
+  onSignUp: () => void;
   error: string | null;
   loading: boolean;
+  showPassword: boolean;
 }
 
 export const PhoneStep = ({ 
@@ -20,9 +24,13 @@ export const PhoneStep = ({
   setPhoneNumber, 
   countryCode,
   setCountryCode,
+  password,
+  setPassword,
   onNext, 
+  onSignUp,
   error, 
-  loading 
+  loading,
+  showPassword
 }: PhoneStepProps) => {
   // Format phone number with spaces for readability
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,6 +41,11 @@ export const PhoneStep = ({
     const formatted = cleaned.replace(/(\d{3})(?=\d)/g, '$1 ');
     
     setPhoneNumber(cleaned); // Store raw digits in state
+  };
+
+  // Format the phone number for display
+  const formatPhoneDisplay = (phone: string) => {
+    return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
   };
 
   return (
@@ -49,7 +62,7 @@ export const PhoneStep = ({
           <Select 
             value={countryCode} 
             onValueChange={setCountryCode}
-            disabled={loading}
+            disabled={loading || showPassword}
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Country Code" />
@@ -69,20 +82,32 @@ export const PhoneStep = ({
           <Input
             type="tel"
             placeholder="Phone number"
-            value={phoneNumber.replace(/(\d{3})(?=\d)/g, '$1 ')} // Display formatted
+            value={formatPhoneDisplay(phoneNumber)}
             onChange={handlePhoneChange}
             className="flex-1"
-            disabled={loading}
+            disabled={loading || showPassword}
           />
         </div>
       </div>
 
+      {showPassword && (
+        <div className="space-y-2">
+          <Label>Password</Label>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+          />
+        </div>
+      )}
+
       <Button 
-        onClick={onNext}
+        onClick={showPassword ? onSignUp : onNext}
         disabled={loading}
         className="w-full"
       >
-        {loading ? "Processing..." : "Next"}
+        {loading ? "Processing..." : (showPassword ? "Sign Up" : "Next")}
       </Button>
     </div>
   );
