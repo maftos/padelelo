@@ -18,6 +18,7 @@ import Roadmap from "@/pages/Roadmap";
 import RegisterMatch from "@/pages/RegisterMatch";
 import Tournaments from "@/pages/Tournaments";
 import TournamentDetail from "@/pages/TournamentDetail";
+import Verify from "@/pages/Verify";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/verify" element={<Verify />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/friends" element={<Friends />} />
             <Route path="/matches" element={<Matches />} />
