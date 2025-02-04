@@ -33,6 +33,10 @@ export const useSignUp = () => {
           }
           return error.message;
         case 422:
+          // This could indicate Twilio configuration issues
+          if (error.message.includes("Invalid From and To pair")) {
+            return "WhatsApp messaging is not properly configured. Please contact support.";
+          }
           return "Invalid phone number format";
         case 429:
           return "Too many attempts. Please try again later";
@@ -87,7 +91,10 @@ export const useSignUp = () => {
         phone: fullPhoneNumber,
         password,
         options: {
-          channel: 'sms'  // Changed from 'whatsapp' to 'sms'
+          channel: 'whatsapp',  // Explicitly requesting WhatsApp channel
+          data: {
+            channel: 'whatsapp'  // Additional channel specification in metadata
+          }
         }
       });
 
@@ -100,7 +107,7 @@ export const useSignUp = () => {
       if (data?.user) {
         toast({
           title: "Verification code sent!",
-          description: "Please check your SMS for the verification code",  // Updated message
+          description: "Please check your WhatsApp for the verification code",
         });
         navigate('/verify', { state: { phone: fullPhoneNumber } });
       }
