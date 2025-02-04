@@ -23,6 +23,7 @@ const Profile = () => {
     languages: "",
     profile_photo: "",
     current_mmr: 0,
+    whatsapp_number: "", // Keep this in state even if not shown in UI
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -46,6 +47,7 @@ const Profile = () => {
         languages: Array.isArray(profileInfo.languages) ? profileInfo.languages.join(", ") : "",
         profile_photo: profileInfo.profile_photo || "",
         current_mmr: profileInfo.current_mmr || 0,
+        whatsapp_number: profileInfo.whatsapp_number || "", // Keep the existing WhatsApp number
       });
       
       return profileInfo;
@@ -143,6 +145,7 @@ const Profile = () => {
         new_languages: formData.languages.split(',').map(lang => lang.trim()),
         new_preferred_language: null,
         new_profile_photo: formData.profile_photo,
+        new_whatsapp_number: formData.whatsapp_number, // Pass the existing WhatsApp number
         new_nationality: formData.nationality,
         new_location: formData.location
       });
