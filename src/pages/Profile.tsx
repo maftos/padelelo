@@ -21,7 +21,6 @@ const Profile = () => {
     gender: "",
     location: "",
     languages: "",
-    whatsapp_number: "",
     profile_photo: "",
     current_mmr: 0,
   });
@@ -45,7 +44,6 @@ const Profile = () => {
         gender: profileInfo.gender || "",
         location: profileInfo.location || "",
         languages: Array.isArray(profileInfo.languages) ? profileInfo.languages.join(", ") : "",
-        whatsapp_number: profileInfo.whatsapp_number || "",
         profile_photo: profileInfo.profile_photo || "",
         current_mmr: profileInfo.current_mmr || 0,
       });
@@ -145,7 +143,6 @@ const Profile = () => {
         new_languages: formData.languages.split(',').map(lang => lang.trim()),
         new_preferred_language: null,
         new_profile_photo: formData.profile_photo,
-        new_whatsapp_number: formData.whatsapp_number,
         new_nationality: formData.nationality,
         new_location: formData.location
       });
@@ -155,7 +152,6 @@ const Profile = () => {
         throw error;
       }
 
-      // After successful update, refetch the profile data
       await refetch();
 
       toast({
@@ -178,12 +174,12 @@ const Profile = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <main className="container max-w-2xl py-8 px-4 space-y-8">
+        <main className="container max-w-4xl mx-auto py-8 px-4">
           <div className="text-center space-y-2">
             <Skeleton className="h-8 w-48 mx-auto" />
             <Skeleton className="h-4 w-64 mx-auto" />
           </div>
-          <div className="space-y-6">
+          <div className="mt-8 space-y-6">
             <div className="flex flex-col items-center gap-4">
               <Skeleton className="h-24 w-24 rounded-full" />
               <Skeleton className="h-8 w-24" />
@@ -209,33 +205,35 @@ const Profile = () => {
         <meta name="description" content="Manage your PadelELO profile, update your information, and track your progress in the Mauritius padel community." />
       </Helmet>
       <Navigation />
-      <main className="container max-w-2xl py-8 px-4 space-y-8">
-        <ProfileHeader 
-          title="My Profile"
-          description="Manage your profile information"
-        />
-
-        <div className="space-y-6">
-          <ProfileAvatar
-            profilePhoto={formData.profile_photo}
-            displayName={formData.display_name}
-            isEditing={isEditing}
-            uploading={uploading}
-            onPhotoUpload={handlePhotoUpload}
+      <main className="container max-w-4xl mx-auto py-8 px-4">
+        <div className="space-y-8">
+          <ProfileHeader 
+            title="My Profile"
+            description="Manage your profile information"
           />
 
-          <ProfileForm
-            formData={formData}
-            isEditing={isEditing}
-            onFormChange={handleFormChange}
-            onGenderSelect={handleGenderSelect}
-            onSave={handleSave}
-            onEdit={() => setIsEditing(true)}
-            onCancel={() => {
-              setIsEditing(false);
-              refetch();
-            }}
-          />
+          <div className="space-y-8">
+            <ProfileAvatar
+              profilePhoto={formData.profile_photo}
+              displayName={formData.display_name}
+              isEditing={isEditing}
+              uploading={uploading}
+              onPhotoUpload={handlePhotoUpload}
+            />
+
+            <ProfileForm
+              formData={formData}
+              isEditing={isEditing}
+              onFormChange={handleFormChange}
+              onGenderSelect={handleGenderSelect}
+              onSave={handleSave}
+              onEdit={() => setIsEditing(true)}
+              onCancel={() => {
+                setIsEditing(false);
+                refetch();
+              }}
+            />
+          </div>
         </div>
       </main>
     </div>
