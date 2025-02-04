@@ -8,16 +8,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
 export const SignInForm = () => {
-  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    return emailRegex.test(email);
+  const validatePhone = (phone: string) => {
+    // Basic phone validation - can be enhanced based on your needs
+    const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+    return phoneRegex.test(phone);
   };
 
   const validatePassword = (password: string) => {
@@ -28,20 +29,17 @@ export const SignInForm = () => {
     if (error instanceof AuthApiError) {
       switch (error.status) {
         case 400:
-          if (error.message.includes("email_address_invalid")) {
-            return "Please enter a valid email address. Example: user@example.com";
-          }
-          if (error.message === "Email not confirmed") {
-            return "Please check your email and click the confirmation link before signing in.";
+          if (error.message.includes("Phone number format is invalid")) {
+            return "Please enter a valid phone number with country code. Example: +12345678900";
           }
           switch (error.message) {
             case "Invalid login credentials":
-              return "Invalid email or password. Please check your credentials.";
+              return "Invalid phone number or password. Please check your credentials.";
             default:
               return error.message;
           }
         case 422:
-          return "Invalid email format.";
+          return "Invalid phone number format.";
         case 429:
           return "Too many attempts. Please try again later.";
         default:
@@ -56,8 +54,8 @@ export const SignInForm = () => {
       setLoading(true);
       setError(null);
 
-      if (!validateEmail(email)) {
-        setError("Please enter a valid email address");
+      if (!validatePhone(phone)) {
+        setError("Please enter a valid phone number with country code");
         return;
       }
 
@@ -67,7 +65,7 @@ export const SignInForm = () => {
       }
 
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
+        phone,
         password,
       });
 
@@ -102,10 +100,10 @@ export const SignInForm = () => {
       
       <div className="space-y-2">
         <Input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="tel"
+          placeholder="Phone number (e.g. +12345678900)"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
           className="w-full"
           disabled={loading}
         />
