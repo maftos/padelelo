@@ -90,7 +90,8 @@ export const useSignUp = () => {
           data: {
             phone: fullPhoneNumber
           },
-          channel: 'whatsapp'  // Explicitly specify WhatsApp as the channel
+          channel: 'whatsapp',  // Explicitly specify WhatsApp as the channel
+          emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       });
 

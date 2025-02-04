@@ -28,7 +28,7 @@ export default function Verify() {
       const { error } = await supabase.auth.verifyOtp({
         phone,
         token: verificationCode,
-        type: 'sms'  // Changed to 'sms' which is the correct type for phone verification
+        type: 'sms'
       });
 
       if (error) throw error;
