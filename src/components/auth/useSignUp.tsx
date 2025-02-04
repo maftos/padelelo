@@ -91,9 +91,10 @@ export const useSignUp = () => {
         phone: fullPhoneNumber,
         password,
         options: {
-          channel: 'whatsapp',  // Explicitly requesting WhatsApp channel
+          channel: 'whatsapp',
           data: {
-            channel: 'whatsapp'  // Additional channel specification in metadata
+            channel: 'whatsapp',
+            whatsappSender: '+15557093548'  // Added WhatsApp sender number
           }
         }
       });
