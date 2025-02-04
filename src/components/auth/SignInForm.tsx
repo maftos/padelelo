@@ -7,7 +7,6 @@ import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -150,7 +149,7 @@ export const SignInForm = () => {
                   {countries.map((country) => (
                     <CommandItem
                       key={country.code}
-                      value={country.code + country.dial_code}
+                      value={`${country.code} ${country.dial_code}`}
                       onSelect={() => {
                         setCountryCode(country.dial_code);
                         setOpen(false);
