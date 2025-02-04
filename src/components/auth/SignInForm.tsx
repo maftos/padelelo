@@ -149,7 +149,7 @@ export const SignInForm = () => {
                   {countries.map((country) => (
                     <CommandItem
                       key={country.code}
-                      value={`${country.code} ${country.dial_code}`}
+                      value={`${country.code} ${country.dial_code} ${country.flag}`}
                       onSelect={() => {
                         setCountryCode(country.dial_code);
                         setOpen(false);
