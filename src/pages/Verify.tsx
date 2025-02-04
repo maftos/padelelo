@@ -3,12 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp"
+import { useToast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
 export default function Verify() {
   const [verificationCode, setVerificationCode] = useState("");
@@ -68,24 +64,23 @@ export default function Verify() {
           <form onSubmit={handleVerify} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="code">Verification Code</Label>
-              <InputOTP
-                value={verificationCode}
-                onChange={setVerificationCode}
+              <Input
+                id="code"
+                type="text"
+                inputMode="numeric"
                 maxLength={6}
-                render={({ slots }) => (
-                  <InputOTPGroup className="gap-2">
-                    {slots.map((slot, index) => (
-                      <InputOTPSlot key={index} {...slot} index={index} />
-                    ))}
-                  </InputOTPGroup>
-                )}
+                pattern="\d{6}"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                placeholder="Enter 6-digit code"
+                className="text-center text-lg tracking-widest"
               />
             </div>
 
             <Button
               type="submit"
               className="w-full"
-              disabled={loading}
+              disabled={loading || verificationCode.length !== 6}
             >
               {loading ? "Verifying..." : "Verify"}
             </Button>
