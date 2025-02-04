@@ -82,6 +82,7 @@ export const useSignUp = () => {
 
       const fullPhoneNumber = countryCode + phoneNumber;
       
+      // First, attempt to sign up with phone and password
       const { data, error: signUpError } = await supabase.auth.signUp({
         phone: fullPhoneNumber,
         password,
