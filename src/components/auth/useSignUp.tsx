@@ -88,7 +88,8 @@ export const useSignUp = () => {
         options: {
           data: {
             phone: fullPhoneNumber
-          }
+          },
+          channel: 'whatsapp'  // Explicitly specify WhatsApp as the channel
         }
       });
 
