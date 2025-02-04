@@ -6,14 +6,34 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { countries } from "@/lib/countries";
 
 export const SignInForm = () => {
-  const [phone, setPhone] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Format phone number with spaces for readability
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Remove all non-digit characters
+    const cleaned = e.target.value.replace(/\D/g, '');
+    
+    // Add spaces every 3 digits
+    const formatted = cleaned.replace(/(\d{3})(?=\d)/g, '$1 ');
+    
+    setPhoneNumber(cleaned); // Store raw digits in state
+  };
+
+  // Format the phone number for display
+  const formatPhoneDisplay = (phone: string) => {
+    return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
+  };
 
   const validatePhone = (phone: string) => {
     // Basic validation for international phone numbers
@@ -54,7 +74,9 @@ export const SignInForm = () => {
       setLoading(true);
       setError(null);
 
-      if (!validatePhone(phone)) {
+      const fullPhoneNumber = countryCode + phoneNumber;
+
+      if (!validatePhone(fullPhoneNumber)) {
         setError("Please enter a valid phone number with country code");
         return;
       }
@@ -65,7 +87,7 @@ export const SignInForm = () => {
       }
 
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        phone,
+        phone: fullPhoneNumber,
         password,
       });
 
@@ -99,26 +121,51 @@ export const SignInForm = () => {
       )}
       
       <div className="space-y-2">
-        <Input
-          type="tel"
-          placeholder="Phone number (e.g. +23012345678)"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          className="w-full"
-          disabled={loading}
-        />
+        <Label>WhatsApp Number</Label>
+        <div className="flex gap-2">
+          <Select 
+            value={countryCode} 
+            onValueChange={setCountryCode}
+            disabled={loading}
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Country Code" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {countries.map((country) => (
+                <SelectItem 
+                  key={country.code} 
+                  value={country.dial_code}
+                >
+                  {country.flag} {country.dial_code} ({country.code})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          
+          <Input
+            type="tel"
+            placeholder="Phone number"
+            value={formatPhoneDisplay(phoneNumber)}
+            onChange={handlePhoneChange}
+            className="flex-1"
+            disabled={loading}
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Password</Label>
         <Input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full"
           disabled={loading}
         />
       </div>
 
       <Button 
-        onClick={handleSignIn} 
+        onClick={handleSignIn}
         disabled={loading}
         className="w-full"
       >
