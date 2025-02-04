@@ -7,10 +7,7 @@ import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
 
 export const SignInForm = () => {
@@ -19,7 +16,6 @@ export const SignInForm = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -55,8 +51,7 @@ export const SignInForm = () => {
         case 400:
           if (error.message.includes("Phone number format is invalid")) {
             return "Please enter a valid phone number with country code. Example: +23012345678";
-          }
-          switch (error.message) {
+           {
             case "Invalid login credentials":
               return "Invalid phone number or password. Please check your credentials.";
             default:
@@ -127,47 +122,25 @@ export const SignInForm = () => {
       <div className="space-y-2">
         <Label>WhatsApp Number</Label>
         <div className="flex gap-2">
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                aria-expanded={open}
-                className="w-[140px] justify-between"
-              >
-                {countryCode
-                  ? countries.find((country) => country.dial_code === countryCode)?.flag + " " + countryCode
-                  : "Select code..."}
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-[200px] p-0">
-              <Command>
-                <CommandInput placeholder="Search country..." />
-                <CommandEmpty>No country found.</CommandEmpty>
-                <CommandGroup className="max-h-[300px] overflow-auto">
-                  {countries.map((country) => (
-                    <CommandItem
-                      key={country.code}
-                      value={country.code}
-                      onSelect={() => {
-                        setCountryCode(country.dial_code);
-                        setOpen(false);
-                      }}
-                    >
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          countryCode === country.dial_code ? "opacity-100" : "opacity-0"
-                        )}
-                      />
-                      {country.flag} {country.dial_code} ({country.code})
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+          <Select 
+            value={countryCode} 
+            onValueChange={setCountryCode}
+            disabled={loading}
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Country Code" />
+            </SelectTrigger>
+            <SelectContent className="max-h-[300px]">
+              {countries.map((country) => (
+                <SelectItem 
+                  key={country.code} 
+                  value={country.dial_code}
+                >
+                  {country.flag} {country.dial_code} ({country.code})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           
           <Input
             type="tel"
