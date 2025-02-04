@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
 
 export default function Verify() {
   const [verificationCode, setVerificationCode] = useState("");
@@ -57,20 +61,24 @@ export default function Verify() {
           <div className="space-y-2 text-center">
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Verify your WhatsApp</h1>
             <p className="text-muted-foreground">
-              Enter the 6-digit code sent to your WhatsApp
+              Enter the 6-digit code sent to {phone}
             </p>
           </div>
 
           <form onSubmit={handleVerify} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="code">Verification Code</Label>
-              <Input
-                id="code"
-                placeholder="Enter 6-digit code"
+              <InputOTP
                 value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                required
-                className="bg-background"
+                onChange={setVerificationCode}
+                maxLength={6}
+                render={({ slots }) => (
+                  <InputOTPGroup className="gap-2">
+                    {slots.map((slot, index) => (
+                      <InputOTPSlot key={index} {...slot} />
+                    ))}
+                  </InputOTPGroup>
+                )}
               />
             </div>
 
