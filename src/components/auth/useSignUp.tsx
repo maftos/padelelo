@@ -87,7 +87,7 @@ export const useSignUp = () => {
         phone: fullPhoneNumber,
         password,
         options: {
-          channel: 'whatsapp'
+          channel: 'sms'  // Changed from 'whatsapp' to 'sms'
         }
       });
 
@@ -100,7 +100,7 @@ export const useSignUp = () => {
       if (data?.user) {
         toast({
           title: "Verification code sent!",
-          description: "Please check your WhatsApp for the verification code",
+          description: "Please check your SMS for the verification code",  // Updated message
         });
         navigate('/verify', { state: { phone: fullPhoneNumber } });
       }
