@@ -20,7 +20,6 @@ export const SignInForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState(""); // Add state for search value
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -143,14 +142,14 @@ export const SignInForm = () => {
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[200px] p-0">
-              <Command value={searchValue} onValueChange={setSearchValue}>
+              <Command>
                 <CommandInput placeholder="Search country..." />
                 <CommandEmpty>No country found.</CommandEmpty>
                 <CommandGroup className="max-h-[300px] overflow-auto">
                   {countries.map((country) => (
                     <CommandItem
                       key={country.code}
-                      value={country.code + country.dial_code + country.flag}
+                      value={country.code}
                       onSelect={() => {
                         setCountryCode(country.dial_code);
                         setOpen(false);
