@@ -10,7 +10,6 @@ export const useSignUp = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState(1);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -51,40 +50,21 @@ export const useSignUp = () => {
         setError("Please enter a valid phone number");
         return;
       }
-      
-      setLoading(true);
-      const fullPhoneNumber = countryCode + phoneNumber;
-      sessionStorage.setItem('signupPhone', fullPhoneNumber);
-      
-      setError(null);
-      setStep(2);
-    } catch (err) {
-      console.error("Error in handleNext:", err);
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBack = () => {
-    sessionStorage.removeItem('signupPhone');
-    setStep(1);
-    setError(null);
-  };
-
-  const handleSignUp = async () => {
-    try {
-      setLoading(true);
-      setError(null);
 
       if (!validatePassword(password)) {
         setError("Password must be at least 6 characters long");
         return;
       }
+      
+      setLoading(true);
+      setError(null);
 
       const fullPhoneNumber = countryCode + phoneNumber;
       
-      // First, attempt to sign up with phone and password
+      // Store the phone number for verification later
+      sessionStorage.setItem('signupPhone', fullPhoneNumber);
+      
+      // Attempt to sign up with phone and password
       const { data, error: signUpError } = await supabase.auth.signUp({
         phone: fullPhoneNumber,
         password,
@@ -123,9 +103,6 @@ export const useSignUp = () => {
     setPassword,
     loading,
     error,
-    step,
     handleNext,
-    handleBack,
-    handleSignUp,
   };
 };
