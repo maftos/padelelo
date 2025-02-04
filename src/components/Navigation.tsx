@@ -24,7 +24,7 @@ export const Navigation = () => {
         <div className="flex flex-1 items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <img 
-              src="/lovable-uploads/6c2aa848-d126-4ee6-9af5-78a13698d72c.png" 
+              src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" 
               alt="PadelELO Logo" 
               className="h-8 w-8" 
             />
