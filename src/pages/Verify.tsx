@@ -28,7 +28,7 @@ export default function Verify() {
       const { error } = await supabase.auth.verifyOtp({
         phone,
         token: verificationCode,
-        type: 'whatsapp'  // Changed from 'sms' to 'whatsapp'
+        type: 'phone'  // Changed to 'phone' as it's the correct type for phone verification
       });
 
       if (error) throw error;
