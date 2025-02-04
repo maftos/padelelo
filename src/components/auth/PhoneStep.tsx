@@ -13,10 +13,8 @@ interface PhoneStepProps {
   password: string;
   setPassword: (password: string) => void;
   onNext: () => void;
-  onSignUp: () => void;
   error: string | null;
   loading: boolean;
-  showPassword: boolean;
 }
 
 export const PhoneStep = ({ 
@@ -27,10 +25,8 @@ export const PhoneStep = ({
   password,
   setPassword,
   onNext, 
-  onSignUp,
   error, 
-  loading,
-  showPassword
+  loading
 }: PhoneStepProps) => {
   // Format phone number with spaces for readability
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +58,7 @@ export const PhoneStep = ({
           <Select 
             value={countryCode} 
             onValueChange={setCountryCode}
-            disabled={loading || showPassword}
+            disabled={loading}
           >
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Country Code" />
@@ -85,29 +81,27 @@ export const PhoneStep = ({
             value={formatPhoneDisplay(phoneNumber)}
             onChange={handlePhoneChange}
             className="flex-1"
-            disabled={loading || showPassword}
+            disabled={loading}
           />
         </div>
       </div>
 
-      {showPassword && (
-        <div className="space-y-2">
-          <Label>Password</Label>
-          <Input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={loading}
-          />
-        </div>
-      )}
+      <div className="space-y-2">
+        <Label>Password</Label>
+        <Input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={loading}
+        />
+      </div>
 
       <Button 
-        onClick={showPassword ? onSignUp : onNext}
+        onClick={onNext}
         disabled={loading}
         className="w-full"
       >
-        {loading ? "Processing..." : (showPassword ? "Sign Up" : "Next")}
+        {loading ? "Processing..." : "Sign Up"}
       </Button>
     </div>
   );
