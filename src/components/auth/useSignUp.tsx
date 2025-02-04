@@ -84,10 +84,9 @@ export const useSignUp = () => {
         return;
       }
 
-      // Format the phone number according to E.164 format
-      // Remove any spaces or special characters and ensure it starts with +
+      // Format phone number for WhatsApp
       const cleanPhoneNumber = (countryCode + phoneNumber).replace(/\s+/g, '');
-      const formattedPhone = cleanPhoneNumber.startsWith('+') ? cleanPhoneNumber : `+${cleanPhoneNumber}`;
+      const formattedPhone = `whatsapp:${cleanPhoneNumber.startsWith('+') ? cleanPhoneNumber : `+${cleanPhoneNumber}`}`;
       
       console.log('Attempting signup with phone:', formattedPhone);
 
