@@ -51,12 +51,11 @@ export const SignInForm = () => {
         case 400:
           if (error.message.includes("Phone number format is invalid")) {
             return "Please enter a valid phone number with country code. Example: +23012345678";
-           {
-            case "Invalid login credentials":
-              return "Invalid phone number or password. Please check your credentials.";
-            default:
-              return error.message;
           }
+          if (error.message === "Invalid login credentials") {
+            return "Invalid phone number or password. Please check your credentials.";
+          }
+          return error.message;
         case 422:
           return "Invalid phone number format.";
         case 429:
