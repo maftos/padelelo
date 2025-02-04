@@ -85,10 +85,11 @@ export const useSignUp = () => {
       }
 
       const fullPhoneNumber = countryCode + phoneNumber;
+      const whatsappFormattedNumber = `whatsapp:${fullPhoneNumber}`;
       
       // First, attempt to sign up with phone and password
       const { data, error: signUpError } = await supabase.auth.signUp({
-        phone: fullPhoneNumber,
+        phone: whatsappFormattedNumber,
         password,
         options: {
           channel: 'whatsapp'
