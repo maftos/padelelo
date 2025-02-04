@@ -84,11 +84,15 @@ export const useSignUp = () => {
         return;
       }
 
-      const fullPhoneNumber = countryCode + phoneNumber;
+      // Format the phone number according to E.164 format
+      // Remove any spaces or special characters and ensure it starts with +
+      const cleanPhoneNumber = (countryCode + phoneNumber).replace(/\s+/g, '');
+      const formattedPhone = cleanPhoneNumber.startsWith('+') ? cleanPhoneNumber : `+${cleanPhoneNumber}`;
       
-      // First, attempt to sign up with phone and password
+      console.log('Attempting signup with phone:', formattedPhone);
+
       const { data, error: signUpError } = await supabase.auth.signUp({
-        phone: fullPhoneNumber,
+        phone: formattedPhone,
         password,
         options: {
           channel: 'whatsapp'
@@ -106,7 +110,7 @@ export const useSignUp = () => {
           title: "Verification code sent!",
           description: "Please check your WhatsApp for the verification code",
         });
-        navigate('/verify', { state: { phone: fullPhoneNumber } });
+        navigate('/verify', { state: { phone: formattedPhone } });
       }
     } catch (err: any) {
       console.error("Unexpected error:", err);
