@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { PhoneStep } from "./PhoneStep";
-import { PasswordStep } from "./PasswordStep";
 import { useSignUp } from "./useSignUp";
 
 export const SignUpForm = () => {
@@ -16,10 +15,7 @@ export const SignUpForm = () => {
     setPassword,
     loading,
     error,
-    step,
     handleNext,
-    handleBack,
-    handleSignUp,
   } = useSignUp();
 
   useEffect(() => {
@@ -31,27 +27,17 @@ export const SignUpForm = () => {
 
   return (
     <div className="space-y-4">
-      {step === 1 ? (
-        <PhoneStep
-          phoneNumber={phoneNumber}
-          setPhoneNumber={setPhoneNumber}
-          countryCode={countryCode}
-          setCountryCode={setCountryCode}
-          onNext={handleNext}
-          error={error}
-          loading={loading}
-        />
-      ) : (
-        <PasswordStep
-          email={countryCode + phoneNumber}
-          password={password}
-          setPassword={setPassword}
-          onBack={handleBack}
-          onSignUp={handleSignUp}
-          error={error}
-          loading={loading}
-        />
-      )}
+      <PhoneStep
+        phoneNumber={phoneNumber}
+        setPhoneNumber={setPhoneNumber}
+        countryCode={countryCode}
+        setCountryCode={setCountryCode}
+        password={password}
+        setPassword={setPassword}
+        onNext={handleNext}
+        error={error}
+        loading={loading}
+      />
     </div>
   );
 };
