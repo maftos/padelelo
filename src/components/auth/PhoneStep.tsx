@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { countries } from "@/lib/countries";
 
 interface PhoneStepProps {
   phoneNumber: string;
@@ -23,6 +24,17 @@ export const PhoneStep = ({
   error, 
   loading 
 }: PhoneStepProps) => {
+  // Format phone number with spaces for readability
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Remove all non-digit characters
+    const cleaned = e.target.value.replace(/\D/g, '');
+    
+    // Add spaces every 3 digits
+    const formatted = cleaned.replace(/(\d{3})(?=\d)/g, '$1 ');
+    
+    setPhoneNumber(cleaned); // Store raw digits in state
+  };
+
   return (
     <div className="space-y-4">
       {error && (
@@ -42,17 +54,23 @@ export const PhoneStep = ({
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Country Code" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="+230">🇲🇺 +230 (MU)</SelectItem>
-              {/* Add more countries as needed */}
+            <SelectContent className="max-h-[300px]">
+              {countries.map((country) => (
+                <SelectItem 
+                  key={country.code} 
+                  value={country.dial_code}
+                >
+                  {country.flag} {country.dial_code} ({country.code})
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           
           <Input
             type="tel"
             placeholder="Phone number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            value={phoneNumber.replace(/(\d{3})(?=\d)/g, '$1 ')} // Display formatted
+            onChange={handlePhoneChange}
             className="flex-1"
             disabled={loading}
           />

@@ -15,9 +15,7 @@ export const useSignUp = () => {
   const navigate = useNavigate();
 
   const validatePhoneNumber = (phone: string) => {
-    // Basic validation for Mauritius phone numbers (8 digits)
-    const phoneRegex = /^\d{8}$/;
-    return phoneRegex.test(phone);
+    return phone.length > 0; // Basic validation to ensure number is not empty
   };
 
   const validatePassword = (password: string) => {
@@ -50,7 +48,7 @@ export const useSignUp = () => {
   const handleNext = async () => {
     try {
       if (!validatePhoneNumber(phoneNumber)) {
-        setError("Please enter a valid phone number (8 digits)");
+        setError("Please enter a valid phone number");
         return;
       }
       

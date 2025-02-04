@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
 
 interface PasswordStepProps {
   email: string;
@@ -13,14 +14,21 @@ interface PasswordStepProps {
 }
 
 export const PasswordStep = ({ 
-  email, 
+  email,
   password, 
   setPassword, 
   onBack, 
-  onSignUp, 
-  error, 
+  onSignUp,
+  error,
   loading 
 }: PasswordStepProps) => {
+  // Format the phone number for display
+  const formatPhoneDisplay = (phone: string) => {
+    const [countryCode, ...rest] = phone.split(' ');
+    const number = rest.join('').replace(/(\d{3})(?=\d)/g, '$1 ');
+    return `${countryCode} ${number}`;
+  };
+
   return (
     <div className="space-y-4">
       {error && (
@@ -28,30 +36,29 @@ export const PasswordStep = ({
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+
+      <div className="space-y-2">
+        <Label>WhatsApp Number</Label>
+        <div className="h-10 px-3 py-2 rounded-md border bg-muted text-muted-foreground">
+          {formatPhoneDisplay(email)}
+        </div>
+      </div>
       
       <div className="space-y-2">
-        <Input
-          type="email"
-          value={email}
-          disabled={true}
-          className="w-full bg-muted"
-        />
-        
+        <Label>Password</Label>
         <Input
           type="password"
-          placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full"
           disabled={loading}
         />
       </div>
 
-      <div className="space-y-2">
+      <div className="flex gap-2">
         <Button 
+          variant="outline"
           onClick={onBack}
           disabled={loading}
-          variant="outline"
           className="w-full"
         >
           Back
@@ -61,7 +68,7 @@ export const PasswordStep = ({
           disabled={loading}
           className="w-full"
         >
-          {loading ? "Creating account..." : "Sign Up"}
+          {loading ? "Processing..." : "Sign Up"}
         </Button>
       </div>
     </div>
