@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { EmailStep } from "./EmailStep";
+import { PhoneStep } from "./PhoneStep";
 import { PasswordStep } from "./PasswordStep";
 import { useSignUp } from "./useSignUp";
 
@@ -8,8 +8,8 @@ export const SignUpForm = () => {
   const [searchParams] = useSearchParams();
   const referrerId = searchParams.get('ref');
   const {
-    email,
-    setEmail,
+    phoneNumber,
+    setPhoneNumber,
     password,
     setPassword,
     loading,
@@ -30,16 +30,16 @@ export const SignUpForm = () => {
   return (
     <div className="space-y-4">
       {step === 1 ? (
-        <EmailStep
-          email={email}
-          setEmail={setEmail}
+        <PhoneStep
+          phoneNumber={phoneNumber}
+          setPhoneNumber={setPhoneNumber}
           onNext={handleNext}
           error={error}
           loading={loading}
         />
       ) : (
         <PasswordStep
-          email={email}
+          email={phoneNumber}
           password={password}
           setPassword={setPassword}
           onBack={handleBack}
