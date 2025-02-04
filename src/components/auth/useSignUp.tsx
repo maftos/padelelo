@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export const useSignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+230"); // Default to Mauritius
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +15,8 @@ export const useSignUp = () => {
   const navigate = useNavigate();
 
   const validatePhoneNumber = (phone: string) => {
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    // Basic validation for Mauritius phone numbers (8 digits)
+    const phoneRegex = /^\d{8}$/;
     return phoneRegex.test(phone);
   };
 
@@ -27,7 +29,7 @@ export const useSignUp = () => {
       switch (error.status) {
         case 400:
           if (error.message.includes("Phone number format is invalid")) {
-            return "Please enter a valid phone number in international format (e.g. +1234567890)";
+            return "Please enter a valid phone number";
           }
           return error.message;
         case 422:
@@ -44,13 +46,13 @@ export const useSignUp = () => {
   const handleNext = async () => {
     try {
       if (!validatePhoneNumber(phoneNumber)) {
-        setError("Please enter a valid phone number in international format (e.g. +1234567890)");
+        setError("Please enter a valid phone number (8 digits)");
         return;
       }
       
       setLoading(true);
-      const trimmedPhone = phoneNumber.trim();
-      sessionStorage.setItem('signupPhone', trimmedPhone);
+      const fullPhoneNumber = countryCode + phoneNumber;
+      sessionStorage.setItem('signupPhone', fullPhoneNumber);
       
       setError(null);
       setStep(2);
@@ -78,14 +80,14 @@ export const useSignUp = () => {
         return;
       }
 
-      const trimmedPhone = phoneNumber.trim();
+      const fullPhoneNumber = countryCode + phoneNumber;
       
       const { data, error: signUpError } = await supabase.auth.signUp({
-        phone: trimmedPhone,
+        phone: fullPhoneNumber,
         password,
         options: {
           data: {
-            phone: trimmedPhone
+            phone: fullPhoneNumber
           }
         }
       });
@@ -101,7 +103,7 @@ export const useSignUp = () => {
           title: "Verification code sent!",
           description: "Please check your WhatsApp for the verification code",
         });
-        navigate('/verify', { state: { phone: trimmedPhone } });
+        navigate('/verify', { state: { phone: fullPhoneNumber } });
       }
     } catch (err: any) {
       console.error("Unexpected error:", err);
@@ -114,6 +116,8 @@ export const useSignUp = () => {
   return {
     phoneNumber,
     setPhoneNumber,
+    countryCode,
+    setCountryCode,
     password,
     setPassword,
     loading,

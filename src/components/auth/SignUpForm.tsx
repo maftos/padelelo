@@ -10,6 +10,8 @@ export const SignUpForm = () => {
   const {
     phoneNumber,
     setPhoneNumber,
+    countryCode,
+    setCountryCode,
     password,
     setPassword,
     loading,
@@ -33,13 +35,15 @@ export const SignUpForm = () => {
         <PhoneStep
           phoneNumber={phoneNumber}
           setPhoneNumber={setPhoneNumber}
+          countryCode={countryCode}
+          setCountryCode={setCountryCode}
           onNext={handleNext}
           error={error}
           loading={loading}
         />
       ) : (
         <PasswordStep
-          email={phoneNumber}
+          email={countryCode + phoneNumber}
           password={password}
           setPassword={setPassword}
           onBack={handleBack}
