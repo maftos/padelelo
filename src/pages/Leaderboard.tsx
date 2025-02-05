@@ -2,7 +2,7 @@ import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Filter, ChevronRight } from "lucide-react";
+import { Filter, ChevronRight, Crown, Poop } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -217,7 +217,13 @@ const Leaderboard = () => {
                       <TableCell className="font-medium">
                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full 
                           ${index < 3 ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground'}`}>
-                          {index + 1}
+                          {index === 0 ? (
+                            <Crown className="w-5 h-5" />
+                          ) : index === leaderboardData.length - 1 ? (
+                            <Poop className="w-5 h-5" />
+                          ) : (
+                            index + 1
+                          )}
                         </span>
                       </TableCell>
                       {!isMobile && (
