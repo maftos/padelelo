@@ -2,7 +2,7 @@ import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Filter, ChevronRight, Crown, Poop } from "lucide-react";
+import { Filter, ChevronRight, Crown, Skull } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -220,7 +220,7 @@ const Leaderboard = () => {
                           {index === 0 ? (
                             <Crown className="w-5 h-5" />
                           ) : index === leaderboardData.length - 1 ? (
-                            <Poop className="w-5 h-5" />
+                            <Skull className="w-5 h-5" />
                           ) : (
                             index + 1
                           )}
