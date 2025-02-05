@@ -161,12 +161,12 @@ export function useMatchForm() {
     try {
       setIsSubmitting(true);
       const { error: completeError } = await supabase.rpc('complete_match', {
-        user_a_id: userId,
-        match_id: matchId,
+        i_match_id: matchId,
         new_team1_score: parseInt(scores[0].team1),
         new_team2_score: parseInt(scores[0].team2),
         team1_win_mmr_change_amount: mmrData.team1_win_mmr_change_amount,
-        team2_win_mmr_change_amount: mmrData.team2_win_mmr_change_amount
+        team2_win_mmr_change_amount: mmrData.team2_win_mmr_change_amount,
+        user_a_id: userId
       });
 
       if (completeError) throw completeError;
