@@ -216,13 +216,42 @@ const Profile = () => {
           />
 
           <div className="space-y-8">
-            <ProfileAvatar
-              profilePhoto={formData.profile_photo}
-              displayName={formData.display_name}
-              isEditing={isEditing}
-              uploading={uploading}
-              onPhotoUpload={handlePhotoUpload}
-            />
+            <div className="flex flex-col items-center gap-4">
+              <ProfileAvatar
+                profilePhoto={formData.profile_photo}
+                displayName={formData.display_name}
+                isEditing={isEditing}
+                uploading={uploading}
+                onPhotoUpload={handlePhotoUpload}
+              />
+              {!isEditing ? (
+                <Button 
+                  onClick={() => setIsEditing(true)}
+                  className="w-full max-w-[200px]"
+                >
+                  Edit Profile
+                </Button>
+              ) : (
+                <div className="flex gap-4 w-full max-w-[400px] justify-center">
+                  <Button 
+                    onClick={handleSave}
+                    className="flex-1"
+                  >
+                    Save Changes
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setIsEditing(false);
+                      refetch();
+                    }}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
 
             <ProfileForm
               formData={formData}

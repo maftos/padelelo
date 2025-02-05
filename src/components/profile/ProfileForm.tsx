@@ -2,14 +2,7 @@ import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
-import { InfoIcon } from "lucide-react";
 
 interface ProfileFormData {
   display_name: string;
@@ -164,15 +157,6 @@ export const ProfileForm: FC<ProfileFormProps> = ({
           />
         </div>
       </div>
-
-      {isEditing ? (
-        <div className="flex gap-4 pt-4">
-          <Button className="flex-1 max-w-[200px]" onClick={onSave}>Save Changes</Button>
-          <Button className="flex-1 max-w-[200px]" variant="outline" onClick={onCancel}>Cancel</Button>
-        </div>
-      ) : (
-        <Button className="w-full max-w-[200px]" onClick={onEdit}>Edit Profile</Button>
-      )}
     </div>
   );
 };
