@@ -36,6 +36,44 @@ export type Database = {
         }
         Relationships: []
       }
+      courts: {
+        Row: {
+          additional_info: string | null
+          court_name: string
+          court_number: number
+          created_at: string | null
+          id: number
+          updated_at: string | null
+          venue_id: string | null
+        }
+        Insert: {
+          additional_info?: string | null
+          court_name: string
+          court_number: number
+          created_at?: string | null
+          id?: never
+          updated_at?: string | null
+          venue_id?: string | null
+        }
+        Update: {
+          additional_info?: string | null
+          court_name?: string
+          court_number?: number
+          created_at?: string | null
+          id?: never
+          updated_at?: string | null
+          venue_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_venue"
+            columns: ["venue_id"]
+            isOneToOne: false
+            referencedRelation: "venues"
+            referencedColumns: ["venue_id"]
+          },
+        ]
+      }
       feature_updates: {
         Row: {
           change_items: string[]
@@ -481,8 +519,11 @@ export type Database = {
           email_address: string | null
           location: unknown
           name: string
+          opening_hours: Json | null
           phone_number: string | null
+          photo_gallery: Json | null
           venue_id: string
+          website_url: string | null
         }
         Insert: {
           admins?: string[] | null
@@ -490,8 +531,11 @@ export type Database = {
           email_address?: string | null
           location: unknown
           name: string
+          opening_hours?: Json | null
           phone_number?: string | null
+          photo_gallery?: Json | null
           venue_id?: string
+          website_url?: string | null
         }
         Update: {
           admins?: string[] | null
@@ -499,8 +543,11 @@ export type Database = {
           email_address?: string | null
           location?: unknown
           name?: string
+          opening_hours?: Json | null
           phone_number?: string | null
+          photo_gallery?: Json | null
           venue_id?: string
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -908,7 +955,7 @@ export type Database = {
       }
       complete_match: {
         Args: {
-          match_id: string
+          i_match_id: string
           new_team1_score: number
           new_team2_score: number
           team1_win_mmr_change_amount: number
