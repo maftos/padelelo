@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button"; // Added this import
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +10,8 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { useQuery } from "@tanstack/react-query";
+
+// ... keep existing code (all the component logic)
 
 const Profile = () => {
   const { userId } = useUserProfile();
@@ -23,7 +26,7 @@ const Profile = () => {
     languages: "",
     profile_photo: "",
     current_mmr: 0,
-    whatsapp_number: "", // Keep this in state even if not shown in UI
+    whatsapp_number: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
