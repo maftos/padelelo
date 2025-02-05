@@ -2,7 +2,7 @@ import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Filter, ChevronRight, Crown, Skull } from "lucide-react";
+import { Filter, ChevronRight } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -218,9 +218,9 @@ const Leaderboard = () => {
                         <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full 
                           ${index < 3 ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground'}`}>
                           {index === 0 ? (
-                            <Crown className="w-5 h-5" />
+                            <img src="/lovable-uploads/9fc3a4aa-a0b9-4dd5-8dfc-603e98b34c78.png" alt="Crown" className="w-5 h-5" />
                           ) : index === leaderboardData.length - 1 ? (
-                            <Skull className="w-5 h-5" />
+                            <img src="/lovable-uploads/9e4f079f-6938-41d4-a79c-db25e2a2ff45.png" alt="Last Place" className="w-5 h-5" />
                           ) : (
                             index + 1
                           )}
