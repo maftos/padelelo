@@ -66,7 +66,7 @@ export const MatchForm = () => {
             {page === 1
               ? `Select Players (${playersLeftToSelect} left)`
               : page === 2
-              ? "Select Partner"
+              ? ""
               : "Enter match score"}
           </p>
           {page === 1 && (
@@ -135,7 +135,7 @@ export const MatchForm = () => {
                 <Card
                   key={playerId}
                   className={`p-4 cursor-pointer transition-all ${
-                    isSelected ? "bg-primary/10 ring-2 ring-primary" : "hover:shadow-md hover:bg-accent/50"
+                    isSelected ? "bg-primary/10 ring-2 ring-primary" : "hover:shadow-md"
                   } ${isCalculating ? "opacity-50 pointer-events-none" : ""}`}
                   onClick={() => {
                     calculateMMR(playerId);
@@ -171,36 +171,38 @@ export const MatchForm = () => {
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
-          <Card className="p-6 space-y-6">
-            <div className="flex items-center justify-between gap-2">
-              <TeamDisplay
-                player1DisplayName={getPlayerName(player1)}
-                player1ProfilePhoto={getPlayerPhoto(player1)}
-                player2DisplayName={getPlayerName(mmrData?.selectedPartnerId || "")}
-                player2ProfilePhoto={getPlayerPhoto(mmrData?.selectedPartnerId || "")}
-                player1IsCompleter={false}
-                player2IsCompleter={false}
-              />
-              <div className="flex items-center gap-2 font-semibold">
-                <span>{scores[0].team1}</span>
-                <span className="text-muted-foreground">-</span>
-                <span>{scores[0].team2}</span>
+          <Card className="p-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between gap-2">
+                <TeamDisplay
+                  player1DisplayName={getPlayerName(player1)}
+                  player1ProfilePhoto={getPlayerPhoto(player1)}
+                  player2DisplayName={getPlayerName(player2)}
+                  player2ProfilePhoto={getPlayerPhoto(player2)}
+                  player1IsCompleter={false}
+                  player2IsCompleter={false}
+                />
+                <div className="flex items-center gap-2 font-semibold">
+                  <span>{scores[0].team1}</span>
+                  <span className="text-muted-foreground">-</span>
+                  <span>{scores[0].team2}</span>
+                </div>
+                <TeamDisplay
+                  player1DisplayName={getPlayerName(player3)}
+                  player1ProfilePhoto={getPlayerPhoto(player3)}
+                  player2DisplayName={getPlayerName(player4)}
+                  player2ProfilePhoto={getPlayerPhoto(player4)}
+                  isRightAligned
+                  player1IsCompleter={false}
+                  player2IsCompleter={false}
+                />
               </div>
-              <TeamDisplay
-                player1DisplayName={getPlayerName(player3)}
-                player1ProfilePhoto={getPlayerPhoto(player3)}
-                player2DisplayName={getPlayerName(player4)}
-                player2ProfilePhoto={getPlayerPhoto(player4)}
-                isRightAligned
-                player1IsCompleter={false}
-                player2IsCompleter={false}
-              />
+              {mmrData && (
+                <TeamPreview
+                  mmrData={mmrData}
+                />
+              )}
             </div>
-            {mmrData && (
-              <TeamPreview
-                mmrData={mmrData}
-              />
-            )}
           </Card>
           <ScoreForm
             onBack={() => setPage(2)}
