@@ -1,7 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface PlayerOption {
   id: string;
@@ -21,37 +19,30 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   onPlayerSelect,
 }) => {
   return (
-    <div className="space-y-4">
-      <RadioGroup
-        onValueChange={onPlayerSelect}
-        className="space-y-2"
-      >
-        {players.map((player) => {
-          const isSelected = selectedPlayers.includes(player.id);
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {players.map((player) => {
+        const isSelected = selectedPlayers.includes(player.id);
 
-          return (
-            <div key={player.id} className="flex items-center space-x-2">
-              <RadioGroupItem
-                value={player.id}
-                id={player.id}
-                checked={isSelected}
-              />
-              <Label
-                htmlFor={player.id}
-                className="flex items-center space-x-2"
-              >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={player.profile_photo || ""} alt={player.name} />
-                  <AvatarFallback>
-                    {player.name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span>{player.name}</span>
-              </Label>
+        return (
+          <Card
+            key={player.id}
+            className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+              isSelected ? "ring-2 ring-primary" : ""
+            }`}
+            onClick={() => onPlayerSelect(player.id)}
+          >
+            <div className="flex flex-col items-center space-y-3">
+              <Avatar className="h-16 w-16">
+                <AvatarImage src={player.profile_photo || ""} alt={player.name} />
+                <AvatarFallback>
+                  {player.name.substring(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="font-medium text-center">{player.name}</span>
             </div>
-          );
-        })}
-      </RadioGroup>
+          </Card>
+        );
+      })}
     </div>
   );
 };
