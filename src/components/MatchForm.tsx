@@ -47,9 +47,8 @@ export const MatchForm = () => {
   }, [profile?.id, player1, setPlayer1]);
 
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
-  const availablePlayers = playerOptions.filter(
-    (p) => !selectedPlayers.includes(p.id) && p.id !== profile?.id
-  );
+  const availablePlayers = playerOptions.filter(p => p.id !== profile?.id);
+  const playersLeftToSelect = 3 - (selectedPlayers.length - 1);
 
   const getPlayerPhoto = (playerId: string) => {
     if (playerId === profile?.id) {
@@ -58,8 +57,6 @@ export const MatchForm = () => {
     const player = playerOptions.find((p) => p.id === playerId);
     return player?.profile_photo || "";
   };
-
-  const playersLeftToSelect = 3 - (selectedPlayers.length - 1); // Subtract 1 because player1 (current user) is auto-selected
 
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
@@ -107,7 +104,9 @@ export const MatchForm = () => {
             )}
           </div>
           <TeamSelect
-            players={searchQuery ? availablePlayers : playerOptions}
+            players={searchQuery ? availablePlayers.filter(p => 
+              p.name.toLowerCase().includes(searchQuery.toLowerCase())
+            ) : availablePlayers}
             selectedPlayers={selectedPlayers}
             currentUserProfile={profile}
             onPlayerSelect={(playerId) => {
@@ -135,8 +134,10 @@ export const MatchForm = () => {
             {[player2, player3, player4].map((playerId) => (
               <Card
                 key={playerId}
-                className={`p-4 cursor-pointer transition-all hover:shadow-md ${
-                  isCalculating ? "opacity-50 pointer-events-none" : ""
+                className={`p-4 cursor-pointer transition-all ${
+                  isCalculating && mmrData?.selectedPartnerId === playerId
+                    ? "opacity-50 pointer-events-none ring-2 ring-primary"
+                    : "hover:shadow-md"
                 }`}
                 onClick={() => {
                   calculateMMR(playerId);
