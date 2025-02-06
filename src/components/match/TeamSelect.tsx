@@ -28,7 +28,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
       >
         {players.map((player) => {
           const isSelected = selectedPlayers.includes(player.id);
-          const isDisabled = selectedPlayers.length >= 2 && !isSelected;
+          const isDisabled = selectedPlayers.length >= 3 && !isSelected;
 
           return (
             <div key={player.id} className="flex items-center space-x-2">
