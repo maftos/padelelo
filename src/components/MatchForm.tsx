@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScoreForm } from "./ScoreForm";
 import { TeamSelect } from "./match/TeamSelect";
+import { PartnerSelect } from "./match/PartnerSelect";
 import { TeamPreview } from "./match/TeamPreview";
 import { Separator } from "@/components/ui/separator";
 import { DateSelector } from "./match/DateSelector";
@@ -32,49 +33,77 @@ export const MatchForm = () => {
     handleSubmit,
   } = useMatchForm();
 
+  const selectedPlayers = [player1, player2, player3].filter(Boolean);
+  const availablePlayers = playerOptions.filter(
+    (p) => !selectedPlayers.includes(p.id)
+  );
+
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
-      <div className="text-center">
+      <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          {page === 1 ? "Select players" : "Enter match score"}
+          {page === 1
+            ? "Select Players (up to 3)"
+            : page === 2
+            ? "Select Partner"
+            : "Enter match score"}
         </p>
+        {page === 1 && (
+          <Button
+            onClick={handleNext}
+            disabled={selectedPlayers.length === 0 || isCalculating}
+            size="sm"
+          >
+            {isCalculating ? "Calculating..." : "Next"}
+          </Button>
+        )}
       </div>
 
       {page === 1 ? (
-        <form onSubmit={(e) => { e.preventDefault(); handleNext(); }} className="space-y-4">
+        <div className="space-y-4">
           <div className="w-full max-w-sm">
             <DateSelector value={date} onChange={setDate} />
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <TeamSelect
-              teamNumber={1}
-              player1Value={player1}
-              player2Value={player2}
-              onPlayer1Change={setPlayer1}
-              onPlayer2Change={setPlayer2}
-              players={playerOptions}
-            />
-            
-            <div className="relative md:pl-6">
-              <Separator orientation="vertical" className="absolute left-0 h-full hidden md:block" />
-              <TeamSelect
-                teamNumber={2}
-                player1Value={player3}
-                player2Value={player4}
-                onPlayer1Change={setPlayer3}
-                onPlayer2Change={setPlayer4}
-                players={playerOptions}
-              />
-            </div>
-          </div>
-
-          <div className="w-full max-w-sm">
-            <Button type="submit" className="w-full" disabled={isCalculating}>
+          <TeamSelect
+            players={playerOptions}
+            selectedPlayers={selectedPlayers}
+            onPlayerSelect={(playerId) => {
+              if (selectedPlayers.includes(playerId)) {
+                // Remove player
+                if (player1 === playerId) setPlayer1("");
+                if (player2 === playerId) setPlayer2("");
+                if (player3 === playerId) setPlayer3("");
+              } else if (selectedPlayers.length < 3) {
+                // Add player to first available slot
+                if (!player1) setPlayer1(playerId);
+                else if (!player2) setPlayer2(playerId);
+                else if (!player3) setPlayer3(playerId);
+              }
+            }}
+          />
+        </div>
+      ) : page === 2 ? (
+        <div className="space-y-4">
+          <PartnerSelect
+            players={selectedPlayers.map((id) => ({
+              id,
+              name: getPlayerName(id),
+            }))}
+            selectedPartner={player4}
+            onPartnerSelect={setPlayer4}
+          />
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setPage(1)}>
+              Back
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={!player4 || isCalculating}
+            >
               {isCalculating ? "Calculating..." : "Next"}
             </Button>
           </div>
-        </form>
+        </div>
       ) : (
         <div className="max-w-sm mx-auto">
           <TeamPreview
@@ -85,7 +114,7 @@ export const MatchForm = () => {
             mmrData={mmrData}
           />
           <ScoreForm
-            onBack={() => setPage(1)}
+            onBack={() => setPage(2)}
             scores={scores}
             setScores={setScores}
             onSubmit={handleSubmit}
