@@ -8,6 +8,7 @@ import { useMatchForm } from "@/hooks/use-match-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamDisplay } from "./match/TeamDisplay";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useEffect } from "react";
 
 export const MatchForm = () => {
   const {
@@ -34,6 +35,13 @@ export const MatchForm = () => {
 
   const { profile } = useUserProfile();
 
+  // Auto-select current user
+  useEffect(() => {
+    if (profile?.id && !player1) {
+      setPlayer1(profile.id);
+    }
+  }, [profile?.id, player1, setPlayer1]);
+
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
   const availablePlayers = playerOptions.filter(
     (p) => !selectedPlayers.includes(p.id)
@@ -52,7 +60,7 @@ export const MatchForm = () => {
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           {page === 1
-            ? "Select Players (4)"
+            ? "Select Players (3)"
             : page === 2
             ? "Select Partner"
             : "Enter match score"}
@@ -76,11 +84,13 @@ export const MatchForm = () => {
             currentUserProfile={profile}
             onPlayerSelect={(playerId) => {
               if (selectedPlayers.includes(playerId)) {
-                // Remove player
-                if (player1 === playerId) setPlayer1("");
-                if (player2 === playerId) setPlayer2("");
-                if (player3 === playerId) setPlayer3("");
-                if (player4 === playerId) setPlayer4("");
+                // Remove player only if it's not the current user
+                if (playerId !== profile?.id) {
+                  if (player1 === playerId) setPlayer1("");
+                  if (player2 === playerId) setPlayer2("");
+                  if (player3 === playerId) setPlayer3("");
+                  if (player4 === playerId) setPlayer4("");
+                }
               } else if (selectedPlayers.length < 4) {
                 // Add player to first available slot
                 if (!player1) setPlayer1(playerId);
