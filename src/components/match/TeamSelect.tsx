@@ -11,17 +11,24 @@ interface TeamSelectProps {
   players: PlayerOption[];
   selectedPlayers: string[];
   onPlayerSelect: (playerId: string) => void;
+  currentUserProfile?: {
+    id: string;
+    profile_photo?: string | null;
+  };
 }
 
 export const TeamSelect: React.FC<TeamSelectProps> = ({
   players,
   selectedPlayers,
   onPlayerSelect,
+  currentUserProfile,
 }) => {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {players.map((player) => {
         const isSelected = selectedPlayers.includes(player.id);
+        const isCurrentUser = player.id === currentUserProfile?.id;
+        const profilePhoto = isCurrentUser ? currentUserProfile?.profile_photo : player.profile_photo;
 
         return (
           <Card
@@ -33,7 +40,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
           >
             <div className="flex flex-col items-center space-y-3">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={player.profile_photo || ""} alt={player.name} />
+                <AvatarImage src={profilePhoto || ""} alt={player.name} />
                 <AvatarFallback>
                   {player.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>

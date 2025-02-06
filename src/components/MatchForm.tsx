@@ -73,6 +73,7 @@ export const MatchForm = () => {
           <TeamSelect
             players={playerOptions}
             selectedPlayers={selectedPlayers}
+            currentUserProfile={profile}
             onPlayerSelect={(playerId) => {
               if (selectedPlayers.includes(playerId)) {
                 // Remove player
