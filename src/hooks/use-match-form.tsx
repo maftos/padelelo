@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -24,6 +24,7 @@ export function useMatchForm() {
   const [mmrData, setMmrData] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { userId } = useUserProfile();
 
   // Load last selected players from localStorage
@@ -66,13 +67,18 @@ export function useMatchForm() {
     enabled: !!userId,
   });
 
+  // Filter player options based on search query
   const playerOptions: PlayerOption[] = [
     { id: userId || "current-user", name: "Me" },
-    ...friends.map(friend => ({
-      id: friend.friend_id,
-      name: friend.display_name,
-      profile_photo: friend.profile_photo
-    }))
+    ...friends
+      .filter(friend => 
+        friend.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .map(friend => ({
+        id: friend.friend_id,
+        name: friend.display_name,
+        profile_photo: friend.profile_photo
+      }))
   ];
 
   const getPlayerName = (playerId: string) => {
@@ -233,6 +239,8 @@ export function useMatchForm() {
     getPlayerName,
     handleNext,
     handleSubmit,
-    calculateMMR
+    calculateMMR,
+    searchQuery,
+    setSearchQuery
   };
 }

@@ -9,6 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamDisplay } from "./match/TeamDisplay";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useEffect } from "react";
+import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 
 export const MatchForm = () => {
   const {
@@ -31,7 +33,9 @@ export const MatchForm = () => {
     getPlayerName,
     handleNext,
     handleSubmit,
-    calculateMMR
+    calculateMMR,
+    searchQuery,
+    setSearchQuery
   } = useMatchForm();
 
   const { profile } = useUserProfile();
@@ -56,29 +60,41 @@ export const MatchForm = () => {
     return player?.profile_photo || "";
   };
 
+  const progressValue = page === 1 ? 33 : page === 2 ? 66 : 100;
+
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
-      <div className="flex justify-between items-center">
-        <p className="text-sm text-muted-foreground">
-          {page === 1
-            ? "Select Players (3)"
-            : page === 2
-            ? "Select Partner"
-            : "Enter match score"}
-        </p>
-        {page === 1 && (
-          <Button
-            onClick={handleNext}
-            disabled={selectedPlayers.length !== 4 || isCalculating}
-            size="sm"
-          >
-            Next
-          </Button>
-        )}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-muted-foreground">
+            {page === 1
+              ? "Select Players (3)"
+              : page === 2
+              ? "Select Partner"
+              : "Enter match score"}
+          </p>
+          {page === 1 && (
+            <Button
+              onClick={handleNext}
+              disabled={selectedPlayers.length !== 4 || isCalculating}
+              size="sm"
+            >
+              Next
+            </Button>
+          )}
+        </div>
+        <Progress value={progressValue} className="h-2" />
       </div>
 
       {page === 1 ? (
         <div className="space-y-4">
+          <Input
+            type="text"
+            placeholder="Search players..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="max-w-sm"
+          />
           <TeamSelect
             players={playerOptions}
             selectedPlayers={selectedPlayers}
@@ -110,14 +126,6 @@ export const MatchForm = () => {
                 key={playerId}
                 className={`p-4 cursor-pointer transition-all hover:shadow-md`}
                 onClick={() => {
-                  // Rearrange players to put selected partner as player2
-                  if (playerId === player3) {
-                    setPlayer2(player3);
-                    setPlayer3(player2);
-                  } else if (playerId === player4) {
-                    setPlayer2(player4);
-                    setPlayer4(player2);
-                  }
                   calculateMMR(playerId);
                 }}
               >
