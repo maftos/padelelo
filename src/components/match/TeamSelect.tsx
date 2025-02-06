@@ -6,7 +6,7 @@ interface PlayerOption {
   id: string;
   name: string;
   profile_photo?: string;
-  current_mmr?: number;
+  current_mmr: number;
 }
 
 interface TeamSelectProps {

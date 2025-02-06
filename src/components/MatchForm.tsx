@@ -15,7 +15,7 @@ interface PlayerOption {
   id: string;
   name: string;
   profile_photo?: string;
-  current_mmr: number; // Changed to non-optional since the backend now always returns it
+  current_mmr: number;
 }
 
 export const MatchForm = () => {
