@@ -59,6 +59,29 @@ export const MatchForm = () => {
     return player?.profile_photo || "";
   };
 
+  // Helper function to get the correct team players based on selected partner
+  const getTeamPlayers = () => {
+    if (!mmrData?.selectedPartnerId) return null;
+
+    const team1Players = {
+      player1Id: player1,
+      player2Id: mmrData.selectedPartnerId
+    };
+
+    const remainingPlayers = [player2, player3, player4].filter(
+      p => p !== mmrData.selectedPartnerId
+    );
+
+    const team2Players = {
+      player1Id: remainingPlayers[0],
+      player2Id: remainingPlayers[1]
+    };
+
+    return { team1Players, team2Players };
+  };
+
+  const teamPlayers = getTeamPlayers();
+
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
       <div className="space-y-4">
@@ -67,7 +90,7 @@ export const MatchForm = () => {
             {page === 1
               ? `Select Players (${playersLeftToSelect} left)`
               : page === 2
-              ? ""
+              ? "Select Partner"
               : "Enter match score"}
           </p>
           {page === 1 && (
@@ -174,30 +197,32 @@ export const MatchForm = () => {
         <div className="max-w-sm mx-auto">
           <Card className="p-6">
             <div className="space-y-6">
-              <div className="flex items-center justify-between gap-2">
-                <TeamDisplay
-                  player1DisplayName={getPlayerName(player1)}
-                  player1ProfilePhoto={getPlayerPhoto(player1)}
-                  player2DisplayName={getPlayerName(player2)}
-                  player2ProfilePhoto={getPlayerPhoto(player2)}
-                  player1IsCompleter={false}
-                  player2IsCompleter={false}
-                />
-                <div className="flex items-center gap-2 font-semibold">
-                  <span>{scores[0].team1}</span>
-                  <span className="text-muted-foreground">-</span>
-                  <span>{scores[0].team2}</span>
+              {teamPlayers && (
+                <div className="flex items-center justify-between gap-2">
+                  <TeamDisplay
+                    player1DisplayName={getPlayerName(teamPlayers.team1Players.player1Id)}
+                    player1ProfilePhoto={getPlayerPhoto(teamPlayers.team1Players.player1Id)}
+                    player2DisplayName={getPlayerName(teamPlayers.team1Players.player2Id)}
+                    player2ProfilePhoto={getPlayerPhoto(teamPlayers.team1Players.player2Id)}
+                    player1IsCompleter={false}
+                    player2IsCompleter={false}
+                  />
+                  <div className="flex items-center gap-2 font-semibold">
+                    <span>{scores[0].team1}</span>
+                    <span className="text-muted-foreground">-</span>
+                    <span>{scores[0].team2}</span>
+                  </div>
+                  <TeamDisplay
+                    player1DisplayName={getPlayerName(teamPlayers.team2Players.player1Id)}
+                    player1ProfilePhoto={getPlayerPhoto(teamPlayers.team2Players.player1Id)}
+                    player2DisplayName={getPlayerName(teamPlayers.team2Players.player2Id)}
+                    player2ProfilePhoto={getPlayerPhoto(teamPlayers.team2Players.player2Id)}
+                    isRightAligned
+                    player1IsCompleter={false}
+                    player2IsCompleter={false}
+                  />
                 </div>
-                <TeamDisplay
-                  player1DisplayName={getPlayerName(player3)}
-                  player1ProfilePhoto={getPlayerPhoto(player3)}
-                  player2DisplayName={getPlayerName(player4)}
-                  player2ProfilePhoto={getPlayerPhoto(player4)}
-                  isRightAligned
-                  player1IsCompleter={false}
-                  player2IsCompleter={false}
-                />
-              </div>
+              )}
               {mmrData && (
                 <TeamPreview
                   mmrData={mmrData}
