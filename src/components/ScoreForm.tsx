@@ -51,6 +51,7 @@ export const ScoreForm = ({
           <Input
             id="score1"
             type="number"
+            inputMode="numeric"
             placeholder="0"
             value={scores[0].team1}
             onChange={(e) => handleScoreChange(0, 'team1', e.target.value)}
@@ -63,6 +64,7 @@ export const ScoreForm = ({
           <Input
             id="score2"
             type="number"
+            inputMode="numeric"
             placeholder="0"
             value={scores[0].team2}
             onChange={(e) => handleScoreChange(0, 'team2', e.target.value)}

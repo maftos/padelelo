@@ -6,6 +6,7 @@ import { TeamPreview } from "./match/TeamPreview";
 import { Separator } from "@/components/ui/separator";
 import { useMatchForm } from "@/hooks/use-match-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { TeamDisplay } from "./match/TeamDisplay";
 
 export const MatchForm = () => {
   const {
@@ -134,13 +135,26 @@ export const MatchForm = () => {
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
-          <TeamPreview
-            team1Player1Name={getPlayerName(player1)}
-            team1Player2Name={getPlayerName(player2)}
-            team2Player1Name={getPlayerName(player3)}
-            team2Player2Name={getPlayerName(player4)}
-            mmrData={mmrData}
-          />
+          <div className="flex items-center justify-between gap-2 mb-6">
+            <TeamDisplay
+              player1DisplayName={getPlayerName(player1)}
+              player1ProfilePhoto={getPlayerPhoto(player1)}
+              player2DisplayName={getPlayerName(player2)}
+              player2ProfilePhoto={getPlayerPhoto(player2)}
+            />
+            <div className="flex items-center gap-2 font-semibold">
+              <span>{scores[0].team1}</span>
+              <span className="text-muted-foreground">-</span>
+              <span>{scores[0].team2}</span>
+            </div>
+            <TeamDisplay
+              player1DisplayName={getPlayerName(player3)}
+              player1ProfilePhoto={getPlayerPhoto(player3)}
+              player2DisplayName={getPlayerName(player4)}
+              player2ProfilePhoto={getPlayerPhoto(player4)}
+              isRightAligned
+            />
+          </div>
           <ScoreForm
             onBack={() => setPage(2)}
             scores={scores}
