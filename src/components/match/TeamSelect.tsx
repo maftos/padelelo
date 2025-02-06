@@ -20,18 +20,15 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   selectedPlayers,
   onPlayerSelect,
 }) => {
-  // Filter out the "Me" player from display but keep in selection
-  const displayPlayers = players.filter(player => player.name !== "Me");
-
   return (
     <div className="space-y-4">
       <RadioGroup
         onValueChange={onPlayerSelect}
         className="space-y-2"
       >
-        {displayPlayers.map((player) => {
+        {players.map((player) => {
           const isSelected = selectedPlayers.includes(player.id);
-          const isDisabled = selectedPlayers.length >= 3 && !isSelected;
+          const isDisabled = selectedPlayers.length >= 2 && !isSelected;
 
           return (
             <div key={player.id} className="flex items-center space-x-2">

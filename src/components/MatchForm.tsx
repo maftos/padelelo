@@ -30,18 +30,18 @@ export const MatchForm = () => {
     getPlayerName,
     handleNext,
     handleSubmit,
+    userId
   } = useMatchForm();
 
-  // Ensure current user ("Me") is always in player1 slot
-  const mePlayer = playerOptions.find(p => p.name === "Me");
-  if (mePlayer && !player1) {
-    setPlayer1(mePlayer.id);
+  // Ensure current user is always in player1 slot
+  if (!player1 && userId) {
+    setPlayer1(userId);
   }
 
-  // Filter selected players, excluding "Me" since it's handled separately
+  // Filter selected players, excluding current user since they're handled separately
   const selectedPlayers = [player2, player3].filter(Boolean);
   const availablePlayers = playerOptions.filter(
-    (p) => !selectedPlayers.includes(p.id) && p.name !== "Me"
+    (p) => !selectedPlayers.includes(p.id) && p.id !== userId
   );
 
   return (
@@ -49,7 +49,7 @@ export const MatchForm = () => {
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           {page === 1
-            ? "Select Players (up to 3)"
+            ? "Select Players (3)"
             : page === 2
             ? "Select Partner"
             : "Enter match score"}
@@ -57,7 +57,7 @@ export const MatchForm = () => {
         {page === 1 && (
           <Button
             onClick={handleNext}
-            disabled={selectedPlayers.length === 0 || isCalculating}
+            disabled={selectedPlayers.length < 2 || isCalculating}
             size="sm"
           >
             {isCalculating ? "Calculating..." : "Next"}
@@ -68,8 +68,8 @@ export const MatchForm = () => {
       {page === 1 ? (
         <div className="space-y-4">
           <TeamSelect
-            players={playerOptions}
-            selectedPlayers={[player1, ...selectedPlayers]}
+            players={availablePlayers}
+            selectedPlayers={selectedPlayers}
             onPlayerSelect={(playerId) => {
               if (selectedPlayers.includes(playerId)) {
                 // Remove player
