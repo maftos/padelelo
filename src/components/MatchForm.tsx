@@ -5,7 +5,6 @@ import { TeamSelect } from "./match/TeamSelect";
 import { PartnerSelect } from "./match/PartnerSelect";
 import { TeamPreview } from "./match/TeamPreview";
 import { Separator } from "@/components/ui/separator";
-import { DateSelector } from "./match/DateSelector";
 import { useMatchForm } from "@/hooks/use-match-form";
 
 export const MatchForm = () => {
@@ -61,9 +60,6 @@ export const MatchForm = () => {
 
       {page === 1 ? (
         <div className="space-y-4">
-          <div className="w-full max-w-sm">
-            <DateSelector value={date} onChange={setDate} />
-          </div>
           <TeamSelect
             players={playerOptions}
             selectedPlayers={selectedPlayers}

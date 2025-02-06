@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 interface PlayerOption {
   id: string;
   name: string;
+  profile_photo?: string | null;
 }
 
 interface TeamSelectProps {
@@ -19,13 +20,16 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   selectedPlayers,
   onPlayerSelect,
 }) => {
+  // Filter out the "Me" player from display but keep in selection
+  const displayPlayers = players.filter(player => player.name !== "Me");
+
   return (
     <div className="space-y-4">
       <RadioGroup
         onValueChange={onPlayerSelect}
         className="space-y-2"
       >
-        {players.map((player) => {
+        {displayPlayers.map((player) => {
           const isSelected = selectedPlayers.includes(player.id);
           const isDisabled = selectedPlayers.length >= 3 && !isSelected;
 
@@ -44,7 +48,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
                 }`}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="" alt={player.name} />
+                  <AvatarImage src={player.profile_photo || ''} alt={player.name} />
                   <AvatarFallback>
                     {player.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
