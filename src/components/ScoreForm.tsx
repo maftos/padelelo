@@ -82,7 +82,7 @@ export const ScoreForm = ({
           onClick={onBack}
           disabled={isSubmitting}
         >
-          Back
+          Start Over
         </Button>
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? "Registering..." : "Register Match"}

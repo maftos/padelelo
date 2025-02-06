@@ -155,6 +155,13 @@ export function useMatchForm() {
     }
   };
 
+  const resetForm = () => {
+    setPage(1);
+    setMatchId(null);
+    setMmrData(null);
+    setScores([{ team1: "", team2: "" }]);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -237,6 +244,7 @@ export function useMatchForm() {
     handleSubmit,
     calculateMMR,
     searchQuery,
-    setSearchQuery
+    setSearchQuery,
+    resetForm
   };
 }

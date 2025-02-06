@@ -34,7 +34,8 @@ export const MatchForm = () => {
     handleSubmit,
     calculateMMR,
     searchQuery,
-    setSearchQuery
+    setSearchQuery,
+    resetForm
   } = useMatchForm();
 
   const { profile } = useUserProfile();
@@ -205,7 +206,7 @@ export const MatchForm = () => {
             </div>
           </Card>
           <ScoreForm
-            onBack={() => setPage(2)}
+            onBack={resetForm}
             scores={scores}
             setScores={setScores}
             onSubmit={handleSubmit}
