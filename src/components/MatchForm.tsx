@@ -66,7 +66,7 @@ export const MatchForm = () => {
             {page === 1
               ? `Select Players (${playersLeftToSelect} left)`
               : page === 2
-              ? "Select Partner"
+              ? ""
               : "Enter match score"}
           </p>
           {page === 1 && (
@@ -90,7 +90,7 @@ export const MatchForm = () => {
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-8"
+              className="pl-8"
             />
             {searchQuery && (
               <Button
@@ -104,9 +104,7 @@ export const MatchForm = () => {
             )}
           </div>
           <TeamSelect
-            players={searchQuery ? availablePlayers.filter(p => 
-              p.name.toLowerCase().includes(searchQuery.toLowerCase())
-            ) : availablePlayers}
+            players={availablePlayers}
             selectedPlayers={selectedPlayers}
             currentUserProfile={profile}
             onPlayerSelect={(playerId) => {
@@ -137,8 +135,8 @@ export const MatchForm = () => {
                 <Card
                   key={playerId}
                   className={`p-4 cursor-pointer transition-all ${
-                    isSelected ? "ring-2 ring-primary" : "hover:shadow-md"
-                  } ${isCalculating && isSelected ? "opacity-50 pointer-events-none" : ""}`}
+                    isSelected ? "bg-primary/10 ring-2 ring-primary" : "hover:shadow-md"
+                  } ${isCalculating ? "opacity-50 pointer-events-none" : ""}`}
                   onClick={() => {
                     calculateMMR(playerId);
                   }}
@@ -169,44 +167,43 @@ export const MatchForm = () => {
             >
               Back
             </Button>
-            <p className="text-sm text-center text-muted-foreground">
-              Select your partner for this match
-            </p>
           </div>
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between gap-2">
-              <TeamDisplay
-                player1DisplayName={getPlayerName(player1)}
-                player1ProfilePhoto={getPlayerPhoto(player1)}
-                player2DisplayName={getPlayerName(player2)}
-                player2ProfilePhoto={getPlayerPhoto(player2)}
-                player1IsCompleter={false}
-                player2IsCompleter={false}
-              />
-              <div className="flex items-center gap-2 font-semibold">
-                <span>{scores[0].team1}</span>
-                <span className="text-muted-foreground">-</span>
-                <span>{scores[0].team2}</span>
+          <Card className="p-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between gap-2">
+                <TeamDisplay
+                  player1DisplayName={getPlayerName(player1)}
+                  player1ProfilePhoto={getPlayerPhoto(player1)}
+                  player2DisplayName={getPlayerName(player2)}
+                  player2ProfilePhoto={getPlayerPhoto(player2)}
+                  player1IsCompleter={false}
+                  player2IsCompleter={false}
+                />
+                <div className="flex items-center gap-2 font-semibold">
+                  <span>{scores[0].team1}</span>
+                  <span className="text-muted-foreground">-</span>
+                  <span>{scores[0].team2}</span>
+                </div>
+                <TeamDisplay
+                  player1DisplayName={getPlayerName(player3)}
+                  player1ProfilePhoto={getPlayerPhoto(player3)}
+                  player2DisplayName={getPlayerName(player4)}
+                  player2ProfilePhoto={getPlayerPhoto(player4)}
+                  isRightAligned
+                  player1IsCompleter={false}
+                  player2IsCompleter={false}
+                />
               </div>
-              <TeamDisplay
-                player1DisplayName={getPlayerName(player3)}
-                player1ProfilePhoto={getPlayerPhoto(player3)}
-                player2DisplayName={getPlayerName(player4)}
-                player2ProfilePhoto={getPlayerPhoto(player4)}
-                isRightAligned
-                player1IsCompleter={false}
-                player2IsCompleter={false}
-              />
+              {mmrData && (
+                <TeamPreview
+                  mmrData={mmrData}
+                />
+              )}
             </div>
-            {mmrData && (
-              <TeamPreview
-                mmrData={mmrData}
-              />
-            )}
-          </div>
+          </Card>
           <ScoreForm
             onBack={() => setPage(2)}
             scores={scores}
