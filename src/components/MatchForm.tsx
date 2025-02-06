@@ -83,20 +83,20 @@ export const MatchForm = () => {
 
       {page === 1 ? (
         <div className="space-y-4">
-          <div className="relative">
+          <div className="relative max-w-sm">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-sm pl-8 pr-8"
+              className="pl-8 pr-8"
             />
             {searchQuery && (
               <Button
                 variant="ghost"
                 size="sm"
-                className="absolute right-0 top-0 h-10 px-3 hover:bg-transparent"
+                className="absolute right-1 top-1 h-8 px-2 hover:bg-transparent"
                 onClick={() => setSearchQuery("")}
               >
                 <X className="h-4 w-4 text-muted-foreground" />
@@ -131,34 +131,35 @@ export const MatchForm = () => {
       ) : page === 2 ? (
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[player2, player3, player4].map((playerId) => (
-              <Card
-                key={playerId}
-                className={`p-4 cursor-pointer transition-all ${
-                  isCalculating && mmrData?.selectedPartnerId === playerId
-                    ? "opacity-50 pointer-events-none ring-2 ring-primary"
-                    : "hover:shadow-md"
-                }`}
-                onClick={() => {
-                  calculateMMR(playerId);
-                }}
-              >
-                <div className="flex flex-col items-center space-y-3">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage
-                      src={getPlayerPhoto(playerId)}
-                      alt={getPlayerName(playerId)}
-                    />
-                    <AvatarFallback>
-                      {getPlayerName(playerId).substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="font-medium text-center">
-                    {getPlayerName(playerId)}
-                  </span>
-                </div>
-              </Card>
-            ))}
+            {[player2, player3, player4].map((playerId) => {
+              const isSelected = mmrData?.selectedPartnerId === playerId;
+              return (
+                <Card
+                  key={playerId}
+                  className={`p-4 cursor-pointer transition-all ${
+                    isSelected ? "ring-2 ring-primary" : "hover:shadow-md"
+                  } ${isCalculating && isSelected ? "opacity-50 pointer-events-none" : ""}`}
+                  onClick={() => {
+                    calculateMMR(playerId);
+                  }}
+                >
+                  <div className="flex flex-col items-center space-y-3">
+                    <Avatar className="h-16 w-16">
+                      <AvatarImage
+                        src={getPlayerPhoto(playerId)}
+                        alt={getPlayerName(playerId)}
+                      />
+                      <AvatarFallback>
+                        {getPlayerName(playerId).substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="font-medium text-center">
+                      {getPlayerName(playerId)}
+                    </span>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
           <div className="flex justify-between items-center">
             <Button
@@ -175,34 +176,36 @@ export const MatchForm = () => {
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
-          {mmrData && (
-            <TeamPreview
-              mmrData={mmrData}
-            />
-          )}
-          <div className="flex items-center justify-between gap-2 mb-6">
-            <TeamDisplay
-              player1DisplayName={getPlayerName(player1)}
-              player1ProfilePhoto={getPlayerPhoto(player1)}
-              player2DisplayName={getPlayerName(player2)}
-              player2ProfilePhoto={getPlayerPhoto(player2)}
-              player1IsCompleter={false}
-              player2IsCompleter={false}
-            />
-            <div className="flex items-center gap-2 font-semibold">
-              <span>{scores[0].team1}</span>
-              <span className="text-muted-foreground">-</span>
-              <span>{scores[0].team2}</span>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between gap-2">
+              <TeamDisplay
+                player1DisplayName={getPlayerName(player1)}
+                player1ProfilePhoto={getPlayerPhoto(player1)}
+                player2DisplayName={getPlayerName(player2)}
+                player2ProfilePhoto={getPlayerPhoto(player2)}
+                player1IsCompleter={false}
+                player2IsCompleter={false}
+              />
+              <div className="flex items-center gap-2 font-semibold">
+                <span>{scores[0].team1}</span>
+                <span className="text-muted-foreground">-</span>
+                <span>{scores[0].team2}</span>
+              </div>
+              <TeamDisplay
+                player1DisplayName={getPlayerName(player3)}
+                player1ProfilePhoto={getPlayerPhoto(player3)}
+                player2DisplayName={getPlayerName(player4)}
+                player2ProfilePhoto={getPlayerPhoto(player4)}
+                isRightAligned
+                player1IsCompleter={false}
+                player2IsCompleter={false}
+              />
             </div>
-            <TeamDisplay
-              player1DisplayName={getPlayerName(player3)}
-              player1ProfilePhoto={getPlayerPhoto(player3)}
-              player2DisplayName={getPlayerName(player4)}
-              player2ProfilePhoto={getPlayerPhoto(player4)}
-              isRightAligned
-              player1IsCompleter={false}
-              player2IsCompleter={false}
-            />
+            {mmrData && (
+              <TeamPreview
+                mmrData={mmrData}
+              />
+            )}
           </div>
           <ScoreForm
             onBack={() => setPage(2)}
