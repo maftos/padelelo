@@ -111,17 +111,13 @@ export function useMatchForm() {
     try {
       setIsCalculating(true);
       
-      // The remaining two players will be team 2
-      const remainingPlayers = [player2, player3, player4].filter(
-        p => p !== team1Player2Id
-      );
-      
+      // Create the match first with the selected partner as team1_player2
       const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
         user_a_id: userId,
         team1_player1_id: player1,
-        team1_player2_id: team1Player2Id,
-        team2_player1_id: remainingPlayers[0],
-        team2_player2_id: remainingPlayers[1],
+        team1_player2_id: team1Player2Id,  // This is the selected partner
+        team2_player1_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1),
+        team2_player2_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1 && p !== [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1)),
         match_date: new Date(date).toISOString()
       });
 
@@ -149,7 +145,7 @@ export function useMatchForm() {
         throw new Error('No MMR data returned from calculate_mmr_change');
       }
 
-      setMmrData(mmrCalcData[0]);
+      setMmrData({...mmrCalcData[0], selectedPartnerId: team1Player2Id});
       setPage(3);
     } catch (error) {
       console.error('Error preparing match:', error);
