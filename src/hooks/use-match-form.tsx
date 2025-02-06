@@ -98,15 +98,24 @@ export function useMatchForm() {
       return;
     }
 
+    setPage(2);
+  };
+
+  const calculateMMR = async (team1Player2Id: string) => {
     try {
       setIsCalculating(true);
+      
+      // The remaining two players will be team 2
+      const remainingPlayers = [player2, player3, player4].filter(
+        p => p !== team1Player2Id
+      );
       
       const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
         user_a_id: userId,
         team1_player1_id: player1,
-        team1_player2_id: player2,
-        team2_player1_id: player3,
-        team2_player2_id: player4,
+        team1_player2_id: team1Player2Id,
+        team2_player1_id: remainingPlayers[0],
+        team2_player2_id: remainingPlayers[1],
         match_date: new Date(date).toISOString()
       });
 
@@ -135,7 +144,7 @@ export function useMatchForm() {
       }
 
       setMmrData(mmrCalcData[0]);
-      setPage(2);
+      setPage(3);
     } catch (error) {
       console.error('Error preparing match:', error);
       toast.error("Failed to prepare match. Please try again.");
@@ -224,5 +233,6 @@ export function useMatchForm() {
     getPlayerName,
     handleNext,
     handleSubmit,
+    calculateMMR
   };
 }

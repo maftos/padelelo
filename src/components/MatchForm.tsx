@@ -31,6 +31,7 @@ export const MatchForm = () => {
     getPlayerName,
     handleNext,
     handleSubmit,
+    calculateMMR
   } = useMatchForm();
 
   const { profile } = useUserProfile();
@@ -71,7 +72,7 @@ export const MatchForm = () => {
             disabled={selectedPlayers.length !== 4 || isCalculating}
             size="sm"
           >
-            {isCalculating ? "Calculating..." : "Next"}
+            Next
           </Button>
         )}
       </div>
@@ -117,7 +118,7 @@ export const MatchForm = () => {
                     setPlayer2(player4);
                     setPlayer4(player2);
                   }
-                  setPage(3);
+                  calculateMMR(playerId);
                 }}
               >
                 <div className="flex flex-col items-center space-y-3">
