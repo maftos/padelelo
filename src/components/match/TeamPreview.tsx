@@ -21,14 +21,9 @@ export const TeamPreview = ({
         <div className="space-y-4">
           {/* MMR Section */}
           <div className="flex justify-between items-center">
-            <div className="text-sm">
-              <span className="text-muted-foreground">Team 1 MMR:</span>{" "}
-              <span className="font-medium">{Math.round(mmrData?.team1_avg_mmr || 0)}</span>
-            </div>
-            <div className="text-sm">
-              <span className="text-muted-foreground">Team 2 MMR:</span>{" "}
-              <span className="font-medium">{Math.round(mmrData?.team2_avg_mmr || 0)}</span>
-            </div>
+            <span className="text-sm font-medium">{Math.round(mmrData?.team1_avg_mmr || 0)}</span>
+            <span className="text-muted-foreground">vs</span>
+            <span className="text-sm font-medium">{Math.round(mmrData?.team2_avg_mmr || 0)}</span>
           </div>
 
           <Separator />
@@ -48,26 +43,16 @@ export const TeamPreview = ({
           {/* MMR Changes */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">If Team 1 Wins</span>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-green-600">
-                  +{Math.round(mmrData?.team1_win_mmr_change_amount || 0)}
-                </span>
-                <span className="text-sm font-medium text-red-600">
-                  -{Math.round(mmrData?.team1_win_mmr_change_amount || 0)}
-                </span>
-              </div>
+              <span className="text-sm text-muted-foreground">If Win</span>
+              <span className="text-sm font-medium text-green-600">
+                +{Math.round(mmrData?.team1_win_mmr_change_amount || 0)}
+              </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">If Team 2 Wins</span>
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-red-600">
-                  -{Math.round(mmrData?.team2_win_mmr_change_amount || 0)}
-                </span>
-                <span className="text-sm font-medium text-green-600">
-                  +{Math.round(mmrData?.team2_win_mmr_change_amount || 0)}
-                </span>
-              </div>
+              <span className="text-sm text-muted-foreground">If Lose</span>
+              <span className="text-sm font-medium text-red-600">
+                -{Math.round(mmrData?.team2_win_mmr_change_amount || 0)}
+              </span>
             </div>
           </div>
         </div>
