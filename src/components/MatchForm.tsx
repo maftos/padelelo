@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { useMatchForm } from "@/hooks/use-match-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamDisplay } from "./match/TeamDisplay";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export const MatchForm = () => {
   const {
@@ -31,12 +32,17 @@ export const MatchForm = () => {
     handleSubmit,
   } = useMatchForm();
 
+  const { profile } = useUserProfile();
+
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
   const availablePlayers = playerOptions.filter(
     (p) => !selectedPlayers.includes(p.id)
   );
 
   const getPlayerPhoto = (playerId: string) => {
+    if (playerId === profile?.id) {
+      return profile.profile_photo || "";
+    }
     const player = playerOptions.find((p) => p.id === playerId);
     return player?.profile_photo || "";
   };
@@ -135,6 +141,15 @@ export const MatchForm = () => {
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
+          {mmrData && (
+            <TeamPreview
+              team1Player1Name={getPlayerName(player1)}
+              team1Player2Name={getPlayerName(player2)}
+              team2Player1Name={getPlayerName(player3)}
+              team2Player2Name={getPlayerName(player4)}
+              mmrData={mmrData}
+            />
+          )}
           <div className="flex items-center justify-between gap-2 mb-6">
             <TeamDisplay
               player1DisplayName={getPlayerName(player1)}
