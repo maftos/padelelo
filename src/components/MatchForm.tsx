@@ -2,10 +2,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScoreForm } from "./ScoreForm";
 import { TeamSelect } from "./match/TeamSelect";
-import { PartnerSelect } from "./match/PartnerSelect";
 import { TeamPreview } from "./match/TeamPreview";
 import { Separator } from "@/components/ui/separator";
 import { useMatchForm } from "@/hooks/use-match-form";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export const MatchForm = () => {
   const {
@@ -35,12 +35,19 @@ export const MatchForm = () => {
     (p) => !selectedPlayers.includes(p.id)
   );
 
+  const getPlayerPhoto = (playerId: string) => {
+    const player = playerOptions.find((p) => p.id === playerId);
+    return player?.profile_photo || "";
+  };
+
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           {page === 1
             ? "Select Players (4)"
+            : page === 2
+            ? "Select Partner"
             : "Enter match score"}
         </p>
         {page === 1 && (
@@ -76,6 +83,46 @@ export const MatchForm = () => {
             }}
           />
         </div>
+      ) : page === 2 ? (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[player2, player3, player4].map((playerId) => (
+              <Card
+                key={playerId}
+                className={`p-4 cursor-pointer transition-all hover:shadow-md`}
+                onClick={() => {
+                  // Rearrange players to put selected partner as player2
+                  if (playerId === player3) {
+                    setPlayer2(player3);
+                    setPlayer3(player2);
+                  } else if (playerId === player4) {
+                    setPlayer2(player4);
+                    setPlayer4(player2);
+                  }
+                  setPage(3);
+                }}
+              >
+                <div className="flex flex-col items-center space-y-3">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage
+                      src={getPlayerPhoto(playerId)}
+                      alt={getPlayerName(playerId)}
+                    />
+                    <AvatarFallback>
+                      {getPlayerName(playerId).substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium text-center">
+                    {getPlayerName(playerId)}
+                  </span>
+                </div>
+              </Card>
+            ))}
+          </div>
+          <p className="text-sm text-center text-muted-foreground">
+            Select your partner for this match
+          </p>
+        </div>
       ) : (
         <div className="max-w-sm mx-auto">
           <TeamPreview
@@ -86,7 +133,7 @@ export const MatchForm = () => {
             mmrData={mmrData}
           />
           <ScoreForm
-            onBack={() => setPage(1)}
+            onBack={() => setPage(2)}
             scores={scores}
             setScores={setScores}
             onSubmit={handleSubmit}
