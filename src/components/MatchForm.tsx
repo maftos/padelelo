@@ -143,10 +143,6 @@ export const MatchForm = () => {
         <div className="max-w-sm mx-auto">
           {mmrData && (
             <TeamPreview
-              team1Player1Name={getPlayerName(player1)}
-              team1Player2Name={getPlayerName(player2)}
-              team2Player1Name={getPlayerName(player3)}
-              team2Player2Name={getPlayerName(player4)}
               mmrData={mmrData}
             />
           )}
