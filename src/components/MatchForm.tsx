@@ -32,9 +32,16 @@ export const MatchForm = () => {
     handleSubmit,
   } = useMatchForm();
 
-  const selectedPlayers = [player1, player2, player3].filter(Boolean);
+  // Ensure current user ("Me") is always in player1 slot
+  const mePlayer = playerOptions.find(p => p.name === "Me");
+  if (mePlayer && !player1) {
+    setPlayer1(mePlayer.id);
+  }
+
+  // Filter selected players, excluding "Me" since it's handled separately
+  const selectedPlayers = [player2, player3].filter(Boolean);
   const availablePlayers = playerOptions.filter(
-    (p) => !selectedPlayers.includes(p.id)
+    (p) => !selectedPlayers.includes(p.id) && p.name !== "Me"
   );
 
   return (
@@ -62,17 +69,15 @@ export const MatchForm = () => {
         <div className="space-y-4">
           <TeamSelect
             players={playerOptions}
-            selectedPlayers={selectedPlayers}
+            selectedPlayers={[player1, ...selectedPlayers]}
             onPlayerSelect={(playerId) => {
               if (selectedPlayers.includes(playerId)) {
                 // Remove player
-                if (player1 === playerId) setPlayer1("");
                 if (player2 === playerId) setPlayer2("");
                 if (player3 === playerId) setPlayer3("");
-              } else if (selectedPlayers.length < 3) {
+              } else if (selectedPlayers.length < 2) {
                 // Add player to first available slot
-                if (!player1) setPlayer1(playerId);
-                else if (!player2) setPlayer2(playerId);
+                if (!player2) setPlayer2(playerId);
                 else if (!player3) setPlayer3(playerId);
               }
             }}
@@ -81,7 +86,7 @@ export const MatchForm = () => {
       ) : page === 2 ? (
         <div className="space-y-4">
           <PartnerSelect
-            players={selectedPlayers.map((id) => ({
+            players={[player2, player3].map((id) => ({
               id,
               name: getPlayerName(id),
             }))}
