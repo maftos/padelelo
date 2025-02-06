@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 interface PlayerOption {
   id: string;
   name: string;
+  profile_photo?: string;
 }
 
 interface TeamSelectProps {
@@ -27,24 +28,20 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
       >
         {players.map((player) => {
           const isSelected = selectedPlayers.includes(player.id);
-          const isDisabled = selectedPlayers.length >= 3 && !isSelected;
 
           return (
             <div key={player.id} className="flex items-center space-x-2">
               <RadioGroupItem
                 value={player.id}
                 id={player.id}
-                disabled={isDisabled}
                 checked={isSelected}
               />
               <Label
                 htmlFor={player.id}
-                className={`flex items-center space-x-2 ${
-                  isDisabled ? "opacity-50" : ""
-                }`}
+                className="flex items-center space-x-2"
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="" alt={player.name} />
+                  <AvatarImage src={player.profile_photo || ""} alt={player.name} />
                   <AvatarFallback>
                     {player.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>

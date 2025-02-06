@@ -32,7 +32,7 @@ export const MatchForm = () => {
     handleSubmit,
   } = useMatchForm();
 
-  const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
+  const selectedPlayers = [player1, player2, player3].filter(Boolean);
   const availablePlayers = playerOptions.filter(
     (p) => !selectedPlayers.includes(p.id)
   );
@@ -42,13 +42,15 @@ export const MatchForm = () => {
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           {page === 1
-            ? "Select Players (4)"
+            ? "Select Players (3)"
+            : page === 2
+            ? "Select Partner"
             : "Enter match score"}
         </p>
         {page === 1 && (
           <Button
             onClick={handleNext}
-            disabled={selectedPlayers.length !== 4 || isCalculating}
+            disabled={selectedPlayers.length !== 3 || isCalculating}
             size="sm"
           >
             {isCalculating ? "Calculating..." : "Next"}
@@ -67,16 +69,36 @@ export const MatchForm = () => {
                 if (player1 === playerId) setPlayer1("");
                 if (player2 === playerId) setPlayer2("");
                 if (player3 === playerId) setPlayer3("");
-                if (player4 === playerId) setPlayer4("");
-              } else if (selectedPlayers.length < 4) {
+              } else if (selectedPlayers.length < 3) {
                 // Add player to first available slot
                 if (!player1) setPlayer1(playerId);
                 else if (!player2) setPlayer2(playerId);
                 else if (!player3) setPlayer3(playerId);
-                else if (!player4) setPlayer4(playerId);
               }
             }}
           />
+        </div>
+      ) : page === 2 ? (
+        <div className="space-y-4">
+          <PartnerSelect
+            players={selectedPlayers.map((id) => ({
+              id,
+              name: getPlayerName(id),
+            }))}
+            selectedPartner={player4}
+            onPartnerSelect={setPlayer4}
+          />
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setPage(1)}>
+              Back
+            </Button>
+            <Button
+              onClick={handleNext}
+              disabled={!player4 || isCalculating}
+            >
+              {isCalculating ? "Calculating..." : "Next"}
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
@@ -88,7 +110,7 @@ export const MatchForm = () => {
             mmrData={mmrData}
           />
           <ScoreForm
-            onBack={() => setPage(1)}
+            onBack={() => setPage(2)}
             scores={scores}
             setScores={setScores}
             onSubmit={handleSubmit}
