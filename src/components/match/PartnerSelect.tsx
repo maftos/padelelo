@@ -12,11 +12,11 @@ interface PartnerSelectProps {
   onPartnerSelect: (playerId: string) => void;
 }
 
-export const PartnerSelect = ({
+export const PartnerSelect: React.FC<PartnerSelectProps> = ({
   players,
   selectedPartner,
   onPartnerSelect,
-}: PartnerSelectProps) => {
+}) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {players.map((player) => (
@@ -42,4 +42,4 @@ export const PartnerSelect = ({
       ))}
     </div>
   );
-});
+};

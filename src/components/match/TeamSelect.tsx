@@ -14,11 +14,11 @@ interface TeamSelectProps {
   onPlayerSelect: (playerId: string) => void;
 }
 
-export const TeamSelect = ({
+export const TeamSelect: React.FC<TeamSelectProps> = ({
   players,
   selectedPlayers,
   onPlayerSelect,
-}: TeamSelectProps) => {
+}) => {
   return (
     <div className="space-y-4">
       <RadioGroup
@@ -57,4 +57,4 @@ export const TeamSelect = ({
       </RadioGroup>
     </div>
   );
-});
+};
