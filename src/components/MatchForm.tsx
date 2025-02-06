@@ -119,9 +119,18 @@ export const MatchForm = () => {
               </Card>
             ))}
           </div>
-          <p className="text-sm text-center text-muted-foreground">
-            Select your partner for this match
-          </p>
+          <div className="flex justify-between items-center">
+            <Button
+              variant="outline"
+              onClick={() => setPage(1)}
+              size="sm"
+            >
+              Back
+            </Button>
+            <p className="text-sm text-center text-muted-foreground">
+              Select your partner for this match
+            </p>
+          </div>
         </div>
       ) : (
         <div className="max-w-sm mx-auto">
