@@ -33,15 +33,10 @@ export const MatchForm = () => {
     userId
   } = useMatchForm();
 
-  // Ensure current user is always in player1 slot
-  if (!player1 && userId) {
-    setPlayer1(userId);
-  }
-
-  // Filter selected players, excluding current user since they're handled separately
-  const selectedPlayers = [player2, player3].filter(Boolean);
+  // Filter selected players
+  const selectedPlayers = [player1, player2, player3].filter(Boolean);
   const availablePlayers = playerOptions.filter(
-    (p) => !selectedPlayers.includes(p.id) && p.id !== userId
+    (p) => !selectedPlayers.includes(p.id)
   );
 
   return (
@@ -49,7 +44,7 @@ export const MatchForm = () => {
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           {page === 1
-            ? "Select Players (3)"
+            ? "Select Players (4)"
             : page === 2
             ? "Select Partner"
             : "Enter match score"}
@@ -57,7 +52,7 @@ export const MatchForm = () => {
         {page === 1 && (
           <Button
             onClick={handleNext}
-            disabled={selectedPlayers.length < 2 || isCalculating}
+            disabled={selectedPlayers.length < 3 || isCalculating}
             size="sm"
           >
             {isCalculating ? "Calculating..." : "Next"}
@@ -73,11 +68,13 @@ export const MatchForm = () => {
             onPlayerSelect={(playerId) => {
               if (selectedPlayers.includes(playerId)) {
                 // Remove player
+                if (player1 === playerId) setPlayer1("");
                 if (player2 === playerId) setPlayer2("");
                 if (player3 === playerId) setPlayer3("");
-              } else if (selectedPlayers.length < 2) {
+              } else if (selectedPlayers.length < 3) {
                 // Add player to first available slot
-                if (!player2) setPlayer2(playerId);
+                if (!player1) setPlayer1(playerId);
+                else if (!player2) setPlayer2(playerId);
                 else if (!player3) setPlayer3(playerId);
               }
             }}
