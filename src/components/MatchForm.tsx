@@ -15,7 +15,7 @@ interface PlayerOption {
   id: string;
   name: string;
   profile_photo?: string;
-  current_mmr?: number;
+  current_mmr?: number;  // Added this property to fix the TypeScript error
 }
 
 export const MatchForm = () => {
