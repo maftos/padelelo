@@ -6,7 +6,6 @@ import { Card } from "@/components/ui/card";
 interface PlayerOption {
   id: string;
   name: string;
-  profile_photo?: string | null;
 }
 
 interface TeamSelectProps {
@@ -45,7 +44,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
                 }`}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={player.profile_photo || ''} alt={player.name} />
+                  <AvatarImage src="" alt={player.name} />
                   <AvatarFallback>
                     {player.name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>

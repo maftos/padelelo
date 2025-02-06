@@ -5,6 +5,7 @@ import { TeamSelect } from "./match/TeamSelect";
 import { PartnerSelect } from "./match/PartnerSelect";
 import { TeamPreview } from "./match/TeamPreview";
 import { Separator } from "@/components/ui/separator";
+import { DateSelector } from "./match/DateSelector";
 import { useMatchForm } from "@/hooks/use-match-form";
 
 export const MatchForm = () => {
@@ -30,10 +31,8 @@ export const MatchForm = () => {
     getPlayerName,
     handleNext,
     handleSubmit,
-    userId
   } = useMatchForm();
 
-  // Filter selected players
   const selectedPlayers = [player1, player2, player3].filter(Boolean);
   const availablePlayers = playerOptions.filter(
     (p) => !selectedPlayers.includes(p.id)
@@ -44,7 +43,7 @@ export const MatchForm = () => {
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           {page === 1
-            ? "Select Players (4)"
+            ? "Select Players (up to 3)"
             : page === 2
             ? "Select Partner"
             : "Enter match score"}
@@ -52,7 +51,7 @@ export const MatchForm = () => {
         {page === 1 && (
           <Button
             onClick={handleNext}
-            disabled={selectedPlayers.length < 3 || isCalculating}
+            disabled={selectedPlayers.length === 0 || isCalculating}
             size="sm"
           >
             {isCalculating ? "Calculating..." : "Next"}
@@ -62,8 +61,11 @@ export const MatchForm = () => {
 
       {page === 1 ? (
         <div className="space-y-4">
+          <div className="w-full max-w-sm">
+            <DateSelector value={date} onChange={setDate} />
+          </div>
           <TeamSelect
-            players={availablePlayers}
+            players={playerOptions}
             selectedPlayers={selectedPlayers}
             onPlayerSelect={(playerId) => {
               if (selectedPlayers.includes(playerId)) {
@@ -83,7 +85,7 @@ export const MatchForm = () => {
       ) : page === 2 ? (
         <div className="space-y-4">
           <PartnerSelect
-            players={[player2, player3].map((id) => ({
+            players={selectedPlayers.map((id) => ({
               id,
               name: getPlayerName(id),
             }))}

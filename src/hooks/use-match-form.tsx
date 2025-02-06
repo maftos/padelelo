@@ -206,6 +206,7 @@ export function useMatchForm() {
     setScores,
     date,
     setDate,
+    matchId,
     mmrData,
     isCalculating,
     isSubmitting,
@@ -213,6 +214,5 @@ export function useMatchForm() {
     getPlayerName,
     handleNext,
     handleSubmit,
-    userId  // Add userId to the returned object
   };
 }
