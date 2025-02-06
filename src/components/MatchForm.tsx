@@ -3,14 +3,13 @@ import { Button } from "@/components/ui/button";
 import { ScoreForm } from "./ScoreForm";
 import { TeamSelect } from "./match/TeamSelect";
 import { TeamPreview } from "./match/TeamPreview";
-import { Separator } from "@/components/ui/separator";
 import { useMatchForm } from "@/hooks/use-match-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamDisplay } from "./match/TeamDisplay";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useEffect } from "react";
-import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 
 export const MatchForm = () => {
   const {
@@ -49,7 +48,7 @@ export const MatchForm = () => {
 
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
   const availablePlayers = playerOptions.filter(
-    (p) => !selectedPlayers.includes(p.id)
+    (p) => !selectedPlayers.includes(p.id) && p.id !== profile?.id
   );
 
   const getPlayerPhoto = (playerId: string) => {
@@ -60,7 +59,7 @@ export const MatchForm = () => {
     return player?.profile_photo || "";
   };
 
-  const progressValue = page === 1 ? 33 : page === 2 ? 66 : 100;
+  const playersLeftToSelect = 3 - (selectedPlayers.length - 1); // Subtract 1 because player1 (current user) is auto-selected
 
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
@@ -68,7 +67,7 @@ export const MatchForm = () => {
         <div className="flex justify-between items-center">
           <p className="text-sm text-muted-foreground">
             {page === 1
-              ? "Select Players (3)"
+              ? `Select Players (${playersLeftToSelect} left)`
               : page === 2
               ? "Select Partner"
               : "Enter match score"}
@@ -83,20 +82,32 @@ export const MatchForm = () => {
             </Button>
           )}
         </div>
-        <Progress value={progressValue} className="h-2" />
       </div>
 
       {page === 1 ? (
         <div className="space-y-4">
-          <Input
-            type="text"
-            placeholder="Search players..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-sm"
-          />
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="max-w-sm pl-8 pr-8"
+            />
+            {searchQuery && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-0 top-0 h-10 px-3 hover:bg-transparent"
+                onClick={() => setSearchQuery("")}
+              >
+                <X className="h-4 w-4 text-muted-foreground" />
+              </Button>
+            )}
+          </div>
           <TeamSelect
-            players={playerOptions}
+            players={availablePlayers}
             selectedPlayers={selectedPlayers}
             currentUserProfile={profile}
             onPlayerSelect={(playerId) => {
@@ -124,7 +135,9 @@ export const MatchForm = () => {
             {[player2, player3, player4].map((playerId) => (
               <Card
                 key={playerId}
-                className={`p-4 cursor-pointer transition-all hover:shadow-md`}
+                className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+                  isCalculating ? "opacity-50 pointer-events-none" : ""
+                }`}
                 onClick={() => {
                   calculateMMR(playerId);
                 }}
