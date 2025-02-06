@@ -1533,6 +1533,7 @@ export type Database = {
           created_at: string
           display_name: string
           profile_photo: string
+          current_mmr: number
         }[]
       }
       get_user_profile: {
