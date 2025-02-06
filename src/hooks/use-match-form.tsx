@@ -6,6 +6,12 @@ import { useQuery } from "@tanstack/react-query";
 
 const STORAGE_KEY = "last_match_players";
 
+interface PlayerOption {
+  id: string;
+  name: string;
+  profile_photo?: string;
+}
+
 export function useMatchForm() {
   const [page, setPage] = useState(1);
   const [player1, setPlayer1] = useState("");
@@ -60,9 +66,13 @@ export function useMatchForm() {
     enabled: !!userId,
   });
 
-  const playerOptions = [
+  const playerOptions: PlayerOption[] = [
     { id: userId || "current-user", name: "Me" },
-    ...friends.map(friend => ({ id: friend.friend_id, name: friend.display_name }))
+    ...friends.map(friend => ({
+      id: friend.friend_id,
+      name: friend.display_name,
+      profile_photo: friend.profile_photo
+    }))
   ];
 
   const getPlayerName = (playerId: string) => {
