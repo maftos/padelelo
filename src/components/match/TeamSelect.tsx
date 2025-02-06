@@ -61,11 +61,9 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
               </Avatar>
               <div className="flex flex-col items-center">
                 <span className="font-medium text-center">{player.name}</span>
-                {player.current_mmr && (
-                  <span className="text-sm text-muted-foreground">
-                    MMR: {player.current_mmr}
-                  </span>
-                )}
+                <span className="text-sm text-muted-foreground">
+                  MMR: {player.current_mmr}
+                </span>
               </div>
             </div>
           </Card>
