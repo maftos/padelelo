@@ -141,6 +141,8 @@ export const MatchForm = () => {
               player1ProfilePhoto={getPlayerPhoto(player1)}
               player2DisplayName={getPlayerName(player2)}
               player2ProfilePhoto={getPlayerPhoto(player2)}
+              player1IsCompleter={false}
+              player2IsCompleter={false}
             />
             <div className="flex items-center gap-2 font-semibold">
               <span>{scores[0].team1}</span>
@@ -153,6 +155,8 @@ export const MatchForm = () => {
               player2DisplayName={getPlayerName(player4)}
               player2ProfilePhoto={getPlayerPhoto(player4)}
               isRightAligned
+              player1IsCompleter={false}
+              player2IsCompleter={false}
             />
           </div>
           <ScoreForm
