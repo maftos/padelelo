@@ -11,6 +11,13 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 
+interface PlayerOption {
+  id: string;
+  name: string;
+  profile_photo?: string;
+  current_mmr?: number;
+}
+
 export const MatchForm = () => {
   const {
     page,
