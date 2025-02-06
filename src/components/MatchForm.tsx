@@ -9,7 +9,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TeamDisplay } from "./match/TeamDisplay";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useEffect } from "react";
-import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 
 export const MatchForm = () => {
@@ -60,7 +59,10 @@ export const MatchForm = () => {
     return player?.profile_photo || "";
   };
 
-  const progressValue = page === 1 ? 33 : page === 2 ? 66 : 100;
+  const getPlayerMMR = (playerId: string) => {
+    const player = playerOptions.find((p) => p.id === playerId);
+    return player?.current_mmr;
+  };
 
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
@@ -83,7 +85,6 @@ export const MatchForm = () => {
             </Button>
           )}
         </div>
-        <Progress value={progressValue} className="h-2" />
       </div>
 
       {page === 1 ? (
@@ -139,9 +140,16 @@ export const MatchForm = () => {
                       {getPlayerName(playerId).substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="font-medium text-center">
-                    {getPlayerName(playerId)}
-                  </span>
+                  <div className="flex flex-col items-center">
+                    <span className="font-medium text-center">
+                      {getPlayerName(playerId)}
+                    </span>
+                    {getPlayerMMR(playerId) && (
+                      <span className="text-sm text-muted-foreground">
+                        MMR: {getPlayerMMR(playerId)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </Card>
             ))}

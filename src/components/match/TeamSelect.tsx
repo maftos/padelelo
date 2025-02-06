@@ -6,6 +6,7 @@ interface PlayerOption {
   id: string;
   name: string;
   profile_photo?: string;
+  current_mmr?: number;
 }
 
 interface TeamSelectProps {
@@ -58,7 +59,14 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
                   {player.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium text-center">{player.name}</span>
+              <div className="flex flex-col items-center">
+                <span className="font-medium text-center">{player.name}</span>
+                {player.current_mmr && (
+                  <span className="text-sm text-muted-foreground">
+                    MMR: {player.current_mmr}
+                  </span>
+                )}
+              </div>
             </div>
           </Card>
         );
