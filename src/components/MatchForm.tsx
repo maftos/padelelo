@@ -107,7 +107,7 @@ export const MatchForm = () => {
             )}
           </div>
           <TeamSelect
-            players={availablePlayers}
+            players={playerOptions}
             selectedPlayers={selectedPlayers}
             currentUserProfile={profile}
             onPlayerSelect={(playerId) => {
