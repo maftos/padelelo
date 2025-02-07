@@ -5,7 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { RecentMatches } from "@/components/RecentMatches";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { useToast } from "@/hooks/use-toast";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { AddFriendDialog } from "@/components/leaderboard/AddFriendDialog";
@@ -19,63 +18,6 @@ interface LeaderboardPlayer {
   gender: string | null;
 }
 
-interface PostgresError {
-  code: string;
-  message: string;
-  details?: string | null;
-  hint?: string | null;
-}
-
-interface SupabaseErrorBody {
-  body: string;
-  message: string;
-}
-
-const parseErrorMessage = (error: any): { title: string; description: string } => {
-  try {
-    const errorData: SupabaseErrorBody = JSON.parse(error.message);
-    if (errorData.body) {
-      const pgError: PostgresError = JSON.parse(errorData.body);
-      
-      // Handle specific error cases
-      if (pgError.message.includes("already friends")) {
-        return {
-          title: "Already Friends",
-          description: "You are already friends with this player! 🤝",
-        };
-      }
-      if (pgError.message.includes("Invitation sent already")) {
-        return {
-          title: "Request Pending",
-          description: "You have already sent a friend request to this player ⏳",
-        };
-      }
-      if (pgError.message.includes("Please complete your profile")) {
-        return {
-          title: "Profile Incomplete",
-          description: "Please update your profile information before sending friend requests 📝",
-        };
-      }
-      
-      // Default error case
-      return {
-        title: "Error",
-        description: pgError.message,
-      };
-    }
-    return {
-      title: "Error",
-      description: errorData.message,
-    };
-  } catch (parseError) {
-    console.error('Error parsing error message:', parseError);
-    return {
-      title: "Error",
-      description: error.message,
-    };
-  }
-};
-
 const Leaderboard = () => {
   const [filters, setFilters] = React.useState({
     gender: "both",
@@ -83,7 +25,6 @@ const Leaderboard = () => {
   });
   const [selectedPlayer, setSelectedPlayer] = React.useState<LeaderboardPlayer | null>(null);
   const { userId } = useUserProfile();
-  const { toast } = useToast();
 
   const { data: leaderboardData, isLoading } = useQuery({
     queryKey: ['leaderboard'],
@@ -108,45 +49,14 @@ const Leaderboard = () => {
   };
 
   const handleSendFriendRequest = async () => {
-    if (!userId || !selectedPlayer) {
-      toast({
-        title: "Missing Information",
-        description: "Could not process your request due to missing information.",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!userId || !selectedPlayer) return;
 
-    try {
-      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-        user_a_id_public: userId,
-        user_b_id_public: selectedPlayer.id
-      });
-
-      if (error) {
-        const { title, description } = parseErrorMessage(error);
-        toast({
-          title,
-          description,
-          variant: error.message.includes("already friends") ? "default" : "destructive",
-          duration: 5000,
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: `Friend request sent to ${selectedPlayer.display_name} 🎉`,
-          duration: 5000,
-        });
-        setSelectedPlayer(null);
-      }
-    } catch (error: any) {
-      toast({
-        title: "System Error",
-        description: "An unexpected error occurred. Please try again later.",
-        variant: "destructive",
-      });
-      console.error('Error sending friend request:', error);
-    }
+    await supabase.rpc('send_friend_request_leaderboard', {
+      user_a_id_public: userId,
+      user_b_id_public: selectedPlayer.id
+    });
+    
+    setSelectedPlayer(null);
   };
 
   return (
