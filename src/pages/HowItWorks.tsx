@@ -1,6 +1,13 @@
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Link } from "react-router-dom";
+import { BookOpen } from "lucide-react";
+import { 
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const HowItWorks = () => {
   return (
@@ -8,9 +15,13 @@ const HowItWorks = () => {
       <Navigation />
       <PageContainer>
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-2xl font-bold mb-6">How It Works</h1>
+          <div className="flex items-center gap-3 mb-6">
+            <BookOpen className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-bold">How It Works</h1>
+          </div>
+
           <div className="space-y-8">
-            <section>
+            <section className="p-6 rounded-lg bg-accent">
               <h2 className="text-xl font-semibold mb-4">General Rules</h2>
               <div className="space-y-6">
                 <div>
@@ -37,8 +48,8 @@ const HowItWorks = () => {
               </div>
             </section>
 
-            <section>
-              <h2 className="text-xl font-semibold mb-4">How to register a match</h2>
+            <section className="p-6 rounded-lg bg-accent">
+              <h2 className="text-xl font-semibold mb-4">Registering a Match</h2>
               <div className="space-y-4">
                 <div>
                   <h3 className="font-medium mb-2">Step 1 - Select the 3 other players</h3>
@@ -58,41 +69,44 @@ const HowItWorks = () => {
               </div>
             </section>
 
-            <section>
+            <section className="p-6 rounded-lg bg-accent">
               <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-2">Do the other players need to confirm the match after I register it?</h3>
-                  <p className="text-muted-foreground">
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="item-1">
+                  <AccordionTrigger>Do the other players need to confirm the match after I register it?</AccordionTrigger>
+                  <AccordionContent>
                     No, the match registration process on padelELO is honor-based. There's no confirmation needed.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Wait, does that mean I can register fake matches & steal points from my friends?</h3>
-                  <p className="text-muted-foreground">
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-2">
+                  <AccordionTrigger>Wait, does that mean I can register fake matches & steal points from my friends?</AccordionTrigger>
+                  <AccordionContent>
                     Yes. The MMR system is zero sum, so - you can only increase your rating by taking them from other players. 
                     Couple of things here - (a) not sure if they'll be your friends much longer, (b) all matches are public - 
                     so everyone will know.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">I registered a match by mistake, can I revert it?</h3>
-                  <p className="text-muted-foreground">
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-3">
+                  <AccordionTrigger>I registered a match by mistake, can I revert it?</AccordionTrigger>
+                  <AccordionContent>
                     No.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">How are the points won/loss calculated?</h3>
-                  <p className="text-muted-foreground">
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-4">
+                  <AccordionTrigger>How are the points won/loss calculated?</AccordionTrigger>
+                  <AccordionContent>
                     Basically the harder your matchup (playing against opponents with higher MMR), the more points you win if you lose. 
                     This also means that if you lose a hard matchup, you would lose less points. See{' '}
                     <Link to="/matchmaking-math" className="underline hover:text-primary">
                       Matchmaking Math
                     </Link>{' '}
                     for full details.
-                  </p>
-                </div>
-              </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </section>
           </div>
         </div>
