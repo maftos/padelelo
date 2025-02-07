@@ -31,17 +31,48 @@ interface SupabaseErrorBody {
   message: string;
 }
 
-const parseErrorMessage = (error: any): string => {
+const parseErrorMessage = (error: any): { title: string; description: string } => {
   try {
     const errorData: SupabaseErrorBody = JSON.parse(error.message);
     if (errorData.body) {
       const pgError: PostgresError = JSON.parse(errorData.body);
-      return pgError.message;
+      
+      // Handle specific error cases
+      if (pgError.message.includes("already friends")) {
+        return {
+          title: "Already Friends",
+          description: "You are already friends with this player! 🤝",
+        };
+      }
+      if (pgError.message.includes("Invitation sent already")) {
+        return {
+          title: "Request Pending",
+          description: "You have already sent a friend request to this player ⏳",
+        };
+      }
+      if (pgError.message.includes("Please complete your profile")) {
+        return {
+          title: "Profile Incomplete",
+          description: "Please update your profile information before sending friend requests 📝",
+        };
+      }
+      
+      // Default error case
+      return {
+        title: "Error",
+        description: pgError.message,
+      };
     }
-    return errorData.message;
+    return {
+      title: "Error",
+      description: errorData.message,
+    };
   } catch (parseError) {
     console.error('Error parsing error message:', parseError);
-    return error.message;
+    return {
+      title: "Error",
+      description: error.message,
+    };
   }
 };
 
@@ -79,8 +110,8 @@ const Leaderboard = () => {
   const handleSendFriendRequest = async () => {
     if (!userId || !selectedPlayer) {
       toast({
-        title: "Error",
-        description: "Missing user information",
+        title: "Missing Information",
+        description: "Could not process your request due to missing information.",
         variant: "destructive",
       });
       return;
@@ -93,22 +124,25 @@ const Leaderboard = () => {
       });
 
       if (error) {
+        const { title, description } = parseErrorMessage(error);
         toast({
-          title: "Error",
-          description: parseErrorMessage(error),
-          variant: "destructive",
+          title,
+          description,
+          variant: error.message.includes("already friends") ? "default" : "destructive",
+          duration: 5000,
         });
       } else {
         toast({
           title: "Success",
-          description: `Friend request sent to ${selectedPlayer.display_name}`,
+          description: `Friend request sent to ${selectedPlayer.display_name} 🎉`,
+          duration: 5000,
         });
         setSelectedPlayer(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "System Error",
+        description: "An unexpected error occurred. Please try again later.",
         variant: "destructive",
       });
       console.error('Error sending friend request:', error);
@@ -151,4 +185,3 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
-
