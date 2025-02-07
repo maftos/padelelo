@@ -33,8 +33,8 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
     <Dialog onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         {children || (
-          <button className="flex w-full items-center gap-2 rounded-md p-2 text-lg hover:bg-accent hover:text-accent-foreground transition-colors">
-            <UserPlus className="h-5 w-5" />
+          <button className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+            <UserPlus className="h-4 w-4" />
             Invite Friends
           </button>
         )}
