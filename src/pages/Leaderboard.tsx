@@ -53,31 +53,24 @@ const Leaderboard = () => {
   const handleSendFriendRequest = async () => {
     if (!userId || !selectedPlayer) return;
 
-    try {
-      const { data, error } = await supabase.rpc('send_friend_request_leaderboard', {
-        user_a_id_public: userId,
-        user_b_id_public: selectedPlayer.id
-      });
+    const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+      user_a_id_public: userId,
+      user_b_id_public: selectedPlayer.id
+    });
 
-      if (error) {
-        toast({
-          title: "Friend Request Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Friend Request Sent",
-          description: `Friend request sent to ${selectedPlayer.display_name}`,
-        });
-      }
-    } catch (error: any) {
+    if (error) {
       toast({
-        title: "Friend Request Failed",
-        description: error.message || "Failed to send friend request",
+        title: "Error",
+        description: error.message,
         variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Success",
+        description: `Friend request sent to ${selectedPlayer.display_name}`,
+      });
     }
+    
     setSelectedPlayer(null);
   };
 
