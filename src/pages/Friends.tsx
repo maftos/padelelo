@@ -10,12 +10,14 @@ import { FriendsList } from "@/components/friends/FriendsList";
 import { AddFriendDialog } from "@/components/friends/AddFriendDialog";
 import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Friends = () => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { userId } = useUserProfile();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -51,7 +53,7 @@ const Friends = () => {
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Left Sidebar */}
-          <div className="lg:w-80 flex-shrink-0 space-y-4">
+          <div className="lg:w-80 flex-shrink-0 space-y-4 order-2 lg:order-1">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Users className="h-6 w-6 text-primary" />
@@ -76,9 +78,8 @@ const Friends = () => {
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 space-y-6">
+          <div className="flex-1 space-y-6 order-1 lg:order-2">
             <FriendRequests />
-            {/* Additional content can be added here */}
           </div>
         </div>
       </div>
