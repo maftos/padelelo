@@ -62,14 +62,15 @@ const Leaderboard = () => {
       if (error) {
         let errorMessage = "Failed to send friend request";
         
-        // Check if error message is available in error.message
-        if (error.message) {
+        // Parse the error.body which contains the detailed error message
+        if (error.body) {
           try {
-            // Try to parse the error message if it's JSON
-            const parsedError = JSON.parse(error.message);
-            errorMessage = parsedError.message || error.message;
+            const parsedBody = JSON.parse(error.body);
+            if (parsedBody?.message) {
+              errorMessage = parsedBody.message;
+            }
           } catch {
-            // If parsing fails, use the error message directly
+            // If JSON parsing fails, try to use error.message as fallback
             errorMessage = error.message;
           }
         }
