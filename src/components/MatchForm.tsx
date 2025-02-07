@@ -151,13 +151,17 @@ export const MatchForm = () => {
             }}
           />
           <div className="pt-6 border-t">
-            <Link 
-              to="/how-it-works" 
-              className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+            <Button 
+              variant="secondary"
+              size="sm"
+              asChild
+              className="flex items-center gap-2"
             >
-              <Info className="h-4 w-4 mr-2" />
-              How to register a match
-            </Link>
+              <Link to="/how-it-works">
+                <Info className="h-4 w-4" />
+                How does this work?
+              </Link>
+            </Button>
           </div>
         </div>
       ) : page === 2 ? (
