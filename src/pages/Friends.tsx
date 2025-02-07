@@ -7,10 +7,10 @@ import { useNavigate } from "react-router-dom";
 import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { FriendsList } from "@/components/friends/FriendsList";
-import { AddFriendDialog } from "@/components/friends/AddFriendDialog";
 import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { InviteFriendDialog } from "@/components/navigation/InviteFriendDialog";
 
 const Friends = () => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
@@ -59,7 +59,11 @@ const Friends = () => {
                 <Users className="h-6 w-6 text-primary" />
                 <h1 className="text-2xl font-bold">Friends</h1>
               </div>
-              <AddFriendDialog userId={userId} onFriendAdded={() => {}} />
+              <InviteFriendDialog userId={userId}>
+                <button className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90">
+                  Invite Friends
+                </button>
+              </InviteFriendDialog>
             </div>
             
             <div className="relative">
