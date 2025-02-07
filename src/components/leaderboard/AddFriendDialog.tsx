@@ -9,7 +9,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
-import { useEffect } from "react";
 
 interface LeaderboardPlayer {
   id: string;
@@ -34,11 +33,32 @@ export const AddFriendDialog = ({
   const handleSendRequest = async () => {
     const result = await onSendRequest();
     if (result?.error) {
-      const errorBody = JSON.parse(result.error.message.includes('body') ? JSON.parse(result.error.message).body : result.error.message);
+      let errorMessage: string;
+      
+      try {
+        // Try to parse the error body if it exists and is a string
+        if (typeof result.error.message === 'string') {
+          if (result.error.message.includes('body')) {
+            const errorBody = JSON.parse(result.error.message);
+            const parsedBody = JSON.parse(errorBody.body);
+            errorMessage = parsedBody.message;
+          } else {
+            errorMessage = result.error.message;
+          }
+        } else {
+          errorMessage = 'An error occurred while sending the friend request';
+        }
+      } catch (e) {
+        errorMessage = 'An error occurred while sending the friend request';
+      }
+
       toast({
-        description: errorBody.message || 'An error occurred while sending the friend request',
+        description: errorMessage,
       });
     } else {
+      toast({
+        description: "Friend request sent successfully!",
+      });
       onClose();
     }
   };
