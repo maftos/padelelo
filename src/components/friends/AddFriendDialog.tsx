@@ -55,6 +55,12 @@ export const AddFriendDialog = ({ userId, onFriendAdded }: AddFriendDialogProps)
             title: "Request Pending",
             description: `You have already sent a friend request to this user`,
           });
+        } else if (error.message.includes("Please complete your profile")) {
+          toast({
+            title: "Profile Incomplete",
+            description: "Please update your profile information before sending friend requests",
+            variant: "destructive",
+          });
         } else {
           throw error;
         }
