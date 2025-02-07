@@ -61,11 +61,14 @@ const Leaderboard = () => {
     if (error) {
       let errorMessage = error.message;
       try {
-        // Parse the error message from the response body
+        // First parse the error object which contains the body
         const errorData = JSON.parse(error.message);
-        errorMessage = errorData.message || error.message;
+        // Then parse the body which contains the actual PostgreSQL error
+        if (errorData.body) {
+          const pgError = JSON.parse(errorData.body);
+          errorMessage = pgError.message;
+        }
       } catch (parseError) {
-        // If parsing fails, use the original error message
         console.error('Error parsing error message:', parseError);
       }
 
