@@ -601,7 +601,6 @@ export type Database = {
           current_mmr: number | null
           date_of_birth: string | null
           display_name: string | null
-          email: string | null
           gender: string | null
           id: string | null
           languages: string[] | null

@@ -3,13 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 interface ProfileFormData {
   display_name: string;
@@ -46,21 +39,7 @@ export const ProfileForm: FC<ProfileFormProps> = ({
     <div className="space-y-8 max-w-2xl mx-auto bg-card rounded-lg p-6 shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            <Label htmlFor="displayName">Display Name</Label>
-            {formData.display_name === 'New Player' && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>You will only appear on the leaderboard once you've set your display name.</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
+          <Label htmlFor="displayName">Display Name</Label>
           {isEditing ? (
             <Input
               id="displayName"
