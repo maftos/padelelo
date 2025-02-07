@@ -61,13 +61,17 @@ const Leaderboard = () => {
 
       if (error) {
         let errorMessage = "Failed to send friend request";
-        try {
-          const parsedBody = JSON.parse(error.body as string);
-          if (parsedBody?.message) {
-            errorMessage = parsedBody.message;
+        
+        // Check if error message is available in error.message
+        if (error.message) {
+          try {
+            // Try to parse the error message if it's JSON
+            const parsedError = JSON.parse(error.message);
+            errorMessage = parsedError.message || error.message;
+          } catch {
+            // If parsing fails, use the error message directly
+            errorMessage = error.message;
           }
-        } catch {
-          errorMessage = error.message;
         }
 
         toast({
@@ -127,3 +131,4 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
+
