@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -79,7 +80,7 @@ const Leaderboard = () => {
   const handleSendFriendRequest = async () => {
     if (!userId || !selectedPlayer) return;
 
-    const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+    const { data, error } = await supabase.rpc('send_friend_request_leaderboard', {
       user_a_id_public: userId,
       user_b_id_public: selectedPlayer.id
     });
@@ -90,10 +91,10 @@ const Leaderboard = () => {
         description: error.message,
         variant: "destructive",
       });
-    } else {
+    } else if (data) {
       toast({
         title: "Friend Request",
-        description: `Friend request sent to ${selectedPlayer.display_name}`,
+        description: data,
       });
     }
     setSelectedPlayer(null);
