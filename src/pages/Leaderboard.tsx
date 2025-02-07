@@ -8,6 +8,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { AddFriendDialog } from "@/components/leaderboard/AddFriendDialog";
+import { toast } from "@/hooks/use-toast";
 
 interface LeaderboardPlayer {
   id: string;
@@ -51,10 +52,18 @@ const Leaderboard = () => {
   const handleSendFriendRequest = async () => {
     if (!userId || !selectedPlayer) return;
 
-    await supabase.rpc('send_friend_request_leaderboard', {
+    const { error } = await supabase.rpc('send_friend_request_leaderboard', {
       user_a_id_public: userId,
       user_b_id_public: selectedPlayer.id
     });
+    
+    if (error) {
+      const errorBody = JSON.parse(error.message).body;
+      const errorMessage = JSON.parse(errorBody).message;
+      toast({
+        description: errorMessage,
+      });
+    }
     
     setSelectedPlayer(null);
   };
@@ -95,3 +104,4 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
+
