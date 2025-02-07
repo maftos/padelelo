@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 interface LeaderboardPlayer {
   id: string;
@@ -30,31 +31,29 @@ export const AddFriendDialog = ({
   onClose, 
   onSendRequest 
 }: AddFriendDialogProps) => {
+  const [error, setError] = useState<string | null>(null);
+
   const handleSendRequest = async () => {
+    setError(null);
     const result = await onSendRequest();
+    
     if (result?.error) {
-      let errorMessage: string;
-      
       try {
         // Try to parse the error body if it exists and is a string
         if (typeof result.error.message === 'string') {
           if (result.error.message.includes('body')) {
             const errorBody = JSON.parse(result.error.message);
             const parsedBody = JSON.parse(errorBody.body);
-            errorMessage = parsedBody.message;
+            setError(parsedBody.message);
           } else {
-            errorMessage = result.error.message;
+            setError(result.error.message);
           }
         } else {
-          errorMessage = 'An error occurred while sending the friend request';
+          setError('An error occurred while sending the friend request');
         }
       } catch (e) {
-        errorMessage = 'An error occurred while sending the friend request';
+        setError('An error occurred while sending the friend request');
       }
-
-      toast({
-        description: errorMessage,
-      });
     } else {
       toast({
         description: "Friend request sent successfully!",
@@ -72,6 +71,13 @@ export const AddFriendDialog = ({
             Do you want to add {player?.display_name} as a friend?
           </DialogDescription>
         </DialogHeader>
+        
+        {error && (
+          <div className="text-sm text-destructive text-center py-2">
+            {error}
+          </div>
+        )}
+
         <DialogFooter className="gap-2 sm:gap-0">
           <Button
             variant="outline"
