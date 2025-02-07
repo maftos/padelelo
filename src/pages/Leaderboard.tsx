@@ -59,9 +59,20 @@ const Leaderboard = () => {
     });
 
     if (error) {
+      // Parse the PostgreSQL error message from the response body
+      let errorMessage = error.message;
+      try {
+        const errorBody = JSON.parse(error.message).body;
+        const pgError = JSON.parse(errorBody);
+        errorMessage = pgError.message;
+      } catch {
+        // If parsing fails, use the original error message
+        console.error('Failed to parse error message:', error);
+      }
+
       toast({
         title: "Error",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive",
       });
     } else {
@@ -110,3 +121,4 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
+
