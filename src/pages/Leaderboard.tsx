@@ -19,6 +19,32 @@ interface LeaderboardPlayer {
   gender: string | null;
 }
 
+interface PostgresError {
+  code: string;
+  message: string;
+  details?: string | null;
+  hint?: string | null;
+}
+
+interface SupabaseErrorBody {
+  body: string;
+  message: string;
+}
+
+const parseErrorMessage = (error: any): string => {
+  try {
+    const errorData: SupabaseErrorBody = JSON.parse(error.message);
+    if (errorData.body) {
+      const pgError: PostgresError = JSON.parse(errorData.body);
+      return pgError.message;
+    }
+    return errorData.message;
+  } catch (parseError) {
+    console.error('Error parsing error message:', parseError);
+    return error.message;
+  }
+};
+
 const Leaderboard = () => {
   const [filters, setFilters] = React.useState({
     gender: "both",
@@ -51,40 +77,42 @@ const Leaderboard = () => {
   };
 
   const handleSendFriendRequest = async () => {
-    if (!userId || !selectedPlayer) return;
-
-    const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-      user_a_id_public: userId,
-      user_b_id_public: selectedPlayer.id
-    });
-
-    if (error) {
-      let errorMessage = error.message;
-      try {
-        // First parse the error object which contains the body
-        const errorData = JSON.parse(error.message);
-        // Then parse the body which contains the actual PostgreSQL error
-        if (errorData.body) {
-          const pgError = JSON.parse(errorData.body);
-          errorMessage = pgError.message;
-        }
-      } catch (parseError) {
-        console.error('Error parsing error message:', parseError);
-      }
-
+    if (!userId || !selectedPlayer) {
       toast({
         title: "Error",
-        description: errorMessage,
+        description: "Missing user information",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Success",
-        description: `Friend request sent to ${selectedPlayer.display_name}`,
-      });
+      return;
     }
-    
-    setSelectedPlayer(null);
+
+    try {
+      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+        user_a_id_public: userId,
+        user_b_id_public: selectedPlayer.id
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: parseErrorMessage(error),
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: `Friend request sent to ${selectedPlayer.display_name}`,
+        });
+        setSelectedPlayer(null);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+      console.error('Error sending friend request:', error);
+    }
   };
 
   return (
@@ -123,3 +151,4 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
+
