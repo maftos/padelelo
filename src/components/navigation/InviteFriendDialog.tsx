@@ -26,7 +26,12 @@ export const InviteFriendDialog = ({ userId, children }: InviteFriendDialogProps
     if (!email) return;
 
     setIsLoading(true);
-    const { error } = await supabase.auth.api.sendInvite(email);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${window.location.origin}/signup?ref=${userId}`,
+      },
+    });
 
     setIsLoading(false);
 
