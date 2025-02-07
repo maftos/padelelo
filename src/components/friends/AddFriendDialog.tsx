@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -22,20 +23,50 @@ export const AddFriendDialog = ({ userId, onFriendAdded }: AddFriendDialogProps)
     if (!userId) return;
 
     try {
-      const { error } = await supabase.rpc('send_friend_request', {
-        i_email: friendEmail,
-        user_a_id_public: userId
+      // First get the user ID for the email
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', friendEmail)
+        .single();
+
+      if (userError || !userData) {
+        toast({
+          title: "Error",
+          description: "User not found with this email",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+        user_a_id_public: userId,
+        user_b_id_public: userData.id
       });
 
-      if (error) throw error;
-
-      toast({
-        title: "Friend Request Sent",
-        description: `A friend request has been sent to ${friendEmail}`,
-      });
-      setFriendEmail("");
-      setIsOpen(false);
-      onFriendAdded();
+      if (error) {
+        if (error.message.includes("best friends")) {
+          toast({
+            title: "Already Friends",
+            description: error.message,
+          });
+        } else if (error.message.includes("Invitation sent already")) {
+          toast({
+            title: "Request Pending",
+            description: `You have already sent a friend request to this user`,
+          });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({
+          title: "Friend Request Sent",
+          description: `A friend request has been sent to ${friendEmail}`,
+        });
+        setFriendEmail("");
+        setIsOpen(false);
+        onFriendAdded();
+      }
     } catch (error: any) {
       toast({
         title: "Error",
