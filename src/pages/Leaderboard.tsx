@@ -59,15 +59,18 @@ const Leaderboard = () => {
     });
 
     if (error) {
-      // Parse the PostgreSQL error message from the response body
       let errorMessage = error.message;
+      
+      // The error object from PostgreSQL RPC calls comes in a specific format
       try {
-        const errorBody = JSON.parse(error.message).body;
-        const pgError = JSON.parse(errorBody);
+        // First parse the error object which contains the body
+        const errorData = JSON.parse(error.message);
+        // Then parse the body which contains the actual PostgreSQL error
+        const pgError = JSON.parse(errorData.body);
+        // Use the PostgreSQL error message
         errorMessage = pgError.message;
-      } catch {
-        // If parsing fails, use the original error message
-        console.error('Failed to parse error message:', error);
+      } catch (parseError) {
+        console.error('Error parsing error message:', parseError);
       }
 
       toast({
