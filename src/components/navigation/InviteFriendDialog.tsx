@@ -41,7 +41,7 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share Invite Link</DialogTitle>
+          <DialogTitle>Invite Friends</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
           {/* Step 1 */}
@@ -50,7 +50,7 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
               <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
                 1
               </div>
-              <h3 className="font-medium">Copy your invitation URL</h3>
+              <h3 className="font-medium">Your Referral Link</h3>
             </div>
             <p className="text-sm text-muted-foreground pl-7">
               This link is unique to your account and allows us to track successful referrals.
@@ -65,7 +65,7 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
               ) : (
                 <Copy className="h-4 w-4 mr-2" />
               )}
-              {hasCopied ? "Copied!" : "Copy Invite URL"}
+              {hasCopied ? "Copied!" : "Copy Referral Link"}
             </Button>
           </div>
 
@@ -75,10 +75,10 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
               <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
                 2
               </div>
-              <h3 className="font-medium">Share this link directly with your friends</h3>
+              <h3 className="font-medium">Share with Friends</h3>
             </div>
             <p className="text-sm text-muted-foreground pl-7">
-              Send the invitation link to friends you would like to invite to padelELO.com
+              Send the link to your friends.
             </p>
           </div>
 
@@ -88,10 +88,10 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
               <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
                 3
               </div>
-              <h3 className="font-medium">They will be able to sign up on our invite-only platform</h3>
+              <h3 className="font-medium">They Sign Up</h3>
             </div>
             <p className="text-sm text-muted-foreground pl-7">
-              When they click your link, they'll see:
+              The platform is invite-only. So once they click on your referral link to sign up, they will see this:
             </p>
             
             {/* Referrer Preview */}
