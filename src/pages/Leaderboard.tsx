@@ -58,10 +58,10 @@ const Leaderboard = () => {
     });
     
     if (error) {
-      const errorBody = JSON.parse(error.message).body;
-      const errorMessage = JSON.parse(errorBody).message;
+      // Parse the error body which contains the actual message
+      const errorBody = JSON.parse(error.message.includes('body') ? JSON.parse(error.message).body : error.message);
       toast({
-        description: errorMessage,
+        description: errorBody.message || 'An error occurred while sending the friend request',
       });
     }
     
