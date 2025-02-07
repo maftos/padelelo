@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -86,25 +87,33 @@ const Leaderboard = () => {
       });
 
       if (error) {
-        // Check if the error message contains our friendly message
-        if (error.message.includes("best friends")) {
+        // Parse the error message from the body
+        const errorBody = JSON.parse(error.message);
+        const errorMessage = errorBody?.message || error.message;
+
+        // Display the appropriate toast based on the error message
+        if (errorMessage.includes("Please complete your profile")) {
+          toast({
+            title: "Profile Incomplete",
+            description: errorMessage,
+            variant: "destructive",
+          });
+        } else if (errorMessage.includes("best friends")) {
           toast({
             title: "Already Friends",
-            description: error.message,
+            description: errorMessage,
           });
-        } else if (error.message.includes("Invitation sent already")) {
+        } else if (errorMessage.includes("Invitation sent already")) {
           toast({
             title: "Request Pending",
             description: `You have already sent a friend request to ${selectedPlayer.display_name}`,
           });
-        } else if (error.message.includes("Please complete your profile")) {
+        } else {
           toast({
-            title: "Profile Incomplete",
-            description: "Please update your profile information before sending friend requests",
+            title: "Error",
+            description: errorMessage,
             variant: "destructive",
           });
-        } else {
-          throw error;
         }
       } else {
         toast({
@@ -116,7 +125,7 @@ const Leaderboard = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message,
+        description: "An unexpected error occurred",
         variant: "destructive",
       });
     }
