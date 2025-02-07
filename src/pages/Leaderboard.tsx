@@ -79,33 +79,24 @@ const Leaderboard = () => {
   const handleSendFriendRequest = async () => {
     if (!userId || !selectedPlayer) return;
 
-    try {
-      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-        user_a_id_public: userId,
-        user_b_id_public: selectedPlayer.id
-      });
+    const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+      user_a_id_public: userId,
+      user_b_id_public: selectedPlayer.id
+    });
 
-      if (error) {
-        const errorBody = JSON.parse(error.message);
-        toast({
-          title: "Error",
-          description: errorBody.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Success",
-          description: `Friend request sent to ${selectedPlayer.display_name}`,
-        });
-      }
-      setSelectedPlayer(null);
-    } catch (error) {
+    if (error) {
       toast({
-        title: "Error",
-        description: "An unexpected error occurred",
+        title: "Friend Request",
+        description: error.message,
         variant: "destructive",
       });
+    } else {
+      toast({
+        title: "Friend Request",
+        description: `Friend request sent to ${selectedPlayer.display_name}`,
+      });
     }
+    setSelectedPlayer(null);
   };
 
   const getInitials = (name: string) => {

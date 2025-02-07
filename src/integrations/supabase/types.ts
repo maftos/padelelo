@@ -1887,7 +1887,7 @@ export type Database = {
           user_a_id_public: string
           user_b_id_public: string
         }
-        Returns: undefined
+        Returns: string
       }
       spheroid_in: {
         Args: {
