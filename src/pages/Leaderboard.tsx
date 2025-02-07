@@ -88,10 +88,36 @@ const Leaderboard = () => {
     setSelectedPlayer(null);
   };
 
+  // Test function to demonstrate different toast types
+  const testToasts = () => {
+    // Success toast
+    toast({
+      title: "Success Example",
+      description: "This is how a success toast looks like!",
+    });
+
+    // After 1 second, show an error toast
+    setTimeout(() => {
+      toast({
+        title: "Error Example",
+        description: "This is how an error message would appear.",
+        variant: "destructive",
+      });
+    }, 1000);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       <main className="container py-8 px-4">
+        {/* Test Button */}
+        <button
+          onClick={testToasts}
+          className="mb-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+        >
+          Test Toast Messages
+        </button>
+
         <div className="grid md:grid-cols-[1fr,auto] gap-8">
           <div className="space-y-4 animate-fade-in">
             <LeaderboardHeader 
