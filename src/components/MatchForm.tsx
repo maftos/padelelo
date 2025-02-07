@@ -9,7 +9,8 @@ import { TeamDisplay } from "./match/TeamDisplay";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Search, X } from "lucide-react";
+import { Search, X, Info } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const MatchForm = () => {
   const {
@@ -149,6 +150,15 @@ export const MatchForm = () => {
               }
             }}
           />
+          <div className="pt-6 border-t">
+            <Link 
+              to="/how-it-works" 
+              className="flex items-center text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              <Info className="h-4 w-4 mr-2" />
+              How to register a match
+            </Link>
+          </div>
         </div>
       ) : page === 2 ? (
         <div className="space-y-6">

@@ -11,7 +11,8 @@ import {
   Trophy,
   Sparkles,
   Calculator,
-  LogOut
+  LogOut,
+  Info
 } from "lucide-react";
 
 interface SideMenuContentProps {
@@ -125,6 +126,14 @@ export const SideMenuContent = ({
 
       {/* Secondary Navigation Section */}
       <div className="space-y-1 px-2">
+        <Link
+          to="/how-it-works"
+          onClick={onClose}
+          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+        >
+          <Info className="h-4 w-4" />
+          How It Works
+        </Link>
         <Link
           to="/roadmap"
           onClick={onClose}
