@@ -97,12 +97,14 @@ const Leaderboard = () => {
             title: "Request Pending",
             description: `You have already sent a friend request to ${selectedPlayer.display_name}`,
           });
-        } else {
+        } else if (error.message.includes("Please complete your profile")) {
           toast({
-            title: "Error",
-            description: error.message,
+            title: "Profile Incomplete",
+            description: "Please update your profile information before sending friend requests",
             variant: "destructive",
           });
+        } else {
+          throw error;
         }
       } else {
         toast({
@@ -114,7 +116,7 @@ const Leaderboard = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: "An unexpected error occurred",
+        description: error.message,
         variant: "destructive",
       });
     }
