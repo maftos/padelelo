@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -87,11 +86,10 @@ const Leaderboard = () => {
       });
 
       if (error) {
-        // Parse the error message from the body and display it directly
-        const errorBody = error.message ? JSON.parse(error.message) : null;
+        const errorBody = JSON.parse(error.message);
         toast({
           title: "Error",
-          description: errorBody?.message || "An unexpected error occurred",
+          description: errorBody.message,
           variant: "destructive",
         });
       } else {
@@ -101,7 +99,7 @@ const Leaderboard = () => {
         });
       }
       setSelectedPlayer(null);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -303,4 +301,3 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
-
