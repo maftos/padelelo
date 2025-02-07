@@ -8,7 +8,6 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { AddFriendDialog } from "@/components/leaderboard/AddFriendDialog";
-import { toast } from "@/hooks/use-toast";
 
 interface LeaderboardPlayer {
   id: string;
@@ -57,15 +56,9 @@ const Leaderboard = () => {
       user_b_id_public: selectedPlayer.id
     });
     
-    if (error) {
-      // Parse the error body which contains the actual message
-      const errorBody = JSON.parse(error.message.includes('body') ? JSON.parse(error.message).body : error.message);
-      toast({
-        description: errorBody.message || 'An error occurred while sending the friend request',
-      });
+    if (!error) {
+      setSelectedPlayer(null);
     }
-    
-    setSelectedPlayer(null);
   };
 
   return (
@@ -104,4 +97,3 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
-
