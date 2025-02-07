@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
@@ -87,15 +86,14 @@ const Leaderboard = () => {
       });
 
       if (error) {
-        // Try to parse the error message from the body if available
-        let errorMessage = error.message;
+        let errorMessage = "Failed to send friend request";
         try {
-          const bodyError = JSON.parse(error.message);
-          if (bodyError?.message) {
-            errorMessage = bodyError.message;
+          const parsedBody = JSON.parse(error.body);
+          if (parsedBody?.message) {
+            errorMessage = parsedBody.message;
           }
         } catch {
-          // If parsing fails, use the original error message
+          errorMessage = error.message;
         }
 
         toast({
@@ -110,7 +108,6 @@ const Leaderboard = () => {
         });
       }
     } catch (error: any) {
-      // Handle any other unexpected errors
       toast({
         title: "Friend Request Failed",
         description: error.message || "Failed to send friend request",
