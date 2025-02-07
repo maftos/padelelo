@@ -87,38 +87,17 @@ const Leaderboard = () => {
       });
 
       if (error) {
-        // Parse the error message from the body
-        const errorBody = JSON.parse(error.message);
-        const errorMessage = errorBody?.message || error.message;
-
-        // Display the appropriate toast based on the error message
-        if (errorMessage.includes("Please complete your profile")) {
-          toast({
-            title: "Profile Incomplete",
-            description: errorMessage,
-            variant: "destructive",
-          });
-        } else if (errorMessage.includes("best friends")) {
-          toast({
-            title: "Already Friends",
-            description: errorMessage,
-          });
-        } else if (errorMessage.includes("Invitation sent already")) {
-          toast({
-            title: "Request Pending",
-            description: `You have already sent a friend request to ${selectedPlayer.display_name}`,
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: errorMessage,
-            variant: "destructive",
-          });
-        }
+        // Parse the error message from the body and display it directly
+        const errorBody = error.message ? JSON.parse(error.message) : null;
+        toast({
+          title: "Error",
+          description: errorBody?.message || "An unexpected error occurred",
+          variant: "destructive",
+        });
       } else {
         toast({
-          title: "Friend Request Sent",
-          description: `A friend request has been sent to ${selectedPlayer.display_name}`,
+          title: "Success",
+          description: `Friend request sent to ${selectedPlayer.display_name}`,
         });
       }
       setSelectedPlayer(null);
@@ -324,3 +303,4 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
+
