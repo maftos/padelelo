@@ -1882,13 +1882,6 @@ export type Database = {
             }
             Returns: undefined
           }
-      send_friend_request: {
-        Args: {
-          i_email: string
-          user_a_id_public: string
-        }
-        Returns: undefined
-      }
       send_friend_request_leaderboard: {
         Args: {
           user_a_id_public: string
