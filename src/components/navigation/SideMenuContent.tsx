@@ -85,7 +85,7 @@ export const SideMenuContent = ({
           <InviteFriendDialog userId={user.id}>
             <button className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
               <UserPlus className="h-4 w-4" />
-              Invite Friends
+              Invite Friend
             </button>
           </InviteFriendDialog>
         </div>
