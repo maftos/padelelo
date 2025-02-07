@@ -60,19 +60,19 @@ const Leaderboard = () => {
 
     if (error) {
       let errorMessage = error.message;
-      
       try {
+        // Parse the error message from the response body
         const errorData = JSON.parse(error.message);
-        const pgError = JSON.parse(errorData.body);
-        errorMessage = pgError.message;
+        errorMessage = errorData.message || error.message;
       } catch (parseError) {
+        // If parsing fails, use the original error message
         console.error('Error parsing error message:', parseError);
       }
 
       toast({
-        variant: "destructive",
         title: "Error",
         description: errorMessage,
+        variant: "destructive",
       });
     } else {
       toast({
