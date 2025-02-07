@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Check, Copy, UserPlus, Numeric1, Numeric2, Numeric3 } from "lucide-react";
+import { Check, Copy, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -47,7 +47,9 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
           {/* Step 1 */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-primary">
-              <Numeric1 className="h-5 w-5" />
+              <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                1
+              </div>
               <h3 className="font-medium">Copy your invitation URL</h3>
             </div>
             <p className="text-sm text-muted-foreground pl-7">
@@ -70,7 +72,9 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
           {/* Step 2 */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-primary">
-              <Numeric2 className="h-5 w-5" />
+              <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                2
+              </div>
               <h3 className="font-medium">Share this link directly with your friends</h3>
             </div>
             <p className="text-sm text-muted-foreground pl-7">
@@ -81,7 +85,9 @@ export const InviteFriendDialog = ({ userId, onOpenChange, children }: InviteFri
           {/* Step 3 */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-primary">
-              <Numeric3 className="h-5 w-5" />
+              <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                3
+              </div>
               <h3 className="font-medium">They will be able to sign up on our invite-only platform</h3>
             </div>
             <p className="text-sm text-muted-foreground pl-7">
