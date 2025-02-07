@@ -8,6 +8,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 
@@ -32,6 +34,11 @@ export const AddFriendDialog = ({
   onSendRequest 
 }: AddFriendDialogProps) => {
   const [error, setError] = useState<string | null>(null);
+
+  const handleClose = () => {
+    setError(null);
+    onClose();
+  };
 
   const handleSendRequest = async () => {
     setError(null);
@@ -58,12 +65,12 @@ export const AddFriendDialog = ({
       toast({
         description: "Friend request sent successfully!",
       });
-      onClose();
+      handleClose();
     }
   };
 
   return (
-    <Dialog open={!!player} onOpenChange={onClose}>
+    <Dialog open={!!player} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add Friend</DialogTitle>
@@ -73,15 +80,16 @@ export const AddFriendDialog = ({
         </DialogHeader>
         
         {error && (
-          <div className="text-sm text-destructive text-center py-2">
-            {error}
-          </div>
+          <Alert variant="destructive" className="my-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
         )}
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button
             variant="outline"
-            onClick={onClose}
+            onClick={handleClose}
           >
             Cancel
           </Button>
