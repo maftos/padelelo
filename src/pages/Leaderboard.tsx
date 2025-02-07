@@ -70,9 +70,9 @@ const Leaderboard = () => {
       }
 
       toast({
+        variant: "destructive",
         title: "Error",
         description: errorMessage,
-        variant: "destructive",
       });
     } else {
       toast({
@@ -120,4 +120,3 @@ const Leaderboard = () => {
 };
 
 export default Leaderboard;
-
