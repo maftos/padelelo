@@ -1,12 +1,14 @@
-import { useState, useEffect } from "react";
+
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Navigation } from "@/components/Navigation";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { MatchHistoryCard } from "@/components/match/MatchHistoryCard";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Loading } from "@/components/ui/loading";
+import { MatchesList } from "@/components/match/MatchesList";
 
 interface MatchDetails {
   match_id: string;
@@ -35,7 +37,6 @@ const Matches = () => {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
 
-  // Check authentication status
   useEffect(() => {
     if (!loading && !session) {
       navigate('/login');
@@ -60,14 +61,13 @@ const Matches = () => {
         throw error;
       }
 
-      // Map the returned data to match our MatchDetails interface
       return data.map((match: any) => ({
         match_id: match.match_id,
         old_mmr: match.old_mmr,
         change_amount: match.change_amount,
         change_type: match.change_type,
         created_at: match.created_at,
-        partner_id: "", // This field isn't used in the card
+        partner_id: "",
         new_mmr: match.new_mmr,
         status: "COMPLETED",
         team1_score: match.team1_score,
@@ -80,19 +80,20 @@ const Matches = () => {
         team2_player1_profile_photo: match.player3_profile_photo,
         team2_player2_display_name: match.player4_display_name,
         team2_player2_profile_photo: match.player4_profile_photo,
+        completed_by: match.completed_by,
+        player1_id: match.player1_id,
+        player2_id: match.player2_id,
+        player3_id: match.player3_id,
+        player4_id: match.player4_id,
       }));
     },
     enabled: !!userId && !!session,
   });
 
-  // Show loading state while checking auth
   if (loading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
-      <p>Loading...</p>
-    </div>;
+    return <Loading />;
   }
 
-  // Don't render anything if not authenticated
   if (!session) {
     return null;
   }
@@ -106,19 +107,8 @@ const Matches = () => {
           <p className="text-muted-foreground">View your recent matches</p>
         </div>
 
-        <div className="space-y-4 max-w-2xl mx-auto">
-          {isLoading ? (
-            <p className="text-center">Loading matches...</p>
-          ) : matches.length === 0 ? (
-            <p className="text-center text-muted-foreground">No matches found</p>
-          ) : (
-            matches.map((match) => (
-              <MatchHistoryCard 
-                key={match.match_id}
-                {...match}
-              />
-            ))
-          )}
+        <div className="max-w-2xl mx-auto">
+          <MatchesList matches={matches} isLoading={isLoading} />
         </div>
       </main>
     </div>
