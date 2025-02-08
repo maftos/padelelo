@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Menu } from "lucide-react";
 import { Button } from "./ui/button";
@@ -44,7 +45,7 @@ export const Navigation = () => {
                     <Menu className="h-5 w-5" />
                   </Button>
                 </SheetTrigger>
-                <SheetContent className="p-0">
+                <SheetContent side="right" className="p-0 animate-slide-in-right">
                   <SideMenuContent 
                     user={user}
                     profile={profile}
