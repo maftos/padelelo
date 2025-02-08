@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
+import { useFormValidation } from "@/hooks/use-form-validation";
+import { VerificationFormData } from "@/types/auth";
 
 export default function Verify() {
   const [verificationCode, setVerificationCode] = useState("");
@@ -13,6 +16,7 @@ export default function Verify() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const phone = location.state?.phone;
+  const { validateVerificationCode } = useFormValidation();
 
   useEffect(() => {
     if (!phone) {
@@ -22,6 +26,16 @@ export default function Verify() {
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateVerificationCode(verificationCode)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid 6-digit code",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -80,7 +94,7 @@ export default function Verify() {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || verificationCode.length !== 6}
+              disabled={loading || !validateVerificationCode(verificationCode)}
             >
               {loading ? "Verifying..." : "Verify"}
             </Button>
@@ -89,4 +103,4 @@ export default function Verify() {
       </div>
     </div>
   );
-}
+};

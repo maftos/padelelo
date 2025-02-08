@@ -1,8 +1,11 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { SignUpFormData } from "@/types/auth";
+import { useFormValidation } from "@/hooks/use-form-validation";
 
 export const useSignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -12,14 +15,7 @@ export const useSignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const validatePhoneNumber = (phone: string) => {
-    return phone.length > 0; // Basic validation to ensure number is not empty
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
-  };
+  const { validatePhoneNumber, validatePassword } = useFormValidation();
 
   const handleAuthError = (error: AuthError) => {
     if (error instanceof AuthApiError) {
@@ -30,7 +26,6 @@ export const useSignUp = () => {
           }
           return error.message;
         case 422:
-          // This could indicate Twilio configuration issues
           if (error.message.includes("Invalid From and To pair")) {
             return "WhatsApp messaging is not properly configured. Please contact support.";
           }
@@ -61,10 +56,8 @@ export const useSignUp = () => {
 
       const fullPhoneNumber = countryCode + phoneNumber;
       
-      // Store the phone number for verification later
       sessionStorage.setItem('signupPhone', fullPhoneNumber);
       
-      // Attempt to sign up with phone and password
       const { data, error: signUpError } = await supabase.auth.signUp({
         phone: fullPhoneNumber,
         password,

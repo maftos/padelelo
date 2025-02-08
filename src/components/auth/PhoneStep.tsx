@@ -1,9 +1,11 @@
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
+import { SignUpFormData } from "@/types/auth";
 
 interface PhoneStepProps {
   phoneNumber: string;
@@ -28,24 +30,17 @@ export const PhoneStep = ({
   error, 
   loading
 }: PhoneStepProps) => {
-  // Format phone number with spaces for readability
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Remove all non-digit characters
     const cleaned = e.target.value.replace(/\D/g, '');
-    
-    // Add spaces every 3 digits
-    const formatted = cleaned.replace(/(\d{3})(?=\d)/g, '$1 ');
-    
-    setPhoneNumber(cleaned); // Store raw digits in state
+    setPhoneNumber(cleaned);
   };
 
-  // Format the phone number for display
   const formatPhoneDisplay = (phone: string) => {
     return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
   };
 
   return (
-    <div className="space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); onNext(); }} className="space-y-4">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
@@ -93,16 +88,17 @@ export const PhoneStep = ({
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
+          minLength={6}
         />
       </div>
 
       <Button 
-        onClick={onNext}
-        disabled={loading}
+        type="submit"
+        disabled={loading || !phoneNumber || !password}
         className="w-full"
       >
         {loading ? "Processing..." : "Sign Up"}
       </Button>
-    </div>
+    </form>
   );
 };

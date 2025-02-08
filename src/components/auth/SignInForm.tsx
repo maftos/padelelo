@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,40 +10,26 @@ import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
+import { useFormValidation } from "@/hooks/use-form-validation";
+import { SignInFormData } from "@/types/auth";
 
 export const SignInForm = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [countryCode, setCountryCode] = useState("+230"); // Default to Mauritius
+  const [countryCode, setCountryCode] = useState("+230");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { validatePhoneNumber, validatePassword } = useFormValidation();
 
-  // Format phone number with spaces for readability
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Remove all non-digit characters
     const cleaned = e.target.value.replace(/\D/g, '');
-    
-    // Add spaces every 3 digits
-    const formatted = cleaned.replace(/(\d{3})(?=\d)/g, '$1 ');
-    
-    setPhoneNumber(cleaned); // Store raw digits in state
+    setPhoneNumber(cleaned);
   };
 
-  // Format the phone number for display
   const formatPhoneDisplay = (phone: string) => {
     return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
-  };
-
-  const validatePhone = (phone: string) => {
-    // Basic validation for international phone numbers
-    const phoneRegex = /^\+[1-9]\d{1,14}$/;
-    return phoneRegex.test(phone);
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
   };
 
   const handleAuthError = (error: AuthError) => {
@@ -50,7 +37,7 @@ export const SignInForm = () => {
       switch (error.status) {
         case 400:
           if (error.message.includes("Phone number format is invalid")) {
-            return "Please enter a valid phone number with country code. Example: +23012345678";
+            return "Please enter a valid phone number with country code";
           }
           if (error.message === "Invalid login credentials") {
             return "Invalid phone number or password. Please check your credentials.";
@@ -67,15 +54,17 @@ export const SignInForm = () => {
     return error.message;
   };
 
-  const handleSignIn = async () => {
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
     try {
       setLoading(true);
       setError(null);
 
       const fullPhoneNumber = countryCode + phoneNumber;
 
-      if (!validatePhone(fullPhoneNumber)) {
-        setError("Please enter a valid phone number with country code");
+      if (!validatePhoneNumber(phoneNumber)) {
+        setError("Please enter a valid phone number");
         return;
       }
 
@@ -111,7 +100,7 @@ export const SignInForm = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <form onSubmit={handleSignIn} className="space-y-4">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
@@ -159,16 +148,17 @@ export const SignInForm = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={loading}
+          minLength={6}
         />
       </div>
 
       <Button 
-        onClick={handleSignIn}
-        disabled={loading}
+        type="submit"
+        disabled={loading || !phoneNumber || !password}
         className="w-full"
       >
         {loading ? "Signing in..." : "Sign In"}
       </Button>
-    </div>
+    </form>
   );
 };
