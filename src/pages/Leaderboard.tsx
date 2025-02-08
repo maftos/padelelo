@@ -1,63 +1,20 @@
 
 import * as React from "react";
 import { Navigation } from "@/components/Navigation";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { RecentMatches } from "@/components/RecentMatches";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { AddFriendDialog } from "@/components/leaderboard/AddFriendDialog";
-
-interface LeaderboardPlayer {
-  id: string;
-  display_name: string;
-  profile_photo: string | null;
-  current_mmr: number;
-  nationality: string | null;
-  gender: string | null;
-}
+import { useLeaderboardFilters } from "@/hooks/use-leaderboard-filters";
+import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
+import { useFriendRequests } from "@/hooks/use-friend-requests";
 
 const Leaderboard = () => {
-  const [filters, setFilters] = React.useState({
-    gender: "both",
-    friendsOnly: false,
-  });
-  const [selectedPlayer, setSelectedPlayer] = React.useState<LeaderboardPlayer | null>(null);
   const { userId } = useUserProfile();
-
-  const { data: leaderboardData, isLoading } = useQuery({
-    queryKey: ['leaderboard'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('users_sorted_by_mmr')
-        .select('*')
-        .limit(25)
-        .order('current_mmr', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const handleGenderChange = (value: string) => {
-    setFilters(prev => ({ ...prev, gender: value }));
-  };
-
-  const handleFriendsOnlyChange = (checked: boolean) => {
-    setFilters(prev => ({ ...prev, friendsOnly: checked }));
-  };
-
-  const handleSendFriendRequest = async () => {
-    if (!userId || !selectedPlayer) return { error: null };
-
-    const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-      user_a_id_public: userId,
-      user_b_id_public: selectedPlayer.id
-    });
-    
-    return { error };
-  };
+  const { filters, handleGenderChange, handleFriendsOnlyChange } = useLeaderboardFilters();
+  const { data: leaderboardData, isLoading } = useLeaderboardData();
+  const { selectedPlayer, setSelectedPlayer, handleSendFriendRequest } = useFriendRequests(userId);
 
   return (
     <div className="min-h-screen bg-background">
