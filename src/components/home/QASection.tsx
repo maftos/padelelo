@@ -1,3 +1,4 @@
+
 import {
   Accordion,
   AccordionContent,
@@ -15,22 +16,12 @@ export const QASection = () => {
           <AccordionItem value="item-1">
             <AccordionTrigger>How can I join PadelELO?</AccordionTrigger>
             <AccordionContent>
-              PadelELO is currently an invite-only platform. To join, you need to be referred by an existing member. 
-              You can view our current members on the leaderboard and get in touch with them directly to request an invitation.
-              This helps us maintain a high-quality, engaged community of padel enthusiasts.
+              PadelELO is currently an invite-only platform. To join, you need to be referred by an existing member 
+              (see the leaderboard - and request an invitation).
             </AccordionContent>
           </AccordionItem>
 
           <AccordionItem value="item-2">
-            <AccordionTrigger>How does the ELO rating work?</AccordionTrigger>
-            <AccordionContent>
-              The ELO rating system calculates your skill level based on match outcomes and opponent ratings. 
-              Win against stronger players, gain more points. Lose against weaker players, lose more points. 
-              This creates a fair and competitive environment where everyone can find matches at their skill level.
-            </AccordionContent>
-          </AccordionItem>
-
-          <AccordionItem value="item-3">
             <AccordionTrigger>How much does it cost?</AccordionTrigger>
             <AccordionContent>
               PadelELO is completely free to use! We believe in making padel more accessible and enjoyable for everyone. 
@@ -38,12 +29,11 @@ export const QASection = () => {
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="item-4">
-            <AccordionTrigger>What's coming next?</AccordionTrigger>
+          <AccordionItem value="item-3">
+            <AccordionTrigger>What's the big vision?</AccordionTrigger>
             <AccordionContent>
-              We're working on exciting features including a tournament management system that will help minimize waiting times 
-              between games by providing transparent brackets and scheduling. We're also planning to integrate court booking 
-              in Mauritius and connect players with professional padel coaches for personalized lessons.
+              We want to build an entire ecosystem around padel - starting in Mauritius. Think big - tournaments, coaches, 
+              court bookings, a social network, padel retreats, and more. You dream it, we build it.
             </AccordionContent>
           </AccordionItem>
         </Accordion>

@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { ClipboardList } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -40,19 +41,19 @@ export const ReleaseNotesSection = () => {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <ClipboardList className="h-8 w-8 text-primary animate-pulse-subtle" />
-            <h2 className="text-3xl font-bold">Latest Updates</h2>
+            <h2 className="text-3xl font-bold">Updates</h2>
           </div>
           <Link to="/roadmap">
-            <Button variant="outline">View all updates</Button>
+            <Button variant="outline">View all</Button>
           </Link>
         </div>
         {isLoading ? (
           <div>Loading updates...</div>
         ) : latestUpdate ? (
           <Card className="p-8 bg-card/50 backdrop-blur border-accent animate-scale-up">
-            <div className="flex items-center justify-between mb-4">
+            <div className="space-y-2 mb-4">
               <h3 className="text-xl font-semibold">{latestUpdate.title}</h3>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-muted-foreground block">
                 {formatDate(latestUpdate.release_date)}
               </span>
             </div>
