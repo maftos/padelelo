@@ -2,51 +2,41 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import { AuthError, AuthApiError } from "@supabase/supabase-js";
+import { AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { SignUpFormData } from "@/types/auth";
-import { useFormValidation } from "@/hooks/use-form-validation";
+import { handleAuthError } from "@/utils/auth-error-handler";
+import { usePhoneInput } from "@/hooks/auth/use-phone-input";
+import { usePasswordInput } from "@/hooks/auth/use-password-input";
 
 export const useSignUp = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [countryCode, setCountryCode] = useState("+230"); // Default to Mauritius
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { validatePhoneNumber, validatePassword } = useFormValidation();
+  
+  const {
+    phoneNumber,
+    setPhoneNumber,
+    countryCode,
+    setCountryCode,
+    isPhoneValid,
+    getFullPhoneNumber,
+  } = usePhoneInput();
 
-  const handleAuthError = (error: AuthError) => {
-    if (error instanceof AuthApiError) {
-      switch (error.status) {
-        case 400:
-          if (error.message.includes("Phone number format is invalid")) {
-            return "Please enter a valid phone number";
-          }
-          return error.message;
-        case 422:
-          if (error.message.includes("Invalid From and To pair")) {
-            return "WhatsApp messaging is not properly configured. Please contact support.";
-          }
-          return "Invalid phone number format";
-        case 429:
-          return "Too many attempts. Please try again later";
-        default:
-          return error.message;
-      }
-    }
-    return error.message;
-  };
+  const {
+    password,
+    setPassword,
+    isPasswordValid,
+  } = usePasswordInput();
 
   const handleNext = async () => {
     try {
-      if (!validatePhoneNumber(phoneNumber)) {
+      if (!isPhoneValid()) {
         setError("Please enter a valid phone number");
         return;
       }
 
-      if (!validatePassword(password)) {
+      if (!isPasswordValid()) {
         setError("Password must be at least 6 characters long");
         return;
       }
@@ -54,8 +44,7 @@ export const useSignUp = () => {
       setLoading(true);
       setError(null);
 
-      const fullPhoneNumber = countryCode + phoneNumber;
-      
+      const fullPhoneNumber = getFullPhoneNumber();
       sessionStorage.setItem('signupPhone', fullPhoneNumber);
       
       const { data, error: signUpError } = await supabase.auth.signUp({
