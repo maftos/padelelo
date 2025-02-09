@@ -1,180 +1,26 @@
-import { useState } from "react";
+
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button"; // Added this import
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileAvatar } from "@/components/profile/ProfileAvatar";
-import { ProfileForm } from "@/components/profile/ProfileForm";
-import { useQuery } from "@tanstack/react-query";
-
-// ... keep existing code (all the component logic)
+import { ProfileContent } from "@/components/profile/ProfileContent";
+import { useProfileState } from "@/hooks/use-profile-state";
 
 const Profile = () => {
   const { userId } = useUserProfile();
-  const { toast } = useToast();
-  const [isEditing, setIsEditing] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [formData, setFormData] = useState({
-    display_name: "",
-    nationality: "",
-    gender: "",
-    location: "",
-    languages: "",
-    profile_photo: "",
-    current_mmr: 0,
-    whatsapp_number: "",
-  });
-
-  const { data: profileData, isLoading, refetch } = useQuery({
-    queryKey: ["profile", userId],
-    queryFn: async () => {
-      if (!userId) return null;
-      
-      const { data, error } = await supabase.rpc('get_user_profile', {
-        user_a_id: userId
-      });
-      
-      if (error) throw error;
-      if (!data || data.length === 0) return null;
-      
-      const profileInfo = data[0];
-      setFormData({
-        display_name: profileInfo.display_name || "",
-        nationality: profileInfo.nationality || "",
-        gender: profileInfo.gender || "",
-        location: profileInfo.location || "",
-        languages: Array.isArray(profileInfo.languages) ? profileInfo.languages.join(", ") : "",
-        profile_photo: profileInfo.profile_photo || "",
-        current_mmr: profileInfo.current_mmr || 0,
-        whatsapp_number: profileInfo.whatsapp_number || "", // Keep the existing WhatsApp number
-      });
-      
-      return profileInfo;
-    },
-    enabled: !!userId,
-    staleTime: 0,
-    gcTime: 0,
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
-  });
-
-  const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      if (!event.target.files || event.target.files.length === 0) {
-        return;
-      }
-
-      const file = event.target.files[0];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-
-      setUploading(true);
-
-      const { data, error: uploadError } = await supabase.storage
-        .from('user-photos')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('user-photos')
-        .getPublicUrl(fileName);
-
-      setFormData(prev => ({
-        ...prev,
-        profile_photo: publicUrl
-      }));
-
-      toast({
-        title: "Photo uploaded",
-        description: "Your profile photo has been updated successfully.",
-      });
-    } catch (error) {
-      console.error('Error uploading photo:', error);
-      toast({
-        title: "Upload failed",
-        description: "There was an error uploading your photo. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleFormChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleGenderSelect = (gender: string) => {
-    setFormData(prev => ({
-      ...prev,
-      gender
-    }));
-  };
-
-  const handleSave = async () => {
-    try {
-      if (!userId) {
-        toast({
-          title: "Error",
-          description: "User ID not found. Please try logging in again.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      console.log('Updating profile with data:', {
-        userId,
-        formData
-      });
-
-      const { error } = await supabase.rpc('edit_user_profile', {
-        user_a_id: userId,
-        new_display_name: formData.display_name,
-        new_gender: formData.gender,
-        new_date_of_birth: null,
-        new_languages: formData.languages.split(',').map(lang => lang.trim()),
-        new_preferred_language: null,
-        new_profile_photo: formData.profile_photo,
-        new_whatsapp_number: formData.whatsapp_number, // Pass the existing WhatsApp number
-        new_nationality: formData.nationality,
-        new_location: formData.location
-      });
-
-      if (error) {
-        console.error('Error updating profile:', error);
-        throw error;
-      }
-
-      await refetch();
-
-      toast({
-        title: "Profile updated",
-        description: "Your profile has been successfully updated.",
-      });
-
-      setIsEditing(false);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  const {
+    isLoading,
+    isEditing,
+    uploading,
+    formData,
+    setIsEditing,
+    handleFormChange,
+    handleGenderSelect,
+    handlePhotoUpload,
+    handleSave,
+    refetch
+  } = useProfileState(userId);
 
   if (isLoading) {
     return (
@@ -208,7 +54,10 @@ const Profile = () => {
     <div className="min-h-screen bg-background">
       <Helmet>
         <title>My Profile - PadelELO</title>
-        <meta name="description" content="Manage your PadelELO profile, update your information, and track your progress in the Mauritius padel community." />
+        <meta 
+          name="description" 
+          content="Manage your PadelELO profile, update your information, and track your progress in the Mauritius padel community." 
+        />
       </Helmet>
       <Navigation />
       <main className="container max-w-4xl mx-auto py-8 px-4">
@@ -218,57 +67,20 @@ const Profile = () => {
             description="Manage your profile information"
           />
 
-          <div className="space-y-8">
-            <div className="flex flex-col items-center gap-4">
-              <ProfileAvatar
-                profilePhoto={formData.profile_photo}
-                displayName={formData.display_name}
-                isEditing={isEditing}
-                uploading={uploading}
-                onPhotoUpload={handlePhotoUpload}
-              />
-              {!isEditing ? (
-                <Button 
-                  onClick={() => setIsEditing(true)}
-                  className="w-full max-w-[200px]"
-                >
-                  Edit Profile
-                </Button>
-              ) : (
-                <div className="flex gap-4 w-full max-w-[400px] justify-center">
-                  <Button 
-                    onClick={handleSave}
-                    className="flex-1"
-                  >
-                    Save Changes
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      setIsEditing(false);
-                      refetch();
-                    }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            <ProfileForm
-              formData={formData}
-              isEditing={isEditing}
-              onFormChange={handleFormChange}
-              onGenderSelect={handleGenderSelect}
-              onSave={handleSave}
-              onEdit={() => setIsEditing(true)}
-              onCancel={() => {
-                setIsEditing(false);
-                refetch();
-              }}
-            />
-          </div>
+          <ProfileContent
+            isEditing={isEditing}
+            uploading={uploading}
+            formData={formData}
+            onPhotoUpload={handlePhotoUpload}
+            onFormChange={handleFormChange}
+            onGenderSelect={handleGenderSelect}
+            onSave={handleSave}
+            onEdit={() => setIsEditing(true)}
+            onCancel={async () => {
+              setIsEditing(false);
+              await refetch();
+            }}
+          />
         </div>
       </main>
     </div>
