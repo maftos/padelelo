@@ -1,5 +1,7 @@
 
 import { Link } from "react-router-dom";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { UserMenu } from "./UserMenu";
 import { UserProfile } from "@/hooks/use-user-profile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -16,22 +18,29 @@ export const DesktopNav = ({ profile, onSignInClick }: DesktopNavProps) => {
 
   return (
     <div className="hidden md:flex flex-1 items-center justify-between">
-      <div className="flex items-center gap-8">
-        <Link to="/" className="flex items-center space-x-2">
-          <img 
-            src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" 
-            alt="PadelELO Logo" 
-            className="h-8 w-8" 
-          />
-          <span className="font-bold text-primary">PadelELO</span>
-        </Link>
+      <Link to="/" className="flex items-center space-x-2">
+        <img 
+          src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" 
+          alt="PadelELO Logo" 
+          className="h-8 w-8" 
+        />
+        <span className="font-bold text-primary">PadelELO</span>
+      </Link>
+
+      <div className="flex items-center gap-4">
+        <UserMenu 
+          profile={profile} 
+          onSignInClick={onSignInClick} 
+        />
         
         {user && (
           <Sheet>
             <SheetTrigger asChild>
-              <button className="text-sm font-medium">Menu</button>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+              </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0">
+            <SheetContent side="right" className="p-0 animate-slide-in-right">
               <SideMenuContent 
                 user={user}
                 profile={profile}
@@ -41,13 +50,6 @@ export const DesktopNav = ({ profile, onSignInClick }: DesktopNavProps) => {
             </SheetContent>
           </Sheet>
         )}
-      </div>
-
-      <div className="flex items-center gap-4">
-        <UserMenu 
-          profile={profile} 
-          onSignInClick={onSignInClick} 
-        />
       </div>
     </div>
   );
