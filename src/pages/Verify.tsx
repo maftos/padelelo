@@ -52,7 +52,7 @@ export default function Verify() {
         description: "Your phone number has been verified.",
       });
       
-      navigate('/home');
+      navigate('/'); // Changed from /home to / for direct navigation
     } catch (error: any) {
       toast({
         title: "Error",
