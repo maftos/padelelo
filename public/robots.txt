@@ -1,0 +1,14 @@
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://padelelo.lovable.dev/sitemap.xml
+
+# Private routes that shouldn't be indexed
+Disallow: /profile
+Disallow: /register-match
+Disallow: /matches
+Disallow: /friends
+Disallow: /verify
+
