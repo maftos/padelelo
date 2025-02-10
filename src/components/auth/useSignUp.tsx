@@ -65,8 +65,8 @@ export const useSignUp = () => {
       if (data?.user && referrerId) {
         const { error: referralError } = await supabase
           .rpc('insert_referral_temp', {
-            referrer_id: referrerId,
-            referred_user_id: data.user.id
+            p_referrer_id: referrerId,
+            p_referred_user_whatsapp: fullPhoneNumber
           });
 
         if (referralError) {
@@ -108,3 +108,4 @@ export const useSignUp = () => {
     handleNext,
   };
 };
+
