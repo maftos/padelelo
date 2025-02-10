@@ -63,10 +63,13 @@ export const useSignUp = () => {
 
       // If we have a referrer ID and the signup was successful, insert the referral
       if (data?.user && referrerId) {
+        // Remove the '+' sign from the phone number for the referral
+        const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
+        
         const { error: referralError } = await supabase
           .rpc('insert_referral_temp', {
             p_referrer_id: referrerId,
-            p_referred_user_whatsapp: fullPhoneNumber
+            p_referred_user_whatsapp: phoneWithoutPlus
           });
 
         if (referralError) {
@@ -108,4 +111,3 @@ export const useSignUp = () => {
     handleNext,
   };
 };
-
