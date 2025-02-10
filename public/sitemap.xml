@@ -3,42 +3,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Public Pages -->
   <url>
-    <loc>https://padelelo.lovable.dev</loc>
+    <loc>https://padelelo.com</loc>
     <priority>1.0</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/home</loc>
+    <loc>https://padelelo.com/home</loc>
     <priority>1.0</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/leaderboard</loc>
+    <loc>https://padelelo.com/leaderboard</loc>
     <priority>0.9</priority>
     <changefreq>daily</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/how-it-works</loc>
+    <loc>https://padelelo.com/how-it-works</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/matchmaking-math</loc>
+    <loc>https://padelelo.com/matchmaking-math</loc>
     <priority>0.7</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/roadmap</loc>
+    <loc>https://padelelo.com/roadmap</loc>
     <priority>0.7</priority>
     <changefreq>weekly</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/login</loc>
+    <loc>https://padelelo.com/login</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
   <url>
-    <loc>https://padelelo.lovable.dev/signup</loc>
+    <loc>https://padelelo.com/signup</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
   </url>
