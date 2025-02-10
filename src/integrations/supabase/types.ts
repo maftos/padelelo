@@ -337,8 +337,8 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          referred_user_email: string | null
           referred_user_id: string | null
+          referred_user_whatsapp: string | null
           referrer_id: string
           signup_completed_at: string | null
           status: string | null
@@ -346,8 +346,8 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
-          referred_user_email?: string | null
           referred_user_id?: string | null
+          referred_user_whatsapp?: string | null
           referrer_id: string
           signup_completed_at?: string | null
           status?: string | null
@@ -355,8 +355,8 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
-          referred_user_email?: string | null
           referred_user_id?: string | null
+          referred_user_whatsapp?: string | null
           referrer_id?: string
           signup_completed_at?: string | null
           status?: string | null
@@ -1587,7 +1587,7 @@ export type Database = {
       insert_referral_temp: {
         Args: {
           p_referrer_id: string
-          p_referred_user_email: string
+          p_referred_user_whatsapp: string
         }
         Returns: undefined
       }

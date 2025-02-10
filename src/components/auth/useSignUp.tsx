@@ -45,7 +45,7 @@ export const useSignUp = () => {
       setError(null);
 
       const fullPhoneNumber = getFullPhoneNumber();
-      sessionStorage.setItem('signupPhone', fullPhoneNumber);
+      const referrerId = sessionStorage.getItem('referrerId');
       
       const { data, error: signUpError } = await supabase.auth.signUp({
         phone: fullPhoneNumber,
@@ -61,13 +61,33 @@ export const useSignUp = () => {
         return;
       }
 
-      if (data?.user) {
-        toast({
-          title: "Verification code sent!",
-          description: "Please check your WhatsApp for the verification code",
-        });
-        navigate('/verify', { state: { phone: fullPhoneNumber } });
+      // If we have a referrer ID and the signup was successful, insert the referral
+      if (data?.user && referrerId) {
+        const { error: referralError } = await supabase
+          .rpc('insert_referral_temp', {
+            referrer_id: referrerId,
+            referred_user_id: data.user.id
+          });
+
+        if (referralError) {
+          console.error("Error inserting referral:", referralError);
+          // We don't want to block the signup process if the referral fails
+          toast({
+            title: "Warning",
+            description: "Your account was created but there was an issue with the referral.",
+            variant: "destructive",
+          });
+        }
       }
+
+      sessionStorage.setItem('signupPhone', fullPhoneNumber);
+
+      toast({
+        title: "Verification code sent!",
+        description: "Please check your WhatsApp for the verification code",
+      });
+      
+      navigate('/verify', { state: { phone: fullPhoneNumber } });
     } catch (err: any) {
       console.error("Unexpected error:", err);
       setError("An unexpected error occurred. Please try again.");
