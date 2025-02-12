@@ -12,10 +12,10 @@ interface Achievement {
   id: number;
   title: string;
   description: string;
-  action_type_trigger: string;
+  action_type_trigger: "EDIT_PROFILE" | "SEND_FRIEND_REQUEST" | "REGISTER_MATCH" | "MATCH_PLAYED" | "SIGN_UP_COMPLETE";
   minimum_level_requirement: number;
   xp_amount: number;
-  prerequisites: string[];
+  prerequisites: number[];  // Changed from string[] to number[]
   category: string;
   icon: string;
   is_unique: boolean;
