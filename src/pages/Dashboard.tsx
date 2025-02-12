@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -19,6 +19,8 @@ interface Achievement {
   category: string;
   icon: string;
   is_unique: boolean;
+  current_progress?: number;
+  target_progress?: number;
 }
 
 interface UserExperience {
@@ -34,116 +36,155 @@ interface LevelRequirement {
   max_xp: number;
 }
 
-export default function Dashboard() {
-  const { user } = useAuth();
-  const navigate = useNavigate();
+// Sample data for development
+const sampleAchievements: Achievement[] = [
+  {
+    id: 1,
+    title: "Profile Master",
+    description: "Complete your profile information",
+    action_type_trigger: "EDIT_PROFILE",
+    minimum_level_requirement: 1,
+    xp_amount: 1000,
+    prerequisites: [],
+    category: "Profile",
+    icon: "👤",
+    is_unique: true,
+    current_progress: 4,
+    target_progress: 5
+  },
+  {
+    id: 2,
+    title: "Social Butterfly",
+    description: "Send friend requests to 5 players",
+    action_type_trigger: "SEND_FRIEND_REQUEST",
+    minimum_level_requirement: 1,
+    xp_amount: 1500,
+    prerequisites: [1],
+    category: "Social",
+    icon: "🦋",
+    is_unique: true,
+    current_progress: 2,
+    target_progress: 5
+  },
+  {
+    id: 3,
+    title: "Match Maker",
+    description: "Register your first match",
+    action_type_trigger: "REGISTER_MATCH",
+    minimum_level_requirement: 2,
+    xp_amount: 2000,
+    prerequisites: [],
+    category: "Matches",
+    icon: "🎮",
+    is_unique: true,
+    current_progress: 0,
+    target_progress: 1
+  }
+];
 
-  // Redirect if not authenticated
+const sampleUserExperience: UserExperience = {
+  level: 2,
+  xp_levelup: 5000,
+  current_xp: 3500,
+  total_xp: 8500
+};
+
+export default function Dashboard() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const [achievements, setAchievements] = useState<Achievement[]>(sampleAchievements);
+  const [userExperience, setUserExperience] = useState<UserExperience>(sampleUserExperience);
+
+  // Modified auth check to handle loading state
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       navigate("/login");
     }
-  }, [user, navigate]);
-
-  // Fetch user's experience data
-  const { data: userExperience } = useQuery({
-    queryKey: ['userExperience', user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('user_experience')
-        .select('*')
-        .eq('user_id', user!.id)
-        .single();
-
-      if (error) throw error;
-      return data as UserExperience;
-    },
-    enabled: !!user?.id
-  });
-
-  // Fetch available achievements
-  const { data: achievements } = useQuery({
-    queryKey: ['achievements'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('achievements')
-        .select('*')
-        .order('minimum_level_requirement', { ascending: true });
-
-      if (error) throw error;
-      return data as Achievement[];
-    }
-  });
-
-  // Fetch level requirements
-  const { data: levelRequirements } = useQuery({
-    queryKey: ['levelRequirements'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('level_requirements')
-        .select('*')
-        .order('level', { ascending: true });
-
-      if (error) throw error;
-      return data as LevelRequirement[];
-    }
-  });
+  }, [user, loading, navigate]);
 
   // Calculate progress to next level
   const calculateLevelProgress = () => {
-    if (!userExperience || !levelRequirements) return 0;
-    
-    const currentLevelReq = levelRequirements.find(
-      req => req.level === userExperience.level
-    );
-    
-    if (!currentLevelReq) return 0;
-    
-    const xpInCurrentLevel = userExperience.total_xp - currentLevelReq.min_xp;
-    const xpRequiredForNextLevel = currentLevelReq.max_xp - currentLevelReq.min_xp;
-    
-    return Math.round((xpInCurrentLevel / xpRequiredForNextLevel) * 100);
+    return Math.round((userExperience.current_xp / userExperience.xp_levelup) * 100);
   };
 
+  if (loading) return <div>Loading...</div>;
   if (!user) return null;
 
   return (
     <PageContainer>
       {/* Level Progress Section */}
-      <Card className="mb-6">
+      <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20">
         <CardHeader>
-          <CardTitle>Level {userExperience?.level || 1}</CardTitle>
-          <CardDescription>
-            {userExperience?.total_xp || 0} XP Total
+          <CardTitle className="text-2xl font-bold">Level {userExperience.level}</CardTitle>
+          <CardDescription className="text-lg">
+            {userExperience.total_xp} XP Total
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Progress value={calculateLevelProgress()} className="w-full h-2" />
+          <div className="space-y-2">
+            <Progress value={calculateLevelProgress()} className="h-3 bg-indigo-950" />
+            <p className="text-sm text-muted-foreground">
+              {userExperience.current_xp} / {userExperience.xp_levelup} XP to next level
+            </p>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Available Achievements Section */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {achievements?.map((achievement) => (
-          <Card key={achievement.id}>
-            <CardHeader>
-              <CardTitle className="text-lg">{achievement.title}</CardTitle>
-              <CardDescription>{achievement.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted-foreground">
-                  {achievement.xp_amount} XP
-                </span>
-                {achievement.minimum_level_requirement > (userExperience?.level || 1) && (
-                  <span className="text-sm text-destructive">
-                    Unlocks at level {achievement.minimum_level_requirement}
-                  </span>
-                )}
+      {/* Achievement Categories */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Daily Quests */}
+        <Card className="bg-gradient-to-br from-amber-500/10 to-red-500/10 border-2 border-amber-500/20">
+          <CardHeader>
+            <CardTitle>Daily Quests</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {achievements.map((achievement) => (
+              <div key={achievement.id} className="bg-black/30 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold">{achievement.title}</h3>
+                  <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
+                <div className="space-y-1">
+                  <Progress 
+                    value={(achievement.current_progress! / achievement.target_progress!) * 100} 
+                    className="h-2 bg-amber-950"
+                  />
+                  <p className="text-xs text-right text-muted-foreground">
+                    {achievement.current_progress} / {achievement.target_progress}
+                  </p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Weekly Challenges */}
+        <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-2 border-blue-500/20">
+          <CardHeader>
+            <CardTitle>Weekly Challenges</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {achievements.map((achievement) => (
+              <div key={achievement.id + "_weekly"} className="bg-black/30 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <h3 className="font-semibold">{achievement.title}</h3>
+                  <span className="text-blue-500 font-bold">{achievement.xp_amount * 2} XP</span>
+                </div>
+                <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
+                <div className="space-y-1">
+                  <Progress 
+                    value={(achievement.current_progress! / achievement.target_progress!) * 100} 
+                    className="h-2 bg-blue-950"
+                  />
+                  <p className="text-xs text-right text-muted-foreground">
+                    {achievement.current_progress} / {achievement.target_progress}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
     </PageContainer>
   );
