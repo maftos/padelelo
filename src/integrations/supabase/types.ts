@@ -532,6 +532,7 @@ export type Database = {
           achievement_id: number
           completed_at: string | null
           current_count: number | null
+          is_claimed: boolean
           target_count: number
           user_id: string
         }
@@ -539,6 +540,7 @@ export type Database = {
           achievement_id: number
           completed_at?: string | null
           current_count?: number | null
+          is_claimed?: boolean
           target_count: number
           user_id: string
         }
@@ -546,6 +548,7 @@ export type Database = {
           achievement_id?: number
           completed_at?: string | null
           current_count?: number | null
+          is_claimed?: boolean
           target_count?: number
           user_id?: string
         }

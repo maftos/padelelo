@@ -51,6 +51,14 @@ interface LevelRequirement {
   max_xp: number;
 }
 
+interface UserBadge {
+  id: number;
+  title: string;
+  icon: string;
+  rarity: "common" | "rare" | "epic" | "legendary";
+  description: string;
+}
+
 const sampleRepeatableActions: RepeatableAction[] = [
   {
     id: 1,
@@ -143,6 +151,30 @@ const sampleUserStats = {
   currentMmr: 3200
 };
 
+const sampleBadges: UserBadge[] = [
+  {
+    id: 1,
+    title: "Tournament Victor",
+    icon: "🏆",
+    rarity: "legendary",
+    description: "Won an M25 tournament"
+  },
+  {
+    id: 2,
+    title: "Rising Star",
+    icon: "⭐",
+    rarity: "epic",
+    description: "Reached 3000+ MMR"
+  },
+  {
+    id: 3,
+    title: "Veteran",
+    icon: "🎯",
+    rarity: "rare",
+    description: "Played 100+ matches"
+  }
+];
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -168,6 +200,19 @@ export default function Dashboard() {
       )
     );
     toast.success("Reward claimed successfully!");
+  };
+
+  const getBadgeColor = (rarity: UserBadge["rarity"]) => {
+    switch (rarity) {
+      case "legendary":
+        return "text-amber-400 bg-amber-400/10";
+      case "epic":
+        return "text-purple-400 bg-purple-400/10";
+      case "rare":
+        return "text-blue-400 bg-blue-400/10";
+      default:
+        return "text-gray-400 bg-gray-400/10";
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -199,6 +244,19 @@ export default function Dashboard() {
                       <GamepadIcon className="h-4 w-4 text-green-500" />
                       <span>{sampleUserStats.totalMatches} Matches</span>
                     </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {sampleBadges.map((badge) => (
+                      <div
+                        key={badge.id}
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${getBadgeColor(badge.rarity)} 
+                          transition-transform hover:scale-105 cursor-help`}
+                        title={badge.description}
+                      >
+                        <span className="text-lg">{badge.icon}</span>
+                        <span className="text-sm font-medium">{badge.title}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -271,7 +329,8 @@ export default function Dashboard() {
                       {achievement.is_completed && !achievement.is_claimed && (
                         <Button 
                           size="sm" 
-                          className="bg-amber-500 hover:bg-amber-600"
+                          className="bg-amber-500 hover:bg-amber-600 hover:scale-105 transition-all duration-200
+                            hover:shadow-lg hover:shadow-amber-500/20"
                           onClick={() => handleClaimReward(achievement.id)}
                         >
                           Claim Reward
@@ -317,7 +376,8 @@ export default function Dashboard() {
                       {achievement.is_completed && !achievement.is_claimed && (
                         <Button 
                           size="sm" 
-                          className="bg-blue-500 hover:bg-blue-600"
+                          className="bg-blue-500 hover:bg-blue-600 hover:scale-105 transition-all duration-200
+                            hover:shadow-lg hover:shadow-blue-500/20"
                           onClick={() => handleClaimReward(achievement.id)}
                         >
                           Claim Reward
