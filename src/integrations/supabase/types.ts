@@ -533,6 +533,7 @@ export type Database = {
           completed_at: string | null
           current_count: number | null
           is_claimed: boolean
+          is_completed: boolean
           target_count: number
           user_id: string
         }
@@ -541,6 +542,7 @@ export type Database = {
           completed_at?: string | null
           current_count?: number | null
           is_claimed?: boolean
+          is_completed?: boolean
           target_count: number
           user_id: string
         }
@@ -549,6 +551,7 @@ export type Database = {
           completed_at?: string | null
           current_count?: number | null
           is_claimed?: boolean
+          is_completed?: boolean
           target_count?: number
           user_id?: string
         }
