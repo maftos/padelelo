@@ -8,7 +8,9 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, Users, GamepadIcon } from "lucide-react";
+import { Trophy, Users, GamepadIcon, Repeat, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface Achievement {
   id: number;
@@ -17,12 +19,23 @@ interface Achievement {
   action_type_trigger: "EDIT_PROFILE" | "SEND_FRIEND_REQUEST" | "REGISTER_MATCH" | "MATCH_PLAYED" | "SIGN_UP_COMPLETE";
   minimum_level_requirement: number;
   xp_amount: number;
-  prerequisites: number[];  // Changed from string[] to number[]
+  prerequisites: number[];
   category: string;
   icon: string;
   is_unique: boolean;
   current_progress?: number;
   target_progress?: number;
+  is_completed?: boolean;
+  is_claimed?: boolean;
+}
+
+interface RepeatableAction {
+  id: number;
+  title: string;
+  description: string;
+  xp_amount: number;
+  icon: string;
+  action_type: string;
 }
 
 interface UserExperience {
@@ -38,7 +51,33 @@ interface LevelRequirement {
   max_xp: number;
 }
 
-// Sample data for development
+const sampleRepeatableActions: RepeatableAction[] = [
+  {
+    id: 1,
+    title: "Play a Match",
+    description: "Complete a match to earn XP",
+    xp_amount: 10,
+    icon: "🎮",
+    action_type: "MATCH_PLAYED"
+  },
+  {
+    id: 2,
+    title: "Register Match Results",
+    description: "Register match results to earn XP",
+    xp_amount: 5,
+    icon: "📝",
+    action_type: "REGISTER_MATCH"
+  },
+  {
+    id: 3,
+    title: "Daily Login",
+    description: "Log in to earn daily XP",
+    xp_amount: 15,
+    icon: "📅",
+    action_type: "DAILY_LOGIN"
+  }
+];
+
 const sampleAchievements: Achievement[] = [
   {
     id: 1,
@@ -51,8 +90,10 @@ const sampleAchievements: Achievement[] = [
     category: "Profile",
     icon: "👤",
     is_unique: true,
-    current_progress: 4,
-    target_progress: 5
+    current_progress: 5,
+    target_progress: 5,
+    is_completed: true,
+    is_claimed: false
   },
   {
     id: 2,
@@ -66,7 +107,9 @@ const sampleAchievements: Achievement[] = [
     icon: "🦋",
     is_unique: true,
     current_progress: 2,
-    target_progress: 5
+    target_progress: 5,
+    is_completed: false,
+    is_claimed: false
   },
   {
     id: 3,
@@ -79,8 +122,10 @@ const sampleAchievements: Achievement[] = [
     category: "Matches",
     icon: "🎮",
     is_unique: true,
-    current_progress: 0,
-    target_progress: 1
+    current_progress: 1,
+    target_progress: 1,
+    is_completed: true,
+    is_claimed: false
   }
 ];
 
@@ -104,16 +149,25 @@ export default function Dashboard() {
   const [achievements, setAchievements] = useState<Achievement[]>(sampleAchievements);
   const [userExperience, setUserExperience] = useState<UserExperience>(sampleUserExperience);
 
-  // Modified auth check to handle loading state
   useEffect(() => {
     if (!loading && !user) {
       navigate("/login");
     }
   }, [user, loading, navigate]);
 
-  // Calculate progress to next level
   const calculateLevelProgress = () => {
     return Math.round((userExperience.current_xp / userExperience.xp_levelup) * 100);
+  };
+
+  const handleClaimReward = (achievementId: number) => {
+    setAchievements(prevAchievements =>
+      prevAchievements.map(achievement =>
+        achievement.id === achievementId
+          ? { ...achievement, is_claimed: true }
+          : achievement
+      )
+    );
+    toast.success("Reward claimed successfully!");
   };
 
   if (loading) return <div>Loading...</div>;
@@ -123,7 +177,6 @@ export default function Dashboard() {
     <>
       <Navigation />
       <PageContainer>
-        {/* Level Progress Section */}
         <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20">
           <CardHeader>
             <div className="flex items-start justify-between">
@@ -161,12 +214,39 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Achievement Categories */}
+        <Card className="mb-6 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-2 border-green-500/20">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Repeat className="h-5 w-5 text-green-500" />
+              <CardTitle>Repeatable Actions</CardTitle>
+            </div>
+            <CardDescription>Actions you can perform multiple times to earn XP</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {sampleRepeatableActions.map((action) => (
+              <div key={action.id} className="bg-black/30 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{action.icon}</span>
+                  <div>
+                    <h3 className="font-semibold">{action.title}</h3>
+                    <p className="text-sm text-muted-foreground">{action.description}</p>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <p className="text-green-500 font-bold text-sm">+{action.xp_amount} XP per action</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Daily Quests */}
           <Card className="bg-gradient-to-br from-amber-500/10 to-red-500/10 border-2 border-amber-500/20">
             <CardHeader>
-              <CardTitle>Daily Quests</CardTitle>
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-amber-500" />
+                <CardTitle>Daily Quests</CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {achievements.map((achievement) => (
@@ -184,19 +264,35 @@ export default function Dashboard() {
                       value={(achievement.current_progress! / achievement.target_progress!) * 100} 
                       className="h-2 bg-amber-950"
                     />
-                    <p className="text-xs text-right text-muted-foreground">
-                      {achievement.current_progress} / {achievement.target_progress}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">
+                        {achievement.current_progress} / {achievement.target_progress}
+                      </p>
+                      {achievement.is_completed && !achievement.is_claimed && (
+                        <Button 
+                          size="sm" 
+                          className="bg-amber-500 hover:bg-amber-600"
+                          onClick={() => handleClaimReward(achievement.id)}
+                        >
+                          Claim Reward
+                        </Button>
+                      )}
+                      {achievement.is_claimed && (
+                        <span className="text-xs text-muted-foreground">Claimed</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          {/* Weekly Challenges */}
           <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-2 border-blue-500/20">
             <CardHeader>
-              <CardTitle>Weekly Challenges</CardTitle>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-blue-500" />
+                <CardTitle>Weekly Challenges</CardTitle>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               {achievements.map((achievement) => (
@@ -214,9 +310,23 @@ export default function Dashboard() {
                       value={(achievement.current_progress! / achievement.target_progress!) * 100} 
                       className="h-2 bg-blue-950"
                     />
-                    <p className="text-xs text-right text-muted-foreground">
-                      {achievement.current_progress} / {achievement.target_progress}
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">
+                        {achievement.current_progress} / {achievement.target_progress}
+                      </p>
+                      {achievement.is_completed && !achievement.is_claimed && (
+                        <Button 
+                          size="sm" 
+                          className="bg-blue-500 hover:bg-blue-600"
+                          onClick={() => handleClaimReward(achievement.id)}
+                        >
+                          Claim Reward
+                        </Button>
+                      )}
+                      {achievement.is_claimed && (
+                        <span className="text-xs text-muted-foreground">Claimed</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
