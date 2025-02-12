@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          action_type_trigger:
+            | Database["public"]["Enums"]["action_types"]
+            | null
+          category: string | null
+          description: string | null
+          icon: string | null
+          id: number
+          is_unique: boolean | null
+          minimum_level_requirement: number | null
+          prerequisites: number[] | null
+          title: string
+          xp_amount: number | null
+        }
+        Insert: {
+          action_type_trigger?:
+            | Database["public"]["Enums"]["action_types"]
+            | null
+          category?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: never
+          is_unique?: boolean | null
+          minimum_level_requirement?: number | null
+          prerequisites?: number[] | null
+          title: string
+          xp_amount?: number | null
+        }
+        Update: {
+          action_type_trigger?:
+            | Database["public"]["Enums"]["action_types"]
+            | null
+          category?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: never
+          is_unique?: boolean | null
+          minimum_level_requirement?: number | null
+          prerequisites?: number[] | null
+          title?: string
+          xp_amount?: number | null
+        }
+        Relationships: []
+      }
       countries: {
         Row: {
           continent: Database["public"]["Enums"]["continents"] | null
@@ -128,6 +173,24 @@ export type Database = {
           id?: never
           status?: Database["public"]["Enums"]["friendship_status"]
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      level_requirements: {
+        Row: {
+          level: number
+          max_xp: number
+          min_xp: number
+        }
+        Insert: {
+          level: number
+          max_xp: number
+          min_xp: number
+        }
+        Update: {
+          level?: number
+          max_xp?: number
+          min_xp?: number
         }
         Relationships: []
       }
@@ -461,6 +524,139 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "venues"
             referencedColumns: ["venue_id"]
+          },
+        ]
+      }
+      user_achievements: {
+        Row: {
+          achievement_id: number
+          completed_at: string | null
+          current_count: number | null
+          target_count: number
+          user_id: string
+        }
+        Insert: {
+          achievement_id: number
+          completed_at?: string | null
+          current_count?: number | null
+          target_count: number
+          user_id: string
+        }
+        Update: {
+          achievement_id?: number
+          completed_at?: string | null
+          current_count?: number | null
+          target_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_achievement"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_user"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_actions: {
+        Row: {
+          action_type: Database["public"]["Enums"]["action_types"] | null
+          created_at: string | null
+          id: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_type?: Database["public"]["Enums"]["action_types"] | null
+          created_at?: string | null
+          id?: never
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_type?: Database["public"]["Enums"]["action_types"] | null
+          created_at?: string | null
+          id?: never
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_experience: {
+        Row: {
+          created_at: string | null
+          current_xp: number | null
+          id: number
+          level: number | null
+          total_xp: number | null
+          updated_at: string | null
+          user_id: string | null
+          xp_levelup: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_xp?: number | null
+          id?: never
+          level?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          xp_levelup?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          current_xp?: number | null
+          id?: never
+          level?: number | null
+          total_xp?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          xp_levelup?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_experience_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_experience_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -3852,6 +4048,12 @@ export type Database = {
       }
     }
     Enums: {
+      action_types:
+        | "EDIT_PROFILE"
+        | "SEND_FRIEND_REQUEST"
+        | "REGISTER_MATCH"
+        | "MATCH_PLAYED"
+        | "SIGN_UP_COMPLETE"
       change_type: "WIN" | "LOSS" | "DRAW" | "MANUAL"
       continents:
         | "Africa"

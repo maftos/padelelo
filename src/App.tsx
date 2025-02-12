@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -11,6 +12,7 @@ import Roadmap from "./pages/Roadmap";
 import MatchmakingMath from "./pages/MatchmakingMath";
 import HowItWorks from "./pages/HowItWorks";
 import Verify from "./pages/Verify";
+import Dashboard from "./pages/Dashboard";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -35,6 +37,7 @@ function App() {
             <Route path="/matchmaking-math" element={<MatchmakingMath />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/verify" element={<Verify />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Routes>
           <Toaster />
         </AuthProvider>
