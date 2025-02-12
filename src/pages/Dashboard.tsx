@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -7,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Navigation } from "@/components/Navigation";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Trophy, Users, GamepadIcon } from "lucide-react";
 
 interface Achievement {
   id: number;
@@ -89,6 +91,13 @@ const sampleUserExperience: UserExperience = {
   total_xp: 8500
 };
 
+const sampleUserStats = {
+  displayName: "John Doe",
+  profilePhoto: "/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png",
+  totalMatches: 25,
+  currentMmr: 3200
+};
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -111,81 +120,110 @@ export default function Dashboard() {
   if (!user) return null;
 
   return (
-    <PageContainer>
-      {/* Level Progress Section */}
-      <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">Level {userExperience.level}</CardTitle>
-          <CardDescription className="text-lg">
-            {userExperience.total_xp} XP Total
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Progress value={calculateLevelProgress()} className="h-3 bg-indigo-950" />
-            <p className="text-sm text-muted-foreground">
-              {userExperience.current_xp} / {userExperience.xp_levelup} XP to next level
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Achievement Categories */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Daily Quests */}
-        <Card className="bg-gradient-to-br from-amber-500/10 to-red-500/10 border-2 border-amber-500/20">
+    <>
+      <Navigation />
+      <PageContainer>
+        {/* Level Progress Section */}
+        <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20">
           <CardHeader>
-            <CardTitle>Daily Quests</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {achievements.map((achievement) => (
-              <div key={achievement.id} className="bg-black/30 rounded-lg p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold">{achievement.title}</h3>
-                  <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
-                </div>
-                <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
-                <div className="space-y-1">
-                  <Progress 
-                    value={(achievement.current_progress! / achievement.target_progress!) * 100} 
-                    className="h-2 bg-amber-950"
-                  />
-                  <p className="text-xs text-right text-muted-foreground">
-                    {achievement.current_progress} / {achievement.target_progress}
-                  </p>
+            <div className="flex items-start justify-between">
+              <div className="flex items-center space-x-4">
+                <Avatar className="h-20 w-20 border-2 border-indigo-500/20">
+                  <AvatarImage src={sampleUserStats.profilePhoto} />
+                  <AvatarFallback>JD</AvatarFallback>
+                </Avatar>
+                <div>
+                  <CardTitle className="text-2xl font-bold">{sampleUserStats.displayName}</CardTitle>
+                  <CardDescription className="text-lg">
+                    Level {userExperience.level} • {userExperience.total_xp} XP Total
+                  </CardDescription>
+                  <div className="flex items-center gap-4 mt-2">
+                    <div className="flex items-center gap-1 text-sm">
+                      <Trophy className="h-4 w-4 text-yellow-500" />
+                      <span>MMR: {sampleUserStats.currentMmr}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-sm">
+                      <GamepadIcon className="h-4 w-4 text-green-500" />
+                      <span>{sampleUserStats.totalMatches} Matches</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <Progress value={calculateLevelProgress()} className="h-3 bg-indigo-950" />
+              <p className="text-sm text-muted-foreground">
+                {userExperience.current_xp} / {userExperience.xp_levelup} XP to next level
+              </p>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Weekly Challenges */}
-        <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-2 border-blue-500/20">
-          <CardHeader>
-            <CardTitle>Weekly Challenges</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {achievements.map((achievement) => (
-              <div key={achievement.id + "_weekly"} className="bg-black/30 rounded-lg p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <h3 className="font-semibold">{achievement.title}</h3>
-                  <span className="text-blue-500 font-bold">{achievement.xp_amount * 2} XP</span>
+        {/* Achievement Categories */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Daily Quests */}
+          <Card className="bg-gradient-to-br from-amber-500/10 to-red-500/10 border-2 border-amber-500/20">
+            <CardHeader>
+              <CardTitle>Daily Quests</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {achievements.map((achievement) => (
+                <div key={achievement.id} className="bg-black/30 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{achievement.icon}</span>
+                      <h3 className="font-semibold">{achievement.title}</h3>
+                    </div>
+                    <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
+                  <div className="space-y-1">
+                    <Progress 
+                      value={(achievement.current_progress! / achievement.target_progress!) * 100} 
+                      className="h-2 bg-amber-950"
+                    />
+                    <p className="text-xs text-right text-muted-foreground">
+                      {achievement.current_progress} / {achievement.target_progress}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
-                <div className="space-y-1">
-                  <Progress 
-                    value={(achievement.current_progress! / achievement.target_progress!) * 100} 
-                    className="h-2 bg-blue-950"
-                  />
-                  <p className="text-xs text-right text-muted-foreground">
-                    {achievement.current_progress} / {achievement.target_progress}
-                  </p>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Weekly Challenges */}
+          <Card className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border-2 border-blue-500/20">
+            <CardHeader>
+              <CardTitle>Weekly Challenges</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {achievements.map((achievement) => (
+                <div key={achievement.id + "_weekly"} className="bg-black/30 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl">{achievement.icon}</span>
+                      <h3 className="font-semibold">{achievement.title}</h3>
+                    </div>
+                    <span className="text-blue-500 font-bold">{achievement.xp_amount * 2} XP</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
+                  <div className="space-y-1">
+                    <Progress 
+                      value={(achievement.current_progress! / achievement.target_progress!) * 100} 
+                      className="h-2 bg-blue-950"
+                    />
+                    <p className="text-xs text-right text-muted-foreground">
+                      {achievement.current_progress} / {achievement.target_progress}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-    </PageContainer>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
+    </>
   );
 }
