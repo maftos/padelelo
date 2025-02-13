@@ -21,6 +21,7 @@ export type Database = {
           is_unique: boolean | null
           minimum_level_requirement: number | null
           prerequisites: number[] | null
+          target_count: number
           title: string
           xp_amount: number | null
         }
@@ -35,6 +36,7 @@ export type Database = {
           is_unique?: boolean | null
           minimum_level_requirement?: number | null
           prerequisites?: number[] | null
+          target_count?: number
           title: string
           xp_amount?: number | null
         }
@@ -49,6 +51,7 @@ export type Database = {
           is_unique?: boolean | null
           minimum_level_requirement?: number | null
           prerequisites?: number[] | null
+          target_count?: number
           title?: string
           xp_amount?: number | null
         }
@@ -1229,21 +1232,36 @@ export type Database = {
             }
             Returns: string
           }
-      edit_user_profile: {
-        Args: {
-          user_a_id: string
-          new_display_name: string
-          new_gender: string
-          new_date_of_birth: string
-          new_languages: string[]
-          new_preferred_language: string
-          new_profile_photo: string
-          new_whatsapp_number: string
-          new_nationality: string
-          new_location: string
-        }
-        Returns: undefined
-      }
+      edit_user_profile:
+        | {
+            Args: {
+              user_a_id: string
+              new_display_name: string
+              new_gender: string
+              new_date_of_birth: string
+              new_languages: string[]
+              new_preferred_language: string
+              new_profile_photo: string
+              new_nationality: string
+              new_location: string
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              user_a_id: string
+              new_display_name: string
+              new_gender: string
+              new_date_of_birth: string
+              new_languages: string[]
+              new_preferred_language: string
+              new_profile_photo: string
+              new_whatsapp_number: string
+              new_nationality: string
+              new_location: string
+            }
+            Returns: undefined
+          }
       enablelongtransactions: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -4060,6 +4078,7 @@ export type Database = {
         | "REGISTER_MATCH"
         | "MATCH_PLAYED"
         | "SIGN_UP_COMPLETE"
+        | "COMPLETE_PROFILE"
       change_type: "WIN" | "LOSS" | "DRAW" | "MANUAL"
       continents:
         | "Africa"
