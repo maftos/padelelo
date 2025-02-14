@@ -74,7 +74,7 @@ export default function Dashboard() {
   });
 
   // Animate XP progress smoothly
-  const animateXPProgress = (oldXP: number, newXP: number, totalXP: number, duration: number = 1000) => {
+  const animateXPProgress = (oldXP: number, newXP: number, totalXP: number, duration: number = 3000) => {
     const startTime = performance.now();
     const startProgress = (1 - (oldXP / totalXP)) * 100;
     const endProgress = (1 - (newXP / totalXP)) * 100;
@@ -143,7 +143,7 @@ export default function Dashboard() {
         setIsLevelingUp(true);
 
         // Animate to 100% first
-        animateXPProgress(oldXP, 0, totalXP, 1000);
+        animateXPProgress(oldXP, 0, totalXP, 3000);
         
         // Show level up toast with animation
         toast.success(
@@ -162,11 +162,11 @@ export default function Dashboard() {
         setTimeout(() => {
           setIsLevelingUp(false);
           // Reset to the new level's progress with animation
-          animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 1000);
-        }, 1500);
+          animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
+        }, 3500);
       } else {
         // Smoothly animate to new XP value
-        animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 1000);
+        animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
         toast.success("Reward claimed successfully!");
       }
 
@@ -200,14 +200,29 @@ export default function Dashboard() {
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <CardTitle className="text-2xl font-bold">{profileData?.display_name}</CardTitle>
+                  <CardTitle className="text-2xl font-bold">
+                    {profileData?.display_name}
+                    {isLevelingUp && (
+                      <span className="inline-flex ml-2">
+                        <span className="animate-ping absolute h-4 w-4">🎉</span>
+                        <span className="relative">✨</span>
+                      </span>
+                    )}
+                  </CardTitle>
                   <CardDescription className="text-lg">
                     Level {profileData?.level || 1}
+                    {isLevelingUp && (
+                      <span className="inline-flex items-center ml-2 space-x-1">
+                        <span className="animate-bounce">🎮</span>
+                        <span className="animate-pulse">⭐</span>
+                        <span className="animate-bounce">🏆</span>
+                      </span>
+                    )}
                   </CardDescription>
                   <div className="flex items-center gap-4 mt-2">
                     <div className="flex items-center gap-1 text-sm">
                       <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span>MMR: {profileData?.current_mmr || 0}</span>
+                      <span>{profileData?.current_mmr || 0}</span>
                     </div>
                     <div className="flex items-center gap-1 text-sm">
                       <GamepadIcon className="h-4 w-4 text-green-500" />
@@ -325,24 +340,6 @@ export default function Dashboard() {
               ))}
             </CardContent>
           </Card>
-        )}
-
-        {/* Level Up Overlay */}
-        {isLevelingUp && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center animate-fade-in z-50">
-            <div className="text-center space-y-4 p-8 rounded-lg bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50 animate-scale-in">
-              <div className="text-4xl font-bold text-yellow-500 animate-bounce">
-                Level Up!
-              </div>
-              <div className="text-2xl">
-                You are now level {profileData?.level}!
-              </div>
-              <Progress 
-                value={100} 
-                className="h-4 bg-yellow-950 w-64"
-              />
-            </div>
-          </div>
         )}
       </PageContainer>
     </>
