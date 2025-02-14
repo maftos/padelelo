@@ -145,12 +145,10 @@ export default function Dashboard() {
         // Animate to 100% first
         animateXPProgress(oldXP, 0, totalXP, 3000);
         
-        // Show level up toast with animation
         toast.success(
           <div className="flex flex-col items-center space-y-2">
-            <div className="text-xl font-bold animate-bounce">🎉 Level Up! 🎉</div>
+            <div className="text-xl font-bold">Level Up!</div>
             <div className="text-lg">You are now level {newProfile.level}!</div>
-            <div className="text-sm text-yellow-300 animate-pulse">+1 Level Achieved</div>
           </div>,
           {
             duration: 5000,
@@ -167,7 +165,7 @@ export default function Dashboard() {
       } else {
         // Smoothly animate to new XP value
         animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
-        toast.success("Reward claimed successfully!");
+        toast.success("Achievement claimed!");
       }
 
       // Clear the recently claimed state after animation
@@ -202,31 +200,31 @@ export default function Dashboard() {
                 <div>
                   <CardTitle className="text-2xl font-bold">
                     {profileData?.display_name}
-                    {isLevelingUp && (
-                      <span className="inline-flex ml-2">
-                        <span className="animate-ping absolute h-4 w-4">🎉</span>
-                        <span className="relative">✨</span>
-                      </span>
-                    )}
                   </CardTitle>
-                  <CardDescription className="text-lg">
+                  <CardDescription className="text-lg flex items-center">
                     Level {profileData?.level || 1}
                     {isLevelingUp && (
-                      <span className="inline-flex items-center ml-2 space-x-1">
-                        <span className="animate-bounce">🎮</span>
-                        <span className="animate-pulse">⭐</span>
-                        <span className="animate-bounce">🏆</span>
-                      </span>
+                      <div className="inline-flex items-center ml-2 space-x-2">
+                        <span className="inline-block animate-bounce">
+                          <Star className="h-5 w-5 text-yellow-500" />
+                        </span>
+                        <span className="inline-block animate-pulse">
+                          <Trophy className="h-5 w-5 text-amber-500" />
+                        </span>
+                        <span className="inline-block animate-bounce delay-100">
+                          <Star className="h-5 w-5 text-yellow-500" />
+                        </span>
+                      </div>
                     )}
                   </CardDescription>
                   <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-1 text-sm">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span>{profileData?.current_mmr || 0}</span>
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-yellow-500" />
+                      <span className="text-base">{profileData?.current_mmr || 0}</span>
                     </div>
-                    <div className="flex items-center gap-1 text-sm">
-                      <GamepadIcon className="h-4 w-4 text-green-500" />
-                      <span>0 Matches</span>
+                    <div className="flex items-center gap-2">
+                      <GamepadIcon className="h-5 w-5 text-green-500" />
+                      <span className="text-base">0</span>
                     </div>
                   </div>
                 </div>
@@ -317,25 +315,11 @@ export default function Dashboard() {
                       : ''
                   }`}
                 >
-                  <div className="flex justify-between items-center mb-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">{achievement.title}</h3>
-                    </div>
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold">{achievement.title}</h3>
                     <span className="text-green-500 font-bold">{achievement.xp_amount} XP</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
-                  <div className="space-y-1">
-                    <Progress 
-                      value={100} 
-                      className="h-2 bg-green-950"
-                    />
-                    <div className="flex justify-between items-center">
-                      <p className="text-xs text-muted-foreground">
-                        Completed
-                      </p>
-                      <span className="text-xs text-green-500">Claimed</span>
-                    </div>
-                  </div>
+                  <p className="text-sm text-muted-foreground mt-1">{achievement.description}</p>
                 </div>
               ))}
             </CardContent>
