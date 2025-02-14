@@ -1166,6 +1166,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      claim_achievement_v1: {
+        Args: {
+          i_user_id: string
+          i_achievement_id: number
+        }
+        Returns: undefined
+      }
       complete_match: {
         Args: {
           i_match_id: string
