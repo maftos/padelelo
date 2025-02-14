@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,6 +29,7 @@ interface UserProfile {
   current_mmr: number;
   level: number;
   xp_levelup: number;
+  total_xp_levelup: number;
 }
 
 export default function Dashboard() {
@@ -74,10 +74,11 @@ export default function Dashboard() {
 
   // Set initial XP progress when profile data loads
   useEffect(() => {
-    if (profileData?.xp_levelup) {
-      setXpProgress(Math.round((profileData.xp_levelup / 100) * 100));
+    if (profileData?.xp_levelup && profileData?.total_xp_levelup) {
+      const progressValue = (1 - (profileData.xp_levelup / profileData.total_xp_levelup)) * 100;
+      setXpProgress(progressValue);
     }
-  }, [profileData?.xp_levelup]);
+  }, [profileData?.xp_levelup, profileData?.total_xp_levelup]);
 
   const handleClaimReward = async (achievementId: number) => {
     try {
@@ -111,14 +112,18 @@ export default function Dashboard() {
         setTimeout(() => {
           setIsLevelingUp(false);
           // Reset to the new level's progress
-          setXpProgress(Math.round((newProfile.xp_levelup / 100) * 100));
+          const newProgress = (1 - (newProfile.xp_levelup / newProfile.total_xp_levelup)) * 100;
+          setXpProgress(newProgress);
         }, 1500);
+
+        toast.success(`Level Up! You are now level ${newProfile.level}! 🎉`);
       } else {
         // Smoothly animate to new XP value
-        setXpProgress(Math.round((newProfile.xp_levelup / 100) * 100));
+        const newProgress = (1 - (newProfile.xp_levelup / newProfile.total_xp_levelup)) * 100;
+        setXpProgress(newProgress);
+        toast.success("Reward claimed successfully!");
       }
 
-      toast.success("Reward claimed successfully!");
     } catch (error) {
       console.error('Error claiming reward:', error);
       toast.error("Failed to claim reward. Please try again.");
@@ -170,7 +175,7 @@ export default function Dashboard() {
                 }`}
               />
               <p className="text-sm text-muted-foreground">
-                {profileData?.xp_levelup || 0} XP to next level
+                {profileData?.xp_levelup || 0} / {profileData?.total_xp_levelup || 100} XP to next level
               </p>
             </div>
           </CardContent>

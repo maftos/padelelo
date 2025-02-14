@@ -1799,6 +1799,7 @@ export type Database = {
           email: string
           level: number
           xp_levelup: number
+          total_xp_levelup: number
         }[]
       }
       gettransactionid: {
