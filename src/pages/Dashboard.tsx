@@ -38,6 +38,7 @@ export default function Dashboard() {
   const [xpProgress, setXpProgress] = useState(0);
   const [isLevelingUp, setIsLevelingUp] = useState(false);
   const [recentlyClaimed, setRecentlyClaimed] = useState<number | null>(null);
+  const [currentLevel, setCurrentLevel] = useState<number | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,7 +46,6 @@ export default function Dashboard() {
     }
   }, [user, loading, navigate]);
 
-  // Query user profile data
   const { data: profileData, refetch: refetchProfile } = useQuery({
     queryKey: ['userProfile', user?.id],
     queryFn: async () => {
@@ -59,7 +59,6 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
-  // Query achievements data
   const { data: achievements, refetch: refetchAchievements } = useQuery({
     queryKey: ['userAchievements', user?.id],
     queryFn: async () => {
@@ -73,7 +72,6 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
-  // Animate XP progress smoothly
   const animateXPProgress = (oldXP: number, newXP: number, totalXP: number, duration: number = 3000) => {
     const startTime = performance.now();
     const startProgress = (1 - (oldXP / totalXP)) * 100;
@@ -83,7 +81,6 @@ export default function Dashboard() {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Easing function for smooth animation
       const easeOutCubic = (x: number): number => {
         return 1 - Math.pow(1 - x, 3);
       };
@@ -101,78 +98,68 @@ export default function Dashboard() {
     requestAnimationFrame(animate);
   };
 
-  // Set initial XP progress when profile data loads
   useEffect(() => {
-    if (profileData?.xp_levelup && profileData?.total_xp_levelup) {
-      const progressValue = (1 - (profileData.xp_levelup / profileData.total_xp_levelup)) * 100;
-      setXpProgress(progressValue);
+    if (profileData?.level) {
+      setCurrentLevel(profileData.level);
     }
-  }, [profileData?.xp_levelup, profileData?.total_xp_levelup]);
+  }, [profileData?.level]);
 
   const handleClaimReward = async (achievementId: number) => {
     try {
       if (!user?.id) return;
 
-      const oldLevel = profileData?.level;
+      const oldLevel = currentLevel;
       const oldXP = profileData?.xp_levelup;
       const totalXP = profileData?.total_xp_levelup;
 
       if (!oldXP || !totalXP) return;
 
-      // Mark the achievement as being claimed (for animation)
       setRecentlyClaimed(achievementId);
 
-      const { error } = await supabase.rpc('claim_achievement', {
+      const { data: claimResult, error: claimError } = await supabase.rpc('claim_achievement', {
         i_user_id: user.id,
         i_achievement_id: achievementId
       });
 
-      if (error) throw error;
+      if (claimError) throw claimError;
 
-      // Refetch data
-      const [profileResult, achievementsResult] = await Promise.all([
-        refetchProfile(),
-        refetchAchievements()
-      ]);
+      if (claimResult !== null) {
+        const [profileResult, achievementsResult] = await Promise.all([
+          refetchProfile(),
+          refetchAchievements()
+        ]);
 
-      // Get the new profile data
-      const newProfile = profileResult.data[0] as UserProfile;
+        const newProfile = profileResult.data[0] as UserProfile;
 
-      // If level changed, show level up animation
-      if (newProfile.level > oldLevel!) {
-        setIsLevelingUp(true);
+        if (newProfile.level > oldLevel!) {
+          setIsLevelingUp(true);
 
-        // Animate to 100% first
-        animateXPProgress(oldXP, 0, totalXP, 3000);
-        
-        toast.success(
-          <div className="flex flex-col items-center space-y-2">
-            <div className="text-xl font-bold">Level Up!</div>
-            <div className="text-lg">You are now level {newProfile.level}!</div>
-          </div>,
-          {
-            duration: 5000,
-            className: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50"
-          }
-        );
+          animateXPProgress(oldXP, 0, totalXP, 3000);
+          
+          toast.success(
+            <div className="flex flex-col items-center space-y-2">
+              <div className="text-xl font-bold">Level Up!</div>
+              <div className="text-lg">You are now level {newProfile.level}!</div>
+            </div>,
+            {
+              duration: 5000,
+              className: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50"
+            }
+          );
 
-        // Wait for the animation to complete
+          setTimeout(() => {
+            setIsLevelingUp(false);
+            animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
+          }, 3500);
+        } else {
+          animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
+          toast.success("Achievement claimed!");
+        }
+
         setTimeout(() => {
-          setIsLevelingUp(false);
-          // Reset to the new level's progress with animation
-          animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
-        }, 3500);
-      } else {
-        // Smoothly animate to new XP value
-        animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
-        toast.success("Achievement claimed!");
+          setRecentlyClaimed(null);
+        }, 1000);
       }
-
-      // Clear the recently claimed state after animation
-      setTimeout(() => {
-        setRecentlyClaimed(null);
-      }, 1000);
-
     } catch (error) {
       console.error('Error claiming reward:', error);
       toast.error("Failed to claim reward. Please try again.");
@@ -205,15 +192,9 @@ export default function Dashboard() {
                     Level {profileData?.level || 1}
                     {isLevelingUp && (
                       <div className="inline-flex items-center ml-2 space-x-2">
-                        <span className="inline-block animate-bounce">
-                          <Star className="h-5 w-5 text-yellow-500" />
-                        </span>
-                        <span className="inline-block animate-pulse">
-                          <Trophy className="h-5 w-5 text-amber-500" />
-                        </span>
-                        <span className="inline-block animate-bounce delay-100">
-                          <Star className="h-5 w-5 text-yellow-500" />
-                        </span>
+                        <Star className="h-5 w-5 text-yellow-500 animate-bounce" />
+                        <Trophy className="h-5 w-5 text-amber-500 animate-pulse" />
+                        <Star className="h-5 w-5 text-yellow-500 animate-bounce delay-150" />
                       </div>
                     )}
                   </CardDescription>
@@ -235,7 +216,7 @@ export default function Dashboard() {
             <div className="space-y-2">
               <Progress 
                 value={xpProgress} 
-                className={`h-3 transition-all duration-1000 ease-out ${
+                className={`h-3 transition-all duration-3000 ease-out ${
                   isLevelingUp ? 'bg-yellow-500' : 'bg-indigo-950'
                 }`}
               />
@@ -296,7 +277,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Claimed Achievements Section */}
         {achievements?.some(a => a.is_claimed) && (
           <Card className="mb-6 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-2 border-green-500/20">
             <CardHeader>
