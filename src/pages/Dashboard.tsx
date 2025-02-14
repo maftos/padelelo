@@ -403,13 +403,81 @@ export default function Dashboard() {
         )}
       </PageContainer>
 
-      {user && showInviteDialog && (
-        <InviteFriendDialog 
-          userId={user.id}
-          onOpenChange={setShowInviteDialog}
-        >
-          {null}
-        </InviteFriendDialog>
+      {user && (
+        <Dialog open={showInviteDialog} onOpenChange={setShowInviteDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Invite Friends</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6">
+              {/* Step 1 */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-primary">
+                  <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                    1
+                  </div>
+                  <h3 className="font-medium">Your Referral Link</h3>
+                </div>
+                <p className="text-sm text-muted-foreground pl-7">
+                  This link is unique to your account and allows us to track successful referrals.
+                </p>
+                <Button
+                  className="w-full mt-2"
+                  variant="outline"
+                  onClick={() => {
+                    const inviteUrl = `${window.location.origin}/signup?ref=${user.id}`;
+                    navigator.clipboard.writeText(inviteUrl)
+                      .then(() => toast.success("Invite URL copied to clipboard!"))
+                      .catch(() => toast.error("Failed to copy invite URL"));
+                  }}
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Referral Link
+                </Button>
+              </div>
+
+              {/* Step 2 */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-primary">
+                  <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                    2
+                  </div>
+                  <h3 className="font-medium">Share with Friends</h3>
+                </div>
+                <p className="text-sm text-muted-foreground pl-7">
+                  Send the link to your friends.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-primary">
+                  <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-xs font-medium">
+                    3
+                  </div>
+                  <h3 className="font-medium">They Sign Up</h3>
+                </div>
+                <p className="text-sm text-muted-foreground pl-7">
+                  The platform is invite-only. So once they click on your referral link to sign up, they will see this:
+                </p>
+                
+                {/* Referrer Preview */}
+                <div className="bg-accent rounded-lg p-4 mt-2">
+                  <div className="flex flex-col items-center gap-4">
+                    <Avatar className="h-16 w-16">
+                      <AvatarImage src={profileData?.profile_photo} />
+                      <AvatarFallback>{profileData?.display_name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="text-center">
+                      <p className="text-sm text-muted-foreground">Invited by</p>
+                      <p className="font-medium">{profileData?.display_name}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
     </>
   );
