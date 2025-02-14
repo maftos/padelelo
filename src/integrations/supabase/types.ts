@@ -1164,7 +1164,7 @@ export type Database = {
           i_user_id: string
           i_achievement_id: number
         }
-        Returns: undefined
+        Returns: Json
       }
       claim_achievement_v1: {
         Args: {

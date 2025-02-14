@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -113,33 +114,31 @@ export default function Dashboard() {
     try {
       if (!user?.id) return;
 
-      const oldLevel = profileData?.level;
       const oldXP = profileData?.xp_levelup;
       const totalXP = profileData?.total_xp_levelup;
+      const oldLevel = profileData?.level;
 
       if (!oldXP || !totalXP) return;
 
       // Mark the achievement as being claimed (for animation)
       setRecentlyClaimed(achievementId);
 
-      const { error } = await supabase.rpc('claim_achievement', {
+      const { data: result, error } = await supabase.rpc('claim_achievement', {
         i_user_id: user.id,
         i_achievement_id: achievementId
       });
 
       if (error) throw error;
 
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+
       // Refetch data
-      const [profileResult, achievementsResult] = await Promise.all([
-        refetchProfile(),
-        refetchAchievements()
-      ]);
+      await Promise.all([refetchProfile(), refetchAchievements()]);
 
-      // Get the new profile data
-      const newProfile = profileResult.data[0] as UserProfile;
-
-      // If level changed, show level up animation
-      if (newProfile.level > oldLevel!) {
+      // Handle level up if detected in the response
+      if (result.did_level_up) {
         setIsLevelingUp(true);
 
         // Animate to 100% first
@@ -148,7 +147,7 @@ export default function Dashboard() {
         toast.success(
           <div className="flex flex-col items-center space-y-2">
             <div className="text-xl font-bold">Level Up!</div>
-            <div className="text-lg">You are now level {newProfile.level}!</div>
+            <div className="text-lg">You are now level {result.new_level}!</div>
           </div>,
           {
             duration: 5000,
@@ -160,11 +159,14 @@ export default function Dashboard() {
         setTimeout(() => {
           setIsLevelingUp(false);
           // Reset to the new level's progress with animation
-          animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
+          const newProfile = profileData;
+          if (newProfile) {
+            animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
+          }
         }, 3500);
       } else {
-        // Smoothly animate to new XP value
-        animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
+        // Regular XP gain animation
+        animateXPProgress(oldXP, result.new_total_xp % totalXP, totalXP, 3000);
         toast.success("Achievement claimed!");
       }
 
@@ -205,15 +207,9 @@ export default function Dashboard() {
                     Level {profileData?.level || 1}
                     {isLevelingUp && (
                       <div className="inline-flex items-center ml-2 space-x-2">
-                        <span className="inline-block animate-bounce">
-                          <Star className="h-5 w-5 text-yellow-500" />
-                        </span>
-                        <span className="inline-block animate-pulse">
-                          <Trophy className="h-5 w-5 text-amber-500" />
-                        </span>
-                        <span className="inline-block animate-bounce delay-100">
-                          <Star className="h-5 w-5 text-yellow-500" />
-                        </span>
+                        <Star className="h-5 w-5 text-yellow-500 animate-bounce" />
+                        <Trophy className="h-5 w-5 text-amber-500 animate-pulse" />
+                        <Star className="h-5 w-5 text-yellow-500 animate-bounce delay-150" />
                       </div>
                     )}
                   </CardDescription>
@@ -296,7 +292,6 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        {/* Claimed Achievements Section */}
         {achievements?.some(a => a.is_claimed) && (
           <Card className="mb-6 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-2 border-green-500/20">
             <CardHeader>
