@@ -534,6 +534,7 @@ export type Database = {
         Row: {
           achievement_id: number
           completed_at: string | null
+          created_at: string
           current_count: number | null
           is_claimed: boolean
           is_completed: boolean
@@ -543,6 +544,7 @@ export type Database = {
         Insert: {
           achievement_id: number
           completed_at?: string | null
+          created_at: string
           current_count?: number | null
           is_claimed?: boolean
           is_completed?: boolean
@@ -552,6 +554,7 @@ export type Database = {
         Update: {
           achievement_id?: number
           completed_at?: string | null
+          created_at?: string
           current_count?: number | null
           is_claimed?: boolean
           is_completed?: boolean
@@ -624,7 +627,6 @@ export type Database = {
       user_experience: {
         Row: {
           created_at: string | null
-          current_xp: number | null
           id: number
           level: number | null
           total_xp: number | null
@@ -634,7 +636,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          current_xp?: number | null
           id?: never
           level?: number | null
           total_xp?: number | null
@@ -644,7 +645,6 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          current_xp?: number | null
           id?: never
           level?: number | null
           total_xp?: number | null
@@ -1159,6 +1159,21 @@ export type Database = {
           team2_win_mmr_change_amount: number
         }[]
       }
+      claim_achievement:
+        | {
+            Args: {
+              i_user_id: string
+              i_achievement_id: number
+            }
+            Returns: undefined
+          }
+        | {
+            Args: {
+              i_user_id: string
+              i_achievement_id: string
+            }
+            Returns: undefined
+          }
       complete_match: {
         Args: {
           i_match_id: string
@@ -1744,6 +1759,21 @@ export type Database = {
         }
         Returns: string
       }
+      get_user_achievements: {
+        Args: {
+          i_user_id: string
+        }
+        Returns: {
+          achievement_id: number
+          title: string
+          description: string
+          current_count: number
+          target_count: number
+          xp_amount: number
+          is_completed: boolean
+          is_claimed: boolean
+        }[]
+      }
       get_user_friends: {
         Args: {
           i_user_id: string
@@ -1775,6 +1805,8 @@ export type Database = {
           current_mmr: number
           nationality: string
           email: string
+          level: number
+          xp_levelup: number
         }[]
       }
       gettransactionid: {
