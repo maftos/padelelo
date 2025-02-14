@@ -9,9 +9,10 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, GamepadIcon, Star } from "lucide-react";
+import { Trophy, GamepadIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import confetti from 'canvas-confetti';
 
 interface Achievement {
   achievement_id: number;
@@ -37,8 +38,9 @@ interface ClaimAchievementResponse {
   success: boolean;
   message?: string;
   xp_amount?: number;
-  old_total_xp?: number;
-  new_total_xp?: number;
+  old_xp_levelup?: number;
+  new_xp_levelup?: number;
+  total_xp_new_levelup?: number;
   old_level?: number;
   new_level?: number;
   did_level_up?: boolean;
@@ -93,11 +95,40 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
+  const triggerConfetti = () => {
+    const duration = 2000;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    
+    // Launch multiple confetti bursts
+    const count = 200;
+    const origin = { x: 0.5, y: 0.5 };
+    
+    function randomInRange(min: number, max: number) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval: any = setInterval(() => {
+      const particleCount = 50;
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: {
+          x: randomInRange(0.1, 0.9),
+          y: randomInRange(0.1, 0.9)
+        }
+      });
+    }, 250);
+
+    setTimeout(() => {
+      clearInterval(interval);
+    }, duration);
+  };
+
   // Animate XP progress smoothly
   const animateXPProgress = (oldXP: number, newXP: number, totalXP: number, duration: number = 3000) => {
     const startTime = performance.now();
-    const startProgress = (1 - (oldXP / totalXP)) * 100;
-    const endProgress = (1 - (newXP / totalXP)) * 100;
+    const startProgress = ((totalXP - oldXP) / totalXP) * 100;
+    const endProgress = ((totalXP - newXP) / totalXP) * 100;
     
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
@@ -124,7 +155,7 @@ export default function Dashboard() {
   // Set initial XP progress when profile data loads
   useEffect(() => {
     if (profileData?.xp_levelup && profileData?.total_xp_levelup) {
-      const progressValue = (1 - (profileData.xp_levelup / profileData.total_xp_levelup)) * 100;
+      const progressValue = ((profileData.total_xp_levelup - profileData.xp_levelup) / profileData.total_xp_levelup) * 100;
       setXpProgress(progressValue);
     }
   }, [profileData?.xp_levelup, profileData?.total_xp_levelup]);
@@ -132,12 +163,6 @@ export default function Dashboard() {
   const handleClaimReward = async (achievementId: number) => {
     try {
       if (!user?.id) return;
-
-      const oldXP = profileData?.xp_levelup;
-      const totalXP = profileData?.total_xp_levelup;
-      const oldLevel = profileData?.level;
-
-      if (!oldXP || !totalXP) return;
 
       // Mark the achievement as being claimed (for animation)
       setRecentlyClaimed(achievementId);
@@ -161,36 +186,40 @@ export default function Dashboard() {
       // Refetch data
       await Promise.all([refetchProfile(), refetchAchievements()]);
 
+      const oldXpLevelup = result.old_xp_levelup || 0;
+      const newXpLevelup = result.new_xp_levelup || 0;
+      const totalXpNewLevelup = result.total_xp_new_levelup || 100;
+
       // Handle level up if detected in the response
       if (result.did_level_up) {
         setIsLevelingUp(true);
 
-        // Animate to 100% first
-        animateXPProgress(oldXP, 0, totalXP, 3000);
+        // First animate to 100%
+        animateXPProgress(oldXpLevelup, 0, totalXpNewLevelup, 1500);
         
-        toast.success(
-          <div className="flex flex-col items-center space-y-2">
-            <div className="text-xl font-bold">Level Up!</div>
-            <div className="text-lg">You are now level {result.new_level}!</div>
-          </div>,
-          {
-            duration: 5000,
-            className: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50"
-          }
-        );
+        // Trigger confetti effect
+        setTimeout(() => {
+          triggerConfetti();
+          toast.success(
+            <div className="text-center">
+              <div className="text-xl font-bold">Level Up!</div>
+              <div className="text-lg">You are now level {result.new_level}!</div>
+            </div>,
+            {
+              duration: 5000,
+              className: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50"
+            }
+          );
+        }, 1500);
 
-        // Wait for the animation to complete
+        // After the first animation completes, animate to the new progress
         setTimeout(() => {
           setIsLevelingUp(false);
-          // Reset to the new level's progress with animation
-          const newProfile = profileData;
-          if (newProfile) {
-            animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 3000);
-          }
-        }, 3500);
+          animateXPProgress(totalXpNewLevelup, newXpLevelup, totalXpNewLevelup, 1500);
+        }, 3000);
       } else {
         // Regular XP gain animation
-        animateXPProgress(oldXP, result.new_total_xp || 0, totalXP, 3000);
+        animateXPProgress(oldXpLevelup, newXpLevelup, totalXpNewLevelup, 1500);
         toast.success("Achievement claimed!");
       }
 
@@ -227,15 +256,8 @@ export default function Dashboard() {
                   <CardTitle className="text-2xl font-bold">
                     {profileData?.display_name}
                   </CardTitle>
-                  <CardDescription className="text-lg flex items-center">
+                  <CardDescription className="text-lg">
                     Level {profileData?.level || 1}
-                    {isLevelingUp && (
-                      <div className="inline-flex items-center ml-2 space-x-2">
-                        <Star className="h-5 w-5 text-yellow-500 animate-bounce" />
-                        <Trophy className="h-5 w-5 text-amber-500 animate-pulse" />
-                        <Star className="h-5 w-5 text-yellow-500 animate-bounce delay-150" />
-                      </div>
-                    )}
                   </CardDescription>
                   <div className="flex items-center gap-4 mt-2">
                     <div className="flex items-center gap-2">

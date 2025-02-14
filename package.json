@@ -47,6 +47,7 @@
     "@supabase/supabase-js": "^2.47.16",
     "@tanstack/react-query": "^5.56.2",
     "@types/react-helmet": "^6.1.11",
+    "canvas-confetti": "^1.9.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
