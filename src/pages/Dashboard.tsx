@@ -44,6 +44,14 @@ interface ClaimAchievementResponse {
   did_level_up?: boolean;
 }
 
+// Helper function to type check the response
+function isClaimAchievementResponse(data: unknown): data is ClaimAchievementResponse {
+  if (typeof data !== 'object' || data === null) return false;
+  
+  const response = data as Partial<ClaimAchievementResponse>;
+  return typeof response.success === 'boolean';
+}
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -141,17 +149,20 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      const claimResult = result as ClaimAchievementResponse;
+      // Type check the response
+      if (!isClaimAchievementResponse(result)) {
+        throw new Error('Invalid response from server');
+      }
 
-      if (!claimResult.success) {
-        throw new Error(claimResult.message || 'Failed to claim achievement');
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to claim achievement');
       }
 
       // Refetch data
       await Promise.all([refetchProfile(), refetchAchievements()]);
 
       // Handle level up if detected in the response
-      if (claimResult.did_level_up) {
+      if (result.did_level_up) {
         setIsLevelingUp(true);
 
         // Animate to 100% first
@@ -160,7 +171,7 @@ export default function Dashboard() {
         toast.success(
           <div className="flex flex-col items-center space-y-2">
             <div className="text-xl font-bold">Level Up!</div>
-            <div className="text-lg">You are now level {claimResult.new_level}!</div>
+            <div className="text-lg">You are now level {result.new_level}!</div>
           </div>,
           {
             duration: 5000,
@@ -179,7 +190,7 @@ export default function Dashboard() {
         }, 3500);
       } else {
         // Regular XP gain animation
-        animateXPProgress(oldXP, claimResult.new_total_xp || 0, totalXP, 3000);
+        animateXPProgress(oldXP, result.new_total_xp || 0, totalXP, 3000);
         toast.success("Achievement claimed!");
       }
 
