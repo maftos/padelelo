@@ -203,7 +203,7 @@ export default function Dashboard() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {achievements?.map((achievement) => (
+            {achievements?.filter(a => !a.is_claimed).map((achievement) => (
               <div key={achievement.achievement_id} className="bg-black/30 rounded-lg p-4">
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
@@ -231,15 +231,49 @@ export default function Dashboard() {
                         Claim Reward
                       </Button>
                     )}
-                    {achievement.is_claimed && (
-                      <span className="text-xs text-muted-foreground">Claimed</span>
-                    )}
                   </div>
                 </div>
               </div>
             ))}
           </CardContent>
         </Card>
+
+        {/* Claimed Achievements Section */}
+        {achievements?.some(a => a.is_claimed) && (
+          <Card className="mb-6 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border-2 border-green-500/20">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-green-500" />
+                <CardTitle>Claimed Achievements</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {achievements?.filter(a => a.is_claimed).map((achievement) => (
+                <div key={achievement.achievement_id} className="bg-black/30 rounded-lg p-4">
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold">{achievement.title}</h3>
+                    </div>
+                    <span className="text-green-500 font-bold">{achievement.xp_amount} XP</span>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
+                  <div className="space-y-1">
+                    <Progress 
+                      value={100} 
+                      className="h-2 bg-green-950"
+                    />
+                    <div className="flex justify-between items-center">
+                      <p className="text-xs text-muted-foreground">
+                        Completed
+                      </p>
+                      <span className="text-xs text-green-500">Claimed</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </PageContainer>
     </>
   );
