@@ -184,22 +184,21 @@ export default function Dashboard() {
 
       if (result.did_level_up) {
         setIsLevelingUp(true);
-        setXpProgress(100); // First set to 100%
+        const fullProgressDuration = 1500;
+        animateXPProgress(oldXpLevelup, 0, totalXpNewLevelup, fullProgressDuration);
         
         setTimeout(() => {
           triggerConfetti();
-        }, 1500);
-
+        }, fullProgressDuration);
+        
         setTimeout(() => {
           setIsLevelingUp(false);
-          setXpProgress(0); // Reset to 0%
+          setXpProgress(0);
           
-          // Then animate to the new value after a brief delay
           setTimeout(() => {
-            const newProgress = ((totalXpNewLevelup - newXpLevelup) / totalXpNewLevelup) * 100;
             animateXPProgress(totalXpNewLevelup, newXpLevelup, totalXpNewLevelup, 1500);
           }, 100);
-        }, 3000);
+        }, fullProgressDuration + 3000);
       } else {
         animateXPProgress(oldXpLevelup, newXpLevelup, totalXpNewLevelup, 1500);
       }
@@ -253,14 +252,22 @@ export default function Dashboard() {
         </Link>;
       case 5:
         return (
-          <Button 
-            variant="secondary"
-            size="sm"
-            className="bg-white/5 hover:bg-white/10"
-            onClick={() => setShowInviteDialog(true)}
-          >
-            Invite Friends
-          </Button>
+          <>
+            <Button 
+              variant="secondary"
+              size="sm"
+              className="bg-white/5 hover:bg-white/10"
+              onClick={() => setShowInviteDialog(true)}
+            >
+              Invite Friends
+            </Button>
+            <InviteFriendDialog 
+              userId={user?.id || ''}
+              onOpenChange={setShowInviteDialog}
+            >
+              {null}
+            </InviteFriendDialog>
+          </>
         );
       default:
         return null;
