@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { Trophy, GamepadIcon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
+import { InviteFriendDialog } from "@/components/navigation/InviteFriendDialog";
 
 interface Achievement {
   achievement_id: number;
@@ -58,6 +59,7 @@ export default function Dashboard() {
   const [xpProgress, setXpProgress] = useState(0);
   const [isLevelingUp, setIsLevelingUp] = useState(false);
   const [recentlyClaimed, setRecentlyClaimed] = useState<number | null>(null);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -212,6 +214,40 @@ export default function Dashboard() {
     return total_xp_levelup - xp_levelup;
   };
 
+  const getAchievementCTA = (achievementId: number) => {
+    switch (achievementId) {
+      case 1:
+        return {
+          text: "Complete Profile",
+          element: <Link to="/profile"><Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">Complete Profile →</Button></Link>
+        };
+      case 2:
+        return {
+          text: "Add Friends",
+          element: <Link to="/leaderboard"><Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">Add Friends →</Button></Link>
+        };
+      case 3:
+        return {
+          text: "Register Match",
+          element: <Link to="/register-match"><Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">Register Match →</Button></Link>
+        };
+      case 5:
+        return {
+          text: "Invite Friends",
+          element: <Button 
+            variant="link" 
+            size="sm" 
+            className="text-muted-foreground hover:text-primary"
+            onClick={() => setShowInviteDialog(true)}
+          >
+            Invite Friends →
+          </Button>
+        };
+      default:
+        return null;
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
 
@@ -281,6 +317,10 @@ export default function Dashboard() {
                     recentlyClaimed === achievement.achievement_id 
                       ? 'scale-0 opacity-0 translate-y-full' 
                       : 'scale-100 opacity-100 translate-y-0'
+                  } ${
+                    achievement.is_completed 
+                      ? 'shadow-lg shadow-amber-500/30 border border-amber-500/50' 
+                      : ''
                   }`}
                 >
                   <div className="flex justify-between items-center mb-2">
@@ -290,7 +330,7 @@ export default function Dashboard() {
                     <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <p className="text-lg font-medium text-muted-foreground">
                         {achievement.current_count} / {achievement.target_count}
@@ -306,6 +346,7 @@ export default function Dashboard() {
                         </Button>
                       )}
                     </div>
+                    {!achievement.is_completed && getAchievementCTA(achievement.achievement_id)?.element}
                   </div>
                 </div>
               ))}
@@ -344,6 +385,13 @@ export default function Dashboard() {
           </Card>
         )}
       </PageContainer>
+
+      {user && <InviteFriendDialog 
+        userId={user.id}
+        onOpenChange={setShowInviteDialog}
+      >
+        {null}
+      </InviteFriendDialog>}
     </>
   );
 }
