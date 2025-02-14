@@ -33,6 +33,17 @@ interface UserProfile {
   total_xp_levelup: number;
 }
 
+interface ClaimAchievementResponse {
+  success: boolean;
+  message?: string;
+  xp_amount?: number;
+  old_total_xp?: number;
+  new_total_xp?: number;
+  old_level?: number;
+  new_level?: number;
+  did_level_up?: boolean;
+}
+
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -130,15 +141,17 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      if (!result.success) {
-        throw new Error(result.message);
+      const claimResult = result as ClaimAchievementResponse;
+
+      if (!claimResult.success) {
+        throw new Error(claimResult.message || 'Failed to claim achievement');
       }
 
       // Refetch data
       await Promise.all([refetchProfile(), refetchAchievements()]);
 
       // Handle level up if detected in the response
-      if (result.did_level_up) {
+      if (claimResult.did_level_up) {
         setIsLevelingUp(true);
 
         // Animate to 100% first
@@ -147,7 +160,7 @@ export default function Dashboard() {
         toast.success(
           <div className="flex flex-col items-center space-y-2">
             <div className="text-xl font-bold">Level Up!</div>
-            <div className="text-lg">You are now level {result.new_level}!</div>
+            <div className="text-lg">You are now level {claimResult.new_level}!</div>
           </div>,
           {
             duration: 5000,
@@ -166,7 +179,7 @@ export default function Dashboard() {
         }, 3500);
       } else {
         // Regular XP gain animation
-        animateXPProgress(oldXP, result.new_total_xp % totalXP, totalXP, 3000);
+        animateXPProgress(oldXP, claimResult.new_total_xp || 0, totalXP, 3000);
         toast.success("Achievement claimed!");
       }
 
