@@ -12,7 +12,6 @@ import { Trophy, GamepadIcon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
-import { InviteFriendDialog } from "@/components/navigation/InviteFriendDialog";
 
 interface Achievement {
   achievement_id: number;
@@ -184,7 +183,7 @@ export default function Dashboard() {
 
       if (result.did_level_up) {
         setIsLevelingUp(true);
-        animateXPProgress(oldXpLevelup, 0, totalXpNewLevelup, 1500);
+        setXpProgress(100); // First set to 100%
         
         setTimeout(() => {
           triggerConfetti();
@@ -192,11 +191,16 @@ export default function Dashboard() {
 
         setTimeout(() => {
           setIsLevelingUp(false);
-          animateXPProgress(totalXpNewLevelup, newXpLevelup, totalXpNewLevelup, 1500);
+          setXpProgress(0); // Reset to 0%
+          
+          // Then animate to the new value after a brief delay
+          setTimeout(() => {
+            const newProgress = ((totalXpNewLevelup - newXpLevelup) / totalXpNewLevelup) * 100;
+            animateXPProgress(totalXpNewLevelup, newXpLevelup, totalXpNewLevelup, 1500);
+          }, 100);
         }, 3000);
       } else {
         animateXPProgress(oldXpLevelup, newXpLevelup, totalXpNewLevelup, 1500);
-        toast.success("Achievement claimed!");
       }
 
       setTimeout(() => {
@@ -217,32 +221,54 @@ export default function Dashboard() {
   const getAchievementCTA = (achievementId: number) => {
     switch (achievementId) {
       case 1:
-        return {
-          text: "Complete Profile",
-          element: <Link to="/profile"><Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">Complete Profile →</Button></Link>
-        };
-      case 2:
-        return {
-          text: "Add Friends",
-          element: <Link to="/leaderboard"><Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">Add Friends →</Button></Link>
-        };
-      case 3:
-        return {
-          text: "Register Match",
-          element: <Link to="/register-match"><Button variant="link" size="sm" className="text-muted-foreground hover:text-primary">Register Match →</Button></Link>
-        };
-      case 5:
-        return {
-          text: "Invite Friends",
-          element: <Button 
-            variant="link" 
-            size="sm" 
-            className="text-muted-foreground hover:text-primary"
-            onClick={() => setShowInviteDialog(true)}
+        return <Link to="/profile">
+          <Button 
+            variant="secondary" 
+            size="sm"
+            className="bg-white/5 hover:bg-white/10"
           >
-            Invite Friends →
+            Complete Profile
           </Button>
-        };
+        </Link>;
+      case 2:
+        return <Link to="/leaderboard">
+          <Button 
+            variant="secondary"
+            size="sm"
+            className="bg-white/5 hover:bg-white/10"
+          >
+            Add Friends
+          </Button>
+        </Link>;
+      case 3:
+        return <Link to="/register-match">
+          <Button 
+            variant="secondary"
+            size="sm"
+            className="bg-white/5 hover:bg-white/10"
+          >
+            Register Match
+          </Button>
+        </Link>;
+      case 5:
+        return (
+          <>
+            <Button 
+              variant="secondary"
+              size="sm"
+              className="bg-white/5 hover:bg-white/10"
+              onClick={() => setShowInviteDialog(true)}
+            >
+              Invite Friends
+            </Button>
+            <InviteFriendDialog 
+              userId={user?.id || ''}
+              onOpenChange={setShowInviteDialog}
+            >
+              {null}
+            </InviteFriendDialog>
+          </>
+        );
       default:
         return null;
     }
@@ -330,12 +356,12 @@ export default function Dashboard() {
                     <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <p className="text-lg font-medium text-muted-foreground">
-                        {achievement.current_count} / {achievement.target_count}
-                      </p>
-                      {achievement.is_completed && !achievement.is_claimed && (
+                  <div className="flex justify-between items-center">
+                    <p className="text-lg font-medium text-muted-foreground">
+                      {achievement.current_count} / {achievement.target_count}
+                    </p>
+                    {achievement.is_completed ? (
+                      !achievement.is_claimed && (
                         <Button 
                           size="sm" 
                           className="bg-amber-500 hover:bg-amber-600 hover:scale-105 transition-all duration-200
@@ -344,9 +370,10 @@ export default function Dashboard() {
                         >
                           Claim Reward
                         </Button>
-                      )}
-                    </div>
-                    {!achievement.is_completed && getAchievementCTA(achievement.achievement_id)?.element}
+                      )
+                    ) : (
+                      getAchievementCTA(achievement.achievement_id)
+                    )}
                   </div>
                 </div>
               ))}
