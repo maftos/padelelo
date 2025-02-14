@@ -73,6 +73,34 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
+  // Animate XP progress smoothly
+  const animateXPProgress = (oldXP: number, newXP: number, totalXP: number, duration: number = 1000) => {
+    const startTime = performance.now();
+    const startProgress = (1 - (oldXP / totalXP)) * 100;
+    const endProgress = (1 - (newXP / totalXP)) * 100;
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function for smooth animation
+      const easeOutCubic = (x: number): number => {
+        return 1 - Math.pow(1 - x, 3);
+      };
+      
+      const easedProgress = easeOutCubic(progress);
+      const currentProgress = startProgress + (endProgress - startProgress) * easedProgress;
+      
+      setXpProgress(currentProgress);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  };
+
   // Set initial XP progress when profile data loads
   useEffect(() => {
     if (profileData?.xp_levelup && profileData?.total_xp_levelup) {
@@ -86,7 +114,10 @@ export default function Dashboard() {
       if (!user?.id) return;
 
       const oldLevel = profileData?.level;
-      const oldXp = profileData?.xp_levelup;
+      const oldXP = profileData?.xp_levelup;
+      const totalXP = profileData?.total_xp_levelup;
+
+      if (!oldXP || !totalXP) return;
 
       // Mark the achievement as being claimed (for animation)
       setRecentlyClaimed(achievementId);
@@ -110,8 +141,9 @@ export default function Dashboard() {
       // If level changed, show level up animation
       if (newProfile.level > oldLevel!) {
         setIsLevelingUp(true);
-        // Fill the bar to 100%
-        setXpProgress(100);
+
+        // Animate to 100% first
+        animateXPProgress(oldXP, 0, totalXP, 1000);
         
         // Show level up toast with animation
         toast.success(
@@ -129,21 +161,19 @@ export default function Dashboard() {
         // Wait for the animation to complete
         setTimeout(() => {
           setIsLevelingUp(false);
-          // Reset to the new level's progress
-          const newProgress = (1 - (newProfile.xp_levelup / newProfile.total_xp_levelup)) * 100;
-          setXpProgress(newProgress);
+          // Reset to the new level's progress with animation
+          animateXPProgress(0, newProfile.xp_levelup, newProfile.total_xp_levelup, 1000);
         }, 1500);
       } else {
         // Smoothly animate to new XP value
-        const newProgress = (1 - (newProfile.xp_levelup / newProfile.total_xp_levelup)) * 100;
-        setXpProgress(newProgress);
+        animateXPProgress(oldXP, newProfile.xp_levelup, newProfile.total_xp_levelup, 1000);
         toast.success("Reward claimed successfully!");
       }
 
       // Clear the recently claimed state after animation
       setTimeout(() => {
         setRecentlyClaimed(null);
-      }, 1000); // Match this with the CSS animation duration
+      }, 1000);
 
     } catch (error) {
       console.error('Error claiming reward:', error);
