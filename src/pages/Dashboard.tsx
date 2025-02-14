@@ -252,22 +252,14 @@ export default function Dashboard() {
         </Link>;
       case 5:
         return (
-          <>
-            <Button 
-              variant="secondary"
-              size="sm"
-              className="bg-white/5 hover:bg-white/10"
-              onClick={() => setShowInviteDialog(true)}
-            >
-              Invite Friends
-            </Button>
-            <InviteFriendDialog 
-              userId={user?.id || ''}
-              onOpenChange={setShowInviteDialog}
-            >
-              {null}
-            </InviteFriendDialog>
-          </>
+          <Button 
+            variant="secondary"
+            size="sm"
+            className="bg-white/5 hover:bg-white/10"
+            onClick={() => setShowInviteDialog(true)}
+          >
+            Invite Friends
+          </Button>
         );
       default:
         return null;
