@@ -12,7 +12,8 @@ import {
   Sparkles,
   Calculator,
   LogOut,
-  Info
+  Info,
+  LayoutDashboard
 } from "lucide-react";
 
 interface SideMenuContentProps {
@@ -61,12 +62,12 @@ export const SideMenuContent = ({
           </div>
         </div>
         <Link
-          to="/profile"
+          to="/dashboard"
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <User className="h-4 w-4" />
-          My Profile
+          <LayoutDashboard className="h-4 w-4" />
+          Dashboard
         </Link>
       </div>
 

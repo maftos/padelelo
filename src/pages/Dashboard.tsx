@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, GamepadIcon, Star, Copy } from "lucide-react";
+import { Trophy, GamepadIcon, Star, Copy, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
@@ -302,6 +302,15 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
+              <Link to="/profile">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="rounded-full h-10 w-10 bg-white/5 hover:bg-white/10"
+                >
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
             </div>
           </CardHeader>
           <CardContent>
