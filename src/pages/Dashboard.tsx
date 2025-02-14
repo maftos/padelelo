@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
@@ -31,41 +32,11 @@ interface UserProfile {
   xp_levelup: number;
 }
 
-interface UserBadge {
-  id: number;
-  title: string;
-  icon: string;
-  rarity: "common" | "rare" | "epic" | "legendary";
-  description: string;
-}
-
-const sampleBadges: UserBadge[] = [
-  {
-    id: 1,
-    title: "Tournament Victor",
-    icon: "🏆",
-    rarity: "legendary",
-    description: "Won an M25 tournament"
-  },
-  {
-    id: 2,
-    title: "Rising Star",
-    icon: "⭐",
-    rarity: "epic",
-    description: "Reached 3000+ MMR"
-  },
-  {
-    id: 3,
-    title: "Veteran",
-    icon: "🎯",
-    rarity: "rare",
-    description: "Played 100+ matches"
-  }
-];
-
 export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [xpProgress, setXpProgress] = useState(0);
+  const [isLevelingUp, setIsLevelingUp] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -73,7 +44,8 @@ export default function Dashboard() {
     }
   }, [user, loading, navigate]);
 
-  const { data: profileData } = useQuery({
+  // Query user profile data
+  const { data: profileData, refetch: refetchProfile } = useQuery({
     queryKey: ['userProfile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
@@ -86,6 +58,7 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
+  // Query achievements data
   const { data: achievements, refetch: refetchAchievements } = useQuery({
     queryKey: ['userAchievements', user?.id],
     queryFn: async () => {
@@ -99,9 +72,19 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
+  // Set initial XP progress when profile data loads
+  useEffect(() => {
+    if (profileData?.xp_levelup) {
+      setXpProgress(Math.round((profileData.xp_levelup / 100) * 100));
+    }
+  }, [profileData?.xp_levelup]);
+
   const handleClaimReward = async (achievementId: number) => {
     try {
       if (!user?.id) return;
+
+      const oldLevel = profileData?.level;
+      const oldXp = profileData?.xp_levelup;
 
       const { error } = await supabase.rpc('claim_achievement', {
         i_user_id: user.id,
@@ -110,29 +93,35 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      await refetchAchievements();
+      // Refetch data
+      const [profileResult, achievementsResult] = await Promise.all([
+        refetchProfile(),
+        refetchAchievements()
+      ]);
+
+      // Get the new profile data
+      const newProfile = profileResult.data[0] as UserProfile;
+
+      // If level changed, show level up animation
+      if (newProfile.level > oldLevel!) {
+        setIsLevelingUp(true);
+        // Fill the bar to 100%
+        setXpProgress(100);
+        // Wait for the animation to complete
+        setTimeout(() => {
+          setIsLevelingUp(false);
+          // Reset to the new level's progress
+          setXpProgress(Math.round((newProfile.xp_levelup / 100) * 100));
+        }, 1500);
+      } else {
+        // Smoothly animate to new XP value
+        setXpProgress(Math.round((newProfile.xp_levelup / 100) * 100));
+      }
+
       toast.success("Reward claimed successfully!");
     } catch (error) {
       console.error('Error claiming reward:', error);
       toast.error("Failed to claim reward. Please try again.");
-    }
-  };
-
-  const calculateLevelProgress = () => {
-    if (!profileData?.xp_levelup) return 0;
-    return Math.round((profileData.xp_levelup / 100) * 100);
-  };
-
-  const getBadgeColor = (rarity: UserBadge["rarity"]) => {
-    switch (rarity) {
-      case "legendary":
-        return "text-amber-400 bg-amber-400/10";
-      case "epic":
-        return "text-purple-400 bg-purple-400/10";
-      case "rare":
-        return "text-blue-400 bg-blue-400/10";
-      default:
-        return "text-gray-400 bg-gray-400/10";
     }
   };
 
@@ -156,7 +145,7 @@ export default function Dashboard() {
                 <div>
                   <CardTitle className="text-2xl font-bold">{profileData?.display_name}</CardTitle>
                   <CardDescription className="text-lg">
-                    Level {profileData?.level || 1} • {profileData?.xp_levelup || 0} XP Total
+                    Level {profileData?.level || 1}
                   </CardDescription>
                   <div className="flex items-center gap-4 mt-2">
                     <div className="flex items-center gap-1 text-sm">
@@ -168,26 +157,18 @@ export default function Dashboard() {
                       <span>0 Matches</span>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {sampleBadges.map((badge) => (
-                      <div
-                        key={badge.id}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${getBadgeColor(badge.rarity)} 
-                          transition-transform hover:scale-105 cursor-help`}
-                        title={badge.description}
-                      >
-                        <span className="text-lg">{badge.icon}</span>
-                        <span className="text-sm font-medium">{badge.title}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Progress value={calculateLevelProgress()} className="h-3 bg-indigo-950" />
+              <Progress 
+                value={xpProgress} 
+                className={`h-3 transition-all duration-1000 ease-out ${
+                  isLevelingUp ? 'bg-yellow-500' : 'bg-indigo-950'
+                }`}
+              />
               <p className="text-sm text-muted-foreground">
                 {profileData?.xp_levelup || 0} XP to next level
               </p>
@@ -199,7 +180,7 @@ export default function Dashboard() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <Star className="h-5 w-5 text-amber-500" />
-              <CardTitle>Daily Quests</CardTitle>
+              <CardTitle>Achievements</CardTitle>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">

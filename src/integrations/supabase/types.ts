@@ -1159,21 +1159,13 @@ export type Database = {
           team2_win_mmr_change_amount: number
         }[]
       }
-      claim_achievement:
-        | {
-            Args: {
-              i_user_id: string
-              i_achievement_id: number
-            }
-            Returns: undefined
-          }
-        | {
-            Args: {
-              i_user_id: string
-              i_achievement_id: string
-            }
-            Returns: undefined
-          }
+      claim_achievement: {
+        Args: {
+          i_user_id: string
+          i_achievement_id: number
+        }
+        Returns: undefined
+      }
       complete_match: {
         Args: {
           i_match_id: string
