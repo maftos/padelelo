@@ -37,6 +37,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [xpProgress, setXpProgress] = useState(0);
   const [isLevelingUp, setIsLevelingUp] = useState(false);
+  const [recentlyClaimed, setRecentlyClaimed] = useState<number | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -87,6 +88,9 @@ export default function Dashboard() {
       const oldLevel = profileData?.level;
       const oldXp = profileData?.xp_levelup;
 
+      // Mark the achievement as being claimed (for animation)
+      setRecentlyClaimed(achievementId);
+
       const { error } = await supabase.rpc('claim_achievement', {
         i_user_id: user.id,
         i_achievement_id: achievementId
@@ -108,6 +112,20 @@ export default function Dashboard() {
         setIsLevelingUp(true);
         // Fill the bar to 100%
         setXpProgress(100);
+        
+        // Show level up toast with animation
+        toast.success(
+          <div className="flex flex-col items-center space-y-2">
+            <div className="text-xl font-bold animate-bounce">🎉 Level Up! 🎉</div>
+            <div className="text-lg">You are now level {newProfile.level}!</div>
+            <div className="text-sm text-yellow-300 animate-pulse">+1 Level Achieved</div>
+          </div>,
+          {
+            duration: 5000,
+            className: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50"
+          }
+        );
+
         // Wait for the animation to complete
         setTimeout(() => {
           setIsLevelingUp(false);
@@ -115,8 +133,6 @@ export default function Dashboard() {
           const newProgress = (1 - (newProfile.xp_levelup / newProfile.total_xp_levelup)) * 100;
           setXpProgress(newProgress);
         }, 1500);
-
-        toast.success(`Level Up! You are now level ${newProfile.level}! 🎉`);
       } else {
         // Smoothly animate to new XP value
         const newProgress = (1 - (newProfile.xp_levelup / newProfile.total_xp_levelup)) * 100;
@@ -124,9 +140,15 @@ export default function Dashboard() {
         toast.success("Reward claimed successfully!");
       }
 
+      // Clear the recently claimed state after animation
+      setTimeout(() => {
+        setRecentlyClaimed(null);
+      }, 1000); // Match this with the CSS animation duration
+
     } catch (error) {
       console.error('Error claiming reward:', error);
       toast.error("Failed to claim reward. Please try again.");
+      setRecentlyClaimed(null);
     }
   };
 
@@ -190,7 +212,14 @@ export default function Dashboard() {
           </CardHeader>
           <CardContent className="space-y-4">
             {achievements?.filter(a => !a.is_claimed).map((achievement) => (
-              <div key={achievement.achievement_id} className="bg-black/30 rounded-lg p-4">
+              <div 
+                key={achievement.achievement_id} 
+                className={`bg-black/30 rounded-lg p-4 transition-all duration-1000 ease-in-out ${
+                  recentlyClaimed === achievement.achievement_id 
+                    ? 'scale-0 opacity-0 translate-y-full' 
+                    : 'scale-100 opacity-100 translate-y-0'
+                }`}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold">{achievement.title}</h3>
@@ -235,7 +264,14 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="space-y-4">
               {achievements?.filter(a => a.is_claimed).map((achievement) => (
-                <div key={achievement.achievement_id} className="bg-black/30 rounded-lg p-4">
+                <div 
+                  key={achievement.achievement_id}
+                  className={`bg-black/30 rounded-lg p-4 transition-all duration-1000 ease-in-out ${
+                    recentlyClaimed === achievement.achievement_id 
+                      ? 'animate-fade-in scale-100 opacity-100' 
+                      : ''
+                  }`}
+                >
                   <div className="flex justify-between items-center mb-2">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">{achievement.title}</h3>
@@ -259,6 +295,24 @@ export default function Dashboard() {
               ))}
             </CardContent>
           </Card>
+        )}
+
+        {/* Level Up Overlay */}
+        {isLevelingUp && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center animate-fade-in z-50">
+            <div className="text-center space-y-4 p-8 rounded-lg bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50 animate-scale-in">
+              <div className="text-4xl font-bold text-yellow-500 animate-bounce">
+                Level Up!
+              </div>
+              <div className="text-2xl">
+                You are now level {profileData?.level}!
+              </div>
+              <Progress 
+                value={100} 
+                className="h-4 bg-yellow-950 w-64"
+              />
+            </div>
+          </div>
         )}
       </PageContainer>
     </>
