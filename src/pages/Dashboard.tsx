@@ -8,11 +8,12 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, GamepadIcon, Star, Copy, User } from "lucide-react";
+import { Trophy, GamepadIcon, Star, Copy, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 interface Achievement {
   achievement_id: number;
   title: string;
@@ -236,54 +237,56 @@ export default function Dashboard() {
   };
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
-  return <>
+  return (
+    <>
       <Navigation />
       <PageContainer>
-        <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-4">
-                <Avatar className="h-20 w-20 border-2 border-indigo-500/20">
-                  <AvatarImage src={profileData?.profile_photo} />
-                  <AvatarFallback>
-                    {profileData?.display_name?.substring(0, 2) || 'NP'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <CardTitle className="text-2xl font-bold">
-                    {profileData?.display_name}
-                  </CardTitle>
-                  <CardDescription className="text-lg">
-                    Level {profileData?.level || 1}
-                  </CardDescription>
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-yellow-500" />
-                      <span className="text-base">{profileData?.current_mmr || 0}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <GamepadIcon className="h-5 w-5 text-green-500" />
-                      <span className="text-base">0</span>
+        <Link to="/profile" className="block">
+          <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20 hover:scale-[1.01] transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/10 group">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-4">
+                  <Avatar className="h-20 w-20 border-2 border-indigo-500/20">
+                    <AvatarImage src={profileData?.profile_photo} />
+                    <AvatarFallback>
+                      {profileData?.display_name?.substring(0, 2) || 'NP'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <CardTitle className="text-2xl font-bold">
+                      {profileData?.display_name}
+                    </CardTitle>
+                    <CardDescription className="text-lg">
+                      Level {profileData?.level || 1}
+                    </CardDescription>
+                    <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="h-5 w-5 text-yellow-500" />
+                        <span className="text-base">{profileData?.current_mmr || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <GamepadIcon className="h-5 w-5 text-green-500" />
+                        <span className="text-base">0</span>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <ArrowRight className="h-6 w-6 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:transform group-hover:translate-x-1 transition-all duration-200 self-center" />
               </div>
-              <Link to="/profile">
-                <Button variant="ghost" size="icon" className="rounded-full h-10 w-10 bg-white/5 hover:bg-white/10">
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <Progress value={xpProgress} className="h-3 transition-all duration-1000 ease-out bg-indigo-950" />
-              <p className="text-sm text-muted-foreground">
-                {calculateRemainingXp(profileData?.xp_levelup || 0, profileData?.total_xp_levelup || 100)} / {profileData?.total_xp_levelup || 100} XP to next level
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Progress 
+                  value={xpProgress} 
+                  className="h-3 transition-all duration-1000 ease-out bg-indigo-950"
+                />
+                <p className="text-sm text-muted-foreground">
+                  {calculateRemainingXp(profileData?.xp_levelup || 0, profileData?.total_xp_levelup || 100)} / {profileData?.total_xp_levelup || 100} XP to next level
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
 
         <Card className="mb-6 bg-gradient-to-br from-amber-500/10 to-red-500/10 border-2 border-amber-500/20">
           <CardHeader>
@@ -405,5 +408,6 @@ export default function Dashboard() {
             </div>
           </DialogContent>
         </Dialog>}
-    </>;
+    </>
+  );
 }
