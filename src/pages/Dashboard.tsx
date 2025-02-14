@@ -345,7 +345,7 @@ export default function Dashboard() {
                     </div>
                     <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
+                  <p className="text-sm text-muted-foreground">{achievement.description}</p>
                   <div className="flex justify-between items-center">
                     <p className="text-lg font-medium text-muted-foreground">
                       {achievement.current_count} / {achievement.target_count}
@@ -376,7 +376,7 @@ export default function Dashboard() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-green-500" />
-                <CardTitle>Claimed Achievements</CardTitle>
+                <CardTitle>Claimed</CardTitle>
               </div>
             </CardHeader>
             <CardContent>
