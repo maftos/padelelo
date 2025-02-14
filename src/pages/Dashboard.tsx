@@ -12,6 +12,7 @@ import { Trophy, GamepadIcon, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
+import { InviteFriendDialog } from "@/components/navigation/InviteFriendDialog";
 
 interface Achievement {
   achievement_id: number;
