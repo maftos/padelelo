@@ -8,7 +8,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, GamepadIcon, Star, Copy, ArrowRight } from "lucide-react";
+import { Trophy, GamepadIcon, Star, Copy, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
@@ -242,9 +242,12 @@ export default function Dashboard() {
       <Navigation />
       <PageContainer>
         <Link to="/profile" className="block">
-          <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20 hover:scale-[1.01] transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/10 group">
+          <Card className="mb-6 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-2 border-indigo-500/20 hover:scale-[1.01] transition-all duration-200 hover:shadow-lg hover:shadow-indigo-500/10 group relative">
+            <div className="absolute right-6 top-1/2 -translate-y-1/2">
+              <ChevronRight className="h-6 w-6 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:transform group-hover:translate-x-1 transition-all duration-200" />
+            </div>
             <CardHeader>
-              <div className="flex items-start justify-between">
+              <div className="flex items-start pr-8">
                 <div className="flex items-center space-x-4">
                   <Avatar className="h-20 w-20 border-2 border-indigo-500/20">
                     <AvatarImage src={profileData?.profile_photo} />
@@ -271,7 +274,6 @@ export default function Dashboard() {
                     </div>
                   </div>
                 </div>
-                <ArrowRight className="h-6 w-6 text-muted-foreground opacity-50 group-hover:opacity-100 group-hover:transform group-hover:translate-x-1 transition-all duration-200 self-center" />
               </div>
             </CardHeader>
             <CardContent>
