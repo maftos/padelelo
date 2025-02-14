@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -46,7 +45,6 @@ interface ClaimAchievementResponse {
   did_level_up?: boolean;
 }
 
-// Helper function to type check the response
 function isClaimAchievementResponse(data: unknown): data is ClaimAchievementResponse {
   if (typeof data !== 'object' || data === null) return false;
   
@@ -67,7 +65,6 @@ export default function Dashboard() {
     }
   }, [user, loading, navigate]);
 
-  // Query user profile data
   const { data: profileData, refetch: refetchProfile } = useQuery({
     queryKey: ['userProfile', user?.id],
     queryFn: async () => {
@@ -81,7 +78,6 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
-  // Query achievements data
   const { data: achievements, refetch: refetchAchievements } = useQuery({
     queryKey: ['userAchievements', user?.id],
     queryFn: async () => {
@@ -99,7 +95,6 @@ export default function Dashboard() {
     const duration = 2000;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
     
-    // Launch multiple confetti bursts
     const count = 200;
     const origin = { x: 0.5, y: 0.5 };
     
@@ -124,7 +119,6 @@ export default function Dashboard() {
     }, duration);
   };
 
-  // Animate XP progress smoothly
   const animateXPProgress = (oldXP: number, newXP: number, totalXP: number, duration: number = 3000) => {
     const startTime = performance.now();
     const startProgress = ((totalXP - oldXP) / totalXP) * 100;
@@ -134,7 +128,6 @@ export default function Dashboard() {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       
-      // Easing function for smooth animation
       const easeOutCubic = (x: number): number => {
         return 1 - Math.pow(1 - x, 3);
       };
@@ -152,10 +145,10 @@ export default function Dashboard() {
     requestAnimationFrame(animate);
   };
 
-  // Set initial XP progress when profile data loads
   useEffect(() => {
     if (profileData?.xp_levelup && profileData?.total_xp_levelup) {
-      const progressValue = ((profileData.total_xp_levelup - profileData.xp_levelup) / profileData.total_xp_levelup) * 100;
+      const remainingXp = profileData.total_xp_levelup - profileData.xp_levelup;
+      const progressValue = (remainingXp / profileData.total_xp_levelup) * 100;
       setXpProgress(progressValue);
     }
   }, [profileData?.xp_levelup, profileData?.total_xp_levelup]);
@@ -164,7 +157,6 @@ export default function Dashboard() {
     try {
       if (!user?.id) return;
 
-      // Mark the achievement as being claimed (for animation)
       setRecentlyClaimed(achievementId);
 
       const { data: result, error } = await supabase.rpc('claim_achievement', {
@@ -174,7 +166,6 @@ export default function Dashboard() {
 
       if (error) throw error;
 
-      // Type check the response
       if (!isClaimAchievementResponse(result)) {
         throw new Error('Invalid response from server');
       }
@@ -183,47 +174,29 @@ export default function Dashboard() {
         throw new Error(result.message || 'Failed to claim achievement');
       }
 
-      // Refetch data
       await Promise.all([refetchProfile(), refetchAchievements()]);
 
       const oldXpLevelup = result.old_xp_levelup || 0;
       const newXpLevelup = result.new_xp_levelup || 0;
       const totalXpNewLevelup = result.total_xp_new_levelup || 100;
 
-      // Handle level up if detected in the response
       if (result.did_level_up) {
         setIsLevelingUp(true);
-
-        // First animate to 100%
         animateXPProgress(oldXpLevelup, 0, totalXpNewLevelup, 1500);
         
-        // Trigger confetti effect
         setTimeout(() => {
           triggerConfetti();
-          toast.success(
-            <div className="text-center">
-              <div className="text-xl font-bold">Level Up!</div>
-              <div className="text-lg">You are now level {result.new_level}!</div>
-            </div>,
-            {
-              duration: 5000,
-              className: "bg-gradient-to-r from-yellow-500/20 to-amber-500/20 border-2 border-yellow-500/50"
-            }
-          );
         }, 1500);
 
-        // After the first animation completes, animate to the new progress
         setTimeout(() => {
           setIsLevelingUp(false);
           animateXPProgress(totalXpNewLevelup, newXpLevelup, totalXpNewLevelup, 1500);
         }, 3000);
       } else {
-        // Regular XP gain animation
         animateXPProgress(oldXpLevelup, newXpLevelup, totalXpNewLevelup, 1500);
         toast.success("Achievement claimed!");
       }
 
-      // Clear the recently claimed state after animation
       setTimeout(() => {
         setRecentlyClaimed(null);
       }, 1000);
@@ -233,6 +206,10 @@ export default function Dashboard() {
       toast.error("Failed to claim reward. Please try again.");
       setRecentlyClaimed(null);
     }
+  };
+
+  const calculateRemainingXp = (xp_levelup: number, total_xp_levelup: number) => {
+    return total_xp_levelup - xp_levelup;
   };
 
   if (loading) return <div>Loading...</div>;
@@ -282,7 +259,7 @@ export default function Dashboard() {
                 }`}
               />
               <p className="text-sm text-muted-foreground">
-                {profileData?.xp_levelup || 0} / {profileData?.total_xp_levelup || 100} XP to next level
+                {calculateRemainingXp(profileData?.xp_levelup || 0, profileData?.total_xp_levelup || 100)} / {profileData?.total_xp_levelup || 100} XP to next level
               </p>
             </div>
           </CardContent>
@@ -295,46 +272,44 @@ export default function Dashboard() {
               <CardTitle>Achievements</CardTitle>
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            {achievements?.filter(a => !a.is_claimed).map((achievement) => (
-              <div 
-                key={achievement.achievement_id} 
-                className={`bg-black/30 rounded-lg p-4 transition-all duration-1000 ease-in-out ${
-                  recentlyClaimed === achievement.achievement_id 
-                    ? 'scale-0 opacity-0 translate-y-full' 
-                    : 'scale-100 opacity-100 translate-y-0'
-                }`}
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold">{achievement.title}</h3>
+          <CardContent>
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {achievements?.filter(a => !a.is_claimed).map((achievement) => (
+                <div 
+                  key={achievement.achievement_id} 
+                  className={`bg-black/30 rounded-lg p-4 transition-all duration-1000 ease-in-out ${
+                    recentlyClaimed === achievement.achievement_id 
+                      ? 'scale-0 opacity-0 translate-y-full' 
+                      : 'scale-100 opacity-100 translate-y-0'
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold">{achievement.title}</h3>
+                    </div>
+                    <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
                   </div>
-                  <span className="text-amber-500 font-bold">{achievement.xp_amount} XP</span>
-                </div>
-                <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
-                <div className="space-y-1">
-                  <Progress 
-                    value={(achievement.current_count / achievement.target_count) * 100} 
-                    className="h-2 bg-amber-950"
-                  />
-                  <div className="flex justify-between items-center">
-                    <p className="text-xs text-muted-foreground">
-                      {achievement.current_count} / {achievement.target_count}
-                    </p>
-                    {achievement.is_completed && !achievement.is_claimed && (
-                      <Button 
-                        size="sm" 
-                        className="bg-amber-500 hover:bg-amber-600 hover:scale-105 transition-all duration-200
-                          hover:shadow-lg hover:shadow-amber-500/20"
-                        onClick={() => handleClaimReward(achievement.achievement_id)}
-                      >
-                        Claim Reward
-                      </Button>
-                    )}
+                  <p className="text-sm text-muted-foreground mb-4">{achievement.description}</p>
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-center">
+                      <p className="text-lg font-medium text-muted-foreground">
+                        {achievement.current_count} / {achievement.target_count}
+                      </p>
+                      {achievement.is_completed && !achievement.is_claimed && (
+                        <Button 
+                          size="sm" 
+                          className="bg-amber-500 hover:bg-amber-600 hover:scale-105 transition-all duration-200
+                            hover:shadow-lg hover:shadow-amber-500/20"
+                          onClick={() => handleClaimReward(achievement.achievement_id)}
+                        >
+                          Claim Reward
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </CardContent>
         </Card>
 
@@ -346,23 +321,25 @@ export default function Dashboard() {
                 <CardTitle>Claimed Achievements</CardTitle>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {achievements?.filter(a => a.is_claimed).map((achievement) => (
-                <div 
-                  key={achievement.achievement_id}
-                  className={`bg-black/30 rounded-lg p-4 transition-all duration-1000 ease-in-out ${
-                    recentlyClaimed === achievement.achievement_id 
-                      ? 'animate-fade-in scale-100 opacity-100' 
-                      : ''
-                  }`}
-                >
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-semibold">{achievement.title}</h3>
-                    <span className="text-green-500 font-bold">{achievement.xp_amount} XP</span>
+            <CardContent>
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                {achievements?.filter(a => a.is_claimed).map((achievement) => (
+                  <div 
+                    key={achievement.achievement_id}
+                    className={`bg-black/30 rounded-lg p-4 transition-all duration-1000 ease-in-out ${
+                      recentlyClaimed === achievement.achievement_id 
+                        ? 'animate-fade-in scale-100 opacity-100' 
+                        : ''
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold">{achievement.title}</h3>
+                      <span className="text-green-500 font-bold">{achievement.xp_amount} XP</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-1">{achievement.description}</p>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{achievement.description}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </CardContent>
           </Card>
         )}
