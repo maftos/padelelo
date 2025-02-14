@@ -403,12 +403,14 @@ export default function Dashboard() {
         )}
       </PageContainer>
 
-      {user && <InviteFriendDialog 
-        userId={user.id}
-        onOpenChange={setShowInviteDialog}
-      >
-        {null}
-      </InviteFriendDialog>}
+      {user && showInviteDialog && (
+        <InviteFriendDialog 
+          userId={user.id}
+          onOpenChange={setShowInviteDialog}
+        >
+          {null}
+        </InviteFriendDialog>
+      )}
     </>
   );
 }
