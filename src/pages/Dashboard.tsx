@@ -253,22 +253,14 @@ export default function Dashboard() {
         </Link>;
       case 5:
         return (
-          <>
-            <Button 
-              variant="secondary"
-              size="sm"
-              className="bg-white/5 hover:bg-white/10"
-              onClick={() => setShowInviteDialog(true)}
-            >
-              Invite Friends
-            </Button>
-            <InviteFriendDialog 
-              userId={user?.id || ''}
-              onOpenChange={setShowInviteDialog}
-            >
-              {null}
-            </InviteFriendDialog>
-          </>
+          <Button 
+            variant="secondary"
+            size="sm"
+            className="bg-white/5 hover:bg-white/10"
+            onClick={() => setShowInviteDialog(true)}
+          >
+            Invite Friends
+          </Button>
         );
       default:
         return null;
@@ -317,9 +309,7 @@ export default function Dashboard() {
             <div className="space-y-2">
               <Progress 
                 value={xpProgress} 
-                className={`h-3 transition-all duration-1000 ease-out ${
-                  isLevelingUp ? 'bg-yellow-500' : 'bg-indigo-950'
-                }`}
+                className="h-3 transition-all duration-1000 ease-out bg-indigo-950"
               />
               <p className="text-sm text-muted-foreground">
                 {calculateRemainingXp(profileData?.xp_levelup || 0, profileData?.total_xp_levelup || 100)} / {profileData?.total_xp_levelup || 100} XP to next level
