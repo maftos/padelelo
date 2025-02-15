@@ -47,7 +47,6 @@ export const useUserProfile = () => {
           return tableData as UserProfile;
         }
         
-        // Since the function now returns JSON directly, we don't need to access index 0
         if (!rpcData) {
           const { data: tableData, error: tableError } = await supabase
             .from('users')
@@ -59,7 +58,13 @@ export const useUserProfile = () => {
           return tableData as UserProfile;
         }
         
-        return rpcData as UserProfile;
+        // Cast the JSON response to UserProfile after verifying it has the required shape
+        const typedData = rpcData as unknown as UserProfile;
+        if (!typedData.id) {
+          throw new Error('Invalid profile data structure');
+        }
+        
+        return typedData;
       } catch (error) {
         console.error('Profile fetch error:', error);
         throw error;

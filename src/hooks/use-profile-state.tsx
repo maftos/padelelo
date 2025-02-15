@@ -40,9 +40,9 @@ export const useProfileState = (userId: string | undefined) => {
       });
       
       if (error) throw error;
-      if (!data || data.length === 0) return null;
+      if (!data) return null;
       
-      const profileInfo = data[0];
+      const profileInfo = data;
       setFormData({
         display_name: profileInfo.display_name || "",
         nationality: profileInfo.nationality || "",
