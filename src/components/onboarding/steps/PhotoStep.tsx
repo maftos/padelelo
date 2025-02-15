@@ -48,7 +48,7 @@ export const PhotoStep = () => {
   };
 
   const handleNext = () => {
-    navigate("/onboarding/step5");
+    navigate("/onboarding/step-5");
   };
 
   return (

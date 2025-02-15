@@ -19,15 +19,18 @@ export const FinalStep = () => {
     setIsSubmitting(true);
     try {
       // Update user profile
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({
-          display_name: localStorage.getItem('onboarding_name'),
-          gender: localStorage.getItem('onboarding_gender'),
-          nationality: localStorage.getItem('onboarding_nationality'),
-          profile_photo: localStorage.getItem('onboarding_photo') || null,
-        })
-        .eq('id', user.id);
+      const { error: updateError } = await supabase.rpc('edit_user_profile', {
+        user_a_id: user.id,
+        new_display_name: localStorage.getItem('onboarding_name'),
+        new_gender: localStorage.getItem('onboarding_gender'),
+        new_date_of_birth: null,
+        new_languages: [],
+        new_preferred_language: null,
+        new_profile_photo: localStorage.getItem('onboarding_photo') || null,
+        new_whatsapp_number: null,
+        new_nationality: localStorage.getItem('onboarding_nationality'),
+        new_location: null
+      });
 
       if (updateError) throw updateError;
 
