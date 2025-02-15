@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { UserProfile } from "./use-user-profile";
 
 interface ProfileFormState {
   display_name: string;
@@ -42,7 +43,14 @@ export const useProfileState = (userId: string | undefined) => {
       if (error) throw error;
       if (!data) return null;
       
-      const profileInfo = data;
+      // Cast the data to UserProfile type
+      const profileInfo = data as unknown as UserProfile;
+      
+      // Validate the required fields
+      if (!profileInfo.id) {
+        throw new Error('Invalid profile data structure');
+      }
+      
       setFormData({
         display_name: profileInfo.display_name || "",
         nationality: profileInfo.nationality || "",
