@@ -13,7 +13,7 @@ export const NameStep = () => {
   const handleNext = () => {
     if (name.trim()) {
       localStorage.setItem("onboarding_name", name.trim());
-      navigate("/onboarding/step3");
+      navigate("/onboarding/step-3");
     }
   };
 

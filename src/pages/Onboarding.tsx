@@ -14,7 +14,6 @@ export default function Onboarding() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Add logging for debugging
     console.log("Onboarding.tsx - profile:", profile);
     
     if (!isLoading && profile?.is_onboarded) {
@@ -31,6 +30,7 @@ export default function Onboarding() {
   return (
     <Routes>
       <Route path="/" element={<GenderStep />} />
+      <Route path="/step-1" element={<GenderStep />} />
       <Route path="/step-2" element={<NameStep />} />
       <Route path="/step-3" element={<NationalityStep />} />
       <Route path="/step-4" element={<PhotoStep />} />

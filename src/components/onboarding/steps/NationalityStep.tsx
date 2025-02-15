@@ -13,7 +13,7 @@ export const NationalityStep = () => {
   const handleNext = () => {
     if (nationality) {
       localStorage.setItem("onboarding_nationality", nationality);
-      navigate("/onboarding/step4");
+      navigate("/onboarding/step-4");
     }
   };
 

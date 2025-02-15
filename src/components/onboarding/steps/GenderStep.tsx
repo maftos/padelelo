@@ -11,9 +11,8 @@ export const GenderStep = () => {
 
   const handleNext = () => {
     if (selectedGender) {
-      // Store in local storage for final submission
       localStorage.setItem("onboarding_gender", selectedGender);
-      navigate("/onboarding/step2");
+      navigate("/onboarding/step-2");
     }
   };
 

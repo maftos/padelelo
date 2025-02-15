@@ -13,6 +13,8 @@ import MatchmakingMath from "./pages/MatchmakingMath";
 import HowItWorks from "./pages/HowItWorks";
 import Verify from "./pages/Verify";
 import Dashboard from "./pages/Dashboard";
+import Onboarding from "./pages/Onboarding";
+import Index from "./pages/Index";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -25,7 +27,8 @@ function App() {
       <Router>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Index />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
@@ -38,6 +41,7 @@ function App() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/verify" element={<Verify />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/onboarding/*" element={<Onboarding />} />
           </Routes>
           <Toaster />
         </AuthProvider>
