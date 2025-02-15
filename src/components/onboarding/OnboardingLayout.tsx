@@ -27,7 +27,7 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
     if (onBack) {
       onBack();
     } else if (currentStep > 1) {
-      navigate(`/onboarding/step${currentStep - 1}`);
+      navigate(`/onboarding/step-${currentStep - 1}`);
     }
   };
 

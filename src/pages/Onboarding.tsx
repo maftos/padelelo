@@ -14,20 +14,27 @@ export default function Onboarding() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Add logging for debugging
+    console.log("Onboarding.tsx - profile:", profile);
+    
     if (!isLoading && profile?.is_onboarded) {
+      console.log("User is already onboarded, redirecting to dashboard");
       navigate("/dashboard");
     }
   }, [profile, isLoading, navigate]);
 
-  if (isLoading) return null;
+  if (isLoading) {
+    console.log("Onboarding.tsx - Loading...");
+    return null;
+  }
 
   return (
     <Routes>
       <Route path="/" element={<GenderStep />} />
-      <Route path="/step2" element={<NameStep />} />
-      <Route path="/step3" element={<NationalityStep />} />
-      <Route path="/step4" element={<PhotoStep />} />
-      <Route path="/step5" element={<AboutStep />} />
+      <Route path="/step-2" element={<NameStep />} />
+      <Route path="/step-3" element={<NationalityStep />} />
+      <Route path="/step-4" element={<PhotoStep />} />
+      <Route path="/step-5" element={<AboutStep />} />
       <Route path="/final" element={<FinalStep />} />
     </Routes>
   );
