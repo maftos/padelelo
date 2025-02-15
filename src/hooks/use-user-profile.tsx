@@ -17,6 +17,10 @@ export interface UserProfile {
   current_mmr: number | null;
   nationality: string | null;
   is_onboarded: boolean | null;
+  email: string | null;
+  level: number | null;
+  xp_levelup: number | null;
+  total_xp_levelup: number | null;
 }
 
 export const useUserProfile = () => {
@@ -43,7 +47,8 @@ export const useUserProfile = () => {
           return tableData as UserProfile;
         }
         
-        if (!rpcData || rpcData.length === 0) {
+        // Since the function now returns JSON directly, we don't need to access index 0
+        if (!rpcData) {
           const { data: tableData, error: tableError } = await supabase
             .from('users')
             .select('*')
@@ -54,7 +59,7 @@ export const useUserProfile = () => {
           return tableData as UserProfile;
         }
         
-        return rpcData[0] as UserProfile;
+        return rpcData as UserProfile;
       } catch (error) {
         console.error('Profile fetch error:', error);
         throw error;

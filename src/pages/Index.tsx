@@ -9,11 +9,21 @@ const Index = () => {
   
   if (loading || profileLoading) return null;
   
-  if (user && profile && !profile.is_onboarded) {
-    return <Navigate to="/onboarding" replace />;
+  // If user is logged in but profile is not loaded, wait
+  if (user && !profile) return null;
+  
+  // If user is logged in and profile exists, check onboarding status
+  if (user && profile) {
+    // Explicitly check for false since null should also trigger onboarding
+    if (profile.is_onboarded === false || profile.is_onboarded === null) {
+      console.log("Redirecting to onboarding, profile:", profile);
+      return <Navigate to="/onboarding" replace />;
+    }
+    return <Navigate to="/dashboard" replace />;
   }
   
-  return <Navigate to={user ? "/dashboard" : "/home"} replace />;
+  // If no user, go to home
+  return <Navigate to="/home" replace />;
 };
 
 export default Index;
