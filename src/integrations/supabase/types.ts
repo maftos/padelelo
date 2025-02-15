@@ -1799,25 +1799,7 @@ export type Database = {
         Args: {
           user_a_id: string
         }
-        Returns: {
-          id: string
-          display_name: string
-          created_at: string
-          gender: string
-          date_of_birth: string
-          location: string
-          languages: string[]
-          preferred_language: string
-          profile_photo: string
-          whatsapp_number: string
-          current_mmr: number
-          nationality: string
-          email: string
-          level: number
-          xp_levelup: number
-          total_xp_levelup: number
-          is_onboarded: boolean
-        }[]
+        Returns: Json
       }
       gettransactionid: {
         Args: Record<PropertyKey, never>
