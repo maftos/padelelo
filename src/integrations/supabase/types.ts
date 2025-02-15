@@ -678,6 +678,7 @@ export type Database = {
           email: string | null
           gender: string | null
           id: string
+          is_onboarded: boolean | null
           languages: string[] | null
           location: string | null
           nationality: string | null
@@ -693,6 +694,7 @@ export type Database = {
           email?: string | null
           gender?: string | null
           id: string
+          is_onboarded?: boolean | null
           languages?: string[] | null
           location?: string | null
           nationality?: string | null
@@ -708,6 +710,7 @@ export type Database = {
           email?: string | null
           gender?: string | null
           id?: string
+          is_onboarded?: boolean | null
           languages?: string[] | null
           location?: string | null
           nationality?: string | null
@@ -1183,6 +1186,12 @@ export type Database = {
           user_a_id: string
         }
         Returns: undefined
+      }
+      complete_onboarding: {
+        Args: {
+          user_a_id: string
+        }
+        Returns: Json
       }
       create_match: {
         Args: {
@@ -1807,6 +1816,7 @@ export type Database = {
           level: number
           xp_levelup: number
           total_xp_levelup: number
+          is_onboarded: boolean
         }[]
       }
       gettransactionid: {
