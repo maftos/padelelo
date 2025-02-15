@@ -16,6 +16,7 @@ export interface UserProfile {
   whatsapp_number: string | null;
   current_mmr: number | null;
   nationality: string | null;
+  is_onboarded: boolean | null;
 }
 
 export const useUserProfile = () => {
