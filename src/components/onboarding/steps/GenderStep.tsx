@@ -1,60 +1,43 @@
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Male, Female } from "lucide-react";
 
 export const GenderStep = () => {
-  const [selectedGender, setSelectedGender] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleNext = () => {
-    if (selectedGender) {
-      localStorage.setItem("onboarding_gender", selectedGender);
-      navigate("/onboarding/step-2");
-    }
+  const handleSelect = (gender: string) => {
+    localStorage.setItem("onboarding_gender", gender);
+    navigate("/onboarding/step-2");
   };
 
   return (
     <OnboardingLayout currentStep={1} totalSteps={6} showBack={false}>
       <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">Welcome to PadelELO!</h1>
-          <p className="text-muted-foreground">First, tell us about yourself</p>
-        </div>
+        <h1 className="text-2xl font-bold text-center">Welcome to PadelELO!</h1>
 
         <div className="grid gap-4">
           <Card
-            className={`p-4 cursor-pointer transition-all ${
-              selectedGender === "MALE"
-                ? "border-primary"
-                : "hover:border-primary/50"
-            }`}
-            onClick={() => setSelectedGender("MALE")}
+            className="p-6 cursor-pointer transition-all hover:border-primary/50"
+            onClick={() => handleSelect("MALE")}
           >
-            <div className="font-medium">Male</div>
+            <div className="flex items-center gap-4">
+              <Male className="h-6 w-6" />
+              <div className="font-medium">Male</div>
+            </div>
           </Card>
 
           <Card
-            className={`p-4 cursor-pointer transition-all ${
-              selectedGender === "FEMALE"
-                ? "border-primary"
-                : "hover:border-primary/50"
-            }`}
-            onClick={() => setSelectedGender("FEMALE")}
+            className="p-6 cursor-pointer transition-all hover:border-primary/50"
+            onClick={() => handleSelect("FEMALE")}
           >
-            <div className="font-medium">Female</div>
+            <div className="flex items-center gap-4">
+              <Female className="h-6 w-6" />
+              <div className="font-medium">Female</div>
+            </div>
           </Card>
         </div>
-
-        <Button
-          className="w-full"
-          onClick={handleNext}
-          disabled={!selectedGender}
-        >
-          Continue
-        </Button>
       </div>
     </OnboardingLayout>
   );

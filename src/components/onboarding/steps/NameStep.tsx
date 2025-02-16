@@ -20,12 +20,7 @@ export const NameStep = () => {
   return (
     <OnboardingLayout currentStep={2} totalSteps={6}>
       <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">What's your name?</h1>
-          <p className="text-muted-foreground">
-            This is how you'll appear to other players
-          </p>
-        </div>
+        <h1 className="text-2xl font-bold text-center">What's your name?</h1>
 
         <div className="space-y-4">
           <div className="space-y-2">
