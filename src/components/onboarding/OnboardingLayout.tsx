@@ -37,17 +37,19 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
         <Progress value={progress} className="h-2" />
       </div>
       <div className="flex-1 container max-w-md mx-auto px-4 py-8">
-        {showBack && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="mb-4"
-            onClick={handleBack}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-        )}
-        {children}
+        <div className="relative mb-6">
+          {showBack && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute left-0 top-1/2 -translate-y-1/2"
+              onClick={handleBack}
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+          )}
+          {children}
+        </div>
       </div>
     </div>
   );
