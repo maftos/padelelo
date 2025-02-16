@@ -27,7 +27,7 @@ export const NationalityStep = () => {
 
   return (
     <OnboardingLayout currentStep={3} totalSteps={6}>
-      <h1 className="text-2xl font-bold text-center mb-6">Where are you from?</h1>
+      <h1 className="text-2xl font-bold text-center pl-8 pr-8">Where are you from?</h1>
 
       <Select value={value} onValueChange={handleValueChange}>
         <SelectTrigger className="w-full">
