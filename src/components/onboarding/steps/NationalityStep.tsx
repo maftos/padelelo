@@ -1,12 +1,7 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
-import { Button } from "@/components/ui/button";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const countryNames = [
   { code: "AF", name: "Afghanistan" },
@@ -252,16 +247,14 @@ const countryNames = [
 ];
 
 export const NationalityStep = () => {
-  const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const navigate = useNavigate();
 
-  const handleSelect = (currentValue: string) => {
-    const country = countryNames.find(country => country.name === currentValue);
+  const handleValueChange = (newValue: string) => {
+    const country = countryNames.find(country => country.name === newValue);
     if (country) {
-      setValue(currentValue);
+      setValue(newValue);
       localStorage.setItem("onboarding_nationality", country.code);
-      setOpen(false);
       navigate("/onboarding/step-4");
     }
   };
@@ -271,41 +264,18 @@ export const NationalityStep = () => {
       <div className="space-y-6">
         <h1 className="text-2xl font-bold text-center">Where are you from?</h1>
 
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="w-full justify-between"
-            >
-              {value ? value : "Select country..."}
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0" align="start">
-            <Command>
-              <CommandInput placeholder="Search country..." className="h-9" />
-              <CommandEmpty>No country found.</CommandEmpty>
-              <CommandGroup>
-                {countryNames.map((country) => (
-                  <CommandItem
-                    key={country.code}
-                    onSelect={(currentValue) => handleSelect(currentValue)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        value === country.name ? "opacity-100" : "opacity-0"
-                      )}
-                    />
-                    {country.name}
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
+        <Select value={value} onValueChange={handleValueChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select country..." />
+          </SelectTrigger>
+          <SelectContent>
+            {countryNames.map((country) => (
+              <SelectItem key={country.code} value={country.name}>
+                {country.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
     </OnboardingLayout>
   );
