@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Card } from "@/components/ui/card";
-import { Mars, Venus } from "lucide-react";
+import { UserCircle2 } from "lucide-react";
 
 export const GenderStep = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ export const GenderStep = () => {
             onClick={() => handleSelect("MALE")}
           >
             <div className="flex items-center gap-4">
-              <Mars className="h-6 w-6" />
+              <UserCircle2 className="h-6 w-6 text-blue-500" />
               <div className="font-medium">Male</div>
             </div>
           </Card>
@@ -33,7 +33,7 @@ export const GenderStep = () => {
             onClick={() => handleSelect("FEMALE")}
           >
             <div className="flex items-center gap-4">
-              <Venus className="h-6 w-6" />
+              <UserCircle2 className="h-6 w-6 text-pink-500" />
               <div className="font-medium">Female</div>
             </div>
           </Card>
