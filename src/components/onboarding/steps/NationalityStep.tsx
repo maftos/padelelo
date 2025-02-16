@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
@@ -253,16 +252,18 @@ const countryNames = [
 
 export const NationalityStep = () => {
   const [open, setOpen] = useState(false);
-  const [nationality, setNationality] = useState("");
+  const [value, setValue] = useState("");
   const navigate = useNavigate();
 
-  const handleSelect = (code: string) => {
-    setNationality(code);
-    localStorage.setItem("onboarding_nationality", code);
-    navigate("/onboarding/step-4");
+  const handleSelect = (currentValue: string) => {
+    const country = countryNames.find(country => country.name === currentValue);
+    if (country) {
+      setValue(currentValue);
+      localStorage.setItem("onboarding_nationality", country.code);
+      setOpen(false);
+      navigate("/onboarding/step-4");
+    }
   };
-
-  const selectedCountry = countryNames.find(country => country.code === nationality);
 
   return (
     <OnboardingLayout currentStep={3} totalSteps={6}>
@@ -277,7 +278,7 @@ export const NationalityStep = () => {
               aria-expanded={open}
               className="w-full justify-between"
             >
-              {selectedCountry ? selectedCountry.name : "Select country..."}
+              {value ? value : "Select country..."}
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
@@ -290,15 +291,12 @@ export const NationalityStep = () => {
                   <CommandItem
                     key={country.code}
                     value={country.name}
-                    onSelect={() => {
-                      handleSelect(country.code);
-                      setOpen(false);
-                    }}
+                    onSelect={handleSelect}
                   >
                     <Check
                       className={cn(
                         "mr-2 h-4 w-4",
-                        nationality === country.code ? "opacity-100" : "opacity-0"
+                        value === country.name ? "opacity-100" : "opacity-0"
                       )}
                     />
                     {country.name}
