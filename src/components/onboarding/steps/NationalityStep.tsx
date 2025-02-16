@@ -5,10 +5,11 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
 
-// Merge country data
-const countryData = countryNames.map(country => ({
-  ...country,
-  flag: countries.find(c => c.code === country.code)?.flag || ''
+// Create country data with names and flags
+const countryData = countries.map(country => ({
+  code: country.code,
+  name: new Intl.DisplayNames(['en'], { type: 'region' }).of(country.code) || country.code,
+  flag: country.flag
 }));
 
 export const NationalityStep = () => {
