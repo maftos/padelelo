@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
@@ -282,16 +283,15 @@ export const NationalityStep = () => {
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
+          <PopoverContent className="w-full p-0" align="start">
             <Command>
-              <CommandInput placeholder="Search country..." />
+              <CommandInput placeholder="Search country..." className="h-9" />
               <CommandEmpty>No country found.</CommandEmpty>
-              <CommandGroup className="max-h-[300px] overflow-y-auto">
+              <CommandGroup>
                 {countryNames.map((country) => (
                   <CommandItem
                     key={country.code}
-                    value={country.name}
-                    onSelect={handleSelect}
+                    onSelect={(currentValue) => handleSelect(currentValue)}
                   >
                     <Check
                       className={cn(
