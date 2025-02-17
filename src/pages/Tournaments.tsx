@@ -31,6 +31,18 @@ export default function Tournaments() {
     }
   });
 
+  const formatTournamentDate = (dateString: string) => {
+    try {
+      if (!dateString) return "TBD";
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "Invalid Date";
+      return format(date, 'PPP');
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
+  };
+
   return (
     <>
       <Navigation />
@@ -56,7 +68,7 @@ export default function Tournaments() {
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground">{tournament.description}</p>
                       <p className="text-sm">
-                        {format(new Date(tournament.date[0]), 'PPP')} - {format(new Date(tournament.date[1]), 'PPP')}
+                        {formatTournamentDate(tournament.date[0])} - {formatTournamentDate(tournament.date[1])}
                       </p>
                       <p className="text-sm">Recommended MMR: {tournament.recommended_mmr}</p>
                       <p className="text-sm">{tournament.interested_count} interested players</p>
