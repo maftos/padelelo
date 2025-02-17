@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -26,6 +27,21 @@ interface Tournament {
   admin_profile_photo: string;
 }
 
+interface TournamentResponse {
+  tournament_id: string;
+  name: string;
+  description: string;
+  date: string;
+  status: string;
+  venue_id: string;
+  recommended_mmr: number;
+  interested_count: number;
+  is_user_interested: boolean;
+  tournament_photo: string;
+  admin_display_name: string;
+  admin_profile_photo: string;
+}
+
 export default function Tournaments() {
   const queryClient = useQueryClient();
 
@@ -39,7 +55,7 @@ export default function Tournaments() {
         return [] as Tournament[];
       }
 
-      return data.map(item => ({
+      return data.map((item: TournamentResponse) => ({
         tournament_id: item.tournament_id,
         name: item.name,
         description: item.description,
@@ -52,7 +68,7 @@ export default function Tournaments() {
         tournament_photo: item.tournament_photo,
         admin_display_name: item.admin_display_name,
         admin_profile_photo: item.admin_profile_photo,
-      } as Tournament));
+      }));
     }
   });
 
