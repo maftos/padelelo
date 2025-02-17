@@ -5,12 +5,19 @@ import { CreateTournamentLayout } from "@/components/tournament/CreateTournament
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function CreateTournamentStep4() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleSubmit = async () => {
+    if (!user?.id) {
+      toast.error("You must be logged in to create a tournament");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const name = localStorage.getItem("tournament_name") || '';
@@ -20,14 +27,15 @@ export default function CreateTournamentStep4() {
 
       const { error } = await supabase.rpc('create_tournament', {
         p_name: name,
-        p_date: `[${new Date().toISOString()},${new Date().toISOString()}]`, // You might want to get this from previous steps
+        p_date: `[${new Date().toISOString()},${new Date().toISOString()}]`,
         p_bracket_type: 'SINGLE_ELIM',
         p_photo_gallery: [],
         p_venue_id: venue_id,
         p_status: 'PENDING',
         p_privacy: 'PUBLIC',
         p_description: description,
-        p_recommended_mmr: parseInt(mmr)
+        p_recommended_mmr: parseInt(mmr),
+        p_user_a_id: user.id
       });
 
       if (error) throw error;
