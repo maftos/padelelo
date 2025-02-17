@@ -36,12 +36,23 @@ export default function TournamentDetail() {
   const { data: tournament, isLoading } = useQuery({
     queryKey: ['tournament', tournamentId],
     queryFn: async () => {
+      console.log('Fetching tournament with ID:', tournamentId); // Debug log
       const { data, error } = await supabase.rpc('view_tournament', {
         p_tournament_id: tournamentId
       });
-      if (error) throw error;
-      const tournaments = data as unknown as Tournament[];
-      return tournaments[0];
+      
+      if (error) {
+        console.error('Supabase error:', error); // Debug log
+        throw error;
+      }
+      
+      console.log('Received data:', data); // Debug log
+      
+      if (!data || data.length === 0) {
+        throw new Error('Tournament not found');
+      }
+      
+      return data[0] as Tournament;
     },
     enabled: !!tournamentId
   });
