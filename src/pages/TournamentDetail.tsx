@@ -6,7 +6,7 @@ import { PageContainer } from "@/components/layouts/PageContainer";
 import { PageHeader } from "@/components/match/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 
@@ -14,7 +14,7 @@ interface Tournament {
   tournament_id: string;
   name: string;
   description: string;
-  date: [string, string];
+  date: string;  // Changed from [string, string] to string since it's a tsrange
   status: string;
   venue_id: string;
   recommended_mmr: number;
@@ -37,6 +37,28 @@ export default function TournamentDetail() {
     },
     enabled: !!tournamentId
   });
+
+  const formatTournamentDate = (dateRange: string) => {
+    try {
+      if (!dateRange) return "TBD";
+      
+      // PostgreSQL tsrange comes in format like "[2024-03-01,2024-03-02)"
+      const matches = dateRange.match(/\[(.*?),(.*?)\)/);
+      if (!matches) return "Invalid Date Range";
+      
+      const startDate = parseISO(matches[1]);
+      const endDate = parseISO(matches[2]);
+      
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        return "Invalid Date Range";
+      }
+
+      return `${format(startDate, 'PPP')} - ${format(endDate, 'PPP')}`;
+    } catch (error) {
+      console.error("Error formatting date range:", error, dateRange);
+      return "Invalid Date Range";
+    }
+  };
 
   const { mutate: toggleInterest } = useMutation({
     mutationFn: async () => {
@@ -73,7 +95,7 @@ export default function TournamentDetail() {
               <p>{tournament.description}</p>
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Dates: {format(new Date(tournament.date[0]), 'PPP')} - {format(new Date(tournament.date[1]), 'PPP')}
+                  Dates: {formatTournamentDate(tournament.date)}
                 </p>
                 <p className="text-sm text-muted-foreground">
                   Recommended MMR: {tournament.recommended_mmr}
