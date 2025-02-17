@@ -40,7 +40,8 @@ export default function TournamentDetail() {
         p_tournament_id: tournamentId
       });
       if (error) throw error;
-      return (data as Tournament[])[0];
+      const tournaments = data as unknown as Tournament[];
+      return tournaments[0];
     },
     enabled: !!tournamentId
   });

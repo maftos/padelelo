@@ -13,16 +13,21 @@ export default function CreateTournamentStep4() {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      const name = localStorage.getItem("tournament_name");
-      const description = localStorage.getItem("tournament_description");
-      const venue = localStorage.getItem("tournament_venue");
-      const mmr = localStorage.getItem("tournament_mmr");
+      const name = localStorage.getItem("tournament_name") || '';
+      const description = localStorage.getItem("tournament_description") || '';
+      const venue_id = localStorage.getItem("tournament_venue") || '';
+      const mmr = localStorage.getItem("tournament_mmr") || '0';
 
       const { error } = await supabase.rpc('create_tournament', {
         p_name: name,
+        p_date: `[${new Date().toISOString()},${new Date().toISOString()}]`, // You might want to get this from previous steps
+        p_bracket_type: 'SINGLE_ELIM',
+        p_photo_gallery: [],
+        p_venue_id: venue_id,
+        p_status: 'PENDING',
+        p_privacy: 'PUBLIC',
         p_description: description,
-        p_venue: venue,
-        p_recommended_mmr: parseInt(mmr || "0"),
+        p_recommended_mmr: parseInt(mmr)
       });
 
       if (error) throw error;

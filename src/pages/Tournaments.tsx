@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -31,7 +30,7 @@ export default function Tournaments() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('view_tournaments');
       if (error) throw error;
-      return data as Tournament[];
+      return data as unknown as Tournament[];
     }
   });
 
