@@ -48,7 +48,7 @@ export default function TournamentDetail() {
       
       console.log('Received data:', data); // Debug log
       
-      if (!data || data.length === 0) {
+      if (!data || !Array.isArray(data) || data.length === 0) {
         throw new Error('Tournament not found');
       }
       
