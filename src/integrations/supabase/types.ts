@@ -468,6 +468,61 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_applications: {
+        Row: {
+          created_at: string | null
+          id: number
+          player1_id: string
+          player2_id: string | null
+          status: Database["public"]["Enums"]["tournament_application_status"]
+          team_name: string | null
+          tournament_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          player1_id: string
+          player2_id?: string | null
+          status: Database["public"]["Enums"]["tournament_application_status"]
+          team_name?: string | null
+          tournament_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          player1_id?: string
+          player2_id?: string | null
+          status?: Database["public"]["Enums"]["tournament_application_status"]
+          team_name?: string | null
+          tournament_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_player"
+            columns: ["player1_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_player"
+            columns: ["player1_id"]
+            isOneToOne: false
+            referencedRelation: "users_sorted_by_mmr"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_tournament"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["tournament_id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           admins: string[] | null
@@ -478,11 +533,9 @@ export type Database = {
           description: string | null
           name: string
           photo_gallery: Json | null
-          players: Json[] | null
           privacy: Database["public"]["Enums"]["tournament_privacy"] | null
           recommended_mmr: number | null
           status: Database["public"]["Enums"]["tournament_status"] | null
-          teams: Json | null
           tournament_id: string
           venue_id: string | null
         }
@@ -495,11 +548,9 @@ export type Database = {
           description?: string | null
           name: string
           photo_gallery?: Json | null
-          players?: Json[] | null
           privacy?: Database["public"]["Enums"]["tournament_privacy"] | null
           recommended_mmr?: number | null
           status?: Database["public"]["Enums"]["tournament_status"] | null
-          teams?: Json | null
           tournament_id?: string
           venue_id?: string | null
         }
@@ -512,11 +563,9 @@ export type Database = {
           description?: string | null
           name?: string
           photo_gallery?: Json | null
-          players?: Json[] | null
           privacy?: Database["public"]["Enums"]["tournament_privacy"] | null
           recommended_mmr?: number | null
           status?: Database["public"]["Enums"]["tournament_status"] | null
-          teams?: Json | null
           tournament_id?: string
           venue_id?: string | null
         }
@@ -725,7 +774,7 @@ export type Database = {
           admins: string[] | null
           courts: Json | null
           email_address: string | null
-          location: unknown
+          location: unknown | null
           name: string
           opening_hours: Json | null
           phone_number: string | null
@@ -737,7 +786,7 @@ export type Database = {
           admins?: string[] | null
           courts?: Json | null
           email_address?: string | null
-          location: unknown
+          location?: unknown | null
           name: string
           opening_hours?: Json | null
           phone_number?: string | null
@@ -749,7 +798,7 @@ export type Database = {
           admins?: string[] | null
           courts?: Json | null
           email_address?: string | null
-          location?: unknown
+          location?: unknown | null
           name?: string
           opening_hours?: Json | null
           phone_number?: string | null
@@ -1055,6 +1104,15 @@ export type Database = {
             }
             Returns: string
           }
+      apply_to_tournament: {
+        Args: {
+          p_tournament_id: string
+          p_player1_id: string
+          p_player2_id?: string
+          p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
+        }
+        Returns: Json
+      }
       box:
         | {
             Args: {
@@ -1204,6 +1262,37 @@ export type Database = {
         }
         Returns: string
       }
+      create_tournament:
+        | {
+            Args: {
+              p_name: string
+              p_date: unknown
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_photo_gallery: Json
+              p_admins: string[]
+              p_venue_id: string
+              p_status: Database["public"]["Enums"]["tournament_status"]
+              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
+              p_description: string
+              p_recommended_mmr: number
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_name: string
+              p_date: unknown
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_photo_gallery: Json
+              p_venue_id: string
+              p_status: Database["public"]["Enums"]["tournament_status"]
+              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
+              p_description: string
+              p_recommended_mmr: number
+              p_user_a_id: string
+            }
+            Returns: Json
+          }
       disablelongtransactions: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1851,6 +1940,22 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      notify_interest_tournament:
+        | {
+            Args: {
+              p_tournament_id: string
+              p_player1_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_tournament_id: string
+              p_player1_id: string
+              p_response_status: Database["public"]["Enums"]["tournament_application_status"]
+            }
+            Returns: Json
+          }
       path: {
         Args: {
           "": unknown
@@ -2126,6 +2231,14 @@ export type Database = {
             }
             Returns: undefined
           }
+      respond_tournament: {
+        Args: {
+          p_tournament_id: string
+          p_player1_id: string
+          p_player2_id?: string
+        }
+        Returns: Json
+      }
       send_friend_request_leaderboard: {
         Args: {
           user_a_id_public: string
@@ -4094,6 +4207,20 @@ export type Database = {
           profile_photo: string
         }[]
       }
+      view_tournament: {
+        Args: {
+          p_tournament_id: string
+          p_user_a_id?: string
+        }
+        Returns: Json
+      }
+      view_tournaments: {
+        Args: {
+          p_status?: Database["public"]["Enums"]["tournament_status"]
+          p_user_a_id?: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       action_types:
@@ -4121,6 +4248,14 @@ export type Database = {
       gender: "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY"
       match_status: "PENDING" | "COMPLETED" | "CANCELLED" | "DELETED"
       referral_status: "PENDING" | "USED"
+      tournament_application_status:
+        | "INTERESTED"
+        | "APPLIED"
+        | "APPROVED"
+        | "CONFIRMED_UNPAID"
+        | "CONFIRMED_PAID"
+        | "NOT_INTERESTED"
+        | "DELETED"
       tournament_bracket_type:
         | "SINGLE_ELIM"
         | "DOUBLE_ELIM"
