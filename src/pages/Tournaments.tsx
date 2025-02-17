@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
@@ -8,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, parseISO } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
+import { Star } from "lucide-react";
 
 interface Tournament {
   tournament_id: string;
@@ -25,12 +28,30 @@ interface Tournament {
 }
 
 export default function Tournaments() {
+  const queryClient = useQueryClient();
+
   const { data: tournaments, isLoading } = useQuery({
     queryKey: ['tournaments'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('view_tournaments');
       if (error) throw error;
-      return data as unknown as Tournament[];
+      return data as Tournament[];
+    }
+  });
+
+  const { mutate: toggleInterest } = useMutation({
+    mutationFn: async (tournamentId: string) => {
+      const { data, error } = await supabase.functions.invoke('notify_tournament_interest', {
+        body: { tournament_id: tournamentId }
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+    },
+    onError: () => {
+      toast.error("Failed to update interest");
     }
   });
 
@@ -67,40 +88,57 @@ export default function Tournaments() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tournaments?.map((tournament) => (
-              <Link key={tournament.tournament_id} to={`/tournaments/${tournament.tournament_id}`}>
-                <Card className="transition-all hover:bg-accent h-full">
-                  <div className="relative h-48 w-full">
-                    <img
-                      src={tournament.tournament_photo || '/placeholder.svg'}
-                      alt={tournament.name}
-                      className="w-full h-full object-cover rounded-t-lg"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="flex justify-between items-start gap-4">
-                      <span>{tournament.name}</span>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={tournament.admin_profile_photo} />
-                          <AvatarFallback>
-                            {tournament.admin_display_name?.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
-                      <p className="text-sm font-medium">{formatTournamentDate(tournament.date)}</p>
-                      <div className="flex justify-between items-center text-sm">
-                        <span>MMR: {tournament.recommended_mmr}</span>
-                        <span>{tournament.interested_count} interested</span>
-                      </div>
+              <div key={tournament.tournament_id} className="relative">
+                <Link to={`/tournaments/${tournament.tournament_id}`}>
+                  <Card className="transition-all hover:bg-accent h-full">
+                    <div className="relative h-48 w-full">
+                      <img
+                        src={tournament.tournament_photo || '/placeholder.svg'}
+                        alt={tournament.name}
+                        className="w-full h-full object-cover rounded-t-lg"
+                      />
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
+                    <CardHeader>
+                      <CardTitle className="flex justify-between items-start gap-4">
+                        <span>{tournament.name}</span>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={tournament.admin_profile_photo} />
+                            <AvatarFallback>
+                              {tournament.admin_display_name?.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
+                        <p className="text-sm font-medium">{formatTournamentDate(tournament.date)}</p>
+                        <div className="flex justify-between items-center text-sm">
+                          <span>MMR: {tournament.recommended_mmr}</span>
+                          <span>{tournament.interested_count} interested</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+                <div className="absolute bottom-4 right-4 z-10">
+                  <Button
+                    variant={tournament.is_user_interested ? "secondary" : "default"}
+                    size="sm"
+                    className="gap-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleInterest(tournament.tournament_id);
+                    }}
+                  >
+                    <Star className={tournament.is_user_interested ? "fill-current" : ""} />
+                    {tournament.is_user_interested ? "Interested" : "Interest"}
+                  </Button>
+                </div>
+              </div>
             ))}
           </div>
         )}
