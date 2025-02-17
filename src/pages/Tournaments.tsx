@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -35,7 +34,25 @@ export default function Tournaments() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('view_tournaments');
       if (error) throw error;
-      return data as Tournament[];
+      
+      if (!data || !Array.isArray(data)) {
+        return [] as Tournament[];
+      }
+
+      return data.map(item => ({
+        tournament_id: item.tournament_id,
+        name: item.name,
+        description: item.description,
+        date: item.date,
+        status: item.status,
+        venue_id: item.venue_id,
+        recommended_mmr: item.recommended_mmr,
+        interested_count: item.interested_count,
+        is_user_interested: item.is_user_interested,
+        tournament_photo: item.tournament_photo,
+        admin_display_name: item.admin_display_name,
+        admin_profile_photo: item.admin_profile_photo,
+      } as Tournament));
     }
   });
 
