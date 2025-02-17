@@ -8,17 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, parseISO } from "date-fns";
 import { Navigation } from "@/components/Navigation";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Tournament {
   tournament_id: string;
   name: string;
   description: string;
-  date: string;  // Changed from [string, string] to string since it's a tsrange
+  date: string;
   status: string;
   venue_id: string;
   recommended_mmr: number;
   interested_count: number;
   is_user_interested: boolean;
+  tournament_photo: string;
+  admin_display_name: string;
+  admin_profile_photo: string;
 }
 
 export default function Tournaments() {
@@ -27,25 +31,20 @@ export default function Tournaments() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('view_tournaments');
       if (error) throw error;
-      return data as unknown as Tournament[];
+      return data as Tournament[];
     }
   });
 
   const formatTournamentDate = (dateRange: string) => {
     try {
       if (!dateRange) return "TBD";
-      
-      // PostgreSQL tsrange comes in format like "[2024-03-01,2024-03-02)"
       const matches = dateRange.match(/\[(.*?),(.*?)\)/);
       if (!matches) return "Invalid Date Range";
-      
       const startDate = parseISO(matches[1]);
       const endDate = parseISO(matches[2]);
-      
       if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
         return "Invalid Date Range";
       }
-
       return `${format(startDate, 'PPP')} - ${format(endDate, 'PPP')}`;
     } catch (error) {
       console.error("Error formatting date range:", error, dateRange);
@@ -67,21 +66,38 @@ export default function Tournaments() {
         {isLoading ? (
           <div>Loading tournaments...</div>
         ) : (
-          <div className="grid gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {tournaments?.map((tournament) => (
               <Link key={tournament.tournament_id} to={`/tournaments/${tournament.tournament_id}`}>
-                <Card className="transition-all hover:bg-accent">
+                <Card className="transition-all hover:bg-accent h-full">
+                  <div className="relative h-48 w-full">
+                    <img
+                      src={tournament.tournament_photo || '/placeholder.svg'}
+                      alt={tournament.name}
+                      className="w-full h-full object-cover rounded-t-lg"
+                    />
+                  </div>
                   <CardHeader>
-                    <CardTitle>{tournament.name}</CardTitle>
+                    <CardTitle className="flex justify-between items-start gap-4">
+                      <span>{tournament.name}</span>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={tournament.admin_profile_photo} />
+                          <AvatarFallback>
+                            {tournament.admin_display_name?.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">{tournament.description}</p>
-                      <p className="text-sm">
-                        {formatTournamentDate(tournament.date)}
-                      </p>
-                      <p className="text-sm">Recommended MMR: {tournament.recommended_mmr}</p>
-                      <p className="text-sm">{tournament.interested_count} interested players</p>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
+                      <p className="text-sm font-medium">{formatTournamentDate(tournament.date)}</p>
+                      <div className="flex justify-between items-center text-sm">
+                        <span>MMR: {tournament.recommended_mmr}</span>
+                        <span>{tournament.interested_count} interested</span>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
