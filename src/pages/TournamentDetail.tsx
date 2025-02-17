@@ -36,23 +36,44 @@ export default function TournamentDetail() {
   const { data: tournament, isLoading } = useQuery({
     queryKey: ['tournament', tournamentId],
     queryFn: async () => {
-      console.log('Fetching tournament with ID:', tournamentId); // Debug log
+      console.log('Fetching tournament with ID:', tournamentId);
       const { data, error } = await supabase.rpc('view_tournament', {
         p_tournament_id: tournamentId
       });
       
       if (error) {
-        console.error('Supabase error:', error); // Debug log
+        console.error('Supabase error:', error);
         throw error;
       }
       
-      console.log('Received data:', data); // Debug log
+      console.log('Received data:', data);
       
       if (!data || !Array.isArray(data) || data.length === 0) {
         throw new Error('Tournament not found');
       }
       
-      return data[0] as Tournament;
+      const tournamentData = data[0] as Record<string, any>;
+      
+      // Validate and transform the data to match our Tournament interface
+      const tournament: Tournament = {
+        tournament_id: tournamentData.tournament_id,
+        name: tournamentData.name,
+        description: tournamentData.description,
+        date: tournamentData.date,
+        status: tournamentData.status,
+        venue_id: tournamentData.venue_id,
+        recommended_mmr: tournamentData.recommended_mmr,
+        interested_count: tournamentData.interested_count,
+        is_user_interested: tournamentData.is_user_interested,
+        tournament_photo: tournamentData.tournament_photo,
+        admin_display_name: tournamentData.admin_display_name,
+        admin_profile_photo: tournamentData.admin_profile_photo,
+        venue_name: tournamentData.venue_name,
+        venue_location: tournamentData.venue_location,
+        total_participants: tournamentData.total_participants,
+      };
+
+      return tournament;
     },
     enabled: !!tournamentId
   });
