@@ -27,7 +27,7 @@ export default function Tournaments() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('view_tournaments');
       if (error) throw error;
-      return data as Tournament[];
+      return data as unknown as Tournament[];
     }
   });
 

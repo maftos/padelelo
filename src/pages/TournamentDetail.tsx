@@ -10,6 +10,18 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 
+interface Tournament {
+  tournament_id: string;
+  name: string;
+  description: string;
+  date: [string, string];
+  status: string;
+  venue_id: string;
+  recommended_mmr: number;
+  interested_count: number;
+  is_user_interested: boolean;
+}
+
 export default function TournamentDetail() {
   const { tournamentId } = useParams();
   const queryClient = useQueryClient();
@@ -21,15 +33,15 @@ export default function TournamentDetail() {
         p_tournament_id: tournamentId
       });
       if (error) throw error;
-      return data[0];
+      return (data as unknown as Tournament[])[0];
     },
     enabled: !!tournamentId
   });
 
   const { mutate: toggleInterest } = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.rpc('notify_tournament_interest', {
-        p_tournament_id: tournamentId
+      const { data, error } = await supabase.functions.invoke('notify_tournament_interest', {
+        body: { tournament_id: tournamentId }
       });
       if (error) throw error;
       return data;
