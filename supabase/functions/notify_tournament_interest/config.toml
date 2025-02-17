@@ -1,3 +1,2 @@
-
 [functions.notify_tournament_interest]
 verify_jwt = true
