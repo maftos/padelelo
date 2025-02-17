@@ -15,6 +15,9 @@ import Verify from "./pages/Verify";
 import Dashboard from "./pages/Dashboard";
 import Onboarding from "./pages/Onboarding";
 import Index from "./pages/Index";
+import Tournaments from "./pages/Tournaments";
+import TournamentDetail from "./pages/TournamentDetail";
+import CreateTournament from "./pages/CreateTournament";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -42,6 +45,9 @@ function App() {
             <Route path="/verify" element={<Verify />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/onboarding/*" element={<Onboarding />} />
+            <Route path="/tournaments" element={<Tournaments />} />
+            <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
+            <Route path="/tournament/create-tournament" element={<CreateTournament />} />
           </Routes>
           <Toaster />
         </AuthProvider>

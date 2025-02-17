@@ -1,106 +1,87 @@
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { sampleTournaments } from "@/data/sampleTournaments";
-import { Badge } from "@/components/ui/badge";
+import { PageHeader } from "@/components/match/PageHeader";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MapPin, Trophy, Users } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { format } from "date-fns";
+import { Navigation } from "@/components/Navigation";
+import { toast } from "sonner";
 
 export default function TournamentDetail() {
-  const { id } = useParams();
-  const tournament = sampleTournaments.find((t) => t.id === id);
+  const { tournamentId } = useParams();
+  const queryClient = useQueryClient();
 
-  if (!tournament) {
-    return <div>Tournament not found</div>;
-  }
+  const { data: tournament, isLoading } = useQuery({
+    queryKey: ['tournament', tournamentId],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('view_tournament', {
+        p_tournament_id: tournamentId
+      });
+      if (error) throw error;
+      return data[0];
+    },
+    enabled: !!tournamentId
+  });
+
+  const { mutate: toggleInterest } = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.rpc('notify_tournament_interest', {
+        p_tournament_id: tournamentId
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (isInterested) => {
+      queryClient.invalidateQueries({ queryKey: ['tournament', tournamentId] });
+      toast.success(isInterested ? "You're now interested in this tournament" : "Interest removed");
+    },
+    onError: () => {
+      toast.error("Failed to update interest");
+    }
+  });
+
+  if (isLoading) return <div>Loading tournament details...</div>;
+  if (!tournament) return <div>Tournament not found</div>;
 
   return (
-    <PageContainer className="max-w-7xl mx-auto">
-      <div className="space-y-6">
-        {/* Tournament Header */}
-        <Card>
+    <>
+      <Navigation />
+      <PageContainer>
+        <PageHeader title={tournament.name} description="Tournament Details" />
+        
+        <Card className="mb-6">
           <CardHeader>
-            <div className="flex flex-col gap-4">
-              <Badge className="w-fit" variant="secondary">
-                {tournament.status}
-              </Badge>
-              <CardTitle className="text-2xl md:text-3xl">
-                {tournament.title}
-              </CardTitle>
-            </div>
+            <CardTitle>Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                <span>
-                  {new Date(tournament.startDate).toLocaleDateString()} -{" "}
-                  {new Date(tournament.endDate).toLocaleDateString()}
-                </span>
+            <div className="space-y-4">
+              <p>{tournament.description}</p>
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Dates: {format(new Date(tournament.date[0]), 'PPP')} - {format(new Date(tournament.date[1]), 'PPP')}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Recommended MMR: {tournament.recommended_mmr}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {tournament.interested_count} interested players
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                <span>{tournament.location}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Trophy className="h-4 w-4" />
-                <span>Prize Pool: {tournament.prizePool}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                <span>
-                  {tournament.registeredTeams} / {tournament.maxTeams} teams
-                  registered
-                </span>
-              </div>
+              
+              <Button 
+                variant={tournament.is_user_interested ? "secondary" : "default"}
+                onClick={() => toggleInterest()}
+                className="w-full"
+              >
+                {tournament.is_user_interested ? "Remove Interest" : "I'm Interested"}
+              </Button>
             </div>
           </CardContent>
         </Card>
-
-        {/* Tournament Content */}
-        <Tabs defaultValue="overview">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="players">Players</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="mt-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <AspectRatio ratio={16 / 9}>
-                    <img
-                      src="/lovable-uploads/53adfa7a-da8e-47cc-92b3-333428670467.png"
-                      alt="Tournament banner"
-                      className="rounded-lg object-cover w-full h-full"
-                    />
-                  </AspectRatio>
-                  <p className="text-muted-foreground">
-                    {tournament.description}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="players" className="mt-4">
-            <Card>
-              <CardContent className="pt-6">
-                <ScrollArea className="h-[400px]">
-                  <div className="space-y-4">
-                    {/* Player list will be implemented here */}
-                    <p className="text-muted-foreground">
-                      Player list coming soon...
-                    </p>
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </>
   );
 }
