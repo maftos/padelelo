@@ -8,6 +8,7 @@ import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MapPin, Calendar, Trophy, Users } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface Tournament {
   tournament_id: string;
@@ -26,7 +27,40 @@ interface Tournament {
   venue_name: string;
   venue_location: [number, number];
   total_participants: number;
+  max_participants: number;
+  confirmed_participants: number;
+  format: {
+    name: string;
+    description: string;
+    rules_image: string;
+  };
 }
+
+// Sample user data for the participants list
+const sampleUsers = [
+  {
+    id: "1",
+    display_name: "John Smith",
+    profile_photo: "",
+    mutual_friends_count: 16,
+    mutual_friends: [
+      { id: "mf1", profile_photo: "" },
+      { id: "mf2", profile_photo: "" },
+      { id: "mf3", profile_photo: "" },
+    ]
+  },
+  {
+    id: "2",
+    display_name: "Sarah Johnson",
+    profile_photo: "",
+    mutual_friends_count: 8,
+    mutual_friends: [
+      { id: "mf4", profile_photo: "" },
+      { id: "mf5", profile_photo: "" },
+    ]
+  },
+  // Add more sample users as needed
+];
 
 // Sample data for UI development
 const sampleTournament: Tournament = {
@@ -46,6 +80,13 @@ const sampleTournament: Tournament = {
   venue_name: "Sports Complex Alpha",
   venue_location: [1.3521, 103.8198],
   total_participants: 32,
+  max_participants: 16,
+  confirmed_participants: 13,
+  format: {
+    name: "Mexicano",
+    description: "A dynamic tournament format that ensures competitive matches throughout.",
+    rules_image: "/lovable-uploads/ac20dcc5-9cfb-456e-a4ea-e0d7772672c4.png"
+  }
 };
 
 export default function TournamentDetail() {
@@ -140,7 +181,7 @@ export default function TournamentDetail() {
                     
                     <div className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-muted-foreground" />
-                      <span>{sampleTournament.total_participants} participants • {sampleTournament.interested_count} interested</span>
+                      <span>{sampleTournament.confirmed_participants} confirmed out of {sampleTournament.max_participants} slots • {sampleTournament.interested_count} interested</span>
                     </div>
                   </div>
                 </div>
@@ -156,6 +197,86 @@ export default function TournamentDetail() {
                   <MapPin className="h-8 w-8 text-muted-foreground" />
                   <span className="ml-2 text-muted-foreground">Map view coming soon</span>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Tournament Format - {sampleTournament.format.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-muted-foreground">{sampleTournament.format.description}</p>
+                  <img 
+                    src={sampleTournament.format.rules_image} 
+                    alt="Tournament Rules" 
+                    className="w-full rounded-lg"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Participants</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="interested" className="w-full">
+                  <TabsList className="w-full">
+                    <TabsTrigger value="interested" className="flex-1">Interested ({sampleTournament.interested_count})</TabsTrigger>
+                    <TabsTrigger value="participating" className="flex-1">Participating ({sampleTournament.confirmed_participants})</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="interested" className="space-y-4">
+                    {sampleUsers.map(user => (
+                      <div key={user.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={user.profile_photo} />
+                          <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="font-medium">{user.display_name}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">{user.mutual_friends_count} mutual friends</span>
+                            <div className="flex -space-x-2">
+                              {user.mutual_friends.slice(0, 3).map((friend, index) => (
+                                <Avatar key={friend.id} className="h-6 w-6 border-2 border-background">
+                                  <AvatarImage src={friend.profile_photo} />
+                                  <AvatarFallback>MF</AvatarFallback>
+                                </Avatar>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </TabsContent>
+                  
+                  <TabsContent value="participating" className="space-y-4">
+                    {sampleUsers.slice(0, 2).map(user => (
+                      <div key={user.id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage src={user.profile_photo} />
+                          <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="font-medium">{user.display_name}</p>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">{user.mutual_friends_count} mutual friends</span>
+                            <div className="flex -space-x-2">
+                              {user.mutual_friends.slice(0, 3).map((friend, index) => (
+                                <Avatar key={friend.id} className="h-6 w-6 border-2 border-background">
+                                  <AvatarImage src={friend.profile_photo} />
+                                  <AvatarFallback>MF</AvatarFallback>
+                                </Avatar>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
