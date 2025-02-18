@@ -526,45 +526,60 @@ export type Database = {
       tournaments: {
         Row: {
           admins: string[] | null
+          approval_type:
+            | Database["public"]["Enums"]["tournament_approval_type"]
+            | null
           bracket_type:
             | Database["public"]["Enums"]["tournament_bracket_type"]
             | null
-          date: unknown | null
           description: string | null
+          end_date: string | null
+          main_photo: string | null
           name: string
           photo_gallery: Json | null
           privacy: Database["public"]["Enums"]["tournament_privacy"] | null
           recommended_mmr: number | null
+          start_date: string | null
           status: Database["public"]["Enums"]["tournament_status"] | null
           tournament_id: string
           venue_id: string | null
         }
         Insert: {
           admins?: string[] | null
+          approval_type?:
+            | Database["public"]["Enums"]["tournament_approval_type"]
+            | null
           bracket_type?:
             | Database["public"]["Enums"]["tournament_bracket_type"]
             | null
-          date?: unknown | null
           description?: string | null
+          end_date?: string | null
+          main_photo?: string | null
           name: string
           photo_gallery?: Json | null
           privacy?: Database["public"]["Enums"]["tournament_privacy"] | null
           recommended_mmr?: number | null
+          start_date?: string | null
           status?: Database["public"]["Enums"]["tournament_status"] | null
           tournament_id?: string
           venue_id?: string | null
         }
         Update: {
           admins?: string[] | null
+          approval_type?:
+            | Database["public"]["Enums"]["tournament_approval_type"]
+            | null
           bracket_type?:
             | Database["public"]["Enums"]["tournament_bracket_type"]
             | null
-          date?: unknown | null
           description?: string | null
+          end_date?: string | null
+          main_photo?: string | null
           name?: string
           photo_gallery?: Json | null
           privacy?: Database["public"]["Enums"]["tournament_privacy"] | null
           recommended_mmr?: number | null
+          start_date?: string | null
           status?: Database["public"]["Enums"]["tournament_status"] | null
           tournament_id?: string
           venue_id?: string | null
@@ -4256,6 +4271,7 @@ export type Database = {
         | "CONFIRMED_PAID"
         | "NOT_INTERESTED"
         | "DELETED"
+      tournament_approval_type: "AUTOMATIC" | "MANUAL"
       tournament_bracket_type:
         | "SINGLE_ELIM"
         | "DOUBLE_ELIM"

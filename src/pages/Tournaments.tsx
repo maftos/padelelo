@@ -16,13 +16,14 @@ interface Tournament {
   tournament_id: string;
   name: string;
   description: string;
-  date: string;
+  start_date: string;
+  end_date: string | null;
   status: string;
   venue_id: string;
   recommended_mmr: number;
   interested_count: number;
-  is_user_interested: boolean;
-  tournament_photo: string;
+  user_interest: 'INTERESTED' | 'NOT_INTERESTED' | null;
+  main_photo: string;
   admin_display_name: string;
   admin_profile_photo: string;
 }
@@ -44,13 +45,14 @@ export default function Tournaments() {
         tournament_id: item.tournament_id,
         name: item.name,
         description: item.description,
-        date: item.date,
+        start_date: item.start_date,
+        end_date: item.end_date,
         status: item.status,
         venue_id: item.venue_id,
         recommended_mmr: item.recommended_mmr,
         interested_count: item.interested_count,
-        is_user_interested: item.is_user_interested,
-        tournament_photo: item.tournament_photo,
+        user_interest: item.user_interest,
+        main_photo: item.main_photo,
         admin_display_name: item.admin_display_name,
         admin_profile_photo: item.admin_profile_photo,
       })) as Tournament[];
@@ -59,8 +61,9 @@ export default function Tournaments() {
 
   const { mutate: toggleInterest } = useMutation({
     mutationFn: async (tournamentId: string) => {
-      const { data, error } = await supabase.functions.invoke('notify_tournament_interest', {
-        body: { tournament_id: tournamentId }
+      const { data, error } = await supabase.rpc('register_tournament_interest', {
+        p_tournament_id: tournamentId,
+        p_response_status: 'INTERESTED'
       });
       if (error) throw error;
       return data;
@@ -73,20 +76,20 @@ export default function Tournaments() {
     }
   });
 
-  const formatTournamentDate = (dateRange: string) => {
+  const formatTournamentDate = (startDate: string, endDate: string | null) => {
     try {
-      if (!dateRange) return "TBD";
-      const matches = dateRange.match(/\[(.*?),(.*?)\)/);
-      if (!matches) return "Invalid Date Range";
-      const startDate = parseISO(matches[1]);
-      const endDate = parseISO(matches[2]);
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return "Invalid Date Range";
+      if (!startDate) return "TBD";
+      const formattedStartDate = format(parseISO(startDate), 'PPP');
+      
+      if (endDate) {
+        const formattedEndDate = format(parseISO(endDate), 'PPP');
+        return `${formattedStartDate} - ${formattedEndDate}`;
       }
-      return `${format(startDate, 'PPP')} - ${format(endDate, 'PPP')}`;
+      
+      return formattedStartDate;
     } catch (error) {
-      console.error("Error formatting date range:", error, dateRange);
-      return "Invalid Date Range";
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
     }
   };
 
@@ -111,7 +114,7 @@ export default function Tournaments() {
                   <Card className="transition-all hover:bg-accent h-full">
                     <div className="relative h-48 w-full">
                       <img
-                        src={tournament.tournament_photo || '/placeholder.svg'}
+                        src={tournament.main_photo || '/placeholder.svg'}
                         alt={tournament.name}
                         className="w-full h-full object-cover rounded-t-lg"
                       />
@@ -132,7 +135,9 @@ export default function Tournaments() {
                     <CardContent>
                       <div className="space-y-2">
                         <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
-                        <p className="text-sm font-medium">{formatTournamentDate(tournament.date)}</p>
+                        <p className="text-sm font-medium">
+                          {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                        </p>
                         <div className="flex justify-between items-center text-sm">
                           <span>MMR: {tournament.recommended_mmr}</span>
                           <span>{tournament.interested_count} interested</span>
@@ -143,7 +148,7 @@ export default function Tournaments() {
                 </Link>
                 <div className="absolute bottom-4 right-4 z-10">
                   <Button
-                    variant={tournament.is_user_interested ? "secondary" : "default"}
+                    variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
                     size="sm"
                     className="gap-2"
                     onClick={(e) => {
@@ -152,8 +157,8 @@ export default function Tournaments() {
                       toggleInterest(tournament.tournament_id);
                     }}
                   >
-                    <Star className={tournament.is_user_interested ? "fill-current" : ""} />
-                    {tournament.is_user_interested ? "Interested" : "Interest"}
+                    <Star className={tournament.user_interest === 'INTERESTED' ? "fill-current" : ""} />
+                    Interested
                   </Button>
                 </div>
               </div>
