@@ -61,9 +61,11 @@ export default function Tournaments() {
 
   const { mutate: toggleInterest } = useMutation({
     mutationFn: async (tournamentId: string) => {
-      const { data, error } = await supabase.rpc('register_tournament_interest', {
-        p_tournament_id: tournamentId,
-        p_response_status: 'INTERESTED'
+      const { data, error } = await supabase.functions.invoke('notify_tournament_interest', {
+        body: { 
+          tournament_id: tournamentId,
+          response_status: 'INTERESTED'
+        }
       });
       if (error) throw error;
       return data;
