@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -36,7 +35,14 @@ interface Tournament {
   };
 }
 
-// Sample user data for the participants list
+const respondedFriends = [
+  { id: "1", profile_photo: "", display_name: "John Smith" },
+  { id: "2", profile_photo: "", display_name: "Sarah Wilson" },
+  { id: "3", profile_photo: "", display_name: "Mike Johnson" },
+  { id: "4", profile_photo: "", display_name: "Emma Davis" },
+  { id: "5", profile_photo: "", display_name: "James Brown" },
+];
+
 const sampleUsers = [
   {
     id: "1",
@@ -59,10 +65,8 @@ const sampleUsers = [
       { id: "mf5", profile_photo: "" },
     ]
   },
-  // Add more sample users as needed
 ];
 
-// Sample data for UI development
 const sampleTournament: Tournament = {
   tournament_id: "1",
   name: "Summer Championship 2024",
@@ -109,13 +113,6 @@ export default function TournamentDetail() {
     }
   };
 
-  const handleToggleInterest = () => {
-    console.log('Toggle interest for tournament:', tournamentId);
-    toast.success("Interest updated successfully");
-  };
-
-  if (!sampleTournament) return <div>Tournament not found</div>;
-
   return (
     <>
       <Navigation />
@@ -127,31 +124,50 @@ export default function TournamentDetail() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
+          <Button 
+            className="absolute top-4 right-4 px-6"
+            size="sm"
+          >
+            Invite Friends
+          </Button>
         </div>
 
         <div className="space-y-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold">{sampleTournament.name}</h1>
-              <div className="flex items-center gap-2 mt-2">
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold">{sampleTournament.name}</h1>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg">{sampleTournament.venue_name}</span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Calendar className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg">{formatTournamentDate(sampleTournament.start_date, sampleTournament.end_date)}</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={sampleTournament.admin_profile_photo} />
                   <AvatarFallback>
                     {sampleTournament.admin_display_name?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="text-muted-foreground">
+                <span className="text-muted-foreground ml-2">
                   Organized by {sampleTournament.admin_display_name}
                 </span>
               </div>
+              <Button 
+                variant="default"
+                onClick={() => console.log('Interest clicked')}
+                className="shrink-0"
+              >
+                I'm Interested
+              </Button>
             </div>
-            <Button 
-              variant={sampleTournament.is_user_interested ? "secondary" : "default"}
-              onClick={handleToggleInterest}
-              className="shrink-0"
-            >
-              {sampleTournament.is_user_interested ? "Remove Interest" : "I'm Interested"}
-            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -163,39 +179,27 @@ export default function TournamentDetail() {
                 <div className="space-y-4">
                   <p className="text-muted-foreground">{sampleTournament.description}</p>
                   
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-muted-foreground" />
-                      <span>{formatTournamentDate(sampleTournament.start_date, sampleTournament.end_date)}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-5 w-5 text-muted-foreground" />
-                      <span>{sampleTournament.venue_name}</span>
-                    </div>
-                    
+                  <div className="space-y-3">                    
                     <div className="flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-muted-foreground" />
-                      <span>Recommended MMR: {sampleTournament.recommended_mmr}</span>
+                      <span>Level: 2500 - 3500</span>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-muted-foreground" />
-                      <span>{sampleTournament.confirmed_participants} confirmed out of {sampleTournament.max_participants} slots • {sampleTournament.interested_count} interested</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-muted-foreground" />
+                        <span>52 responded</span>
+                      </div>
+                      <div className="flex -space-x-2 overflow-hidden pl-7">
+                        {respondedFriends.map((friend) => (
+                          <Avatar key={friend.id} className="h-8 w-8 border-2 border-background">
+                            <AvatarImage src={friend.profile_photo} />
+                            <AvatarFallback>{friend.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Location</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                  <MapPin className="h-8 w-8 text-muted-foreground" />
-                  <span className="ml-2 text-muted-foreground">Map view coming soon</span>
                 </div>
               </CardContent>
             </Card>
@@ -239,7 +243,7 @@ export default function TournamentDetail() {
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground">{user.mutual_friends_count} mutual friends</span>
                             <div className="flex -space-x-2">
-                              {user.mutual_friends.slice(0, 3).map((friend, index) => (
+                              {user.mutual_friends.slice(0, 3).map((friend) => (
                                 <Avatar key={friend.id} className="h-6 w-6 border-2 border-background">
                                   <AvatarImage src={friend.profile_photo} />
                                   <AvatarFallback>MF</AvatarFallback>
@@ -264,7 +268,7 @@ export default function TournamentDetail() {
                           <div className="flex items-center gap-2">
                             <span className="text-sm text-muted-foreground">{user.mutual_friends_count} mutual friends</span>
                             <div className="flex -space-x-2">
-                              {user.mutual_friends.slice(0, 3).map((friend, index) => (
+                              {user.mutual_friends.slice(0, 3).map((friend) => (
                                 <Avatar key={friend.id} className="h-6 w-6 border-2 border-background">
                                   <AvatarImage src={friend.profile_photo} />
                                   <AvatarFallback>MF</AvatarFallback>
