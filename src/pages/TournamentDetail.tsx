@@ -1,7 +1,5 @@
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,13 +13,14 @@ interface Tournament {
   tournament_id: string;
   name: string;
   description: string;
-  date: string;
+  start_date: string;
+  end_date: string | null;
   status: string;
   venue_id: string;
   recommended_mmr: number;
   interested_count: number;
   is_user_interested: boolean;
-  tournament_photo: string;
+  main_photo: string;
   admin_display_name: string;
   admin_profile_photo: string;
   venue_name: string;
@@ -29,91 +28,52 @@ interface Tournament {
   total_participants: number;
 }
 
+// Sample data for UI development
+const sampleTournament: Tournament = {
+  tournament_id: "1",
+  name: "Summer Championship 2024",
+  description: "Join us for an exciting summer tournament with players from all skill levels. Great prizes and networking opportunities await!",
+  start_date: "2024-06-01",
+  end_date: "2024-06-03",
+  status: "UPCOMING",
+  venue_id: "venue1",
+  recommended_mmr: 2000,
+  interested_count: 42,
+  is_user_interested: true,
+  main_photo: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
+  admin_display_name: "John Doe",
+  admin_profile_photo: "",
+  venue_name: "Sports Complex Alpha",
+  venue_location: [1.3521, 103.8198],
+  total_participants: 32,
+};
+
 export default function TournamentDetail() {
   const { tournamentId } = useParams();
-  const queryClient = useQueryClient();
 
-  const { data: tournament, isLoading } = useQuery({
-    queryKey: ['tournament', tournamentId],
-    queryFn: async () => {
-      console.log('Fetching tournament with ID:', tournamentId);
-      const { data, error } = await supabase.rpc('view_tournament', {
-        p_tournament_id: tournamentId
-      });
-      
-      if (error) {
-        console.error('Supabase error:', error);
-        throw error;
-      }
-      
-      console.log('Received data:', data);
-      
-      if (!data || !Array.isArray(data) || data.length === 0) {
-        throw new Error('Tournament not found');
-      }
-      
-      const tournamentData = data[0] as Record<string, any>;
-      
-      // Validate and transform the data to match our Tournament interface
-      const tournament: Tournament = {
-        tournament_id: tournamentData.tournament_id,
-        name: tournamentData.name,
-        description: tournamentData.description,
-        date: tournamentData.date,
-        status: tournamentData.status,
-        venue_id: tournamentData.venue_id,
-        recommended_mmr: tournamentData.recommended_mmr,
-        interested_count: tournamentData.interested_count,
-        is_user_interested: tournamentData.is_user_interested,
-        tournament_photo: tournamentData.tournament_photo,
-        admin_display_name: tournamentData.admin_display_name,
-        admin_profile_photo: tournamentData.admin_profile_photo,
-        venue_name: tournamentData.venue_name,
-        venue_location: tournamentData.venue_location,
-        total_participants: tournamentData.total_participants,
-      };
-
-      return tournament;
-    },
-    enabled: !!tournamentId
-  });
-
-  const formatTournamentDate = (dateRange: string) => {
+  const formatTournamentDate = (startDate: string, endDate: string | null) => {
     try {
-      if (!dateRange) return "TBD";
-      const matches = dateRange.match(/\[(.*?),(.*?)\)/);
-      if (!matches) return "Invalid Date Range";
-      const startDate = parseISO(matches[1]);
-      const endDate = parseISO(matches[2]);
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        return "Invalid Date Range";
+      if (!startDate) return "TBD";
+      const formattedStartDate = format(parseISO(startDate), 'PPP');
+      
+      if (endDate) {
+        const formattedEndDate = format(parseISO(endDate), 'PPP');
+        return `${formattedStartDate} - ${formattedEndDate}`;
       }
-      return `${format(startDate, 'PPP')} - ${format(endDate, 'PPP')}`;
+      
+      return formattedStartDate;
     } catch (error) {
-      console.error("Error formatting date range:", error, dateRange);
-      return "Invalid Date Range";
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
     }
   };
 
-  const { mutate: toggleInterest } = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('notify_tournament_interest', {
-        body: { tournament_id: tournamentId }
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: (isInterested) => {
-      queryClient.invalidateQueries({ queryKey: ['tournament', tournamentId] });
-      toast.success(isInterested ? "You're now interested in this tournament" : "Interest removed");
-    },
-    onError: () => {
-      toast.error("Failed to update interest");
-    }
-  });
+  const handleToggleInterest = () => {
+    console.log('Toggle interest for tournament:', tournamentId);
+    toast.success("Interest updated successfully");
+  };
 
-  if (isLoading) return <div>Loading tournament details...</div>;
-  if (!tournament) return <div>Tournament not found</div>;
+  if (!sampleTournament) return <div>Tournament not found</div>;
 
   return (
     <>
@@ -121,8 +81,8 @@ export default function TournamentDetail() {
       <PageContainer>
         <div className="relative h-64 -mx-4 sm:-mx-6 mb-6">
           <img
-            src={tournament.tournament_photo || '/placeholder.svg'}
-            alt={tournament.name}
+            src={sampleTournament.main_photo || '/placeholder.svg'}
+            alt={sampleTournament.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
@@ -131,25 +91,25 @@ export default function TournamentDetail() {
         <div className="space-y-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold">{tournament.name}</h1>
+              <h1 className="text-3xl font-bold">{sampleTournament.name}</h1>
               <div className="flex items-center gap-2 mt-2">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={tournament.admin_profile_photo} />
+                  <AvatarImage src={sampleTournament.admin_profile_photo} />
                   <AvatarFallback>
-                    {tournament.admin_display_name?.substring(0, 2).toUpperCase()}
+                    {sampleTournament.admin_display_name?.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <span className="text-muted-foreground">
-                  Organized by {tournament.admin_display_name}
+                  Organized by {sampleTournament.admin_display_name}
                 </span>
               </div>
             </div>
             <Button 
-              variant={tournament.is_user_interested ? "secondary" : "default"}
-              onClick={() => toggleInterest()}
+              variant={sampleTournament.is_user_interested ? "secondary" : "default"}
+              onClick={handleToggleInterest}
               className="shrink-0"
             >
-              {tournament.is_user_interested ? "Remove Interest" : "I'm Interested"}
+              {sampleTournament.is_user_interested ? "Remove Interest" : "I'm Interested"}
             </Button>
           </div>
 
@@ -160,27 +120,27 @@ export default function TournamentDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <p className="text-muted-foreground">{tournament.description}</p>
+                  <p className="text-muted-foreground">{sampleTournament.description}</p>
                   
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <Calendar className="h-5 w-5 text-muted-foreground" />
-                      <span>{formatTournamentDate(tournament.date)}</span>
+                      <span>{formatTournamentDate(sampleTournament.start_date, sampleTournament.end_date)}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <MapPin className="h-5 w-5 text-muted-foreground" />
-                      <span>{tournament.venue_name}</span>
+                      <span>{sampleTournament.venue_name}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-muted-foreground" />
-                      <span>Recommended MMR: {tournament.recommended_mmr}</span>
+                      <span>Recommended MMR: {sampleTournament.recommended_mmr}</span>
                     </div>
                     
                     <div className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-muted-foreground" />
-                      <span>{tournament.total_participants} participants • {tournament.interested_count} interested</span>
+                      <span>{sampleTournament.total_participants} participants • {sampleTournament.interested_count} interested</span>
                     </div>
                   </div>
                 </div>
