@@ -1472,7 +1472,7 @@ export type Database = {
       }
       friend_requests_counter: {
         Args: {
-          user_a_id_public: string
+          user_a_id: string
         }
         Returns: Json
       }
