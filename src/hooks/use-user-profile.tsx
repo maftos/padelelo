@@ -47,8 +47,8 @@ export const useUserProfile = () => {
         
         console.log('Friend requests response:', friendRequestsResponse);
 
-        // Cast the response data to our defined type and extract count
-        const requestCount = (friendRequestsResponse.data as FriendRequestsCountResponse)?.count || 0;
+        // First cast to unknown, then to our defined type, and extract count
+        const requestCount = ((friendRequestsResponse.data as unknown) as FriendRequestsCountResponse)?.count || 0;
         console.log('Extracted request count:', requestCount);
         
         if (profileResponse.error) {
