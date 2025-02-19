@@ -21,7 +21,7 @@ export interface UserProfile {
   level: number | null;
   xp_levelup: number | null;
   total_xp_levelup: number | null;
-  friend_requests_count?: number;
+  friend_requests_count: number | null;
 }
 
 export const useUserProfile = () => {
@@ -35,8 +35,8 @@ export const useUserProfile = () => {
       try {
         // Get user profile and friend requests count in parallel
         const [profileResponse, friendRequestsResponse] = await Promise.all([
-          supabase.rpc('get_user_profile', { user_a_id: user.id }),
-          supabase.rpc('friend_requests_counter', { user_a_id: user.id })
+          supabase.rpc('get_user_profile', { user_a_id_public: user.id }),
+          supabase.rpc('friend_requests_counter', { user_a_id_public: user.id })
         ]);
         
         if (profileResponse.error) {
@@ -50,7 +50,7 @@ export const useUserProfile = () => {
           if (tableError) throw tableError;
           return {
             ...tableData,
-            friend_requests_count: friendRequestsResponse.data || 0
+            friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
           } as UserProfile;
         }
         
@@ -64,7 +64,7 @@ export const useUserProfile = () => {
           if (tableError) throw tableError;
           return {
             ...tableData,
-            friend_requests_count: friendRequestsResponse.data || 0
+            friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
           } as UserProfile;
         }
         
@@ -76,8 +76,8 @@ export const useUserProfile = () => {
         
         return {
           ...typedData,
-          friend_requests_count: friendRequestsResponse.data || 0
-        };
+          friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
+        } as UserProfile;
       } catch (error) {
         console.error('Profile fetch error:', error);
         throw error;
