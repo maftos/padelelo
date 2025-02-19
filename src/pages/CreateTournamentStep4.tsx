@@ -3,76 +3,46 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateTournamentLayout } from "@/components/tournament/CreateTournamentLayout";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function CreateTournamentStep4() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [recommendedMmr, setRecommendedMmr] = useState("");
   const navigate = useNavigate();
-  const { user } = useAuth();
 
-  const handleSubmit = async () => {
-    if (!user?.id) {
-      toast.error("You must be logged in to create a tournament");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const name = localStorage.getItem("tournament_name") || '';
-      const description = localStorage.getItem("tournament_description") || '';
-      const venue_id = localStorage.getItem("tournament_venue") || '';
-      const mmr = localStorage.getItem("tournament_mmr") || '0';
-
-      const { error } = await supabase.rpc('create_tournament', {
-        p_name: name,
-        p_date: `[${new Date().toISOString()},${new Date().toISOString()}]`,
-        p_bracket_type: 'SINGLE_ELIM',
-        p_photo_gallery: [],
-        p_venue_id: venue_id,
-        p_status: 'PENDING',
-        p_privacy: 'PUBLIC',
-        p_description: description,
-        p_recommended_mmr: parseInt(mmr),
-        p_user_a_id: user.id
-      });
-
-      if (error) throw error;
-
-      // Clear localStorage
-      localStorage.removeItem("tournament_name");
-      localStorage.removeItem("tournament_description");
-      localStorage.removeItem("tournament_venue");
-      localStorage.removeItem("tournament_mmr");
-
-      toast.success("Tournament created successfully!");
-      navigate("/tournaments");
-    } catch (error) {
-      console.error('Error creating tournament:', error);
-      toast.error("Failed to create tournament");
-    } finally {
-      setIsSubmitting(false);
+  const handleNext = () => {
+    if (recommendedMmr) {
+      localStorage.setItem("tournament_recommended_mmr", recommendedMmr);
+      navigate("/tournament/create-tournament/step-5");
     }
   };
 
   return (
-    <CreateTournamentLayout currentStep={4} totalSteps={4}>
+    <CreateTournamentLayout currentStep={4} totalSteps={6}>
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-center">Confirm Details</h1>
+        <h1 className="text-2xl font-bold text-center">Recommended Level</h1>
 
         <div className="space-y-4">
-          <p className="text-center text-muted-foreground">
-            Review your tournament details before creating
-          </p>
+          <div className="space-y-2">
+            <Label htmlFor="mmr">Recommended MMR</Label>
+            <Input
+              id="mmr"
+              type="number"
+              value={recommendedMmr}
+              onChange={(e) => setRecommendedMmr(e.target.value)}
+              placeholder="Enter recommended MMR"
+              min="0"
+              max="5000"
+            />
+          </div>
         </div>
 
         <Button
           className="w-full"
-          onClick={handleSubmit}
-          disabled={isSubmitting}
+          onClick={handleNext}
+          disabled={!recommendedMmr}
         >
-          {isSubmitting ? "Creating Tournament..." : "Create Tournament"}
+          Continue
         </Button>
       </div>
     </CreateTournamentLayout>

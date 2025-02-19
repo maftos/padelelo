@@ -525,7 +525,7 @@ export type Database = {
       }
       tournaments: {
         Row: {
-          admins: string[] | null
+          admins: string[]
           approval_type:
             | Database["public"]["Enums"]["tournament_approval_type"]
             | null
@@ -535,6 +535,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           main_photo: string | null
+          max_players: number | null
           name: string
           photo_gallery: Json | null
           privacy: Database["public"]["Enums"]["tournament_privacy"] | null
@@ -545,7 +546,7 @@ export type Database = {
           venue_id: string | null
         }
         Insert: {
-          admins?: string[] | null
+          admins: string[]
           approval_type?:
             | Database["public"]["Enums"]["tournament_approval_type"]
             | null
@@ -555,6 +556,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           main_photo?: string | null
+          max_players?: number | null
           name: string
           photo_gallery?: Json | null
           privacy?: Database["public"]["Enums"]["tournament_privacy"] | null
@@ -565,7 +567,7 @@ export type Database = {
           venue_id?: string | null
         }
         Update: {
-          admins?: string[] | null
+          admins?: string[]
           approval_type?:
             | Database["public"]["Enums"]["tournament_approval_type"]
             | null
@@ -575,6 +577,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           main_photo?: string | null
+          max_players?: number | null
           name?: string
           photo_gallery?: Json | null
           privacy?: Database["public"]["Enums"]["tournament_privacy"] | null
@@ -1119,15 +1122,24 @@ export type Database = {
             }
             Returns: string
           }
-      apply_to_tournament: {
-        Args: {
-          p_tournament_id: string
-          p_player1_id: string
-          p_player2_id?: string
-          p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
-        }
-        Returns: Json
-      }
+      apply_to_tournament:
+        | {
+            Args: {
+              p_tournament_id: string
+              p_player1_id: string
+              p_player2_id?: string
+              p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_tournament_id: string
+              p_player1_id: string
+              p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
+            }
+            Returns: Json
+          }
       box:
         | {
             Args: {
@@ -1283,6 +1295,22 @@ export type Database = {
               p_name: string
               p_date: unknown
               p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_main_photo: string
+              p_venue_id: string
+              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
+              p_description: string
+              p_recommended_mmr: number
+              p_max_players: number
+              p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
+              p_user_a_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_name: string
+              p_date: unknown
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
               p_photo_gallery: Json
               p_admins: string[]
               p_venue_id: string
@@ -1305,6 +1333,41 @@ export type Database = {
               p_description: string
               p_recommended_mmr: number
               p_user_a_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_name: string
+              p_start_date: string
+              p_end_date: string
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_main_photo: string
+              p_venue_id: string
+              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
+              p_description: string
+              p_recommended_mmr: number
+              p_max_players: number
+              p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
+              p_user_a_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_name: string
+              p_start_date: string
+              p_end_date: string
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_main_photo: string
+              p_venue_id: string
+              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
+              p_description: string
+              p_recommended_mmr: number
+              p_max_players: number
+              p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
+              p_user_a_id: string
+              p_admins: string[]
             }
             Returns: Json
           }
@@ -1359,6 +1422,13 @@ export type Database = {
             }
             Returns: string
           }
+      edit_tournament: {
+        Args: {
+          tournament_id: string
+          updates: Json
+        }
+        Returns: Json
+      }
       edit_user_profile:
         | {
             Args: {
@@ -1399,6 +1469,12 @@ export type Database = {
           geom2: unknown
         }
         Returns: boolean
+      }
+      friend_requests_counter: {
+        Args: {
+          user_a_id_public: string
+        }
+        Returns: Json
       }
       geography:
         | {
@@ -1905,6 +1981,10 @@ export type Database = {
         }
         Returns: Json
       }
+      get_venues: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       gettransactionid: {
         Args: Record<PropertyKey, never>
         Returns: unknown
@@ -1920,6 +2000,20 @@ export type Database = {
           "": unknown
         }
         Returns: unknown
+      }
+      ignore_suggested_friend: {
+        Args: {
+          user_a_id_public: string
+          friend_id: string
+        }
+        Returns: Json
+      }
+      ignore_suggested_friends: {
+        Args: {
+          user_a_id_public: string
+          friend_ids_to_ignore: string[]
+        }
+        Returns: Json
       }
       insert_feature_update: {
         Args: {
@@ -2228,6 +2322,12 @@ export type Database = {
       postgis_wagyu_version: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      publish_tournament: {
+        Args: {
+          tournament_id: string
+        }
+        Returns: Json
       }
       respond_friend_request:
         | {
@@ -4176,6 +4276,12 @@ export type Database = {
         }
         Returns: number
       }
+      suggest_friends: {
+        Args: {
+          user_a_id_public: string
+        }
+        Returns: Json
+      }
       text: {
         Args: {
           "": unknown
@@ -4271,6 +4377,7 @@ export type Database = {
         | "CONFIRMED_PAID"
         | "NOT_INTERESTED"
         | "DELETED"
+        | "WAITLISTED"
       tournament_approval_type: "AUTOMATIC" | "MANUAL"
       tournament_bracket_type:
         | "SINGLE_ELIM"
@@ -4282,7 +4389,12 @@ export type Database = {
         | "MEXICANO_TEAM"
         | "MIXICANO"
       tournament_privacy: "INVITE_ONLY" | "FRIENDS" | "PUBLIC"
-      tournament_status: "INCOMPLETE" | "PENDING" | "COMPLETED"
+      tournament_status:
+        | "INCOMPLETE"
+        | "PENDING"
+        | "COMPLETED"
+        | "STARTED"
+        | "DELETED"
     }
     CompositeTypes: {
       geometry_dump: {
