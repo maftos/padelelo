@@ -10,7 +10,7 @@ import { toast } from "sonner";
 type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM" | "ROUND_ROBIN" | "AMERICANO_SOLO" | "MEXICANO_SOLO" | "AMERICANO_TEAM" | "MEXICANO_TEAM" | "MIXICANO";
 type PrivacyType = "INVITE_ONLY" | "FRIENDS" | "PUBLIC";
 
-export default function CreateTournamentStep6() {
+export default function CreateTournamentStep7() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -30,8 +30,9 @@ export default function CreateTournamentStep6() {
       const bracketType = localStorage.getItem("tournament_bracket_type") as BracketType;
       const recommendedMmr = localStorage.getItem("tournament_recommended_mmr");
       const privacy = localStorage.getItem("tournament_privacy") as PrivacyType;
+      const venueId = localStorage.getItem("tournament_venue_id");
 
-      if (!bracketType || !privacy) {
+      if (!bracketType || !privacy || !venueId) {
         throw new Error("Missing required tournament settings");
       }
 
@@ -40,7 +41,7 @@ export default function CreateTournamentStep6() {
         p_date: `[${startDate},${endDate}]`,
         p_bracket_type: bracketType,
         p_photo_gallery: [],
-        p_venue_id: null, // We'll handle venue selection in a future update
+        p_venue_id: venueId,
         p_status: 'PENDING',
         p_privacy: privacy,
         p_description: description,
@@ -58,6 +59,7 @@ export default function CreateTournamentStep6() {
       localStorage.removeItem("tournament_bracket_type");
       localStorage.removeItem("tournament_recommended_mmr");
       localStorage.removeItem("tournament_privacy");
+      localStorage.removeItem("tournament_venue_id");
 
       toast.success("Tournament created successfully!");
       navigate("/tournaments");
@@ -70,7 +72,7 @@ export default function CreateTournamentStep6() {
   };
 
   return (
-    <CreateTournamentLayout currentStep={6} totalSteps={6}>
+    <CreateTournamentLayout currentStep={7} totalSteps={7}>
       <div className="space-y-6">
         <h1 className="text-2xl font-bold text-center">Review & Create</h1>
 

@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -23,6 +22,7 @@ import CreateTournamentStep3 from "./pages/CreateTournamentStep3";
 import CreateTournamentStep4 from "./pages/CreateTournamentStep4";
 import CreateTournamentStep5 from "./pages/CreateTournamentStep5";
 import CreateTournamentStep6 from "./pages/CreateTournamentStep6";
+import CreateTournamentStep7 from "./pages/CreateTournamentStep7";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -58,6 +58,7 @@ function App() {
             <Route path="/tournament/create-tournament/step-4" element={<CreateTournamentStep4 />} />
             <Route path="/tournament/create-tournament/step-5" element={<CreateTournamentStep5 />} />
             <Route path="/tournament/create-tournament/step-6" element={<CreateTournamentStep6 />} />
+            <Route path="/tournament/create-tournament/step-7" element={<CreateTournamentStep7 />} />
           </Routes>
           <Toaster />
         </AuthProvider>
