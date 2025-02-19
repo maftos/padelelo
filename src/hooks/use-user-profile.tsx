@@ -35,8 +35,8 @@ export const useUserProfile = () => {
       try {
         // Get user profile and friend requests count in parallel
         const [profileResponse, friendRequestsResponse] = await Promise.all([
-          supabase.rpc('get_user_profile', { user_a_id_public: user.id }),
-          supabase.rpc('friend_requests_counter', { user_a_id_public: user.id })
+          supabase.rpc('get_user_profile', { user_a_id: user.id }),
+          supabase.rpc('friend_requests_counter', { user_a_id: user.id })
         ]);
         
         if (profileResponse.error) {
