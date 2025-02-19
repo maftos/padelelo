@@ -33,8 +33,10 @@ export default function CreateTournamentStep5() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_venues');
       if (error) throw error;
+      // First cast to unknown, then to VenueResponse[]
+      const venuesData = data as unknown as VenueResponse[];
       // Transform the response data to match our Venue interface
-      return (data as VenueResponse[]).map((venue): Venue => ({
+      return venuesData.map((venue): Venue => ({
         id: venue.venue_id,
         display_name: venue.name
       }));
