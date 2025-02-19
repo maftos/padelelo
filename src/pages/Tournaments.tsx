@@ -8,6 +8,9 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Tournament {
   tournament_id: string;
@@ -25,56 +28,25 @@ interface Tournament {
   admin_profile_photo: string;
 }
 
-// Sample data for UI development
-const sampleTournaments: Tournament[] = [
-  {
-    tournament_id: "1",
-    name: "Summer Championship 2024",
-    description: "Join us for an exciting summer tournament with players from all skill levels. Great prizes and networking opportunities await!",
-    start_date: "2024-06-01",
-    end_date: "2024-06-03",
-    status: "UPCOMING",
-    venue_id: "venue1",
-    recommended_mmr: 2000,
-    interested_count: 42,
-    user_interest: "INTERESTED",
-    main_photo: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6",
-    admin_display_name: "John Doe",
-    admin_profile_photo: "",
-  },
-  {
-    tournament_id: "2",
-    name: "Weekly Tournament",
-    description: "Our regular weekly tournament for all players. Come join us for some competitive matches!",
-    start_date: "2024-03-15",
-    end_date: null,
-    status: "UPCOMING",
-    venue_id: "venue2",
-    recommended_mmr: 1500,
-    interested_count: 28,
-    user_interest: null,
-    main_photo: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b",
-    admin_display_name: "Jane Smith",
-    admin_profile_photo: "",
-  },
-  {
-    tournament_id: "3",
-    name: "Pro League Qualifiers",
-    description: "Qualify for the upcoming Pro League season. High-level competition expected.",
-    start_date: "2024-04-20",
-    end_date: "2024-04-22",
-    status: "UPCOMING",
-    venue_id: "venue3",
-    recommended_mmr: 2500,
-    interested_count: 56,
-    user_interest: "NOT_INTERESTED",
-    main_photo: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-    admin_display_name: "Mike Johnson",
-    admin_profile_photo: "",
-  },
-];
-
 export default function Tournaments() {
+  const { user } = useAuth();
+
+  const { data: tournaments, isLoading, error } = useQuery({
+    queryKey: ['tournaments', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('view_tournaments', {
+        user_a_id: user?.id || null
+      });
+
+      if (error) {
+        console.error('Error fetching tournaments:', error);
+        throw error;
+      }
+
+      return data as Tournament[];
+    }
+  });
+
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
     try {
       const formattedStartDate = format(new Date(startDate), 'PPP');
@@ -91,6 +63,50 @@ export default function Tournaments() {
     }
   };
 
+  const handleInterestToggle = async (tournamentId: string, currentInterest: 'INTERESTED' | 'NOT_INTERESTED' | null) => {
+    try {
+      if (!user) {
+        // Handle not logged in state - you might want to redirect to login
+        return;
+      }
+
+      const { error } = await supabase.rpc('toggle_tournament_interest', {
+        tournament_a_id: tournamentId,
+        user_a_id: user.id
+      });
+
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error toggling interest:', error);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <>
+        <Navigation />
+        <PageContainer>
+          <div className="flex justify-center items-center min-h-[60vh]">
+            <div className="animate-pulse">Loading tournaments...</div>
+          </div>
+        </PageContainer>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navigation />
+        <PageContainer>
+          <div className="text-center text-destructive">
+            Error loading tournaments. Please try again later.
+          </div>
+        </PageContainer>
+      </>
+    );
+  }
+
   return (
     <>
       <Navigation />
@@ -103,7 +119,7 @@ export default function Tournaments() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {sampleTournaments.map((tournament) => (
+          {tournaments?.map((tournament) => (
             <div key={tournament.tournament_id} className="relative">
               <Link to={`/tournaments/${tournament.tournament_id}`}>
                 <Card className="transition-all hover:bg-accent h-full">
@@ -149,7 +165,7 @@ export default function Tournaments() {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Interest toggled for tournament:', tournament.tournament_id);
+                    handleInterestToggle(tournament.tournament_id, tournament.user_interest);
                   }}
                 >
                   <Star className={tournament.user_interest === 'INTERESTED' ? "fill-current" : ""} />
