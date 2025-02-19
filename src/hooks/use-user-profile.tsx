@@ -41,6 +41,10 @@ export const useUserProfile = () => {
         ]);
         
         console.log('Friend requests response:', friendRequestsResponse);
+
+        // Extract the count from the JSON response correctly
+        const requestCount = friendRequestsResponse.data?.count || 0;
+        console.log('Extracted request count:', requestCount);
         
         if (profileResponse.error) {
           console.error('RPC error:', profileResponse.error);
@@ -53,7 +57,7 @@ export const useUserProfile = () => {
           if (tableError) throw tableError;
           return {
             ...tableData,
-            friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
+            friend_requests_count: requestCount
           } as UserProfile;
         }
         
@@ -67,7 +71,7 @@ export const useUserProfile = () => {
           if (tableError) throw tableError;
           return {
             ...tableData,
-            friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
+            friend_requests_count: requestCount
           } as UserProfile;
         }
         
@@ -79,7 +83,7 @@ export const useUserProfile = () => {
         
         const finalProfile = {
           ...typedData,
-          friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
+          friend_requests_count: requestCount
         } as UserProfile;
         
         console.log('Final profile with friend requests:', finalProfile);
