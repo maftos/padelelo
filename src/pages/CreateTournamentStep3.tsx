@@ -12,8 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM" | "ROUND_ROBIN" | "AMERICANO_SOLO" | "MEXICANO_SOLO" | "AMERICANO_TEAM" | "MEXICANO_TEAM" | "MIXICANO";
+
 export default function CreateTournamentStep3() {
-  const [bracketType, setBracketType] = useState("");
+  const [bracketType, setBracketType] = useState<BracketType | "">("");
   const navigate = useNavigate();
 
   const handleNext = () => {
@@ -31,7 +33,7 @@ export default function CreateTournamentStep3() {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="bracket-type">Bracket Type</Label>
-            <Select value={bracketType} onValueChange={setBracketType}>
+            <Select value={bracketType} onValueChange={(value: BracketType) => setBracketType(value)}>
               <SelectTrigger id="bracket-type">
                 <SelectValue placeholder="Select bracket type" />
               </SelectTrigger>
@@ -39,7 +41,11 @@ export default function CreateTournamentStep3() {
                 <SelectItem value="SINGLE_ELIM">Single Elimination</SelectItem>
                 <SelectItem value="DOUBLE_ELIM">Double Elimination</SelectItem>
                 <SelectItem value="ROUND_ROBIN">Round Robin</SelectItem>
-                <SelectItem value="MEXICANO">Mexicano</SelectItem>
+                <SelectItem value="AMERICANO_SOLO">Americano (Solo)</SelectItem>
+                <SelectItem value="MEXICANO_SOLO">Mexicano (Solo)</SelectItem>
+                <SelectItem value="AMERICANO_TEAM">Americano (Team)</SelectItem>
+                <SelectItem value="MEXICANO_TEAM">Mexicano (Team)</SelectItem>
+                <SelectItem value="MIXICANO">Mixicano</SelectItem>
               </SelectContent>
             </Select>
           </div>

@@ -7,6 +7,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM" | "ROUND_ROBIN" | "AMERICANO_SOLO" | "MEXICANO_SOLO" | "AMERICANO_TEAM" | "MEXICANO_TEAM" | "MIXICANO";
+type PrivacyType = "INVITE_ONLY" | "FRIENDS" | "PUBLIC";
+
 export default function CreateTournamentStep6() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
@@ -24,9 +27,13 @@ export default function CreateTournamentStep6() {
       const description = localStorage.getItem("tournament_description");
       const startDate = localStorage.getItem("tournament_start_date");
       const endDate = localStorage.getItem("tournament_end_date");
-      const bracketType = localStorage.getItem("tournament_bracket_type");
+      const bracketType = localStorage.getItem("tournament_bracket_type") as BracketType;
       const recommendedMmr = localStorage.getItem("tournament_recommended_mmr");
-      const privacy = localStorage.getItem("tournament_privacy");
+      const privacy = localStorage.getItem("tournament_privacy") as PrivacyType;
+
+      if (!bracketType || !privacy) {
+        throw new Error("Missing required tournament settings");
+      }
 
       const { error } = await supabase.rpc('create_tournament', {
         p_name: name,

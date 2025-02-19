@@ -12,8 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+type PrivacyType = "INVITE_ONLY" | "FRIENDS" | "PUBLIC";
+
 export default function CreateTournamentStep5() {
-  const [privacy, setPrivacy] = useState("");
+  const [privacy, setPrivacy] = useState<PrivacyType | "">("");
   const navigate = useNavigate();
 
   const handleNext = () => {
@@ -31,14 +33,14 @@ export default function CreateTournamentStep5() {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="privacy">Privacy Setting</Label>
-            <Select value={privacy} onValueChange={setPrivacy}>
+            <Select value={privacy} onValueChange={(value: PrivacyType) => setPrivacy(value)}>
               <SelectTrigger id="privacy">
                 <SelectValue placeholder="Select privacy setting" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="PUBLIC">Public</SelectItem>
-                <SelectItem value="PRIVATE">Private</SelectItem>
-                <SelectItem value="UNLISTED">Unlisted</SelectItem>
+                <SelectItem value="FRIENDS">Friends Only</SelectItem>
+                <SelectItem value="INVITE_ONLY">Invite Only</SelectItem>
               </SelectContent>
             </Select>
           </div>
