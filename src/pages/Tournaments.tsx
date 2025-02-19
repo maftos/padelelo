@@ -69,11 +69,17 @@ export default function Tournaments() {
         return;
       }
 
+      console.log('Toggling interest for tournament:', tournamentId);
+      console.log('Current interest:', currentInterest);
+      console.log('New status:', currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED');
+
+      const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
+
       // Using type assertion to handle the RPC function type
-      const { error } = await (supabase.rpc as any)('notify_tournament_interest', {
+      const { data, error } = await supabase.rpc('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_player1_id: user.id,
-        p_response_status: currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED'
+        p_response_status: newStatus
       });
 
       if (error) {
@@ -81,8 +87,10 @@ export default function Tournaments() {
         throw error;
       }
 
+      console.log('Toggle response:', data);
+
       // Refetch tournaments to update the UI
-      refetch();
+      await refetch();
     } catch (error) {
       console.error('Error toggling interest:', error);
     }
