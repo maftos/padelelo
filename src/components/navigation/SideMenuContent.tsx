@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { InviteFriendDialog } from "./InviteFriendDialog";
@@ -7,7 +8,7 @@ import {
   User, 
   UserPlus, 
   ClipboardEdit, 
-  Users, 
+  Users,
   Trophy,
   Sparkles,
   Calculator,
@@ -15,6 +16,7 @@ import {
   Info,
   LayoutDashboard
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface SideMenuContentProps {
   user: { id: string } | null;
@@ -24,6 +26,7 @@ interface SideMenuContentProps {
     display_name?: string;
     profile_photo?: string;
     current_mmr?: number;
+    friend_requests_count?: number;
   };
 }
 
@@ -108,10 +111,17 @@ export const SideMenuContent = ({
         <Link
           to="/friends"
           onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          className="flex items-center justify-between text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <Users className="h-4 w-4" />
-          Friends
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4" />
+            Friends
+          </div>
+          {profile?.friend_requests_count ? (
+            <Badge variant="destructive" className="ml-2">
+              {profile.friend_requests_count}
+            </Badge>
+          ) : null}
         </Link>
         <Link
           to="/leaderboard"
