@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { PageHeader } from "@/components/match/PageHeader";
@@ -42,7 +43,6 @@ export default function Tournaments() {
         throw error;
       }
 
-      // Type assertion to handle the conversion
       return data as unknown as Tournament[];
     }
   });
@@ -69,7 +69,8 @@ export default function Tournaments() {
         return;
       }
 
-      const { error } = await supabase.rpc('notify_tournament_interest', {
+      // Using type assertion to handle the RPC function type
+      const { error } = await (supabase.rpc as any)('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_user_id: user.id
       });
