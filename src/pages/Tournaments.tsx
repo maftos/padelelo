@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { PageHeader } from "@/components/match/PageHeader";
@@ -70,18 +69,15 @@ export default function Tournaments() {
         return;
       }
 
-      // For now, let's just log the action since the RPC function isn't in our type definitions
-      console.log('Toggle interest:', { tournamentId, currentInterest });
-      
-      // When the RPC function is properly defined in the types, we can uncomment this:
-      /*
-      const { error } = await supabase.rpc('toggle_tournament_interest', {
+      const { error } = await supabase.rpc('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_user_id: user.id
       });
 
-      if (error) throw error;
-      */
+      if (error) {
+        console.error('Error toggling interest:', error);
+        throw error;
+      }
     } catch (error) {
       console.error('Error toggling interest:', error);
     }
