@@ -117,10 +117,7 @@ export const SideMenuContent = ({
             <Users className="h-4 w-4" />
             Friends
             {profile?.friend_requests_count && profile.friend_requests_count > 0 ? (
-              <Badge 
-                variant="destructive" 
-                className="ml-1 animate-pulse-subtle shadow-[0_0_10px] shadow-destructive/50"
-              >
+              <Badge variant="destructive" className="ml-1">
                 {profile.friend_requests_count}
               </Badge>
             ) : null}
@@ -135,6 +132,8 @@ export const SideMenuContent = ({
           Leaderboard
         </Link>
       </div>
+
+      <Separator className="my-4" />
 
       {/* Secondary Navigation Section */}
       <div className="space-y-1 px-2">
