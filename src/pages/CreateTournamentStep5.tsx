@@ -19,6 +19,11 @@ interface Venue {
   display_name: string;
 }
 
+interface VenueResponse {
+  venue_id: string;
+  name: string;
+}
+
 export default function CreateTournamentStep5() {
   const [venueId, setVenueId] = useState<string>("");
   const navigate = useNavigate();
@@ -28,7 +33,11 @@ export default function CreateTournamentStep5() {
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_venues');
       if (error) throw error;
-      return data as Venue[];
+      // Transform the response data to match our Venue interface
+      return (data as VenueResponse[]).map((venue): Venue => ({
+        id: venue.venue_id,
+        display_name: venue.name
+      }));
     }
   });
 
