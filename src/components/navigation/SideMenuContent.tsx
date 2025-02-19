@@ -23,10 +23,10 @@ interface SideMenuContentProps {
   onSignOut: () => void;
   onClose: () => void;
   profile?: {
-    display_name?: string;
-    profile_photo?: string;
-    current_mmr?: number;
-    friend_requests_count?: number;
+    display_name?: string | null;
+    profile_photo?: string | null;
+    current_mmr?: number | null;
+    friend_requests_count?: number | null;
   };
 }
 
@@ -56,7 +56,7 @@ export const SideMenuContent = ({
       <div className="space-y-4 px-2">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
-            <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name} />
+            <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
             <AvatarFallback>{profile?.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
@@ -117,7 +117,7 @@ export const SideMenuContent = ({
             <Users className="h-4 w-4" />
             Friends
           </div>
-          {profile?.friend_requests_count ? (
+          {profile?.friend_requests_count && profile.friend_requests_count > 0 ? (
             <Badge variant="destructive" className="ml-2">
               {profile.friend_requests_count}
             </Badge>

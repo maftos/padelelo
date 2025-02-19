@@ -33,11 +33,14 @@ export const useUserProfile = () => {
       if (!user?.id) return null;
       
       try {
+        console.log('Fetching profile for user:', user.id);
         // Get user profile and friend requests count in parallel
         const [profileResponse, friendRequestsResponse] = await Promise.all([
           supabase.rpc('get_user_profile', { user_a_id: user.id }),
           supabase.rpc('friend_requests_counter', { user_a_id: user.id })
         ]);
+        
+        console.log('Friend requests response:', friendRequestsResponse);
         
         if (profileResponse.error) {
           console.error('RPC error:', profileResponse.error);
@@ -74,10 +77,13 @@ export const useUserProfile = () => {
           throw new Error('Invalid profile data structure');
         }
         
-        return {
+        const finalProfile = {
           ...typedData,
           friend_requests_count: typeof friendRequestsResponse.data === 'number' ? friendRequestsResponse.data : 0
         } as UserProfile;
+        
+        console.log('Final profile with friend requests:', finalProfile);
+        return finalProfile;
       } catch (error) {
         console.error('Profile fetch error:', error);
         throw error;
