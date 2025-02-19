@@ -24,6 +24,11 @@ export interface UserProfile {
   friend_requests_count: number | null;
 }
 
+// Define the type for the friend requests counter response
+interface FriendRequestsCountResponse {
+  count: number;
+}
+
 export const useUserProfile = () => {
   const { user } = useAuth();
 
@@ -42,8 +47,8 @@ export const useUserProfile = () => {
         
         console.log('Friend requests response:', friendRequestsResponse);
 
-        // Extract the count from the JSON response correctly
-        const requestCount = friendRequestsResponse.data?.count || 0;
+        // Cast the response data to our defined type and extract count
+        const requestCount = (friendRequestsResponse.data as FriendRequestsCountResponse)?.count || 0;
         console.log('Extracted request count:', requestCount);
         
         if (profileResponse.error) {
