@@ -31,7 +31,7 @@ interface Tournament {
 export default function Tournaments() {
   const { user } = useAuth();
 
-  const { data: tournaments, isLoading, error } = useQuery({
+  const { data: tournaments, isLoading, error, refetch } = useQuery({
     queryKey: ['tournaments', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('view_tournaments', {
@@ -72,13 +72,17 @@ export default function Tournaments() {
       // Using type assertion to handle the RPC function type
       const { error } = await (supabase.rpc as any)('notify_tournament_interest', {
         p_tournament_id: tournamentId,
-        p_user_id: user.id
+        p_player1_id: user.id,
+        p_response_status: currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED'
       });
 
       if (error) {
         console.error('Error toggling interest:', error);
         throw error;
       }
+
+      // Refetch tournaments to update the UI
+      refetch();
     } catch (error) {
       console.error('Error toggling interest:', error);
     }
