@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,7 @@ interface Tournament {
   total_participants: number;
   max_participants: number;
   confirmed_participants: number;
+  bracket_type: string;
   format: {
     name: string;
     description: string;
@@ -86,10 +86,15 @@ export default function TournamentDetail() {
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
     try {
       if (!startDate) return "TBD";
-      const formattedStartDate = format(new Date(startDate), 'PPP');
+      
+      const utcStart = new Date(startDate);
+      utcStart.setHours(utcStart.getHours() + 4);
+      const formattedStartDate = format(utcStart, 'PPP p');
       
       if (endDate) {
-        const formattedEndDate = format(new Date(endDate), 'PPP');
+        const utcEnd = new Date(endDate);
+        utcEnd.setHours(utcEnd.getHours() + 4);
+        const formattedEndDate = format(utcEnd, 'PPP p');
         return `${formattedStartDate} - ${formattedEndDate}`;
       }
       
@@ -118,7 +123,6 @@ export default function TournamentDetail() {
         return;
       }
 
-      // Now refetch is properly defined
       await refetch();
       toast.success(`Successfully ${newStatus === 'INTERESTED' ? 'interested in' : 'removed interest from'} tournament`);
     } catch (error) {
@@ -188,18 +192,20 @@ export default function TournamentDetail() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={tournament.admin_profile_photo} />
-                  <AvatarFallback>
-                    {tournament.admin_display_name?.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-muted-foreground ml-2">
-                  Organized by {tournament.admin_display_name}
-                </span>
-              </div>
+            <div className="flex flex-wrap gap-4">
+              {tournament.admins?.map((admin) => (
+                <div key={admin.user_id} className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={admin.profile_photo} />
+                    <AvatarFallback>
+                      {admin.display_name?.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-muted-foreground">
+                    {tournament.admins.indexOf(admin) === 0 ? 'Organized by ' : 'Co-organized by '}{admin.display_name}
+                  </span>
+                </div>
+              ))}
               <Button 
                 variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
                 onClick={handleInterestToggle}
@@ -217,12 +223,19 @@ export default function TournamentDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <p className="text-muted-foreground">{tournament.description}</p>
+                  {tournament.description?.split('\n').map((paragraph, index) => (
+                    <p key={index} className="text-muted-foreground">{paragraph}</p>
+                  ))}
                   
                   <div className="space-y-3">                    
                     <div className="flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-muted-foreground" />
-                      <span>Level: {tournament.recommended_mmr}</span>
+                      <span>Recommended Level: {tournament.recommended_mmr}</span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-muted-foreground" />
+                      <span>Bracket Type: {tournament.bracket_type}</span>
                     </div>
                     
                     <div className="space-y-2">
