@@ -1291,16 +1291,11 @@ export type Database = {
       }
       create_tournament: {
         Args: {
-          p_name: string
           p_start_date: string
           p_end_date: string
           p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
           p_venue_id: string
-          p_privacy: Database["public"]["Enums"]["tournament_privacy"]
-          p_description: string
-          p_recommended_mmr: number
           p_max_players: number
-          p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
           p_user_a_id: string
         }
         Returns: Json
