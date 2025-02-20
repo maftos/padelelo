@@ -12,6 +12,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
+interface TournamentAdmin {
+  user_id: string;
+  profile_photo: string | null;
+  display_name: string;
+}
+
 interface Tournament {
   tournament_id: string;
   name: string;
@@ -21,14 +27,10 @@ interface Tournament {
   status: string;
   venue_id: string;
   recommended_mmr: number;
-  responded_count: number;  // Changed from interested_count to match backend
+  responded_count: number;
   user_interest: 'INTERESTED' | 'NOT_INTERESTED' | null;
   main_photo: string | null;
-  admins: Array<{    // Changed from admin to admins array to match backend
-    user_id: string;
-    profile_photo: string | null;
-    display_name: string;
-  }>;
+  admins: TournamentAdmin[];
 }
 
 export default function Tournaments() {
@@ -138,8 +140,12 @@ export default function Tournaments() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tournaments?.map((tournament) => {
-            // Get the first admin from the admins array
-            const primaryAdmin = tournament.admins?.[0] || {};
+            // Get the first admin from the admins array with proper type
+            const primaryAdmin: TournamentAdmin = tournament.admins?.[0] || {
+              user_id: '',
+              profile_photo: null,
+              display_name: 'TO'
+            };
             
             return (
               <div key={tournament.tournament_id} className="relative">
@@ -159,7 +165,7 @@ export default function Tournaments() {
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={primaryAdmin.profile_photo || undefined} />
                             <AvatarFallback>
-                              {primaryAdmin.display_name?.substring(0, 2).toUpperCase() || 'TO'}
+                              {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         </div>
