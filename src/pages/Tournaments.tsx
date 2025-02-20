@@ -36,23 +36,31 @@ interface Tournament {
 export default function Tournaments() {
   const { user } = useAuth();
 
-  const { data: tournaments, isLoading, error, refetch } = useQuery({
+  const { data: tournaments, isLoading, error } = useQuery({
     queryKey: ['tournaments', user?.id],
     queryFn: async () => {
       console.log('Fetching tournaments for user:', user?.id);
-      const { data, error } = await supabase.rpc('view_tournaments', {
-        p_user_a_id: user?.id || null
-      });
+      
+      const { data: tournamentData, error: tournamentError } = await supabase
+        .rpc('view_tournaments', {
+          p_user_a_id: user?.id || null
+        });
 
-      if (error) {
-        console.error('Error fetching tournaments:', error);
-        throw error;
+      if (tournamentError) {
+        console.error('Error fetching tournaments:', tournamentError);
+        throw tournamentError;
       }
 
-      console.log('Tournaments data received:', data);
-      return (data as unknown) as Tournament[];
+      if (!tournamentData) {
+        return [];
+      }
+
+      console.log('Tournaments data received:', tournamentData);
+      return tournamentData as Tournament[];
     },
-    enabled: true
+    enabled: true,
+    retry: 1,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
@@ -83,19 +91,16 @@ export default function Tournaments() {
 
       const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
 
-      const { data, error } = await (supabase.rpc as any)('notify_tournament_interest', {
+      const { error: toggleError } = await supabase.rpc('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_player1_id: user.id,
         p_response_status: newStatus
       });
 
-      if (error) {
-        console.error('Error toggling interest:', error);
-        throw error;
+      if (toggleError) {
+        console.error('Error toggling interest:', toggleError);
+        throw toggleError;
       }
-
-      console.log('Toggle response:', data);
-      await refetch();
     } catch (error) {
       console.error('Error toggling interest:', error);
     }
@@ -140,7 +145,6 @@ export default function Tournaments() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tournaments?.map((tournament) => {
-            // Get the first admin from the admins array with proper type
             const primaryAdmin: TournamentAdmin = tournament.admins?.[0] || {
               user_id: '',
               profile_photo: null,
