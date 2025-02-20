@@ -76,7 +76,7 @@ export default function Tournaments() {
       const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
 
       // Using type assertion to handle the RPC function type
-      const { data, error } = await supabase.rpc('notify_tournament_interest', {
+      const { data, error } = await (supabase.rpc as any)('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_player1_id: user.id,
         p_response_status: newStatus
