@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Progress } from "@/components/ui/progress";
@@ -55,14 +54,16 @@ export default function CreateTournament() {
   const [endTime, setEndTime] = useState<string>("");
 
   // Fetch venues on component mount
-  useState(() => {
+  useEffect(() => {
     const fetchVenues = async () => {
       const { data, error } = await supabase.rpc('get_venues');
       if (error) {
         toast.error("Failed to load venues");
         return;
       }
-      setVenues(data);
+      // Properly cast the data through unknown first
+      const typedData = (data as unknown) as Venue[];
+      setVenues(typedData);
     };
     fetchVenues();
   }, []);
