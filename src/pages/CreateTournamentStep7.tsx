@@ -32,7 +32,6 @@ interface CreateTournamentParams {
   p_max_players: number;
   p_approval_type: ApprovalType;
   p_user_a_id: string;
-  p_admins: string[];
   p_main_photo?: string | null;
 }
 
@@ -83,7 +82,6 @@ export default function CreateTournamentStep7() {
         p_max_players: parseInt(maxPlayers),
         p_approval_type: approvalType,
         p_user_a_id: user.id,
-        p_admins: [], // Empty array for now, could be enhanced with admin selection
         p_main_photo: mainPhoto || null
       };
 

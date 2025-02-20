@@ -1302,7 +1302,6 @@ export type Database = {
           p_max_players: number
           p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
           p_user_a_id: string
-          p_admins: string[]
         }
         Returns: Json
       }
