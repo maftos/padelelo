@@ -19,20 +19,16 @@ interface Tournament {
   start_date: string;
   end_date: string | null;
   status: string;
-  venue_name: string;
   venue_id: string;
   recommended_mmr: number;
-  interested_count: number;
+  responded_count: number;  // Changed from interested_count to match backend
   user_interest: 'INTERESTED' | 'NOT_INTERESTED' | null;
   main_photo: string | null;
-  admin: {
-    display_name: string;
+  admins: Array<{    // Changed from admin to admins array to match backend
+    user_id: string;
     profile_photo: string | null;
-  };
-  format: {
-    name: string;
-    description: string;
-  };
+    display_name: string;
+  }>;
 }
 
 export default function Tournaments() {
@@ -52,10 +48,9 @@ export default function Tournaments() {
       }
 
       console.log('Tournaments data received:', data);
-      // First cast to unknown, then to Tournament[] to satisfy TypeScript
       return (data as unknown) as Tournament[];
     },
-    enabled: true // This ensures the query runs even if user is null
+    enabled: true
   });
 
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
@@ -142,61 +137,66 @@ export default function Tournaments() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tournaments?.map((tournament) => (
-            <div key={tournament.tournament_id} className="relative">
-              <Link to={`/tournaments/${tournament.tournament_id}`}>
-                <Card className="transition-all hover:bg-accent h-full">
-                  <div className="relative h-48 w-full">
-                    <img
-                      src={tournament.main_photo || '/placeholder.svg'}
-                      alt={tournament.name}
-                      className="w-full h-full object-cover rounded-t-lg"
-                    />
-                  </div>
-                  <CardHeader>
-                    <CardTitle className="flex justify-between items-start gap-4">
-                      <span>{tournament.name}</span>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={tournament.admin.profile_photo || undefined} />
-                          <AvatarFallback>
-                            {tournament.admin.display_name?.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                      </div>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
-                      <p className="text-sm font-medium">
-                        {formatTournamentDate(tournament.start_date, tournament.end_date)}
-                      </p>
-                      <div className="flex justify-between items-center text-sm">
-                        <span>MMR: {tournament.recommended_mmr}</span>
-                        <span>{tournament.interested_count} interested</span>
-                      </div>
+          {tournaments?.map((tournament) => {
+            // Get the first admin from the admins array
+            const primaryAdmin = tournament.admins?.[0] || {};
+            
+            return (
+              <div key={tournament.tournament_id} className="relative">
+                <Link to={`/tournaments/${tournament.tournament_id}`}>
+                  <Card className="transition-all hover:bg-accent h-full">
+                    <div className="relative h-48 w-full">
+                      <img
+                        src={tournament.main_photo || '/placeholder.svg'}
+                        alt={tournament.name}
+                        className="w-full h-full object-cover rounded-t-lg"
+                      />
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-              <div className="absolute bottom-4 right-4 z-10">
-                <Button
-                  variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
-                  size="sm"
-                  className="gap-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleInterestToggle(tournament.tournament_id, tournament.user_interest);
-                  }}
-                >
-                  <Star className={tournament.user_interest === 'INTERESTED' ? "fill-current" : ""} />
-                  Interested
-                </Button>
+                    <CardHeader>
+                      <CardTitle className="flex justify-between items-start gap-4">
+                        <span>{tournament.name}</span>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={primaryAdmin.profile_photo || undefined} />
+                            <AvatarFallback>
+                              {primaryAdmin.display_name?.substring(0, 2).toUpperCase() || 'TO'}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
+                        <p className="text-sm font-medium">
+                          {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                        </p>
+                        <div className="flex justify-between items-center text-sm">
+                          <span>MMR: {tournament.recommended_mmr}</span>
+                          <span>{tournament.responded_count} interested</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+                <div className="absolute bottom-4 right-4 z-10">
+                  <Button
+                    variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
+                    size="sm"
+                    className="gap-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleInterestToggle(tournament.tournament_id, tournament.user_interest);
+                    }}
+                  >
+                    <Star className={tournament.user_interest === 'INTERESTED' ? "fill-current" : ""} />
+                    Interested
+                  </Button>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </PageContainer>
     </>
