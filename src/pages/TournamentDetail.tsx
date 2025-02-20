@@ -66,7 +66,7 @@ export default function TournamentDetail() {
   const { tournamentId } = useParams();
   const { user } = useAuth();
 
-  const { data: tournament, isLoading, error } = useQuery({
+  const { data: tournament, isLoading, error, refetch } = useQuery({
     queryKey: ['tournament', tournamentId, user?.id],
     queryFn: async () => {
       const { data, error } = await (supabase.rpc as any)('view_tournament', {
@@ -118,8 +118,8 @@ export default function TournamentDetail() {
         return;
       }
 
-      // Refresh tournament data
-      refetch();
+      // Now refetch is properly defined
+      await refetch();
       toast.success(`Successfully ${newStatus === 'INTERESTED' ? 'interested in' : 'removed interest from'} tournament`);
     } catch (error) {
       console.error('Error:', error);
