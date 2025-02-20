@@ -52,11 +52,13 @@ export default function Tournaments() {
       }
 
       if (!tournamentData) {
-        return [];
+        return [] as Tournament[];
       }
 
-      console.log('Tournaments data received:', tournamentData);
-      return tournamentData as Tournament[];
+      // Properly cast the data through unknown first
+      const typedData = (tournamentData as unknown) as Tournament[];
+      console.log('Tournaments data received:', typedData);
+      return typedData;
     },
     enabled: true,
     retry: 1,
@@ -91,7 +93,8 @@ export default function Tournaments() {
 
       const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
 
-      const { error: toggleError } = await supabase.rpc('notify_tournament_interest', {
+      // Cast the rpc call to any to bypass the type checking for the function name
+      const { error: toggleError } = await (supabase.rpc as any)('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_player1_id: user.id,
         p_response_status: newStatus
