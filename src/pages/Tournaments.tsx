@@ -19,13 +19,20 @@ interface Tournament {
   start_date: string;
   end_date: string | null;
   status: string;
+  venue_name: string;
   venue_id: string;
   recommended_mmr: number;
   interested_count: number;
   user_interest: 'INTERESTED' | 'NOT_INTERESTED' | null;
-  main_photo: string;
-  admin_display_name: string;
-  admin_profile_photo: string;
+  main_photo: string | null;
+  admin: {
+    display_name: string;
+    profile_photo: string | null;
+  };
+  format: {
+    name: string;
+    description: string;
+  };
 }
 
 export default function Tournaments() {
@@ -34,6 +41,7 @@ export default function Tournaments() {
   const { data: tournaments, isLoading, error, refetch } = useQuery({
     queryKey: ['tournaments', user?.id],
     queryFn: async () => {
+      console.log('Fetching tournaments for user:', user?.id);
       const { data, error } = await supabase.rpc('view_tournaments', {
         p_user_a_id: user?.id || null
       });
@@ -43,8 +51,10 @@ export default function Tournaments() {
         throw error;
       }
 
-      return data as unknown as Tournament[];
-    }
+      console.log('Tournaments data received:', data);
+      return data as Tournament[];
+    },
+    enabled: true // This ensures the query runs even if user is null
   });
 
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
@@ -75,7 +85,6 @@ export default function Tournaments() {
 
       const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
 
-      // Using type assertion to handle the RPC function type
       const { data, error } = await (supabase.rpc as any)('notify_tournament_interest', {
         p_tournament_id: tournamentId,
         p_player1_id: user.id,
@@ -88,8 +97,6 @@ export default function Tournaments() {
       }
 
       console.log('Toggle response:', data);
-
-      // Refetch tournaments to update the UI
       await refetch();
     } catch (error) {
       console.error('Error toggling interest:', error);
@@ -150,9 +157,9 @@ export default function Tournaments() {
                       <span>{tournament.name}</span>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={tournament.admin_profile_photo} />
+                          <AvatarImage src={tournament.admin.profile_photo || undefined} />
                           <AvatarFallback>
-                            {tournament.admin_display_name?.substring(0, 2).toUpperCase()}
+                            {tournament.admin.display_name?.substring(0, 2).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </div>
