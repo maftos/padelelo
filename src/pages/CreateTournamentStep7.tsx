@@ -20,6 +20,22 @@ type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM" | "ROUND_ROBIN" | "AMERICANO_SO
 type PrivacyType = "INVITE_ONLY" | "FRIENDS" | "PUBLIC";
 type ApprovalType = "AUTOMATIC" | "MANUAL";
 
+interface CreateTournamentParams {
+  p_name: string;
+  p_description: string;
+  p_start_date: string;
+  p_end_date: string;
+  p_bracket_type: BracketType;
+  p_venue_id: string;
+  p_privacy: PrivacyType;
+  p_recommended_mmr: number;
+  p_max_players: number;
+  p_approval_type: ApprovalType;
+  p_user_a_id: string;
+  p_admins: string[];
+  p_main_photo?: string | null;
+}
+
 export default function CreateTournamentStep7() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [maxPlayers, setMaxPlayers] = useState<string>("");
@@ -51,25 +67,27 @@ export default function CreateTournamentStep7() {
       const privacy = localStorage.getItem("tournament_privacy") as PrivacyType;
       const venueId = localStorage.getItem("tournament_venue_id");
 
-      if (!bracketType || !privacy || !venueId || !name || !description || !startDate || !endDate) {
+      if (!name || !description || !startDate || !endDate || !bracketType || !privacy || !venueId) {
         throw new Error("Missing required tournament settings");
       }
 
-      const { error } = await supabase.rpc('create_tournament', {
+      const params: CreateTournamentParams = {
         p_name: name,
+        p_description: description,
         p_start_date: startDate.toISOString(),
         p_end_date: endDate.toISOString(),
         p_bracket_type: bracketType,
-        p_main_photo: mainPhoto || null,
         p_venue_id: venueId,
         p_privacy: privacy,
-        p_description: description,
         p_recommended_mmr: parseInt(recommendedMmr || "0"),
         p_max_players: parseInt(maxPlayers),
         p_approval_type: approvalType,
         p_user_a_id: user.id,
-        p_admins: [] // Empty array for now, could be enhanced with admin selection
-      });
+        p_admins: [], // Empty array for now, could be enhanced with admin selection
+        p_main_photo: mainPhoto || null
+      };
+
+      const { error } = await supabase.rpc('create_tournament', params);
 
       if (error) throw error;
 

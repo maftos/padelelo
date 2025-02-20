@@ -1289,88 +1289,23 @@ export type Database = {
         }
         Returns: string
       }
-      create_tournament:
-        | {
-            Args: {
-              p_name: string
-              p_date: unknown
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_main_photo: string
-              p_venue_id: string
-              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
-              p_description: string
-              p_recommended_mmr: number
-              p_max_players: number
-              p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
-              p_user_a_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_name: string
-              p_date: unknown
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_photo_gallery: Json
-              p_admins: string[]
-              p_venue_id: string
-              p_status: Database["public"]["Enums"]["tournament_status"]
-              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
-              p_description: string
-              p_recommended_mmr: number
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_name: string
-              p_date: unknown
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_photo_gallery: Json
-              p_venue_id: string
-              p_status: Database["public"]["Enums"]["tournament_status"]
-              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
-              p_description: string
-              p_recommended_mmr: number
-              p_user_a_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_name: string
-              p_start_date: string
-              p_end_date: string
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_main_photo: string
-              p_venue_id: string
-              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
-              p_description: string
-              p_recommended_mmr: number
-              p_max_players: number
-              p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
-              p_user_a_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_name: string
-              p_start_date: string
-              p_end_date: string
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_main_photo: string
-              p_venue_id: string
-              p_privacy: Database["public"]["Enums"]["tournament_privacy"]
-              p_description: string
-              p_recommended_mmr: number
-              p_max_players: number
-              p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
-              p_user_a_id: string
-              p_admins: string[]
-            }
-            Returns: Json
-          }
+      create_tournament: {
+        Args: {
+          p_name: string
+          p_start_date: string
+          p_end_date: string
+          p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+          p_venue_id: string
+          p_privacy: Database["public"]["Enums"]["tournament_privacy"]
+          p_description: string
+          p_recommended_mmr: number
+          p_max_players: number
+          p_approval_type: Database["public"]["Enums"]["tournament_approval_type"]
+          p_user_a_id: string
+          p_admins: string[]
+        }
+        Returns: Json
+      }
       disablelongtransactions: {
         Args: Record<PropertyKey, never>
         Returns: string
