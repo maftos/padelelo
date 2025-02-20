@@ -52,7 +52,8 @@ export default function Tournaments() {
       }
 
       console.log('Tournaments data received:', data);
-      return data as Tournament[];
+      // First cast to unknown, then to Tournament[] to satisfy TypeScript
+      return (data as unknown) as Tournament[];
     },
     enabled: true // This ensures the query runs even if user is null
   });
