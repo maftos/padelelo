@@ -37,8 +37,22 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         throw error;
       }
       
-      console.log('Friend suggestions data:', data);
-      return data as SuggestedFriendsResponse;
+      // Ensure the data has the expected shape
+      if (!data || typeof data !== 'object') {
+        return {
+          users_played_with: [],
+          mutual_friends: []
+        };
+      }
+
+      // Create a properly typed response with default empty arrays
+      const response: SuggestedFriendsResponse = {
+        users_played_with: Array.isArray(data.users_played_with) ? data.users_played_with : [],
+        mutual_friends: Array.isArray(data.mutual_friends) ? data.mutual_friends : []
+      };
+      
+      console.log('Friend suggestions data:', response);
+      return response;
     },
     enabled: !!userId,
   });
@@ -66,12 +80,20 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  if (!suggestions || (!suggestions.users_played_with.length && !suggestions.mutual_friends.length)) {
+  // Early return if suggestions is null or empty
+  if (!suggestions) {
+    return null;
+  }
+
+  const hasUserPlayed = Array.isArray(suggestions.users_played_with) && suggestions.users_played_with.length > 0;
+  const hasMutualFriends = Array.isArray(suggestions.mutual_friends) && suggestions.mutual_friends.length > 0;
+
+  if (!hasUserPlayed && !hasMutualFriends) {
     return null;
   }
 
   const renderUserList = (users: SuggestedUser[], title: string) => {
-    if (!users.length) return null;
+    if (!Array.isArray(users) || users.length === 0) return null;
 
     return (
       <div className="space-y-4">
@@ -105,11 +127,11 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         <h2 className="text-xl font-semibold">People You May Know</h2>
       </div>
       
-      {suggestions.users_played_with.length > 0 && (
+      {hasUserPlayed && (
         renderUserList(suggestions.users_played_with, "Players You've Matched With")
       )}
       
-      {suggestions.mutual_friends.length > 0 && (
+      {hasMutualFriends && (
         renderUserList(suggestions.mutual_friends, "People Your Friends Know")
       )}
     </div>
