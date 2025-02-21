@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UserPlus2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 
 interface SuggestedUser {
   user_id: string;
@@ -32,6 +35,8 @@ interface RpcResponse {
 }
 
 export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
+  const [pendingRequests, setPendingRequests] = useState<Set<string>>(new Set());
+
   const { data: suggestions, isLoading, error } = useQuery({
     queryKey: ['suggestedFriends', userId],
     queryFn: async () => {
@@ -47,8 +52,12 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         throw error;
       }
 
-      // Type assertion for the RPC response
-      const rpcResponse = data as RpcResponse;
+      // Type assertion for the RPC response after checking it exists
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response data');
+      }
+
+      const rpcResponse = data as unknown as RpcResponse;
       
       // Transform the data into our expected format
       const response: SuggestedFriendsResponse = {
@@ -66,6 +75,46 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     },
     enabled: !!userId,
   });
+
+  const handleSendFriendRequest = async (targetUserId: string) => {
+    if (!userId) return;
+
+    setPendingRequests(prev => new Set(prev).add(targetUserId));
+
+    try {
+      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
+        user_a_id_public: userId,
+        user_b_id_public: targetUserId
+      });
+
+      if (error) {
+        console.error('Error sending friend request:', error);
+        toast({
+          title: "Error",
+          description: "Failed to send friend request. Please try again.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Friend request sent successfully!"
+        });
+      }
+    } catch (err) {
+      console.error('Error sending friend request:', err);
+      toast({
+        title: "Error",
+        description: "Failed to send friend request. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setPendingRequests(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(targetUserId);
+        return newSet;
+      });
+    }
+  };
 
   if (error) {
     console.error('Error in SuggestedFriends component:', error);
@@ -111,17 +160,34 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {users.map((user) => (
             <Card key={user.user_id} className="p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center space-x-4">
-                <Avatar>
-                  <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
-                  <AvatarFallback>
-                    {user.display_name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">{user.display_name}</p>
-                  <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <Avatar>
+                    <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
+                    <AvatarFallback>
+                      {user.display_name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{user.display_name}</p>
+                    <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
+                  </div>
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSendFriendRequest(user.user_id)}
+                  disabled={pendingRequests.has(user.user_id)}
+                >
+                  {pendingRequests.has(user.user_id) ? (
+                    "Sending..."
+                  ) : (
+                    <>
+                      <UserPlus2 className="h-4 w-4 mr-1" />
+                      Add
+                    </>
+                  )}
+                </Button>
               </div>
             </Card>
           ))}
