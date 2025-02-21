@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star } from "lucide-react";
+import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star, Pencil } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,6 +68,7 @@ interface Tournament {
 export default function TournamentDetail() {
   const { tournamentId } = useParams();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
@@ -138,6 +139,10 @@ export default function TournamentDetail() {
     }
   };
 
+  const handleNavigateToEdit = () => {
+    navigate(`/tournaments/${tournamentId}/edit`);
+  };
+
   const isAdmin = tournament?.admins?.some(admin => admin.user_id === user?.id) || false;
 
   if (isLoading) {
@@ -180,11 +185,12 @@ export default function TournamentDetail() {
           {isAdmin && (
             <Button
               variant="outline"
-              size="icon"
+              size="sm"
               className="absolute top-4 left-4 bg-background"
-              onClick={() => {/* Add edit functionality */}}
+              onClick={handleNavigateToEdit}
             >
-              <Settings className="h-4 w-4 text-primary" />
+              <Pencil className="h-4 w-4 text-primary mr-2" />
+              Edit Details
             </Button>
           )}
           <div className="absolute top-4 right-4 flex gap-2">
