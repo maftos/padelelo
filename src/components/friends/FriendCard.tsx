@@ -1,43 +1,55 @@
+
+import { UserPlus2, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { SuggestedUser } from "./types/friend-types";
 
 interface FriendCardProps {
-  friend: {
-    friend_id: string;
-    display_name: string;
-    profile_photo: string | null;
-    created_at: string;
-  };
+  user: SuggestedUser;
+  onSendRequest: (userId: string) => void;
+  isPending: boolean;
 }
 
-export const FriendCard = ({ friend }: FriendCardProps) => {
+export const FriendCard = ({ user, onSendRequest, isPending }: FriendCardProps) => {
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Card className="p-4 hover:shadow-md transition-shadow cursor-pointer">
-          <div className="flex items-center space-x-4">
-            <Avatar>
-              <AvatarImage src={friend.profile_photo || ''} alt={friend.display_name} />
-              <AvatarFallback>
-                {friend.display_name ? friend.display_name.charAt(0).toUpperCase() : 'U'}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="font-medium">{friend.display_name}</p>
-              <p className="text-sm text-muted-foreground">
-                Friend since {new Date(friend.created_at).toLocaleDateString()}
-              </p>
-            </div>
+    <Card className="p-4 hover:shadow-md transition-shadow">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Avatar>
+            <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
+            <AvatarFallback>
+              {user.display_name?.substring(0, 2).toUpperCase() || 'UN'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <p className="font-medium">{user.display_name || 'Unknown User'}</p>
+            {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <Users className="h-3.5 w-3.5 mr-1" />
+                <span>
+                  {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
+                </span>
+              </div>
+            )}
           </div>
-        </Card>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{friend.display_name}'s Recent Matches</DialogTitle>
-        </DialogHeader>
-        {/* RecentMatches component would go here */}
-      </DialogContent>
-    </Dialog>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onSendRequest(user.id)}
+          disabled={isPending}
+        >
+          {isPending ? (
+            "Sending..."
+          ) : (
+            <>
+              <UserPlus2 className="h-4 w-4 mr-1" />
+              Add
+            </>
+          )}
+        </Button>
+      </div>
+    </Card>
   );
 };
