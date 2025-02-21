@@ -68,7 +68,14 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       }
 
       console.log('Played with suggestions data:', data);
-      return data as unknown as RpcResponsePlayed;
+      // Remove duplicates based on user ID
+      const uniqueUsers = data ? Array.from(
+        new Map(data.users_played_with.map(user => [user.id, user])).values()
+      ) : [];
+      
+      return {
+        users_played_with: uniqueUsers
+      } as RpcResponsePlayed;
     },
     enabled: !!userId,
   });
@@ -152,7 +159,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         <div className="space-y-6">
           <div className="flex items-center gap-2">
             <UserPlus2 className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">People You've Played With</h2>
+            <h2 className="text-xl font-semibold">Played With</h2>
           </div>
           
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -255,3 +262,4 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     </div>
   );
 };
+
