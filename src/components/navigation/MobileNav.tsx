@@ -22,7 +22,7 @@ export const MobileNav = ({
   onSignInClick,
   onSignOut 
 }: MobileNavProps) => {
-  const hasFriendRequests = profile?.friend_requests_count && profile.friend_requests_count > 0;
+  const hasFriendRequests = (profile?.friend_requests_count || 0) > 0;
 
   return (
     <div className="flex md:hidden flex-1 items-center justify-between">
@@ -51,7 +51,7 @@ export const MobileNav = ({
                     variant="destructive" 
                     className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]"
                   >
-                    {profile.friend_requests_count}
+                    {profile?.friend_requests_count}
                   </Badge>
                 )}
               </Button>
