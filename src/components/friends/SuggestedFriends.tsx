@@ -52,12 +52,15 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
 
       console.log('Mutual friends suggestions data:', data);
       
-      // Safely type assert the response
-      if (data && typeof data === 'object' && 'top_mutual_friends' in data) {
-        return data as RpcResponseMutual;
+      // First cast to unknown, then check the structure
+      const typedData = data as unknown;
+      if (typedData && 
+          typeof typedData === 'object' && 
+          'top_mutual_friends' in typedData && 
+          Array.isArray((typedData as any).top_mutual_friends)) {
+        return typedData as RpcResponseMutual;
       }
       
-      // Return empty array if no data
       return { top_mutual_friends: [] } as RpcResponseMutual;
     },
     enabled: !!userId,
@@ -80,12 +83,16 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
 
       console.log('Played with suggestions data:', rpcData);
       
-      // Safely type assert the response and ensure it matches our expected structure
-      if (rpcData && typeof rpcData === 'object' && 'users_played_with' in rpcData) {
-        const typedData = rpcData as { users_played_with: PlayedWithUser[] };
+      // First cast to unknown, then check the structure
+      const typedData = rpcData as unknown;
+      if (typedData && 
+          typeof typedData === 'object' && 
+          'users_played_with' in typedData && 
+          Array.isArray((typedData as any).users_played_with)) {
+        const validData = typedData as { users_played_with: PlayedWithUser[] };
         // Remove duplicates based on user ID
         const uniqueUsers = Array.from(
-          new Map(typedData.users_played_with.map(user => [user.id, user])).values()
+          new Map(validData.users_played_with.map(user => [user.id, user])).values()
         );
         
         return {
@@ -93,7 +100,6 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         } as RpcResponsePlayed;
       }
       
-      // Return empty array if no data
       return {
         users_played_with: []
       } as RpcResponsePlayed;
