@@ -52,7 +52,6 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         throw error;
       }
 
-      // Type assertion for the RPC response after checking it exists
       if (!data || typeof data !== 'object') {
         throw new Error('Invalid response data');
       }
@@ -61,12 +60,15 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       
       // Transform the data into our expected format
       const response: SuggestedFriendsResponse = {
-        users_played_with: rpcResponse.users_played_with || [],
+        users_played_with: rpcResponse.users_played_with?.map(user => ({
+          ...user,
+          display_name: user.display_name || 'Unknown User'
+        })) || [],
         mutual_friends: rpcResponse.top_mutual_friends?.map(friend => ({
           user_id: friend.friend_id,
-          display_name: friend.display_name,
+          display_name: friend.display_name || 'Unknown User',
           profile_photo: friend.profile_photo,
-          current_mmr: 0 // Since this isn't in the mutual friends data
+          current_mmr: 0
         })) || []
       };
       
@@ -139,7 +141,6 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  // Early return if suggestions is null
   if (!suggestions) {
     return null;
   }
@@ -165,11 +166,11 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
                   <Avatar>
                     <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
                     <AvatarFallback>
-                      {user.display_name.substring(0, 2).toUpperCase()}
+                      {(user.display_name || 'U').substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-medium">{user.display_name}</p>
+                    <p className="font-medium">{user.display_name || 'Unknown User'}</p>
                     <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
                   </div>
                 </div>
@@ -213,3 +214,4 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     </div>
   );
 };
+
