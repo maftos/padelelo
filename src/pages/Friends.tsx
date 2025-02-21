@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { FriendsList } from "@/components/friends/FriendsList";
+import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
 import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -84,6 +86,7 @@ const Friends = () => {
           {/* Main Content Area */}
           <div className="flex-1 space-y-6 order-1 lg:order-2">
             <FriendRequests />
+            <SuggestedFriends userId={userId} />
           </div>
         </div>
       </div>
