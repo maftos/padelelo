@@ -1,12 +1,10 @@
 
-import { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useParams } from "react-router-dom";
+import { Navigation } from "@/components/Navigation";
+import { PageContainer } from "@/components/layouts/PageContainer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -14,271 +12,219 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Navigation } from "@/components/Navigation";
-import { PageContainer } from "@/components/layouts/PageContainer";
-import { Progress } from "@/components/ui/progress";
-import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
-interface Venue {
-  venue_id: string;
+// Sample data types
+type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM";
+type TournamentStatus = "DRAFT" | "PUBLISHED" | "COMPLETED";
+type TournamentPrivacy = "PUBLIC" | "PRIVATE";
+type ApprovalType = "AUTOMATIC" | "MANUAL";
+
+interface TournamentFormData {
   name: string;
-}
-
-type BracketType = "SINGLE_ELIM";
-
-interface Tournament {
-  tournament_id: string;
-  max_participants: number;
+  bracket_type: BracketType;
   venue_id: string;
+  status: TournamentStatus;
+  privacy: TournamentPrivacy;
+  description: string;
+  recommended_mmr: number;
+  main_photo: string;
+  approval_type: ApprovalType;
   start_date: string;
   end_date: string;
-  bracket_type: BracketType;
+  max_players: number;
 }
+
+// Sample tournament data
+const sampleTournament: TournamentFormData = {
+  name: "Sample Tournament 2024",
+  bracket_type: "SINGLE_ELIM",
+  venue_id: "venue-1",
+  status: "DRAFT",
+  privacy: "PUBLIC",
+  description: "This is a sample tournament description.",
+  recommended_mmr: 3000,
+  main_photo: "https://example.com/photo.jpg",
+  approval_type: "AUTOMATIC",
+  start_date: "2024-03-20T14:00",
+  end_date: "2024-03-20T18:00",
+  max_players: 16
+};
+
+// Sample venues data
+const sampleVenues = [
+  { id: "venue-1", name: "Sports Complex A" },
+  { id: "venue-2", name: "Tennis Club B" },
+  { id: "venue-3", name: "Recreation Center C" },
+];
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [venues, setVenues] = useState<Venue[]>([]);
 
-  // Step 1: Maximum Players
-  const [maxPlayers, setMaxPlayers] = useState<string>("");
-
-  // Step 2: Venue
-  const [selectedVenue, setSelectedVenue] = useState<string>("");
-
-  // Step 3: Dates and Times
-  const [startDate, setStartDate] = useState<string>("");
-  const [startTime, setStartTime] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
-
-  // Fetch tournament data
-  const { data: tournament } = useQuery({
-    queryKey: ['tournament', tournamentId, user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc('view_tournament', {
-        p_tournament_id: tournamentId,
-        p_user_a_id: user?.id || null
-      });
-
-      if (error) throw error;
-      return data as Tournament;
-    },
-    enabled: !!tournamentId && !!user?.id
-  });
-
-  // Update form when tournament data is loaded
-  useEffect(() => {
-    if (tournament) {
-      const startDateTime = new Date(tournament.start_date);
-      const endDateTime = tournament.end_date ? new Date(tournament.end_date) : null;
-
-      setMaxPlayers(tournament.max_participants?.toString() || "");
-      setSelectedVenue(tournament.venue_id || "");
-      setStartDate(startDateTime.toISOString().split('T')[0]);
-      setStartTime(startDateTime.toTimeString().slice(0, 5));
-      if (endDateTime) {
-        setEndDate(endDateTime.toISOString().split('T')[0]);
-        setEndTime(endDateTime.toTimeString().slice(0, 5));
-      }
-    }
-  }, [tournament]);
-
-  // Fetch venues
-  useEffect(() => {
-    const fetchVenues = async () => {
-      const { data, error } = await supabase.rpc('get_venues');
-      if (error) {
-        toast.error("Failed to load venues");
-        return;
-      }
-      // Properly type the data
-      const typedData = data as unknown as Venue[];
-      setVenues(typedData || []);
-    };
-    fetchVenues();
-  }, []);
-
-  const handleNext = () => {
-    if (currentStep === 1 && !maxPlayers) {
-      toast.error("Please enter maximum number of players");
-      return;
-    }
-    if (currentStep === 2 && !selectedVenue) {
-      toast.error("Please select a venue");
-      return;
-    }
-    if (currentStep < 3) {
-      setCurrentStep(prev => prev + 1);
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(prev => prev - 1);
-    } else {
-      navigate(`/tournaments/${tournamentId}`);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!user?.id || !tournamentId) {
-      toast.error("You must be logged in to edit a tournament");
-      return;
-    }
-
-    // Validate all required fields
-    if (!maxPlayers || !selectedVenue || !startDate || !startTime || !endDate || !endTime) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      // Combine date and time strings into ISO string with UTC+4
-      const startDateTime = new Date(`${startDate}T${startTime}+04:00`).toISOString();
-      const endDateTime = new Date(`${endDate}T${endTime}+04:00`).toISOString();
-
-      const updates = {
-        max_players: parseInt(maxPlayers),
-        venue_id: selectedVenue,
-        start_date: startDateTime,
-        end_date: endDateTime,
-      };
-
-      const { error } = await supabase.rpc('edit_tournament', {
-        p_tournament_id: tournamentId,
-        p_user_a_id: user.id,
-        p_updates: updates
-      });
-
-      if (error) throw error;
-
-      toast.success("Tournament updated successfully!");
-      navigate(`/tournaments/${tournamentId}`);
-    } catch (error) {
-      console.error('Error updating tournament:', error);
-      toast.error("Failed to update tournament");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            <Label htmlFor="maxPlayers">Maximum Number of Players</Label>
-            <Input
-              id="maxPlayers"
-              type="number"
-              value={maxPlayers}
-              onChange={(e) => setMaxPlayers(e.target.value)}
-              placeholder="Enter maximum number of players"
-              min="2"
-            />
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-4">
-            <Label htmlFor="venue">Tournament Venue</Label>
-            <Select value={selectedVenue} onValueChange={setSelectedVenue}>
-              <SelectTrigger id="venue">
-                <SelectValue placeholder="Select venue" />
-              </SelectTrigger>
-              <SelectContent>
-                {venues.map((venue) => (
-                  <SelectItem key={venue.venue_id} value={venue.venue_id}>
-                    {venue.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="startDate">Start Date</Label>
-              <Input
-                id="startDate"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="startTime">Start Time</Label>
-              <Input
-                id="startTime"
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="endDate">End Date</Label>
-              <Input
-                id="endDate"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="endTime">End Time</Label>
-              <Input
-                id="endTime"
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // This will be implemented later
+    console.log("Form submitted");
   };
 
   return (
     <>
       <Navigation />
       <PageContainer>
-        <div className="max-w-md mx-auto px-4 py-8">
-          <Progress value={(currentStep / 3) * 100} className="mb-8" />
+        <div className="max-w-3xl mx-auto py-8 px-4">
+          <h1 className="text-2xl font-bold mb-6">Edit Tournament</h1>
           
-          <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-center">
-              {currentStep === 1 && "How many players?"}
-              {currentStep === 2 && "Where will it be held?"}
-              {currentStep === 3 && "When will it start and end?"}
-            </h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Tournament Name</Label>
+                    <Input
+                      id="name"
+                      defaultValue={sampleTournament.name}
+                      placeholder="Enter tournament name"
+                    />
+                  </div>
 
-            {renderStep()}
+                  <div className="space-y-2">
+                    <Label htmlFor="venue">Venue</Label>
+                    <Select defaultValue={sampleTournament.venue_id}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select venue" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {sampleVenues.map((venue) => (
+                          <SelectItem key={venue.id} value={venue.id}>
+                            {venue.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-            <div className="flex justify-between mt-6">
-              <Button variant="outline" onClick={handleBack}>
-                Back
+                  <div className="space-y-2">
+                    <Label htmlFor="bracketType">Bracket Type</Label>
+                    <Select defaultValue={sampleTournament.bracket_type}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select bracket type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="SINGLE_ELIM">Single Elimination</SelectItem>
+                        <SelectItem value="DOUBLE_ELIM">Double Elimination</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Status</Label>
+                    <Select defaultValue={sampleTournament.status}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="DRAFT">Draft</SelectItem>
+                        <SelectItem value="PUBLISHED">Published</SelectItem>
+                        <SelectItem value="COMPLETED">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="privacy">Privacy</Label>
+                    <Select defaultValue={sampleTournament.privacy}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select privacy" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PUBLIC">Public</SelectItem>
+                        <SelectItem value="PRIVATE">Private</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="approvalType">Approval Type</Label>
+                    <Select defaultValue={sampleTournament.approval_type}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select approval type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AUTOMATIC">Automatic</SelectItem>
+                        <SelectItem value="MANUAL">Manual</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="maxPlayers">Maximum Players</Label>
+                    <Input
+                      id="maxPlayers"
+                      type="number"
+                      defaultValue={sampleTournament.max_players}
+                      min={2}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="recommendedMmr">Recommended MMR</Label>
+                    <Input
+                      id="recommendedMmr"
+                      type="number"
+                      defaultValue={sampleTournament.recommended_mmr}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="startDate">Start Date & Time</Label>
+                    <Input
+                      id="startDate"
+                      type="datetime-local"
+                      defaultValue={sampleTournament.start_date}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="endDate">End Date & Time</Label>
+                    <Input
+                      id="endDate"
+                      type="datetime-local"
+                      defaultValue={sampleTournament.end_date}
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="mainPhoto">Main Photo URL</Label>
+                    <Input
+                      id="mainPhoto"
+                      defaultValue={sampleTournament.main_photo}
+                      placeholder="Enter photo URL"
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      defaultValue={sampleTournament.description}
+                      placeholder="Enter tournament description"
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-end gap-4">
+              <Button variant="outline" type="button">
+                Cancel
               </Button>
-              {currentStep < 3 ? (
-                <Button onClick={handleNext}>Next</Button>
-              ) : (
-                <Button 
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Saving..." : "Save Changes"}
-                </Button>
-              )}
+              <Button type="submit">
+                Save Changes
+              </Button>
             </div>
-          </div>
+          </form>
         </div>
       </PageContainer>
     </>
