@@ -12,11 +12,16 @@ interface SuggestedUser {
   id: string;
   display_name: string;
   profile_photo: string | null;
-  mutual_count?: number;
+  mutual_friends_count?: number; // For top mutual friends
+  mutual_count?: number; // For users played with
 }
 
-interface RpcResponse {
-  people_you_may_know: SuggestedUser[];
+interface RpcResponseMutual {
+  top_mutual_friends: SuggestedUser[];
+}
+
+interface RpcResponsePlayed {
+  users_played_with: SuggestedUser[];
 }
 
 interface SuggestedFriendsProps {
@@ -26,23 +31,44 @@ interface SuggestedFriendsProps {
 export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
   const [pendingRequests, setPendingRequests] = useState<Set<string>>(new Set());
 
-  const { data: suggestions, isLoading, error } = useQuery({
-    queryKey: ['suggestedFriends', userId],
+  // Query for getting users with mutual friends
+  const { data: mutualFriendsData, isLoading: isMutualLoading } = useQuery({
+    queryKey: ['suggestFriendsMutual', userId],
     queryFn: async () => {
       if (!userId) return null;
       
-      console.log('Fetching friend suggestions for user:', userId);
-      const { data, error } = await supabase.rpc('suggest_friends', {
+      const { data, error } = await supabase.rpc('suggest_friends_top_mutual', {
         user_a_id_public: userId
       });
       
       if (error) {
-        console.error('Error fetching friend suggestions:', error);
+        console.error('Error fetching mutual friends suggestions:', error);
         throw error;
       }
 
-      console.log('Suggested friends data:', data);
-      return data as RpcResponse;
+      console.log('Mutual friends suggestions data:', data);
+      return data as RpcResponseMutual;
+    },
+    enabled: !!userId,
+  });
+
+  // Query for getting users played with
+  const { data: playedWithData, isLoading: isPlayedLoading } = useQuery({
+    queryKey: ['suggestFriendsPlayed', userId],
+    queryFn: async () => {
+      if (!userId) return null;
+      
+      const { data, error } = await supabase.rpc('suggest_users_played_with', {
+        user_a_id_public: userId
+      });
+      
+      if (error) {
+        console.error('Error fetching played with suggestions:', error);
+        throw error;
+      }
+
+      console.log('Played with suggestions data:', data);
+      return data as RpcResponsePlayed;
     },
     enabled: !!userId,
   });
@@ -87,12 +113,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     }
   };
 
-  if (error) {
-    console.error('Error in SuggestedFriends component:', error);
-    return null;
-  }
-
-  if (isLoading) {
+  if (isPlayedLoading || isMutualLoading) {
     return (
       <div className="space-y-4 animate-pulse">
         {[...Array(3)].map((_, i) => (
@@ -110,7 +131,13 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  if (!suggestions?.people_you_may_know || suggestions.people_you_may_know.length === 0) {
+  // Combine and deduplicate suggestions
+  const combinedSuggestions = Array.from(new Set([
+    ...(mutualFriendsData?.top_mutual_friends || []),
+    ...(playedWithData?.users_played_with || [])
+  ].map(user => JSON.stringify(user)))).map(str => JSON.parse(str));
+
+  if (combinedSuggestions.length === 0) {
     return null;
   }
 
@@ -122,7 +149,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       </div>
       
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {suggestions.people_you_may_know.map((user) => (
+        {combinedSuggestions.map((user) => (
           <Card key={user.id} className="p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -134,10 +161,12 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
                 </Avatar>
                 <div className="space-y-1">
                   <p className="font-medium">{user.display_name || 'Unknown User'}</p>
-                  {user.mutual_count !== undefined && (
+                  {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
                     <div className="flex items-center text-sm text-muted-foreground">
                       <Users className="h-3.5 w-3.5 mr-1" />
-                      <span>{user.mutual_count} mutual {user.mutual_count === 1 ? 'friend' : 'friends'}</span>
+                      <span>
+                        {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
+                      </span>
                     </div>
                   )}
                 </div>

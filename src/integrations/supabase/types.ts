@@ -4248,12 +4248,6 @@ export type Database = {
         }
         Returns: number
       }
-      suggest_friends: {
-        Args: {
-          user_a_id_public: string
-        }
-        Returns: Json
-      }
       suggest_friends_top_mutual: {
         Args: {
           user_a_id_public: string
