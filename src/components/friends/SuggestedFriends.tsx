@@ -16,23 +16,12 @@ interface SuggestedUser {
   mutual_count: number;
 }
 
-interface SuggestedFriendsResponse {
-  users_played_with: SuggestedUser[];
-  mutual_friends: SuggestedUser[];
+interface RpcResponse {
+  people_you_may_know: SuggestedUser[];  // Updated to match new response format
 }
 
 interface SuggestedFriendsProps {
   userId: string | undefined;
-}
-
-interface RpcResponse {
-  users_played_with: SuggestedUser[] | null;
-  top_mutual_friends: Array<{
-    friend_id: string;
-    mutual_count: number;
-    profile_photo: string | null;
-    display_name: string | null;
-  }> | null;
 }
 
 export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
@@ -57,25 +46,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         throw new Error('Invalid response data');
       }
 
-      const rpcResponse = data as unknown as RpcResponse;
-      
-      // Transform the data into our expected format
-      const response: SuggestedFriendsResponse = {
-        users_played_with: rpcResponse.users_played_with?.map(user => ({
-          ...user,
-          display_name: user.display_name || 'Unknown User'
-        })) || [],
-        mutual_friends: rpcResponse.top_mutual_friends?.map(friend => ({
-          user_id: friend.friend_id,
-          display_name: friend.display_name || 'Unknown User',
-          profile_photo: friend.profile_photo,
-          current_mmr: 0, // Default value since it's not provided in the response
-          mutual_count: friend.mutual_count
-        })) || []
-      };
-      
-      console.log('Friend suggestions data:', response);
-      return response;
+      return data as unknown as RpcResponse;
     },
     enabled: !!userId,
   });
@@ -143,67 +114,9 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  if (!suggestions) {
+  if (!suggestions || !suggestions.people_you_may_know || suggestions.people_you_may_know.length === 0) {
     return null;
   }
-
-  const hasUserPlayed = suggestions.users_played_with.length > 0;
-  const hasMutualFriends = suggestions.mutual_friends.length > 0;
-
-  if (!hasUserPlayed && !hasMutualFriends) {
-    return null;
-  }
-
-  const renderUserList = (users: SuggestedUser[], title: string) => {
-    if (users.length === 0) return null;
-
-    return (
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {users.map((user) => (
-            <Card key={user.user_id} className="p-4 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <Avatar>
-                    <AvatarImage src={user.profile_photo || ''} alt={user.display_name || 'Unknown User'} />
-                    <AvatarFallback>
-                      {(user.display_name || 'Unknown User').substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-1">
-                    <p className="font-medium">{user.display_name || 'Unknown User'}</p>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Users className="h-3.5 w-3.5 mr-1" />
-                      <span>{user.mutual_count} mutual {user.mutual_count === 1 ? 'friend' : 'friends'}</span>
-                    </div>
-                    {user.current_mmr && (
-                      <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
-                    )}
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleSendFriendRequest(user.user_id)}
-                  disabled={pendingRequests.has(user.user_id)}
-                >
-                  {pendingRequests.has(user.user_id) ? (
-                    "Sending..."
-                  ) : (
-                    <>
-                      <UserPlus2 className="h-4 w-4 mr-1" />
-                      Add
-                    </>
-                  )}
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -212,13 +125,47 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         <h2 className="text-xl font-semibold">People You May Know</h2>
       </div>
       
-      {hasUserPlayed && (
-        renderUserList(suggestions.users_played_with, "Players You've Matched With")
-      )}
-      
-      {hasMutualFriends && (
-        renderUserList(suggestions.mutual_friends, "People Your Friends Know")
-      )}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {suggestions.people_you_may_know.map((user) => (
+          <Card key={user.user_id} className="p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Avatar>
+                  <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
+                  <AvatarFallback>
+                    {user.display_name?.substring(0, 2).toUpperCase() || 'UN'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="space-y-1">
+                  <p className="font-medium">{user.display_name || 'Unknown User'}</p>
+                  <div className="flex items-center text-sm text-muted-foreground">
+                    <Users className="h-3.5 w-3.5 mr-1" />
+                    <span>{user.mutual_count} mutual {user.mutual_count === 1 ? 'friend' : 'friends'}</span>
+                  </div>
+                  {user.current_mmr && (
+                    <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
+                  )}
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handleSendFriendRequest(user.user_id)}
+                disabled={pendingRequests.has(user.user_id)}
+              >
+                {pendingRequests.has(user.user_id) ? (
+                  "Sending..."
+                ) : (
+                  <>
+                    <UserPlus2 className="h-4 w-4 mr-1" />
+                    Add
+                  </>
+                )}
+              </Button>
+            </div>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 };
