@@ -20,8 +20,15 @@ interface RpcResponseMutual {
   top_mutual_friends: SuggestedUser[];
 }
 
+interface PlayedWithUser {
+  id: string;
+  display_name: string;
+  profile_photo: string | null;
+  mutual_count?: number;
+}
+
 interface RpcResponsePlayed {
-  users_played_with: SuggestedUser[];
+  users_played_with: PlayedWithUser[];
 }
 
 interface SuggestedFriendsProps {
@@ -47,7 +54,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       }
 
       console.log('Mutual friends suggestions data:', data);
-      return data as unknown as RpcResponseMutual;
+      return data as RpcResponseMutual;
     },
     enabled: !!userId,
   });
@@ -58,7 +65,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     queryFn: async () => {
       if (!userId) return null;
       
-      const { data, error } = await supabase.rpc('suggest_users_played_with', {
+      const { data: rpcData, error } = await supabase.rpc('suggest_users_played_with', {
         user_a_id_public: userId
       });
       
@@ -67,14 +74,23 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         throw error;
       }
 
-      console.log('Played with suggestions data:', data);
-      // Remove duplicates based on user ID
-      const uniqueUsers = data ? Array.from(
-        new Map(data.users_played_with.map(user => [user.id, user])).values()
-      ) : [];
+      console.log('Played with suggestions data:', rpcData);
       
+      // Ensure the data matches our expected structure
+      if (Array.isArray(rpcData)) {
+        // Remove duplicates based on user ID
+        const uniqueUsers = Array.from(
+          new Map(rpcData.map(user => [user.id, user as PlayedWithUser])).values()
+        );
+        
+        return {
+          users_played_with: uniqueUsers
+        } as RpcResponsePlayed;
+      }
+      
+      // Return empty array if no data
       return {
-        users_played_with: uniqueUsers
+        users_played_with: []
       } as RpcResponsePlayed;
     },
     enabled: !!userId,
