@@ -10,7 +10,6 @@ import { FriendsList } from "@/components/friends/FriendsList";
 import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
 import { Users, Home } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { InviteFriendDialog } from "@/components/navigation/InviteFriendDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Friends = () => {
@@ -58,11 +57,6 @@ const Friends = () => {
               <Users className="h-6 w-6 text-primary" />
               <h1 className="text-2xl font-bold">Friends</h1>
             </div>
-            <InviteFriendDialog userId={userId}>
-              <button className="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90">
-                Invite Friends
-              </button>
-            </InviteFriendDialog>
           </div>
 
           {/* Tabs Navigation */}
