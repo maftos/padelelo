@@ -1,4 +1,3 @@
-
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -95,7 +94,7 @@ export default function TournamentDetail() {
       
       if (endDate) {
         const utcEnd = addHours(new Date(endDate), 4);
-        const formattedEndDate = format(utcEnd, 'EEE, MMM d, h:mm a');
+        const formattedEndDate = format(utcEnd, 'h:mm a');
         return `${formattedStartDate} - ${formattedEndDate}`;
       }
       
@@ -184,18 +183,16 @@ export default function TournamentDetail() {
 
         <div className="space-y-6">
           <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-muted-foreground" />
+              <span className="text-lg">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
+            </div>
+            
             <h1 className="text-3xl font-bold">{tournament.name}</h1>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                <span className="text-lg">{tournament.venue_name}</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-muted-foreground" />
-                <span className="text-lg">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
-              </div>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-muted-foreground" />
+              <span className="text-lg">{tournament.venue_name}</span>
             </div>
 
             <div className="flex flex-wrap gap-4">
@@ -229,33 +226,31 @@ export default function TournamentDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className={`relative ${!isDescriptionExpanded ? 'max-h-[120px] overflow-hidden' : ''}`}>
-                    {tournament.description?.split('\n').map((paragraph, index) => (
-                      <p key={index} className="text-muted-foreground mb-2">{paragraph}</p>
-                    ))}
-                    {!isDescriptionExpanded && tournament.description && (
-                      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent" />
+                  <div>
+                    <div className={`${!isDescriptionExpanded ? 'line-clamp-5' : ''}`}>
+                      {tournament.description?.split('\n').map((paragraph, index) => (
+                        <p key={index} className="text-muted-foreground mb-2">{paragraph}</p>
+                      ))}
+                    </div>
+                    {tournament.description && tournament.description.length > 100 && (
+                      <button
+                        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                        className="inline-flex items-center gap-1 text-primary hover:underline mt-1"
+                      >
+                        {isDescriptionExpanded ? (
+                          <>
+                            See less
+                            <ChevronUp className="h-4 w-4" />
+                          </>
+                        ) : (
+                          <>
+                            See more
+                            <ChevronDown className="h-4 w-4" />
+                          </>
+                        )}
+                      </button>
                     )}
                   </div>
-                  {tournament.description && tournament.description.length > 100 && (
-                    <Button
-                      variant="ghost"
-                      className="w-full flex items-center gap-2"
-                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                    >
-                      {isDescriptionExpanded ? (
-                        <>
-                          Read Less
-                          <ChevronUp className="h-4 w-4" />
-                        </>
-                      ) : (
-                        <>
-                          Read More
-                          <ChevronDown className="h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  )}
                   
                   <div className="space-y-3">                    
                     <div className="flex items-center gap-2">
@@ -263,19 +258,15 @@ export default function TournamentDetail() {
                       <span>Recommended Level: {tournament.recommended_mmr}</span>
                     </div>
 
-                    <Card className="bg-muted/50">
-                      <CardContent className="pt-6">
-                        <div className="flex items-center gap-2">
-                          <Trophy className="h-5 w-5 text-muted-foreground" />
-                          <span className="font-medium">Bracket Type: {tournament.bracket_type}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-muted-foreground" />
+                      <span>Bracket Type: {tournament.bracket_type}</span>
+                    </div>
                     
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
                         <Users className="h-5 w-5 text-muted-foreground" />
-                        <span>{tournament.interested_count} responded</span>
+                        <span>Your Friends</span>
                       </div>
                       <div className="flex -space-x-2 overflow-hidden pl-7">
                         {tournament.mutual_friends_interested?.map((friend) => (
