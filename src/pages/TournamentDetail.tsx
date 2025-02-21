@@ -6,12 +6,13 @@ import { format, addHours } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Calendar, Trophy, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Trophy, Users, ChevronDown, ChevronUp } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
+import { TournamentInviteDialog } from "./TournamentInviteDialog";
 
 interface Tournament {
   tournament_id: string;
@@ -67,6 +68,7 @@ export default function TournamentDetail() {
   const { tournamentId } = useParams();
   const { user } = useAuth();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
   const { data: tournament, isLoading, error, refetch } = useQuery({
     queryKey: ['tournament', tournamentId, user?.id],
@@ -173,20 +175,27 @@ export default function TournamentDetail() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
-          <Button 
-            className="absolute top-4 right-4 px-6"
-            size="sm"
-          >
-            Invite Friends
-          </Button>
+          <div className="absolute top-4 right-4 flex gap-2">
+            <Button
+              variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
+              onClick={handleInterestToggle}
+              size="sm"
+            >
+              {tournament.user_interest === 'INTERESTED' ? 'Not Interested' : 'I\'m Interested'}
+            </Button>
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={() => setInviteDialogOpen(true)}
+            >
+              Invite
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-muted-foreground" />
-              <span className="text-lg">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
-            </div>
+            <span className="text-lg text-primary">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
             
             <h1 className="text-3xl font-bold">{tournament.name}</h1>
             
@@ -209,13 +218,6 @@ export default function TournamentDetail() {
                   </span>
                 </div>
               ))}
-              <Button 
-                variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
-                onClick={handleInterestToggle}
-                className="shrink-0"
-              >
-                {tournament.user_interest === 'INTERESTED' ? 'Not Interested' : 'I\'m Interested'}
-              </Button>
             </div>
           </div>
 
@@ -330,6 +332,12 @@ export default function TournamentDetail() {
           </div>
         </div>
       </PageContainer>
+      <TournamentInviteDialog
+        open={inviteDialogOpen}
+        onOpenChange={setInviteDialogOpen}
+        tournamentId={tournament.tournament_id}
+        tournamentName={tournament.name}
+      />
     </>
   );
 }
