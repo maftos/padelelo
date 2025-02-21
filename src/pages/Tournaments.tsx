@@ -8,9 +8,10 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 interface TournamentAdmin {
   user_id: string;
@@ -35,6 +36,7 @@ interface Tournament {
 
 export default function Tournaments() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: tournaments, isLoading, error } = useQuery({
     queryKey: ['tournaments', user?.id],
@@ -55,7 +57,6 @@ export default function Tournaments() {
         return [] as Tournament[];
       }
 
-      // Properly cast the data through unknown first
       const typedData = (tournamentData as unknown) as Tournament[];
       console.log('Tournaments data received:', typedData);
       return typedData;
@@ -63,6 +64,52 @@ export default function Tournaments() {
     enabled: true,
     retry: 1,
     staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  const toggleInterestMutation = useMutation({
+    mutationFn: async ({ tournamentId, newStatus }: { tournamentId: string, newStatus: 'INTERESTED' | 'NOT_INTERESTED' }) => {
+      if (!user) throw new Error('User not authenticated');
+
+      const { error: toggleError } = await (supabase.rpc as any)('notify_tournament_interest', {
+        p_tournament_id: tournamentId,
+        p_player1_id: user.id,
+        p_response_status: newStatus
+      });
+
+      if (toggleError) throw toggleError;
+      return { tournamentId, newStatus };
+    },
+    onSuccess: (data) => {
+      // Optimistically update the cache
+      queryClient.setQueryData(['tournaments', user?.id], (oldData: Tournament[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(tournament => {
+          if (tournament.tournament_id === data.tournamentId) {
+            return {
+              ...tournament,
+              user_interest: data.newStatus,
+              responded_count: data.newStatus === 'INTERESTED' 
+                ? tournament.responded_count + 1 
+                : tournament.responded_count - 1
+            };
+          }
+          return tournament;
+        });
+      });
+
+      toast({
+        title: "Success",
+        description: `You are ${data.newStatus === 'INTERESTED' ? 'now' : 'no longer'} interested in this tournament.`,
+      });
+    },
+    onError: (error) => {
+      console.error('Error toggling interest:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update your interest. Please try again.",
+        variant: "destructive",
+      });
+    }
   });
 
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
@@ -81,32 +128,9 @@ export default function Tournaments() {
     }
   };
 
-  const handleInterestToggle = async (tournamentId: string, currentInterest: 'INTERESTED' | 'NOT_INTERESTED' | null) => {
-    try {
-      if (!user) {
-        return;
-      }
-
-      console.log('Toggling interest for tournament:', tournamentId);
-      console.log('Current interest:', currentInterest);
-      console.log('New status:', currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED');
-
-      const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
-
-      // Cast the rpc call to any to bypass the type checking for the function name
-      const { error: toggleError } = await (supabase.rpc as any)('notify_tournament_interest', {
-        p_tournament_id: tournamentId,
-        p_player1_id: user.id,
-        p_response_status: newStatus
-      });
-
-      if (toggleError) {
-        console.error('Error toggling interest:', toggleError);
-        throw toggleError;
-      }
-    } catch (error) {
-      console.error('Error toggling interest:', error);
-    }
+  const handleInterestToggle = (tournamentId: string, currentInterest: 'INTERESTED' | 'NOT_INTERESTED' | null) => {
+    const newStatus = currentInterest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
+    toggleInterestMutation.mutate({ tournamentId, newStatus });
   };
 
   if (isLoading) {
@@ -202,9 +226,10 @@ export default function Tournaments() {
                       e.stopPropagation();
                       handleInterestToggle(tournament.tournament_id, tournament.user_interest);
                     }}
+                    disabled={toggleInterestMutation.isPending}
                   >
                     <Star className={tournament.user_interest === 'INTERESTED' ? "fill-current" : ""} />
-                    Interested
+                    {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
                   </Button>
                 </div>
               </div>
@@ -215,3 +240,4 @@ export default function Tournaments() {
     </>
   );
 }
+
