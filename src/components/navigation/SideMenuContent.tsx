@@ -114,14 +114,12 @@ export const SideMenuContent = ({
         <Link
           to="/friends"
           onClick={onClose}
-          className="flex items-center justify-between text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <div className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            <span>Friends</span>
-          </div>
+          <Users className="h-4 w-4" />
+          <span>Friends</span>
           {hasFriendRequests && (
-            <Badge variant="destructive" className="ml-2">
+            <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center text-[10px]">
               {friendRequestCount}
             </Badge>
           )}
