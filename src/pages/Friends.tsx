@@ -8,15 +8,13 @@ import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { FriendsList } from "@/components/friends/FriendsList";
 import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
-import { Input } from "@/components/ui/input";
-import { Search, Users, Home } from "lucide-react";
+import { Users, Home } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { InviteFriendDialog } from "@/components/navigation/InviteFriendDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Friends = () => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { userId } = useUserProfile();
   const isMobile = useIsMobile();
@@ -65,17 +63,6 @@ const Friends = () => {
                 Invite Friends
               </button>
             </InviteFriendDialog>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="Search friends..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
           </div>
 
           {/* Tabs Navigation */}
