@@ -2,17 +2,18 @@ import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format, addHours } from "date-fns";
+import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Trophy, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { TournamentInviteDialog } from "./TournamentInviteDialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface Tournament {
   tournament_id: string;
@@ -67,6 +68,7 @@ interface Tournament {
 export default function TournamentDetail() {
   const { tournamentId } = useParams();
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
 
@@ -91,12 +93,10 @@ export default function TournamentDetail() {
     try {
       if (!startDate) return "TBD";
       
-      const utcStart = addHours(new Date(startDate), 4);
-      const formattedStartDate = format(utcStart, 'EEE, MMM d, h:mm a');
+      const formattedStartDate = format(new Date(startDate), 'EEE, MMM d, h:mm a');
       
       if (endDate) {
-        const utcEnd = addHours(new Date(endDate), 4);
-        const formattedEndDate = format(utcEnd, 'h:mm a');
+        const formattedEndDate = format(new Date(endDate), 'h:mm a');
         return `${formattedStartDate} - ${formattedEndDate}`;
       }
       
@@ -138,6 +138,8 @@ export default function TournamentDetail() {
     }
   };
 
+  const isAdmin = tournament?.admins?.some(admin => admin.user_id === user?.id) || false;
+
   if (isLoading) {
     return (
       <>
@@ -167,7 +169,7 @@ export default function TournamentDetail() {
   return (
     <>
       <Navigation />
-      <PageContainer>
+      <PageContainer className="pb-24 md:pb-6">
         <div className="relative h-64 -mx-4 sm:-mx-6 mb-6">
           <img
             src={tournament.main_photo}
@@ -175,14 +177,17 @@ export default function TournamentDetail() {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
-          <div className="absolute top-4 right-4 flex gap-2">
+          {isAdmin && (
             <Button
-              variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
-              onClick={handleInterestToggle}
-              size="sm"
+              variant="outline"
+              size="icon"
+              className="absolute top-4 left-4 bg-background"
+              onClick={() => {/* Add edit functionality */}}
             >
-              {tournament.user_interest === 'INTERESTED' ? 'Not Interested' : 'I\'m Interested'}
+              <Settings className="h-4 w-4 text-primary" />
             </Button>
+          )}
+          <div className="absolute top-4 right-4 flex gap-2">
             <Button 
               variant="outline"
               size="sm"
@@ -237,7 +242,7 @@ export default function TournamentDetail() {
                     {tournament.description && tournament.description.length > 100 && (
                       <button
                         onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                        className="inline-flex items-center gap-1 text-primary hover:underline mt-1"
+                        className="inline-flex items-center gap-1 text-secondary-foreground hover:underline mt-1"
                       >
                         {isDescriptionExpanded ? (
                           <>
@@ -258,11 +263,6 @@ export default function TournamentDetail() {
                     <div className="flex items-center gap-2">
                       <Trophy className="h-5 w-5 text-muted-foreground" />
                       <span>Recommended Level: {tournament.recommended_mmr}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-muted-foreground" />
-                      <span>Bracket Type: {tournament.bracket_type}</span>
                     </div>
                     
                     <div className="space-y-2">
@@ -330,7 +330,35 @@ export default function TournamentDetail() {
               </CardContent>
             </Card>
           </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Bracket Type</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-muted-foreground" />
+                <span>{tournament.bracket_type}</span>
+              </div>
+            </CardContent>
+          </Card>
         </div>
+
+        {isMobile && (
+          <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex gap-2">
+            <Button 
+              className="flex-1"
+              variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "outline"}
+              onClick={handleInterestToggle}
+            >
+              <Star className="h-4 w-4 mr-2" />
+              Interested
+            </Button>
+            <Button className="flex-1" variant="default">
+              Register
+            </Button>
+          </div>
+        )}
       </PageContainer>
       <TournamentInviteDialog
         open={inviteDialogOpen}
