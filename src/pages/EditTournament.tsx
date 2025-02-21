@@ -1,5 +1,4 @@
 
-import { useParams } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Input } from "@/components/ui/input";
@@ -14,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { useParams } from "react-router-dom";
 
 // Sample data types
 type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM";
@@ -61,11 +61,11 @@ const sampleVenues = [
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
+  console.log("Tournament ID:", tournamentId); // Added for debugging
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // This will be implemented later
-    console.log("Form submitted");
+    console.log("Form submitted"); // Added for debugging
   };
 
   return (
