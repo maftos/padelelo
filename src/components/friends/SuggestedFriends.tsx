@@ -51,7 +51,14 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       }
 
       console.log('Mutual friends suggestions data:', data);
-      return data as RpcResponseMutual;
+      
+      // Safely type assert the response
+      if (data && typeof data === 'object' && 'top_mutual_friends' in data) {
+        return data as RpcResponseMutual;
+      }
+      
+      // Return empty array if no data
+      return { top_mutual_friends: [] } as RpcResponseMutual;
     },
     enabled: !!userId,
   });
@@ -73,8 +80,8 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
 
       console.log('Played with suggestions data:', rpcData);
       
-      // Ensure the data matches our expected structure
-      if (rpcData && typeof rpcData === 'object') {
+      // Safely type assert the response and ensure it matches our expected structure
+      if (rpcData && typeof rpcData === 'object' && 'users_played_with' in rpcData) {
         const typedData = rpcData as { users_played_with: PlayedWithUser[] };
         // Remove duplicates based on user ID
         const uniqueUsers = Array.from(
