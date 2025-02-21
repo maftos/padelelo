@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UserPlus2 } from "lucide-react";
+import { UserPlus2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ interface SuggestedUser {
   display_name: string;
   profile_photo: string | null;
   current_mmr: number;
+  mutual_count: number;
 }
 
 interface SuggestedFriendsResponse {
@@ -68,7 +69,8 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
           user_id: friend.friend_id,
           display_name: friend.display_name || 'Unknown User',
           profile_photo: friend.profile_photo,
-          current_mmr: 0
+          current_mmr: 0, // Default value since it's not provided in the response
+          mutual_count: friend.mutual_count
         })) || []
       };
       
@@ -169,9 +171,15 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
                       {(user.display_name || 'Unknown User').substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="space-y-1">
                     <p className="font-medium">{user.display_name || 'Unknown User'}</p>
-                    <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Users className="h-3.5 w-3.5 mr-1" />
+                      <span>{user.mutual_count} mutual {user.mutual_count === 1 ? 'friend' : 'friends'}</span>
+                    </div>
+                    {user.current_mmr && (
+                      <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
+                    )}
                   </div>
                 </div>
                 <Button
@@ -214,4 +222,3 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     </div>
   );
 };
-
