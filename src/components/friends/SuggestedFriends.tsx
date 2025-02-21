@@ -21,6 +21,16 @@ interface SuggestedFriendsProps {
   userId: string | undefined;
 }
 
+interface RpcResponse {
+  users_played_with: SuggestedUser[] | null;
+  top_mutual_friends: Array<{
+    friend_id: string;
+    mutual_count: number;
+    profile_photo: string | null;
+    display_name: string;
+  }> | null;
+}
+
 export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
   const { data: suggestions, isLoading, error } = useQuery({
     queryKey: ['suggestedFriends', userId],
@@ -36,19 +46,19 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         console.error('Error fetching friend suggestions:', error);
         throw error;
       }
-      
-      // Ensure the data has the expected shape
-      if (!data || typeof data !== 'object') {
-        return {
-          users_played_with: [],
-          mutual_friends: []
-        };
-      }
 
-      // Create a properly typed response with default empty arrays
+      // Type assertion for the RPC response
+      const rpcResponse = data as RpcResponse;
+      
+      // Transform the data into our expected format
       const response: SuggestedFriendsResponse = {
-        users_played_with: Array.isArray(data.users_played_with) ? data.users_played_with : [],
-        mutual_friends: Array.isArray(data.mutual_friends) ? data.mutual_friends : []
+        users_played_with: rpcResponse.users_played_with || [],
+        mutual_friends: rpcResponse.top_mutual_friends?.map(friend => ({
+          user_id: friend.friend_id,
+          display_name: friend.display_name,
+          profile_photo: friend.profile_photo,
+          current_mmr: 0 // Since this isn't in the mutual friends data
+        })) || []
       };
       
       console.log('Friend suggestions data:', response);
@@ -80,20 +90,20 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  // Early return if suggestions is null or empty
+  // Early return if suggestions is null
   if (!suggestions) {
     return null;
   }
 
-  const hasUserPlayed = Array.isArray(suggestions.users_played_with) && suggestions.users_played_with.length > 0;
-  const hasMutualFriends = Array.isArray(suggestions.mutual_friends) && suggestions.mutual_friends.length > 0;
+  const hasUserPlayed = suggestions.users_played_with.length > 0;
+  const hasMutualFriends = suggestions.mutual_friends.length > 0;
 
   if (!hasUserPlayed && !hasMutualFriends) {
     return null;
   }
 
   const renderUserList = (users: SuggestedUser[], title: string) => {
-    if (!Array.isArray(users) || users.length === 0) return null;
+    if (users.length === 0) return null;
 
     return (
       <div className="space-y-4">
