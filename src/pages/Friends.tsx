@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogAction } from "@/components/ui/alert-dialog";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Routes, Route } from "react-router-dom";
 import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
@@ -52,8 +52,19 @@ const Friends = () => {
         {/* Main Content */}
         <div className="flex-1 p-6">
           <div className="max-w-5xl mx-auto space-y-6">
-            <FriendRequests />
-            <SuggestedFriends userId={userId} />
+            <Routes>
+              {/* Home route shows both sections */}
+              <Route path="/" element={
+                <>
+                  <FriendRequests />
+                  <SuggestedFriends userId={userId} />
+                </>
+              } />
+              {/* Dedicated routes for each section */}
+              <Route path="/requests" element={<FriendRequests />} />
+              <Route path="/suggestions" element={<SuggestedFriends userId={userId} />} />
+              {/* Additional routes can be added here as needed */}
+            </Routes>
           </div>
         </div>
       </div>
