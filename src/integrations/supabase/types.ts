@@ -1300,6 +1300,13 @@ export type Database = {
         }
         Returns: Json
       }
+      delete_tournament: {
+        Args: {
+          tournament_id: string
+          user_a_id: string
+        }
+        Returns: Json
+      }
       disablelongtransactions: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -1351,13 +1358,22 @@ export type Database = {
             }
             Returns: string
           }
-      edit_tournament: {
-        Args: {
-          tournament_id: string
-          updates: Json
-        }
-        Returns: Json
-      }
+      edit_tournament:
+        | {
+            Args: {
+              tournament_id: string
+              updates: Json
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              tournament_id: string
+              user_a_id: string
+              updates: Json
+            }
+            Returns: Json
+          }
       edit_user_profile:
         | {
             Args: {
@@ -2252,12 +2268,20 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      publish_tournament: {
-        Args: {
-          tournament_id: string
-        }
-        Returns: Json
-      }
+      publish_tournament:
+        | {
+            Args: {
+              p_tournament_id: string
+              user_a_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              tournament_id: string
+            }
+            Returns: Json
+          }
       respond_friend_request:
         | {
             Args: {
@@ -2289,6 +2313,25 @@ export type Database = {
           user_b_id_public: string
         }
         Returns: string
+      }
+      send_whatsapp_notification: {
+        Args: {
+          friend_ids: string[]
+          content_variables: Json
+        }
+        Returns: Json
+      }
+      send_whatsapp_notification_example: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      share_tournament_friends: {
+        Args: {
+          user_a_id: string
+          tournament_id: string
+          friend_ids: string[]
+        }
+        Returns: Json
       }
       spheroid_in: {
         Args: {
