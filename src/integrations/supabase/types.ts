@@ -4254,6 +4254,18 @@ export type Database = {
         }
         Returns: Json
       }
+      suggest_friends_top_mutual: {
+        Args: {
+          user_a_id_public: string
+        }
+        Returns: Json
+      }
+      suggest_users_played_with: {
+        Args: {
+          user_a_id_public: string
+        }
+        Returns: Json
+      }
       text: {
         Args: {
           "": unknown
