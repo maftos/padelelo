@@ -30,7 +30,7 @@ interface RpcResponse {
     friend_id: string;
     mutual_count: number;
     profile_photo: string | null;
-    display_name: string;
+    display_name: string | null;
   }> | null;
 }
 
@@ -164,9 +164,9 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar>
-                    <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
+                    <AvatarImage src={user.profile_photo || ''} alt={user.display_name || 'Unknown User'} />
                     <AvatarFallback>
-                      {(user.display_name || 'U').substring(0, 2).toUpperCase()}
+                      {(user.display_name || 'Unknown User').substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
