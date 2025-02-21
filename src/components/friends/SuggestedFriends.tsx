@@ -47,7 +47,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       }
 
       console.log('Mutual friends suggestions data:', data);
-      return data as RpcResponseMutual;
+      return data as unknown as RpcResponseMutual;
     },
     enabled: !!userId,
   });
@@ -68,7 +68,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       }
 
       console.log('Played with suggestions data:', data);
-      return data as RpcResponsePlayed;
+      return data as unknown as RpcResponsePlayed;
     },
     enabled: !!userId,
   });
@@ -193,3 +193,4 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     </div>
   );
 };
+
