@@ -20,11 +20,8 @@ interface RpcResponseMutual {
   top_mutual_friends: SuggestedUser[];
 }
 
-interface PlayedWithUser {
-  id: string;
-  display_name: string;
-  profile_photo: string | null;
-  mutual_count?: number;
+interface PlayedWithUser extends SuggestedUser {
+  mutual_friends_count: number; // Make this required for PlayedWithUser
 }
 
 interface RpcResponsePlayed {
@@ -77,10 +74,11 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       console.log('Played with suggestions data:', rpcData);
       
       // Ensure the data matches our expected structure
-      if (Array.isArray(rpcData)) {
+      if (rpcData && typeof rpcData === 'object') {
+        const typedData = rpcData as { users_played_with: PlayedWithUser[] };
         // Remove duplicates based on user ID
         const uniqueUsers = Array.from(
-          new Map(rpcData.map(user => [user.id, user as PlayedWithUser])).values()
+          new Map(typedData.users_played_with.map(user => [user.id, user])).values()
         );
         
         return {
@@ -191,11 +189,11 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
                     </Avatar>
                     <div className="space-y-1">
                       <p className="font-medium">{user.display_name || 'Unknown User'}</p>
-                      {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
+                      {user.mutual_friends_count !== undefined && (
                         <div className="flex items-center text-sm text-muted-foreground">
                           <Users className="h-3.5 w-3.5 mr-1" />
                           <span>
-                            {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
+                            {user.mutual_friends_count} mutual {user.mutual_friends_count === 1 ? 'friend' : 'friends'}
                           </span>
                         </div>
                       )}
