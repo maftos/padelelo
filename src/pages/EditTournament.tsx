@@ -1,19 +1,19 @@
 
+import { useAuth } from "@/contexts/AuthContext";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Button } from "@/components/ui/button";
+import { CreateTournamentLayout } from "@/components/tournament/CreateTournamentLayout";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Navigation } from "@/components/Navigation";
-import { toast } from "sonner";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ChevronLeft } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Navigation } from "@/components/Navigation";
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
@@ -22,17 +22,18 @@ export default function EditTournament() {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    start_date: "",
-    end_date: "",
-    recommended_mmr: 0,
-    max_players: 0,
-    bracket_type: "",
-    status: "",
+    recommendedMmr: "",
+    maxPlayers: "",
+    startDate: "",
+    endDate: "",
+    bracketType: "",
+    mainPhoto: "",
+    approvalType: "",
     privacy: "",
-    approval_type: ""
   });
 
-  const { data: tournament, isLoading } = useQuery({
+  // Fetch the existing tournament data
+  const { data: tournament, isLoading, error } = useQuery({
     queryKey: ['tournament', tournamentId, user?.id],
     queryFn: async () => {
       const { data, error } = await (supabase.rpc as any)('view_tournament', {
@@ -45,54 +46,73 @@ export default function EditTournament() {
         throw error;
       }
 
-      setFormData({
-        name: data.name,
-        description: data.description || "",
-        start_date: data.start_date ? format(new Date(data.start_date), "yyyy-MM-dd'T'HH:mm") : "",
-        end_date: data.end_date ? format(new Date(data.end_date), "yyyy-MM-dd'T'HH:mm") : "",
-        recommended_mmr: data.recommended_mmr || 0,
-        max_players: data.max_participants || 0,
-        bracket_type: data.bracket_type || "",
-        status: data.status || "",
-        privacy: data.privacy || "",
-        approval_type: data.approval_type || "AUTOMATIC"
-      });
-
       return data;
     }
   });
 
-  const editMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
+  // Mutation for updating tournament
+  const updateTournament = useMutation({
+    mutationFn: async (updates: any) => {
       const { error } = await (supabase.rpc as any)('edit_tournament', {
-        p_tournament_id: tournamentId,
-        p_name: data.name,
-        p_description: data.description,
-        p_start_date: data.start_date,
-        p_end_date: data.end_date,
-        p_recommended_mmr: data.recommended_mmr,
-        p_max_players: data.max_players,
-        p_bracket_type: data.bracket_type,
-        p_status: data.status,
-        p_privacy: data.privacy,
-        p_approval_type: data.approval_type
+        tournament_id: tournamentId,
+        user_a_id: user?.id,
+        updates
       });
 
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Tournament updated successfully");
+      toast.success('Tournament updated successfully');
       navigate(`/tournaments/${tournamentId}`);
     },
     onError: (error) => {
+      toast.error('Failed to update tournament');
       console.error('Error updating tournament:', error);
-      toast.error("Failed to update tournament");
     }
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Update form data when tournament data is fetched
+  useEffect(() => {
+    if (tournament) {
+      setFormData({
+        name: tournament.name || "",
+        description: tournament.description || "",
+        recommendedMmr: tournament.recommended_mmr?.toString() || "",
+        maxPlayers: tournament.max_players?.toString() || "",
+        startDate: tournament.start_date ? format(new Date(tournament.start_date), "yyyy-MM-dd'T'HH:mm") : "",
+        endDate: tournament.end_date ? format(new Date(tournament.end_date), "yyyy-MM-dd'T'HH:mm") : "",
+        bracketType: tournament.bracket_type || "",
+        mainPhoto: tournament.main_photo || "",
+        approvalType: tournament.approval_type || "",
+        privacy: tournament.privacy || "",
+      });
+    }
+  }, [tournament]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    editMutation.mutate(formData);
+    
+    const updates = {
+      name: formData.name,
+      description: formData.description,
+      recommended_mmr: parseInt(formData.recommendedMmr),
+      max_players: parseInt(formData.maxPlayers),
+      start_date: formData.startDate,
+      end_date: formData.endDate || null,
+      bracket_type: formData.bracketType,
+      main_photo: formData.mainPhoto,
+      approval_type: formData.approvalType,
+      privacy: formData.privacy,
+    };
+
+    updateTournament.mutate(updates);
   };
 
   if (isLoading) {
@@ -108,175 +128,168 @@ export default function EditTournament() {
     );
   }
 
+  if (error || !tournament) {
+    return (
+      <>
+        <Navigation />
+        <PageContainer>
+          <div className="text-center text-destructive">
+            Error loading tournament details. Please try again later.
+          </div>
+        </PageContainer>
+      </>
+    );
+  }
+
   return (
     <>
       <Navigation />
-      <PageContainer>
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </Button>
-            <h1 className="text-2xl font-bold">Edit Tournament</h1>
+      <CreateTournamentLayout>
+        <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl mx-auto">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Tournament Name</Label>
+              <Input
+                id="name"
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                placeholder="Enter tournament name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                placeholder="Enter tournament description"
+                className="min-h-[100px]"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="startDate">Start Date & Time</Label>
+                <Input
+                  id="startDate"
+                  type="datetime-local"
+                  value={formData.startDate}
+                  onChange={(e) => handleInputChange("startDate", e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="endDate">End Date & Time (Optional)</Label>
+                <Input
+                  id="endDate"
+                  type="datetime-local"
+                  value={formData.endDate}
+                  onChange={(e) => handleInputChange("endDate", e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="recommendedMmr">Recommended MMR</Label>
+                <Input
+                  id="recommendedMmr"
+                  type="number"
+                  value={formData.recommendedMmr}
+                  onChange={(e) => handleInputChange("recommendedMmr", e.target.value)}
+                  placeholder="Enter recommended MMR"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="maxPlayers">Maximum Players</Label>
+                <Input
+                  id="maxPlayers"
+                  type="number"
+                  value={formData.maxPlayers}
+                  onChange={(e) => handleInputChange("maxPlayers", e.target.value)}
+                  placeholder="Enter maximum players"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="bracketType">Bracket Type</Label>
+                <Select 
+                  value={formData.bracketType} 
+                  onValueChange={(value) => handleInputChange("bracketType", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select bracket type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="SINGLE_ELIMINATION">Single Elimination</SelectItem>
+                    <SelectItem value="DOUBLE_ELIMINATION">Double Elimination</SelectItem>
+                    <SelectItem value="ROUND_ROBIN">Round Robin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="approvalType">Approval Type</Label>
+                <Select 
+                  value={formData.approvalType} 
+                  onValueChange={(value) => handleInputChange("approvalType", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select approval type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AUTOMATIC">Automatic</SelectItem>
+                    <SelectItem value="MANUAL">Manual</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="privacy">Privacy</Label>
+              <Select 
+                value={formData.privacy} 
+                onValueChange={(value) => handleInputChange("privacy", value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select privacy setting" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PUBLIC">Public</SelectItem>
+                  <SelectItem value="PRIVATE">Private</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="mainPhoto">Main Photo URL</Label>
+              <Input
+                id="mainPhoto"
+                value={formData.mainPhoto}
+                onChange={(e) => handleInputChange("mainPhoto", e.target.value)}
+                placeholder="Enter main photo URL"
+              />
+            </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Tournament Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                  rows={5}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="start_date">Start Date & Time</Label>
-                  <Input
-                    id="start_date"
-                    type="datetime-local"
-                    value={formData.start_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, start_date: e.target.value }))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="end_date">End Date & Time</Label>
-                  <Input
-                    id="end_date"
-                    type="datetime-local"
-                    value={formData.end_date}
-                    onChange={(e) => setFormData(prev => ({ ...prev, end_date: e.target.value }))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="recommended_mmr">Recommended MMR</Label>
-                  <Input
-                    id="recommended_mmr"
-                    type="number"
-                    value={formData.recommended_mmr}
-                    onChange={(e) => setFormData(prev => ({ ...prev, recommended_mmr: parseInt(e.target.value) }))}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="max_players">Maximum Players</Label>
-                  <Input
-                    id="max_players"
-                    type="number"
-                    value={formData.max_players}
-                    onChange={(e) => setFormData(prev => ({ ...prev, max_players: parseInt(e.target.value) }))}
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="bracket_type">Bracket Type</Label>
-                  <Select
-                    value={formData.bracket_type}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, bracket_type: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select bracket type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="SINGLE_ELIMINATION">Single Elimination</SelectItem>
-                      <SelectItem value="DOUBLE_ELIMINATION">Double Elimination</SelectItem>
-                      <SelectItem value="ROUND_ROBIN">Round Robin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="DRAFT">Draft</SelectItem>
-                      <SelectItem value="PUBLISHED">Published</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                      <SelectItem value="COMPLETED">Completed</SelectItem>
-                      <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="privacy">Privacy</Label>
-                  <Select
-                    value={formData.privacy}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, privacy: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select privacy" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="PUBLIC">Public</SelectItem>
-                      <SelectItem value="PRIVATE">Private</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="approval_type">Approval Type</Label>
-                  <Select
-                    value={formData.approval_type}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, approval_type: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select approval type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="AUTOMATIC">Automatic</SelectItem>
-                      <SelectItem value="MANUAL">Manual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={editMutation.isPending}
-              >
-                {editMutation.isPending ? "Saving..." : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </div>
-      </PageContainer>
+          <div className="flex gap-4 justify-end">
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => navigate(`/tournaments/${tournamentId}`)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </CreateTournamentLayout>
     </>
   );
 }
