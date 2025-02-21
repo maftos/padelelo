@@ -1,52 +1,91 @@
 
-import { useAuth } from "@/contexts/AuthContext";
-import { useParams, useNavigate } from "react-router-dom";
-import { PageContainer } from "@/components/layouts/PageContainer";
-import { Navigation } from "@/components/Navigation";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Navigation } from "@/components/Navigation";
+import { PageContainer } from "@/components/layouts/PageContainer";
+import { Progress } from "@/components/ui/progress";
+import { useQuery } from "@tanstack/react-query";
+
+interface Venue {
+  venue_id: string;
+  name: string;
+}
+
+type BracketType = "SINGLE_ELIM";
+
+interface Tournament {
+  tournament_id: string;
+  max_participants: number;
+  venue_id: string;
+  start_date: string;
+  end_date: string;
+  bracket_type: BracketType;
+}
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
-  const TOTAL_STEPS = 3;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [venues, setVenues] = useState<Venue[]>([]);
 
-  // Form state
-  const [formData, setFormData] = useState({
-    maxPlayers: "",
-    selectedVenue: "",
-    startDate: "",
-    startTime: "",
-    endDate: "",
-    endTime: "",
-  });
+  // Step 1: Maximum Players
+  const [maxPlayers, setMaxPlayers] = useState<string>("");
 
-  const [venues, setVenues] = useState([]);
+  // Step 2: Venue
+  const [selectedVenue, setSelectedVenue] = useState<string>("");
+
+  // Step 3: Dates and Times
+  const [startDate, setStartDate] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
 
   // Fetch tournament data
-  const { data: tournament, isLoading } = useQuery({
+  const { data: tournament } = useQuery({
     queryKey: ['tournament', tournamentId, user?.id],
     queryFn: async () => {
-      const { data, error } = await (supabase.rpc as any)('view_tournament', {
+      const { data, error } = await supabase.rpc('view_tournament', {
         p_tournament_id: tournamentId,
         p_user_a_id: user?.id || null
       });
 
       if (error) throw error;
-      return data;
-    }
+      return data as Tournament;
+    },
+    enabled: !!tournamentId && !!user?.id
   });
+
+  // Update form when tournament data is loaded
+  useEffect(() => {
+    if (tournament) {
+      const startDateTime = new Date(tournament.start_date);
+      const endDateTime = tournament.end_date ? new Date(tournament.end_date) : null;
+
+      setMaxPlayers(tournament.max_participants?.toString() || "");
+      setSelectedVenue(tournament.venue_id || "");
+      setStartDate(startDateTime.toISOString().split('T')[0]);
+      setStartTime(startDateTime.toTimeString().slice(0, 5));
+      if (endDateTime) {
+        setEndDate(endDateTime.toISOString().split('T')[0]);
+        setEndTime(endDateTime.toTimeString().slice(0, 5));
+      }
+    }
+  }, [tournament]);
 
   // Fetch venues
   useEffect(() => {
@@ -56,30 +95,23 @@ export default function EditTournament() {
         toast.error("Failed to load venues");
         return;
       }
-      setVenues(data);
+      // Properly type the data
+      const typedData = data as unknown as Venue[];
+      setVenues(typedData || []);
     };
     fetchVenues();
   }, []);
 
-  // Update form data when tournament data is loaded
-  useEffect(() => {
-    if (tournament) {
-      const startDateTime = new Date(tournament.start_date);
-      const endDateTime = tournament.end_date ? new Date(tournament.end_date) : null;
-
-      setFormData({
-        maxPlayers: tournament.max_participants?.toString() || "",
-        selectedVenue: tournament.venue_id || "",
-        startDate: format(startDateTime, "yyyy-MM-dd"),
-        startTime: format(startDateTime, "HH:mm"),
-        endDate: endDateTime ? format(endDateTime, "yyyy-MM-dd") : "",
-        endTime: endDateTime ? format(endDateTime, "HH:mm") : "",
-      });
-    }
-  }, [tournament]);
-
   const handleNext = () => {
-    if (currentStep < TOTAL_STEPS) {
+    if (currentStep === 1 && !maxPlayers) {
+      toast.error("Please enter maximum number of players");
+      return;
+    }
+    if (currentStep === 2 && !selectedVenue) {
+      toast.error("Please select a venue");
+      return;
+    }
+    if (currentStep < 3) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -93,26 +125,31 @@ export default function EditTournament() {
   };
 
   const handleSubmit = async () => {
-    if (!user?.id || !tournament) {
+    if (!user?.id || !tournamentId) {
       toast.error("You must be logged in to edit a tournament");
+      return;
+    }
+
+    // Validate all required fields
+    if (!maxPlayers || !selectedVenue || !startDate || !startTime || !endDate || !endTime) {
+      toast.error("Please fill in all required fields");
       return;
     }
 
     setIsSubmitting(true);
     try {
-      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
-      const endDateTime = formData.endDate && formData.endTime 
-        ? new Date(`${formData.endDate}T${formData.endTime}+04:00`).toISOString()
-        : null;
+      // Combine date and time strings into ISO string with UTC+4
+      const startDateTime = new Date(`${startDate}T${startTime}+04:00`).toISOString();
+      const endDateTime = new Date(`${endDate}T${endTime}+04:00`).toISOString();
 
       const updates = {
-        max_players: parseInt(formData.maxPlayers),
-        venue_id: formData.selectedVenue,
+        max_players: parseInt(maxPlayers),
+        venue_id: selectedVenue,
         start_date: startDateTime,
         end_date: endDateTime,
       };
 
-      const { error } = await (supabase.rpc as any)('edit_tournament', {
+      const { error } = await supabase.rpc('edit_tournament', {
         p_tournament_id: tournamentId,
         p_user_a_id: user.id,
         p_updates: updates
@@ -139,8 +176,8 @@ export default function EditTournament() {
             <Input
               id="maxPlayers"
               type="number"
-              value={formData.maxPlayers}
-              onChange={(e) => setFormData(prev => ({ ...prev, maxPlayers: e.target.value }))}
+              value={maxPlayers}
+              onChange={(e) => setMaxPlayers(e.target.value)}
               placeholder="Enter maximum number of players"
               min="2"
             />
@@ -150,15 +187,12 @@ export default function EditTournament() {
         return (
           <div className="space-y-4">
             <Label htmlFor="venue">Tournament Venue</Label>
-            <Select 
-              value={formData.selectedVenue} 
-              onValueChange={(value) => setFormData(prev => ({ ...prev, selectedVenue: value }))}
-            >
+            <Select value={selectedVenue} onValueChange={setSelectedVenue}>
               <SelectTrigger id="venue">
                 <SelectValue placeholder="Select venue" />
               </SelectTrigger>
               <SelectContent>
-                {venues.map((venue: any) => (
+                {venues.map((venue) => (
                   <SelectItem key={venue.venue_id} value={venue.venue_id}>
                     {venue.name}
                   </SelectItem>
@@ -175,8 +209,8 @@ export default function EditTournament() {
               <Input
                 id="startDate"
                 type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
               />
             </div>
             <div>
@@ -184,8 +218,8 @@ export default function EditTournament() {
               <Input
                 id="startTime"
                 type="time"
-                value={formData.startTime}
-                onChange={(e) => setFormData(prev => ({ ...prev, startTime: e.target.value }))}
+                value={startTime}
+                onChange={(e) => setStartTime(e.target.value)}
               />
             </div>
             <div>
@@ -193,8 +227,8 @@ export default function EditTournament() {
               <Input
                 id="endDate"
                 type="date"
-                value={formData.endDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
             <div>
@@ -202,8 +236,8 @@ export default function EditTournament() {
               <Input
                 id="endTime"
                 type="time"
-                value={formData.endTime}
-                onChange={(e) => setFormData(prev => ({ ...prev, endTime: e.target.value }))}
+                value={endTime}
+                onChange={(e) => setEndTime(e.target.value)}
               />
             </div>
           </div>
@@ -213,34 +247,27 @@ export default function EditTournament() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <>
-        <Navigation />
-        <PageContainer>
-          <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="animate-pulse">Loading tournament details...</div>
-          </div>
-        </PageContainer>
-      </>
-    );
-  }
-
   return (
     <>
       <Navigation />
       <PageContainer>
         <div className="max-w-md mx-auto px-4 py-8">
-          <h1 className="text-2xl font-bold text-center mb-8">Edit Tournament</h1>
+          <Progress value={(currentStep / 3) * 100} className="mb-8" />
           
           <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-center">
+              {currentStep === 1 && "How many players?"}
+              {currentStep === 2 && "Where will it be held?"}
+              {currentStep === 3 && "When will it start and end?"}
+            </h1>
+
             {renderStep()}
 
             <div className="flex justify-between mt-6">
               <Button variant="outline" onClick={handleBack}>
                 Back
               </Button>
-              {currentStep < TOTAL_STEPS ? (
+              {currentStep < 3 ? (
                 <Button onClick={handleNext}>Next</Button>
               ) : (
                 <Button 
@@ -257,4 +284,3 @@ export default function EditTournament() {
     </>
   );
 }
-
