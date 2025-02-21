@@ -1,16 +1,18 @@
+
 import { useParams } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { format } from "date-fns";
+import { format, addHours } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Calendar, Trophy, Users } from "lucide-react";
+import { MapPin, Calendar, Trophy, Users, ChevronDown, ChevronUp } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
 
 interface Tournament {
   tournament_id: string;
@@ -65,6 +67,7 @@ interface Tournament {
 export default function TournamentDetail() {
   const { tournamentId } = useParams();
   const { user } = useAuth();
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   const { data: tournament, isLoading, error, refetch } = useQuery({
     queryKey: ['tournament', tournamentId, user?.id],
@@ -87,14 +90,12 @@ export default function TournamentDetail() {
     try {
       if (!startDate) return "TBD";
       
-      const utcStart = new Date(startDate);
-      utcStart.setHours(utcStart.getHours() + 4);
-      const formattedStartDate = format(utcStart, 'PPP p');
+      const utcStart = addHours(new Date(startDate), 4);
+      const formattedStartDate = format(utcStart, 'EEE, MMM d, h:mm a');
       
       if (endDate) {
-        const utcEnd = new Date(endDate);
-        utcEnd.setHours(utcEnd.getHours() + 4);
-        const formattedEndDate = format(utcEnd, 'PPP p');
+        const utcEnd = addHours(new Date(endDate), 4);
+        const formattedEndDate = format(utcEnd, 'EEE, MMM d, h:mm a');
         return `${formattedStartDate} - ${formattedEndDate}`;
       }
       
@@ -107,7 +108,12 @@ export default function TournamentDetail() {
 
   const handleInterestToggle = async () => {
     try {
-      if (!user || !tournament) return;
+      if (!user || !tournament) {
+        if (!user) {
+          toast.error('Please log in to show interest in tournaments');
+        }
+        return;
+      }
 
       const newStatus = tournament.user_interest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
 
@@ -123,8 +129,8 @@ export default function TournamentDetail() {
         return;
       }
 
-      await refetch();
-      toast.success(`Successfully ${newStatus === 'INTERESTED' ? 'interested in' : 'removed interest from'} tournament`);
+      refetch();
+      toast.success(`Successfully ${newStatus === 'INTERESTED' ? 'shown interest in' : 'removed interest from'} tournament`);
     } catch (error) {
       console.error('Error:', error);
       toast.error('An error occurred');
@@ -223,9 +229,33 @@ export default function TournamentDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {tournament.description?.split('\n').map((paragraph, index) => (
-                    <p key={index} className="text-muted-foreground">{paragraph}</p>
-                  ))}
+                  <div className={`relative ${!isDescriptionExpanded ? 'max-h-[120px] overflow-hidden' : ''}`}>
+                    {tournament.description?.split('\n').map((paragraph, index) => (
+                      <p key={index} className="text-muted-foreground mb-2">{paragraph}</p>
+                    ))}
+                    {!isDescriptionExpanded && tournament.description && (
+                      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-background to-transparent" />
+                    )}
+                  </div>
+                  {tournament.description && tournament.description.length > 100 && (
+                    <Button
+                      variant="ghost"
+                      className="w-full flex items-center gap-2"
+                      onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                    >
+                      {isDescriptionExpanded ? (
+                        <>
+                          Read Less
+                          <ChevronUp className="h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          Read More
+                          <ChevronDown className="h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
                   
                   <div className="space-y-3">                    
                     <div className="flex items-center gap-2">
@@ -233,10 +263,14 @@ export default function TournamentDetail() {
                       <span>Recommended Level: {tournament.recommended_mmr}</span>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-muted-foreground" />
-                      <span>Bracket Type: {tournament.bracket_type}</span>
-                    </div>
+                    <Card className="bg-muted/50">
+                      <CardContent className="pt-6">
+                        <div className="flex items-center gap-2">
+                          <Trophy className="h-5 w-5 text-muted-foreground" />
+                          <span className="font-medium">Bracket Type: {tournament.bracket_type}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
                     
                     <div className="space-y-2">
                       <div className="flex items-center gap-2">
