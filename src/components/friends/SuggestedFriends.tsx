@@ -9,15 +9,14 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 
 interface SuggestedUser {
-  user_id: string;
+  id: string;
   display_name: string;
   profile_photo: string | null;
-  current_mmr: number;
-  mutual_count: number;
+  mutual_count?: number;
 }
 
 interface RpcResponse {
-  people_you_may_know: SuggestedUser[];  // Updated to match new response format
+  people_you_may_know: SuggestedUser[];
 }
 
 interface SuggestedFriendsProps {
@@ -42,11 +41,8 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
         throw error;
       }
 
-      if (!data || typeof data !== 'object') {
-        throw new Error('Invalid response data');
-      }
-
-      return data as unknown as RpcResponse;
+      console.log('Suggested friends data:', data);
+      return data as RpcResponse;
     },
     enabled: !!userId,
   });
@@ -114,7 +110,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  if (!suggestions || !suggestions.people_you_may_know || suggestions.people_you_may_know.length === 0) {
+  if (!suggestions?.people_you_may_know || suggestions.people_you_may_know.length === 0) {
     return null;
   }
 
@@ -127,7 +123,7 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
       
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {suggestions.people_you_may_know.map((user) => (
-          <Card key={user.user_id} className="p-4 hover:shadow-md transition-shadow">
+          <Card key={user.id} className="p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Avatar>
@@ -138,22 +134,21 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
                 </Avatar>
                 <div className="space-y-1">
                   <p className="font-medium">{user.display_name || 'Unknown User'}</p>
-                  <div className="flex items-center text-sm text-muted-foreground">
-                    <Users className="h-3.5 w-3.5 mr-1" />
-                    <span>{user.mutual_count} mutual {user.mutual_count === 1 ? 'friend' : 'friends'}</span>
-                  </div>
-                  {user.current_mmr && (
-                    <p className="text-sm text-muted-foreground">MMR: {user.current_mmr}</p>
+                  {user.mutual_count !== undefined && (
+                    <div className="flex items-center text-sm text-muted-foreground">
+                      <Users className="h-3.5 w-3.5 mr-1" />
+                      <span>{user.mutual_count} mutual {user.mutual_count === 1 ? 'friend' : 'friends'}</span>
+                    </div>
                   )}
                 </div>
               </div>
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => handleSendFriendRequest(user.user_id)}
-                disabled={pendingRequests.has(user.user_id)}
+                onClick={() => handleSendFriendRequest(user.id)}
+                disabled={pendingRequests.has(user.id)}
               >
-                {pendingRequests.has(user.user_id) ? (
+                {pendingRequests.has(user.id) ? (
                   "Sending..."
                 ) : (
                   <>
