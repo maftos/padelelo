@@ -131,66 +131,127 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  // Combine and deduplicate suggestions
-  const combinedSuggestions = Array.from(new Set([
-    ...(mutualFriendsData?.top_mutual_friends || []),
-    ...(playedWithData?.users_played_with || [])
-  ].map(user => JSON.stringify(user)))).map(str => JSON.parse(str));
+  // Get the list of users from played with data
+  const playedWithUsers = playedWithData?.users_played_with || [];
+  const playedWithIds = new Set(playedWithUsers.map(user => user.id));
 
-  if (combinedSuggestions.length === 0) {
+  // Filter out users that appear in the played with list from mutual friends
+  const suggestedUsers = mutualFriendsData?.top_mutual_friends.filter(
+    user => !playedWithIds.has(user.id)
+  ) || [];
+
+  // Don't render if there are no suggestions at all
+  if (playedWithUsers.length === 0 && suggestedUsers.length === 0) {
     return null;
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <div className="flex items-center gap-2">
-        <UserPlus2 className="h-5 w-5 text-primary" />
-        <h2 className="text-xl font-semibold">People You May Know</h2>
-      </div>
-      
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {combinedSuggestions.map((user) => (
-          <Card key={user.id} className="p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Avatar>
-                  <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
-                  <AvatarFallback>
-                    {user.display_name?.substring(0, 2).toUpperCase() || 'UN'}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="space-y-1">
-                  <p className="font-medium">{user.display_name || 'Unknown User'}</p>
-                  {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Users className="h-3.5 w-3.5 mr-1" />
-                      <span>
-                        {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
-                      </span>
+    <div className="space-y-10 animate-fade-in">
+      {/* Played With Section */}
+      {playedWithUsers.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <UserPlus2 className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">People You've Played With</h2>
+          </div>
+          
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {playedWithUsers.map((user) => (
+              <Card key={user.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Avatar>
+                      <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
+                      <AvatarFallback>
+                        {user.display_name?.substring(0, 2).toUpperCase() || 'UN'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-1">
+                      <p className="font-medium">{user.display_name || 'Unknown User'}</p>
+                      {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Users className="h-3.5 w-3.5 mr-1" />
+                          <span>
+                            {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSendFriendRequest(user.id)}
+                    disabled={pendingRequests.has(user.id)}
+                  >
+                    {pendingRequests.has(user.id) ? (
+                      "Sending..."
+                    ) : (
+                      <>
+                        <UserPlus2 className="h-4 w-4 mr-1" />
+                        Add
+                      </>
+                    )}
+                  </Button>
                 </div>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleSendFriendRequest(user.id)}
-                disabled={pendingRequests.has(user.id)}
-              >
-                {pendingRequests.has(user.id) ? (
-                  "Sending..."
-                ) : (
-                  <>
-                    <UserPlus2 className="h-4 w-4 mr-1" />
-                    Add
-                  </>
-                )}
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Suggested Friends Section */}
+      {suggestedUsers.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center gap-2">
+            <UserPlus2 className="h-5 w-5 text-primary" />
+            <h2 className="text-xl font-semibold">Suggested Friends</h2>
+          </div>
+          
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {suggestedUsers.map((user) => (
+              <Card key={user.id} className="p-4 hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <Avatar>
+                      <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
+                      <AvatarFallback>
+                        {user.display_name?.substring(0, 2).toUpperCase() || 'UN'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="space-y-1">
+                      <p className="font-medium">{user.display_name || 'Unknown User'}</p>
+                      {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
+                        <div className="flex items-center text-sm text-muted-foreground">
+                          <Users className="h-3.5 w-3.5 mr-1" />
+                          <span>
+                            {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleSendFriendRequest(user.id)}
+                    disabled={pendingRequests.has(user.id)}
+                  >
+                    {pendingRequests.has(user.id) ? (
+                      "Sending..."
+                    ) : (
+                      <>
+                        <UserPlus2 className="h-4 w-4 mr-1" />
+                        Add
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
