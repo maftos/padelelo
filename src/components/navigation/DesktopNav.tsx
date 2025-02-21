@@ -7,6 +7,7 @@ import { UserProfile } from "@/hooks/use-user-profile";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SideMenuContent } from "./SideMenuContent";
 import { useAuth } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
 
 interface DesktopNavProps {
   profile: UserProfile | null;
@@ -15,6 +16,7 @@ interface DesktopNavProps {
 
 export const DesktopNav = ({ profile, onSignInClick }: DesktopNavProps) => {
   const { user, signOut } = useAuth();
+  const hasFriendRequests = profile?.friend_requests_count && profile.friend_requests_count > 0;
 
   return (
     <div className="hidden md:flex flex-1 items-center justify-between">
@@ -36,8 +38,16 @@ export const DesktopNav = ({ profile, onSignInClick }: DesktopNavProps) => {
         {user && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="relative">
                 <Menu className="h-5 w-5" />
+                {hasFriendRequests && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]"
+                  >
+                    {profile.friend_requests_count}
+                  </Badge>
+                )}
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-0 animate-slide-in-right">

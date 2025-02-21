@@ -7,6 +7,7 @@ import { UserMenu } from "./UserMenu";
 import { SideMenuContent } from "./SideMenuContent";
 import { UserProfile } from "@/hooks/use-user-profile";
 import { User } from "@supabase/supabase-js";
+import { Badge } from "@/components/ui/badge";
 
 interface MobileNavProps {
   profile: UserProfile | null;
@@ -21,6 +22,8 @@ export const MobileNav = ({
   onSignInClick,
   onSignOut 
 }: MobileNavProps) => {
+  const hasFriendRequests = profile?.friend_requests_count && profile.friend_requests_count > 0;
+
   return (
     <div className="flex md:hidden flex-1 items-center justify-between">
       <Link to="/" className="flex items-center space-x-2">
@@ -41,8 +44,16 @@ export const MobileNav = ({
         {user && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="relative">
                 <Menu className="h-5 w-5" />
+                {hasFriendRequests && (
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[10px]"
+                  >
+                    {profile.friend_requests_count}
+                  </Badge>
+                )}
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-0 animate-slide-in-right">
