@@ -16,7 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Calendar as CalendarIcon, Globe, MapPin } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Globe, MapPin } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -49,6 +49,13 @@ export default function CreateTournament() {
     endTime: "",
     venue: "",
     description: "",
+  });
+
+  // Time options in 15-minute intervals
+  const timeOptions = Array.from({ length: 96 }, (_, i) => {
+    const hours = Math.floor(i / 4);
+    const minutes = (i % 4) * 15;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   });
 
   // Get today's date in YYYY-MM-DD format for min date attribute
@@ -153,7 +160,7 @@ export default function CreateTournament() {
                           {formData.startDate ? (
                             format(new Date(formData.startDate), "PPP")
                           ) : (
-                            <span>Pick a date</span>
+                            <span>Select Date</span>
                           )}
                         </Button>
                       </PopoverTrigger>
@@ -174,20 +181,52 @@ export default function CreateTournament() {
                         />
                       </PopoverContent>
                     </Popover>
-                    <label className="absolute left-3 top-2 text-xs text-gray-500 z-10">
+                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
                       Start Date
                     </label>
                   </div>
 
                   <div className="relative">
-                    <Input
-                      type="time"
-                      value={formData.startTime}
-                      onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                      step="900"
-                      className="peer h-14 pt-4 cursor-pointer"
-                    />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">Start Time</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "h-14 pt-4 w-full justify-start text-left font-normal",
+                            !formData.startTime && "text-muted-foreground"
+                          )}
+                        >
+                          <Clock className="mr-2 h-4 w-4" />
+                          {formData.startTime ? (
+                            format(new Date(`2000-01-01T${formData.startTime}`), "h:mm a")
+                          ) : (
+                            <span>Select Time</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-52 p-2" align="start">
+                        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto">
+                          {timeOptions.map((time) => (
+                            <Button
+                              key={time}
+                              variant="ghost"
+                              className={cn(
+                                "justify-start font-normal",
+                                formData.startTime === time && "bg-accent text-accent-foreground"
+                              )}
+                              onClick={() => {
+                                setFormData({ ...formData, startTime: time });
+                              }}
+                            >
+                              {format(new Date(`2000-01-01T${time}`), "h:mm a")}
+                            </Button>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
+                      Start Time
+                    </label>
                   </div>
                 </div>
 
@@ -218,7 +257,7 @@ export default function CreateTournament() {
                           {formData.endDate ? (
                             format(new Date(formData.endDate), "PPP")
                           ) : (
-                            <span>Pick a date</span>
+                            <span>Select Date</span>
                           )}
                         </Button>
                       </PopoverTrigger>
@@ -239,19 +278,51 @@ export default function CreateTournament() {
                         />
                       </PopoverContent>
                     </Popover>
-                    <label className="absolute left-3 top-2 text-xs text-gray-500 z-10">
+                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
                       End Date
                     </label>
                   </div>
                   <div className="relative">
-                    <Input
-                      type="time"
-                      value={formData.endTime}
-                      onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                      step="900"
-                      className="peer h-14 pt-4 cursor-pointer"
-                    />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">End Time</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "h-14 pt-4 w-full justify-start text-left font-normal",
+                            !formData.endTime && "text-muted-foreground"
+                          )}
+                        >
+                          <Clock className="mr-2 h-4 w-4" />
+                          {formData.endTime ? (
+                            format(new Date(`2000-01-01T${formData.endTime}`), "h:mm a")
+                          ) : (
+                            <span>Select Time</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-52 p-2" align="start">
+                        <div className="flex flex-col gap-1 max-h-52 overflow-y-auto">
+                          {timeOptions.map((time) => (
+                            <Button
+                              key={time}
+                              variant="ghost"
+                              className={cn(
+                                "justify-start font-normal",
+                                formData.endTime === time && "bg-accent text-accent-foreground"
+                              )}
+                              onClick={() => {
+                                setFormData({ ...formData, endTime: time });
+                              }}
+                            >
+                              {format(new Date(`2000-01-01T${time}`), "h:mm a")}
+                            </Button>
+                          ))}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
+                      End Time
+                    </label>
                   </div>
                 </div>
               )}
@@ -321,4 +392,3 @@ export default function CreateTournament() {
     </>
   );
 }
-
