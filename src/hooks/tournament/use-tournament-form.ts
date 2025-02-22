@@ -52,7 +52,7 @@ export const useTournamentForm = () => {
       startDate: formData.startDate !== "",
       startTime: formData.startTime !== "",
       venue: formData.venue !== "",
-      bracketType: formData.bracketType !== "",
+      bracketType: formData.bracketType !== undefined,
     };
 
     if (showEndDate) {
@@ -115,4 +115,3 @@ export const useTournamentForm = () => {
     handleSubmit,
   };
 };
-
