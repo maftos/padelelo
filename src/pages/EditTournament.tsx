@@ -1,228 +1,204 @@
 
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { useParams } from "react-router-dom";
-
-// Sample data types
-type BracketType = "SINGLE_ELIM" | "DOUBLE_ELIM";
-type TournamentStatus = "DRAFT" | "PUBLISHED" | "COMPLETED";
-type TournamentPrivacy = "PUBLIC" | "PRIVATE";
-type ApprovalType = "AUTOMATIC" | "MANUAL";
-
-interface TournamentFormData {
-  name: string;
-  bracket_type: BracketType;
-  venue_id: string;
-  status: TournamentStatus;
-  privacy: TournamentPrivacy;
-  description: string;
-  recommended_mmr: number;
-  main_photo: string;
-  approval_type: ApprovalType;
-  start_date: string;
-  end_date: string;
-  max_players: number;
-}
-
-// Sample tournament data
-const sampleTournament: TournamentFormData = {
-  name: "Sample Tournament 2024",
-  bracket_type: "SINGLE_ELIM",
-  venue_id: "venue-1",
-  status: "DRAFT",
-  privacy: "PUBLIC",
-  description: "This is a sample tournament description.",
-  recommended_mmr: 3000,
-  main_photo: "https://example.com/photo.jpg",
-  approval_type: "AUTOMATIC",
-  start_date: "2024-03-20T14:00",
-  end_date: "2024-03-20T18:00",
-  max_players: 16
-};
-
-// Sample venues data
-const sampleVenues = [
-  { id: "venue-1", name: "Sports Complex A" },
-  { id: "venue-2", name: "Tennis Club B" },
-  { id: "venue-3", name: "Recreation Center C" },
-];
+import { useTournamentForm } from "@/hooks/tournament/use-tournament-form";
+import { TournamentBasicInfo } from "@/components/tournament/TournamentBasicInfo";
+import { TournamentDateTime } from "@/components/tournament/TournamentDateTime";
+import { TournamentVenue } from "@/components/tournament/TournamentVenue";
+import { TournamentSettings } from "@/components/tournament/TournamentSettings";
+import { TournamentDescription } from "@/components/tournament/TournamentDescription";
+import { TournamentBracketType } from "@/components/tournament/TournamentBracketType";
+import { useNavigate } from "react-router-dom";
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
-  console.log("Tournament ID:", tournamentId); // Added for debugging
+  const navigate = useNavigate();
+  const {
+    formData,
+    setFormData,
+    showEndDate,
+    setShowEndDate,
+    isSubmitting,
+    venues,
+    setVenues,
+    validateForm,
+  } = useTournamentForm();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [tournamentStatus, setTournamentStatus] = useState<string>("INCOMPLETE");
+  
+  const defaultPhoto = 'https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/tournament-photos//manuel-pappacena-zTwzxr4BbTA-unsplash.webp';
+
+  useEffect(() => {
+    const fetchTournament = async () => {
+      const { data, error } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('tournament_id', tournamentId)
+        .single();
+
+      if (error) {
+        toast.error("Failed to load tournament");
+        return;
+      }
+
+      if (data) {
+        setTournamentStatus(data.status);
+        const startDate = new Date(data.start_date);
+        const endDate = new Date(data.end_date);
+
+        setFormData({
+          name: data.name || "",
+          startDate: startDate.toISOString().split('T')[0],
+          startTime: startDate.toTimeString().slice(0, 5),
+          endDate: endDate.toISOString().split('T')[0],
+          endTime: endDate.toTimeString().slice(0, 5),
+          venue: data.venue_id || "",
+          description: data.description || "",
+          maxPlayers: data.max_players?.toString() || "",
+          bracketType: data.bracket_type,
+        });
+
+        if (data.end_date) {
+          setShowEndDate(true);
+        }
+      }
+    };
+
+    const fetchVenues = async () => {
+      const { data, error } = await supabase.rpc('get_venues');
+      if (error) {
+        toast.error("Failed to load venues");
+        return;
+      }
+      setVenues(data as { venue_id: string; name: string; }[]);
+    };
+
+    fetchTournament();
+    fetchVenues();
+  }, [tournamentId, setFormData, setShowEndDate, setVenues]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted"); // Added for debugging
+    
+    setIsSubmitting(true);
+    try {
+      const startDateTime = new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
+      const endDateTime = showEndDate 
+        ? new Date(`${formData.endDate}T${formData.endTime}+04:00`).toISOString()
+        : new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
+
+      const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
+
+      const { error } = await supabase.rpc('edit_tournament', {
+        p_tournament_id: tournamentId,
+        p_max_players: maxPlayers,
+        p_venue_id: formData.venue,
+        p_start_date: startDateTime,
+        p_end_date: endDateTime,
+        p_bracket_type: formData.bracketType,
+      });
+
+      if (error) throw error;
+
+      toast.success("Tournament updated successfully!");
+      navigate("/tournaments");
+    } catch (error) {
+      console.error('Error updating tournament:', error);
+      toast.error("Failed to update tournament");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    try {
+      const { error } = await supabase.rpc('publish_tournament', {
+        p_tournament_id: tournamentId
+      });
+
+      if (error) throw error;
+
+      toast.success("Tournament published successfully!");
+      setTournamentStatus("PUBLISHED");
+    } catch (error) {
+      console.error('Error publishing tournament:', error);
+      toast.error("Failed to publish tournament");
+    }
   };
 
   return (
     <>
       <Navigation />
       <PageContainer>
-        <div className="max-w-3xl mx-auto py-8 px-4">
-          <h1 className="text-2xl font-bold mb-6">Edit Tournament</h1>
-          
+        <div className="max-w-2xl mx-auto px-4 py-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="grid gap-6 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Tournament Name</Label>
-                    <Input
-                      id="name"
-                      defaultValue={sampleTournament.name}
-                      placeholder="Enter tournament name"
-                    />
-                  </div>
+            <div className="relative aspect-video rounded-lg bg-gray-100 overflow-hidden">
+              <img
+                src={defaultPhoto}
+                alt="Tournament cover"
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="venue">Venue</Label>
-                    <Select defaultValue={sampleTournament.venue_id}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select venue" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {sampleVenues.map((venue) => (
-                          <SelectItem key={venue.id} value={venue.id}>
-                            {venue.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+            <div className="grid gap-6">
+              <TournamentBasicInfo
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="bracketType">Bracket Type</Label>
-                    <Select defaultValue={sampleTournament.bracket_type}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select bracket type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="SINGLE_ELIM">Single Elimination</SelectItem>
-                        <SelectItem value="DOUBLE_ELIM">Double Elimination</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <TournamentDateTime
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+                showEndDate={showEndDate}
+                onShowEndDateChange={setShowEndDate}
+              />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select defaultValue={sampleTournament.status}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="DRAFT">Draft</SelectItem>
-                        <SelectItem value="PUBLISHED">Published</SelectItem>
-                        <SelectItem value="COMPLETED">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <TournamentVenue
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+                venues={venues}
+              />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="privacy">Privacy</Label>
-                    <Select defaultValue={sampleTournament.privacy}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select privacy" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PUBLIC">Public</SelectItem>
-                        <SelectItem value="PRIVATE">Private</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <TournamentBracketType
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="approvalType">Approval Type</Label>
-                    <Select defaultValue={sampleTournament.approval_type}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select approval type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="AUTOMATIC">Automatic</SelectItem>
-                        <SelectItem value="MANUAL">Manual</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <TournamentSettings
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
 
-                  <div className="space-y-2">
-                    <Label htmlFor="maxPlayers">Maximum Players</Label>
-                    <Input
-                      id="maxPlayers"
-                      type="number"
-                      defaultValue={sampleTournament.max_players}
-                      min={2}
-                    />
-                  </div>
+              <TournamentDescription
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
+              />
+            </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="recommendedMmr">Recommended MMR</Label>
-                    <Input
-                      id="recommendedMmr"
-                      type="number"
-                      defaultValue={sampleTournament.recommended_mmr}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="startDate">Start Date & Time</Label>
-                    <Input
-                      id="startDate"
-                      type="datetime-local"
-                      defaultValue={sampleTournament.start_date}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="endDate">End Date & Time</Label>
-                    <Input
-                      id="endDate"
-                      type="datetime-local"
-                      defaultValue={sampleTournament.end_date}
-                    />
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="mainPhoto">Main Photo URL</Label>
-                    <Input
-                      id="mainPhoto"
-                      defaultValue={sampleTournament.main_photo}
-                      placeholder="Enter photo URL"
-                    />
-                  </div>
-
-                  <div className="space-y-2 md:col-span-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      defaultValue={sampleTournament.description}
-                      placeholder="Enter tournament description"
-                      className="min-h-[100px]"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-end gap-4">
-              <Button variant="outline" type="button">
-                Cancel
+            <div className="flex gap-4">
+              <Button
+                type="submit"
+                className="flex-1"
+                disabled={isSubmitting || !validateForm()}
+              >
+                {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
-              <Button type="submit">
-                Save Changes
-              </Button>
+
+              {tournamentStatus === "INCOMPLETE" && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handlePublish}
+                  className="flex-1"
+                >
+                  Publish Tournament
+                </Button>
+              )}
             </div>
           </form>
         </div>
