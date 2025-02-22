@@ -11,6 +11,7 @@ import { TournamentDateTime } from "@/components/tournament/TournamentDateTime";
 import { TournamentVenue } from "@/components/tournament/TournamentVenue";
 import { TournamentSettings } from "@/components/tournament/TournamentSettings";
 import { TournamentDescription } from "@/components/tournament/TournamentDescription";
+import { TournamentBracketType } from "@/components/tournament/TournamentBracketType";
 
 export default function CreateTournament() {
   const {
@@ -70,6 +71,11 @@ export default function CreateTournament() {
                 formData={formData}
                 onChange={(data) => setFormData({ ...formData, ...data })}
                 venues={venues}
+              />
+
+              <TournamentBracketType
+                formData={formData}
+                onChange={(data) => setFormData({ ...formData, ...data })}
               />
 
               <TournamentSettings

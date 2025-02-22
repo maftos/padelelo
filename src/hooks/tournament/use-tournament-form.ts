@@ -14,6 +14,7 @@ export interface TournamentFormData {
   venue: string;
   description: string;
   maxPlayers: string;
+  bracketType: string;
 }
 
 export const useTournamentForm = () => {
@@ -32,6 +33,7 @@ export const useTournamentForm = () => {
     venue: "",
     description: "",
     maxPlayers: "",
+    bracketType: "SINGLE_ELIM", // Default to single elimination
   });
 
   const validateForm = () => {
@@ -40,6 +42,7 @@ export const useTournamentForm = () => {
       startDate: formData.startDate !== "",
       startTime: formData.startTime !== "",
       venue: formData.venue !== "",
+      bracketType: formData.bracketType !== "",
     };
 
     if (showEndDate) {
@@ -74,7 +77,7 @@ export const useTournamentForm = () => {
         p_venue_id: formData.venue,
         p_start_date: startDateTime,
         p_end_date: endDateTime,
-        p_bracket_type: "SINGLE_ELIM",
+        p_bracket_type: formData.bracketType,
         p_user_a_id: user.id,
       });
 
