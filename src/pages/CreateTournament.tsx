@@ -16,7 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Calendar as CalendarIcon, Clock, Globe, MapPin } from "lucide-react";
+import { Calendar as CalendarIcon, Clock, Globe, MapPin, Users, Shield } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -49,7 +49,29 @@ export default function CreateTournament() {
     endTime: "",
     venue: "",
     description: "",
+    maxPlayers: "",
   });
+
+  // Validate form fields
+  const validateForm = () => {
+    const requiredFields = {
+      name: formData.name.trim() !== "",
+      startDate: formData.startDate !== "",
+      startTime: formData.startTime !== "",
+      venue: formData.venue !== "",
+    };
+
+    // If end date is shown, both end date and time must be filled
+    if (showEndDate) {
+      return (
+        Object.values(requiredFields).every(Boolean) &&
+        formData.endDate !== "" &&
+        formData.endTime !== ""
+      );
+    }
+
+    return Object.values(requiredFields).every(Boolean);
+  };
 
   // Time options in 15-minute intervals
   const timeOptions = Array.from({ length: 96 }, (_, i) => {
@@ -88,8 +110,10 @@ export default function CreateTournament() {
         ? new Date(`${formData.endDate}T${formData.endTime}+04:00`).toISOString()
         : new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
 
+      const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
+
       const { error } = await supabase.rpc('create_tournament', {
-        p_max_players: 16,
+        p_max_players: maxPlayers,
         p_venue_id: formData.venue,
         p_start_date: startDateTime,
         p_end_date: endDateTime,
@@ -132,6 +156,7 @@ export default function CreateTournament() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="peer h-14 pt-4"
                   placeholder=" "
+                  required
                 />
                 <label
                   htmlFor="name"
@@ -341,6 +366,7 @@ export default function CreateTournament() {
                 <Select
                   value={formData.venue}
                   onValueChange={(value) => setFormData({ ...formData, venue: value })}
+                  required
                 >
                   <SelectTrigger className="h-14 pt-4 pl-10">
                     <SelectValue placeholder=" " />
@@ -355,6 +381,37 @@ export default function CreateTournament() {
                 </Select>
                 <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
                   Location
+                </label>
+              </div>
+
+              {/* Max Players Input */}
+              <div className="relative">
+                <Users className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
+                <Input
+                  type="number"
+                  min="2"
+                  max="128"
+                  value={formData.maxPlayers}
+                  onChange={(e) => setFormData({ ...formData, maxPlayers: e.target.value })}
+                  className="peer h-14 pt-4 pl-10"
+                  placeholder=" "
+                />
+                <label className="absolute left-10 top-2 text-xs text-gray-500">
+                  Max Players (Optional)
+                </label>
+              </div>
+
+              {/* Approval Type Input (Disabled) */}
+              <div className="relative">
+                <Shield className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
+                <Input
+                  value="Automatic"
+                  disabled
+                  className="peer h-14 pt-4 pl-10"
+                  placeholder=" "
+                />
+                <label className="absolute left-10 top-2 text-xs text-gray-500">
+                  Approval Type
                 </label>
               </div>
 
@@ -381,7 +438,7 @@ export default function CreateTournament() {
                   placeholder=" "
                 />
                 <label className="absolute left-3 top-2 text-xs text-gray-500">
-                  Description
+                  Description (Optional)
                 </label>
               </div>
             </div>
@@ -389,7 +446,7 @@ export default function CreateTournament() {
             <Button
               type="submit"
               className="w-full"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !validateForm()}
             >
               {isSubmitting ? "Creating..." : "Create Tournament"}
             </Button>
@@ -399,3 +456,4 @@ export default function CreateTournament() {
     </>
   );
 }
+
