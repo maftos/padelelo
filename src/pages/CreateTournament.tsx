@@ -16,7 +16,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Calendar, Clock, Plus, X } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
+import { format } from "date-fns";
 
 interface Venue {
   venue_id: string;
@@ -43,6 +44,9 @@ export default function CreateTournament() {
     description: "",
   });
 
+  // Get today's date in YYYY-MM-DD format for min date attribute
+  const today = format(new Date(), 'yyyy-MM-dd');
+
   // Fetch venues on component mount
   useEffect(() => {
     const fetchVenues = async () => {
@@ -51,7 +55,6 @@ export default function CreateTournament() {
         toast.error("Failed to load venues");
         return;
       }
-      // Double type assertion to safely convert the data
       setVenues((data as unknown) as Venue[]);
     };
     fetchVenues();
@@ -127,78 +130,71 @@ export default function CreateTournament() {
               </div>
 
               {/* Date and Time Grid */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="relative">
-                  <Input
-                    type="date"
-                    value={formData.startDate}
-                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                    className="peer h-14 pt-4"
-                    placeholder=" "
-                  />
-                  <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400" />
-                  <label className="absolute left-3 top-2 text-xs text-gray-500">Start Date</label>
+              <div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative">
+                    <Input
+                      type="date"
+                      value={formData.startDate}
+                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                      min={today}
+                      className="peer h-14 pt-4 pr-10"
+                      placeholder=" "
+                    />
+                    <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
+                    <label className="absolute left-3 top-2 text-xs text-gray-500">Start Date</label>
+                  </div>
+
+                  <div className="relative">
+                    <Input
+                      type="time"
+                      value={formData.startTime}
+                      onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                      step="900"
+                      className="peer h-14 pt-4 pr-10"
+                      placeholder=" "
+                    />
+                    <Clock className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
+                    <label className="absolute left-3 top-2 text-xs text-gray-500">Start Time</label>
+                  </div>
                 </div>
 
-                <div className="relative">
-                  <Input
-                    type="time"
-                    value={formData.startTime}
-                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                    className="peer h-14 pt-4"
-                    placeholder=" "
-                  />
-                  <Clock className="absolute right-3 top-4 h-5 w-5 text-gray-400" />
-                  <label className="absolute left-3 top-2 text-xs text-gray-500">Start Time</label>
-                </div>
+                {/* Optional End Date Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setShowEndDate(!showEndDate)}
+                  className="mt-2 text-sm text-primary hover:underline focus:outline-none"
+                >
+                  {showEndDate ? "Remove end date/time" : "+ Add end date and time"}
+                </button>
               </div>
 
               {/* Optional End Date/Time */}
-              {!showEndDate ? (
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex items-center gap-2"
-                  onClick={() => setShowEndDate(true)}
-                >
-                  <Plus className="h-4 w-4" /> Add End Date and Time
-                </Button>
-              ) : (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">End Date and Time</span>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowEndDate(false)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
+              {showEndDate && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="relative">
+                    <Input
+                      type="date"
+                      value={formData.endDate}
+                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                      min={formData.startDate || today}
+                      className="peer h-14 pt-4 pr-10"
+                      placeholder=" "
+                    />
+                    <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
+                    <label className="absolute left-3 top-2 text-xs text-gray-500">End Date</label>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="relative">
-                      <Input
-                        type="date"
-                        value={formData.endDate}
-                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                        className="peer h-14 pt-4"
-                        placeholder=" "
-                      />
-                      <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400" />
-                      <label className="absolute left-3 top-2 text-xs text-gray-500">End Date</label>
-                    </div>
-                    <div className="relative">
-                      <Input
-                        type="time"
-                        value={formData.endTime}
-                        onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                        className="peer h-14 pt-4"
-                        placeholder=" "
-                      />
-                      <Clock className="absolute right-3 top-4 h-5 w-5 text-gray-400" />
-                      <label className="absolute left-3 top-2 text-xs text-gray-500">End Time</label>
-                    </div>
+                  <div className="relative">
+                    <Input
+                      type="time"
+                      value={formData.endTime}
+                      onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                      step="900"
+                      className="peer h-14 pt-4 pr-10"
+                      placeholder=" "
+                    />
+                    <Clock className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
+                    <label className="absolute left-3 top-2 text-xs text-gray-500">End Time</label>
                   </div>
                 </div>
               )}
@@ -230,7 +226,7 @@ export default function CreateTournament() {
                 <Input
                   value="Public"
                   disabled
-                  className="peer h-14 pt-4 bg-gray-50"
+                  className="peer h-14 pt-4"
                   placeholder=" "
                 />
                 <label className="absolute left-3 top-2 text-xs text-gray-500">
@@ -244,6 +240,7 @@ export default function CreateTournament() {
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="min-h-[120px] pt-6 resize-y"
+                  style={{ minHeight: '7.5rem' }}
                   placeholder=" "
                 />
                 <label className="absolute left-3 top-2 text-xs text-gray-500">
@@ -265,4 +262,3 @@ export default function CreateTournament() {
     </>
   );
 }
-
