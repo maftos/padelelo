@@ -16,7 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Calendar, Clock } from "lucide-react";
+import { Calendar, Clock, Globe, MapPin } from "lucide-react";
 import { format } from "date-fns";
 
 interface Venue {
@@ -133,29 +133,27 @@ export default function CreateTournament() {
               <div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
+                    <Calendar className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
                     <Input
                       type="date"
                       value={formData.startDate}
                       onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                       min={today}
-                      className="peer h-14 pt-4 pr-10"
-                      placeholder=" "
+                      className="peer h-14 pt-4 pl-10"
                     />
-                    <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">Start Date</label>
+                    <label className="absolute left-10 top-2 text-xs text-gray-500">Start Date</label>
                   </div>
 
                   <div className="relative">
+                    <Clock className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
                     <Input
                       type="time"
                       value={formData.startTime}
                       onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                       step="900"
-                      className="peer h-14 pt-4 pr-10"
-                      placeholder=" "
+                      className="peer h-14 pt-4 pl-10"
                     />
-                    <Clock className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">Start Time</label>
+                    <label className="absolute left-10 top-2 text-xs text-gray-500">Start Time</label>
                   </div>
                 </div>
 
@@ -173,39 +171,38 @@ export default function CreateTournament() {
               {showEndDate && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
+                    <Calendar className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
                     <Input
                       type="date"
                       value={formData.endDate}
                       onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                       min={formData.startDate || today}
-                      className="peer h-14 pt-4 pr-10"
-                      placeholder=" "
+                      className="peer h-14 pt-4 pl-10"
                     />
-                    <Calendar className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">End Date</label>
+                    <label className="absolute left-10 top-2 text-xs text-gray-500">End Date</label>
                   </div>
                   <div className="relative">
+                    <Clock className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
                     <Input
                       type="time"
                       value={formData.endTime}
                       onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                       step="900"
-                      className="peer h-14 pt-4 pr-10"
-                      placeholder=" "
+                      className="peer h-14 pt-4 pl-10"
                     />
-                    <Clock className="absolute right-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">End Time</label>
+                    <label className="absolute left-10 top-2 text-xs text-gray-500">End Time</label>
                   </div>
                 </div>
               )}
 
               {/* Location Select */}
               <div className="relative">
+                <MapPin className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none z-10" />
                 <Select
                   value={formData.venue}
                   onValueChange={(value) => setFormData({ ...formData, venue: value })}
                 >
-                  <SelectTrigger className="h-14 pt-4">
+                  <SelectTrigger className="h-14 pt-4 pl-10">
                     <SelectValue placeholder=" " />
                   </SelectTrigger>
                   <SelectContent>
@@ -216,20 +213,21 @@ export default function CreateTournament() {
                     ))}
                   </SelectContent>
                 </Select>
-                <label className="absolute left-3 top-2 text-xs text-gray-500 z-10">
+                <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
                   Location
                 </label>
               </div>
 
               {/* Visibility Input (Disabled) */}
               <div className="relative">
+                <Globe className="absolute left-3 top-4 h-5 w-5 text-gray-400 pointer-events-none" />
                 <Input
                   value="Public"
                   disabled
-                  className="peer h-14 pt-4"
+                  className="peer h-14 pt-4 pl-10"
                   placeholder=" "
                 />
-                <label className="absolute left-3 top-2 text-xs text-gray-500">
+                <label className="absolute left-10 top-2 text-xs text-gray-500">
                   Visibility
                 </label>
               </div>
@@ -262,3 +260,4 @@ export default function CreateTournament() {
     </>
   );
 }
+
