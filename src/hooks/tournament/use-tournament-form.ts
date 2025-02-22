@@ -5,6 +5,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
+export type BracketType = 
+  | "SINGLE_ELIM"
+  | "DOUBLE_ELIM"
+  | "ROUND_ROBIN"
+  | "AMERICANO_SOLO"
+  | "MEXICANO_SOLO"
+  | "AMERICANO_TEAM"
+  | "MEXICANO_TEAM"
+  | "MIXICANO";
+
 export interface TournamentFormData {
   name: string;
   startDate: string;
@@ -14,7 +24,7 @@ export interface TournamentFormData {
   venue: string;
   description: string;
   maxPlayers: string;
-  bracketType: string;
+  bracketType: BracketType;
 }
 
 export const useTournamentForm = () => {
@@ -105,3 +115,4 @@ export const useTournamentForm = () => {
     handleSubmit,
   };
 };
+
