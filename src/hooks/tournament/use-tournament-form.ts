@@ -109,9 +109,11 @@ export const useTournamentForm = () => {
     showEndDate,
     setShowEndDate,
     isSubmitting,
+    setIsSubmitting,  // Added this line
     venues,
     setVenues,
     validateForm,
     handleSubmit,
   };
 };
+
