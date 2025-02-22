@@ -51,6 +51,7 @@ export default function CreateTournament() {
         toast.error("Failed to load venues");
         return;
       }
+      // Type assertion to ensure the data matches the Venue interface
       setVenues(data as Venue[]);
     };
     fetchVenues();
