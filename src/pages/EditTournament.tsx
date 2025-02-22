@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,16 +14,19 @@ import { TournamentSettings } from "@/components/tournament/TournamentSettings";
 import { TournamentDescription } from "@/components/tournament/TournamentDescription";
 import { TournamentBracketType } from "@/components/tournament/TournamentBracketType";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const {
     formData,
     setFormData,
     showEndDate,
     setShowEndDate,
     isSubmitting,
+    setIsSubmitting,
     venues,
     setVenues,
     validateForm,
@@ -84,6 +87,10 @@ export default function EditTournament() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user?.id) {
+      toast.error("You must be logged in to edit a tournament");
+      return;
+    }
     
     setIsSubmitting(true);
     try {
@@ -95,12 +102,17 @@ export default function EditTournament() {
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
       const { error } = await supabase.rpc('edit_tournament', {
-        p_tournament_id: tournamentId,
-        p_max_players: maxPlayers,
-        p_venue_id: formData.venue,
-        p_start_date: startDateTime,
-        p_end_date: endDateTime,
-        p_bracket_type: formData.bracketType,
+        tournament_id: tournamentId,
+        user_a_id: user.id,
+        updates: {
+          max_players: maxPlayers,
+          venue_id: formData.venue,
+          start_date: startDateTime,
+          end_date: endDateTime,
+          bracket_type: formData.bracketType,
+          name: formData.name,
+          description: formData.description
+        }
       });
 
       if (error) throw error;
@@ -116,9 +128,15 @@ export default function EditTournament() {
   };
 
   const handlePublish = async () => {
+    if (!user?.id) {
+      toast.error("You must be logged in to publish a tournament");
+      return;
+    }
+
     try {
       const { error } = await supabase.rpc('publish_tournament', {
-        p_tournament_id: tournamentId
+        tournament_id: tournamentId,
+        user_a_id: user.id
       });
 
       if (error) throw error;
