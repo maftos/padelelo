@@ -157,11 +157,16 @@ export default function CreateTournament() {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.startDate ? (
-                            format(new Date(formData.startDate), "PPP")
-                          ) : (
-                            <span>Select Date</span>
-                          )}
+                          <div className="flex flex-col items-start">
+                            <span className="text-xs text-gray-500">Start Date</span>
+                            <span className="mt-0.5">
+                              {formData.startDate ? (
+                                format(new Date(formData.startDate), "PPP")
+                              ) : (
+                                "Select Date"
+                              )}
+                            </span>
+                          </div>
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -181,9 +186,6 @@ export default function CreateTournament() {
                         />
                       </PopoverContent>
                     </Popover>
-                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
-                      Start Date
-                    </label>
                   </div>
 
                   <div className="relative">
@@ -197,11 +199,16 @@ export default function CreateTournament() {
                           )}
                         >
                           <Clock className="mr-2 h-4 w-4" />
-                          {formData.startTime ? (
-                            format(new Date(`2000-01-01T${formData.startTime}`), "h:mm a")
-                          ) : (
-                            <span>Select Time</span>
-                          )}
+                          <div className="flex flex-col items-start">
+                            <span className="text-xs text-gray-500">Start Time</span>
+                            <span className="mt-0.5">
+                              {formData.startTime ? (
+                                format(new Date(`2000-01-01T${formData.startTime}`), "h:mm a")
+                              ) : (
+                                "Select Time"
+                              )}
+                            </span>
+                          </div>
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-52 p-2" align="start">
@@ -224,13 +231,9 @@ export default function CreateTournament() {
                         </div>
                       </PopoverContent>
                     </Popover>
-                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
-                      Start Time
-                    </label>
                   </div>
                 </div>
 
-                {/* Optional End Date Toggle */}
                 <button
                   type="button"
                   onClick={() => setShowEndDate(!showEndDate)}
@@ -254,11 +257,16 @@ export default function CreateTournament() {
                           )}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
-                          {formData.endDate ? (
-                            format(new Date(formData.endDate), "PPP")
-                          ) : (
-                            <span>Select Date</span>
-                          )}
+                          <div className="flex flex-col items-start">
+                            <span className="text-xs text-gray-500">End Date</span>
+                            <span className="mt-0.5">
+                              {formData.endDate ? (
+                                format(new Date(formData.endDate), "PPP")
+                              ) : (
+                                "Select Date"
+                              )}
+                            </span>
+                          </div>
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-auto p-0" align="start">
@@ -278,10 +286,8 @@ export default function CreateTournament() {
                         />
                       </PopoverContent>
                     </Popover>
-                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
-                      End Date
-                    </label>
                   </div>
+
                   <div className="relative">
                     <Popover>
                       <PopoverTrigger asChild>
@@ -293,11 +299,16 @@ export default function CreateTournament() {
                           )}
                         >
                           <Clock className="mr-2 h-4 w-4" />
-                          {formData.endTime ? (
-                            format(new Date(`2000-01-01T${formData.endTime}`), "h:mm a")
-                          ) : (
-                            <span>Select Time</span>
-                          )}
+                          <div className="flex flex-col items-start">
+                            <span className="text-xs text-gray-500">End Time</span>
+                            <span className="mt-0.5">
+                              {formData.endTime ? (
+                                format(new Date(`2000-01-01T${formData.endTime}`), "h:mm a")
+                              ) : (
+                                "Select Time"
+                              )}
+                            </span>
+                          </div>
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-52 p-2" align="start">
@@ -320,9 +331,6 @@ export default function CreateTournament() {
                         </div>
                       </PopoverContent>
                     </Popover>
-                    <label className="absolute left-10 top-2 text-xs text-gray-500 z-10">
-                      End Time
-                    </label>
                   </div>
                 </div>
               )}
@@ -369,8 +377,7 @@ export default function CreateTournament() {
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="min-h-[120px] pt-6 resize-y"
-                  style={{ minHeight: '7.5rem' }}
+                  className="pt-6 resize-y min-h-[96px]"
                   placeholder=" "
                 />
                 <label className="absolute left-3 top-2 text-xs text-gray-500">
