@@ -16,8 +16,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { Globe, MapPin } from "lucide-react";
+import { Calendar as CalendarIcon, Globe, MapPin } from "lucide-react";
 import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface Venue {
   venue_id: string;
@@ -133,14 +140,43 @@ export default function CreateTournament() {
               <div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
-                    <Input
-                      type="date"
-                      value={formData.startDate}
-                      onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                      min={today}
-                      className="peer h-14 pt-4 cursor-pointer appearance-none"
-                    />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">Start Date</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "h-14 pt-4 w-full justify-start text-left font-normal",
+                            !formData.startDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.startDate ? (
+                            format(new Date(formData.startDate), "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.startDate ? new Date(formData.startDate) : undefined}
+                          onSelect={(date) =>
+                            setFormData({
+                              ...formData,
+                              startDate: date ? format(date, 'yyyy-MM-dd') : ''
+                            })
+                          }
+                          disabled={(date) =>
+                            date < new Date()
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <label className="absolute left-3 top-2 text-xs text-gray-500 z-10">
+                      Start Date
+                    </label>
                   </div>
 
                   <div className="relative">
@@ -149,7 +185,7 @@ export default function CreateTournament() {
                       value={formData.startTime}
                       onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
                       step="900"
-                      className="peer h-14 pt-4 cursor-pointer appearance-none"
+                      className="peer h-14 pt-4 cursor-pointer"
                     />
                     <label className="absolute left-3 top-2 text-xs text-gray-500">Start Time</label>
                   </div>
@@ -169,14 +205,43 @@ export default function CreateTournament() {
               {showEndDate && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="relative">
-                    <Input
-                      type="date"
-                      value={formData.endDate}
-                      onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                      min={formData.startDate || today}
-                      className="peer h-14 pt-4 cursor-pointer appearance-none"
-                    />
-                    <label className="absolute left-3 top-2 text-xs text-gray-500">End Date</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "h-14 pt-4 w-full justify-start text-left font-normal",
+                            !formData.endDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {formData.endDate ? (
+                            format(new Date(formData.endDate), "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={formData.endDate ? new Date(formData.endDate) : undefined}
+                          onSelect={(date) =>
+                            setFormData({
+                              ...formData,
+                              endDate: date ? format(date, 'yyyy-MM-dd') : ''
+                            })
+                          }
+                          disabled={(date) =>
+                            date < (formData.startDate ? new Date(formData.startDate) : new Date())
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <label className="absolute left-3 top-2 text-xs text-gray-500 z-10">
+                      End Date
+                    </label>
                   </div>
                   <div className="relative">
                     <Input
@@ -184,7 +249,7 @@ export default function CreateTournament() {
                       value={formData.endTime}
                       onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
                       step="900"
-                      className="peer h-14 pt-4 cursor-pointer appearance-none"
+                      className="peer h-14 pt-4 cursor-pointer"
                     />
                     <label className="absolute left-3 top-2 text-xs text-gray-500">End Time</label>
                   </div>
@@ -256,3 +321,4 @@ export default function CreateTournament() {
     </>
   );
 }
+
