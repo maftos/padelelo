@@ -39,14 +39,29 @@ export default function Verify() {
     setLoading(true);
 
     try {
-      // Changed type from 'sms' to 'phone_change' since we're using WhatsApp
       const { error } = await supabase.auth.verifyOtp({
         phone,
         token: verificationCode,
         type: 'phone_change'
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Verification error:", error);
+        if (error.message.toLowerCase().includes("expired")) {
+          toast({
+            title: "Code Expired",
+            description: "This verification code has expired. Please go back and request a new code.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+          });
+        }
+        return;
+      }
 
       toast({
         title: "Success!",
