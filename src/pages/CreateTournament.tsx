@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -44,15 +44,15 @@ export default function CreateTournament() {
   });
 
   // Fetch venues on component mount
-  useState(() => {
+  useEffect(() => {
     const fetchVenues = async () => {
       const { data, error } = await supabase.rpc('get_venues');
       if (error) {
         toast.error("Failed to load venues");
         return;
       }
-      // Type assertion to ensure the data matches the Venue interface
-      setVenues(data as Venue[]);
+      // Double type assertion to safely convert the data
+      setVenues((data as unknown) as Venue[]);
     };
     fetchVenues();
   }, []);
@@ -265,3 +265,4 @@ export default function CreateTournament() {
     </>
   );
 }
+
