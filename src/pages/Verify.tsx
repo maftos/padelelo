@@ -39,10 +39,11 @@ export default function Verify() {
     setLoading(true);
 
     try {
+      // Changed type from 'sms' to 'phone_change' since we're using WhatsApp
       const { error } = await supabase.auth.verifyOtp({
         phone,
         token: verificationCode,
-        type: 'sms'
+        type: 'phone_change'
       });
 
       if (error) throw error;
@@ -52,8 +53,9 @@ export default function Verify() {
         description: "Your phone number has been verified.",
       });
       
-      navigate('/'); // Changed from /home to / for direct navigation
+      navigate('/');
     } catch (error: any) {
+      console.error("Verification error:", error);
       toast({
         title: "Error",
         description: error.message,
@@ -104,3 +106,4 @@ export default function Verify() {
     </div>
   );
 };
+
