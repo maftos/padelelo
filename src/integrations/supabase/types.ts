@@ -2325,14 +2325,19 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
-      share_tournament_friends: {
-        Args: {
-          user_a_id: string
-          tournament_id: string
-          friend_ids: string[]
-        }
-        Returns: Json
-      }
+      share_tournament_friends:
+        | {
+            Args: Record<PropertyKey, never>
+            Returns: Json
+          }
+        | {
+            Args: {
+              user_a_id: string
+              tournament_id: string
+              friend_ids: string[]
+            }
+            Returns: Json
+          }
       spheroid_in: {
         Args: {
           "": unknown
