@@ -40,7 +40,7 @@ export default function Verify() {
 
     try {
       const { error } = await supabase.auth.verifyOtp({
-        phoneNumber: phone,
+        phone: phone,
         token: verificationCode,
         type: 'signup'
       });
@@ -121,4 +121,3 @@ export default function Verify() {
     </div>
   );
 };
-
