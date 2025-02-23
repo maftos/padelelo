@@ -1,11 +1,11 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries } from "@/lib/countries";
 import { SignUpFormData } from "@/types/auth";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface PhoneStepProps {
   phoneNumber: string;
@@ -14,7 +14,11 @@ interface PhoneStepProps {
   setCountryCode: (code: string) => void;
   password: string;
   setPassword: (password: string) => void;
+  verificationCode: string;
+  setVerificationCode: (code: string) => void;
+  isVerificationStep: boolean;
   onNext: () => void;
+  onVerify: () => void;
   error: string | null;
   loading: boolean;
 }
@@ -26,7 +30,11 @@ export const PhoneStep = ({
   setCountryCode,
   password,
   setPassword,
+  verificationCode,
+  setVerificationCode,
+  isVerificationStep,
   onNext, 
+  onVerify,
   error, 
   loading
 }: PhoneStepProps) => {
@@ -38,6 +46,48 @@ export const PhoneStep = ({
   const formatPhoneDisplay = (phone: string) => {
     return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
   };
+
+  if (isVerificationStep) {
+    return (
+      <form onSubmit={(e) => { e.preventDefault(); onVerify(); }} className="space-y-4">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Verify your WhatsApp</h1>
+          <p className="text-muted-foreground">
+            Enter the 6-digit code sent to {countryCode}{phoneNumber}
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="code">Verification Code</Label>
+          <Input
+            id="code"
+            type="text"
+            inputMode="numeric"
+            maxLength={6}
+            pattern="\d{6}"
+            value={verificationCode}
+            onChange={(e) => setVerificationCode(e.target.value)}
+            placeholder="Enter 6-digit code"
+            className="text-center text-lg tracking-widest"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+        >
+          {loading ? "Verifying..." : "Verify"}
+        </Button>
+      </form>
+    );
+  }
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onNext(); }} className="space-y-4">

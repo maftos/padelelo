@@ -7,10 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { handleAuthError } from "@/utils/auth-error-handler";
 import { usePhoneInput } from "@/hooks/auth/use-phone-input";
 import { usePasswordInput } from "@/hooks/auth/use-password-input";
+import { useFormValidation } from "@/hooks/use-form-validation";
 
 export const useSignUp = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isVerificationStep, setIsVerificationStep] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -28,6 +31,8 @@ export const useSignUp = () => {
     setPassword,
     isPasswordValid,
   } = usePasswordInput();
+
+  const { validateVerificationCode } = useFormValidation();
 
   const handleNext = async () => {
     try {
@@ -74,7 +79,6 @@ export const useSignUp = () => {
 
         if (referralError) {
           console.error("Error inserting referral:", referralError);
-          // We don't want to block the signup process if the referral fails
           toast({
             title: "Warning",
             description: "Your account was created but there was an issue with the referral.",
@@ -90,10 +94,80 @@ export const useSignUp = () => {
         description: "Please check your WhatsApp for the verification code",
       });
       
-      navigate('/verify', { state: { phone: fullPhoneNumber } });
+      setIsVerificationStep(true);
     } catch (err: any) {
       console.error("Unexpected error:", err);
       setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerify = async () => {
+    // Clean and validate the verification code
+    const cleanCode = verificationCode.trim();
+    
+    if (!validateVerificationCode(cleanCode)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid 6-digit code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    const fullPhoneNumber = getFullPhoneNumber();
+    console.log('Attempting verification with:', { phone: fullPhoneNumber, code: cleanCode });
+
+    try {
+      // Check current session first
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Current session state:', session);
+
+      const { error } = await supabase.auth.verifyOtp({
+        phone: fullPhoneNumber,
+        token: cleanCode,
+        type: 'sms'
+      });
+
+      if (error) {
+        console.error('Verification error:', error);
+        
+        if (error.message.toLowerCase().includes('expired')) {
+          toast({
+            title: "Code Expired",
+            description: "The verification code has expired. Please request a new one.",
+            variant: "destructive",
+          });
+          setIsVerificationStep(false);
+          return;
+        }
+        
+        throw error;
+      }
+
+      // Verify the session was updated
+      const { data: { session: newSession } } = await supabase.auth.getSession();
+      console.log('New session state after verification:', newSession);
+
+      if (!newSession) {
+        throw new Error("Failed to establish session after verification");
+      }
+
+      toast({
+        title: "Success!",
+        description: "Your phone number has been verified.",
+      });
+      
+      navigate('/');
+    } catch (error: any) {
+      console.error('Verification process error:', error);
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -109,5 +183,9 @@ export const useSignUp = () => {
     loading,
     error,
     handleNext,
+    verificationCode,
+    setVerificationCode,
+    isVerificationStep,
+    handleVerify,
   };
 };

@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { PhoneStep } from "./PhoneStep";
@@ -16,6 +17,10 @@ export const SignUpForm = () => {
     loading,
     error,
     handleNext,
+    verificationCode,
+    setVerificationCode,
+    isVerificationStep,
+    handleVerify,
   } = useSignUp();
 
   useEffect(() => {
@@ -34,7 +39,11 @@ export const SignUpForm = () => {
         setCountryCode={setCountryCode}
         password={password}
         setPassword={setPassword}
+        verificationCode={verificationCode}
+        setVerificationCode={setVerificationCode}
+        isVerificationStep={isVerificationStep}
         onNext={handleNext}
+        onVerify={handleVerify}
         error={error}
         loading={loading}
       />
