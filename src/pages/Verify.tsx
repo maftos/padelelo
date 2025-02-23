@@ -15,11 +15,17 @@ export default function Verify() {
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const phone = location.state?.phone;
+  const phone = location.state?.phone?.trim();
   const { validateVerificationCode } = useFormValidation();
+
+  // Log the phone number format for debugging
+  useEffect(() => {
+    console.log('Phone number from state:', phone);
+  }, [phone]);
 
   useEffect(() => {
     if (!phone) {
+      console.log('No phone number found in state, redirecting to signup');
       navigate('/signup');
     }
   }, [phone, navigate]);
@@ -27,7 +33,10 @@ export default function Verify() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateVerificationCode(verificationCode)) {
+    // Trim and validate the verification code
+    const cleanCode = verificationCode.trim();
+    
+    if (!validateVerificationCode(cleanCode)) {
       toast({
         title: "Error",
         description: "Please enter a valid 6-digit code",
@@ -37,15 +46,42 @@ export default function Verify() {
     }
 
     setLoading(true);
+    console.log('Attempting verification with:', { phone, code: cleanCode });
 
     try {
+      // Check current session first
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Current session state:', session);
+
       const { error } = await supabase.auth.verifyOtp({
         phone,
-        token: verificationCode,
+        token: cleanCode,
         type: 'sms'
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Verification error:', error);
+        
+        if (error.message.toLowerCase().includes('expired')) {
+          toast({
+            title: "Code Expired",
+            description: "The verification code has expired. Please request a new one.",
+            variant: "destructive",
+          });
+          navigate('/signup');
+          return;
+        }
+        
+        throw error;
+      }
+
+      // Verify the session was updated
+      const { data: { session: newSession } } = await supabase.auth.getSession();
+      console.log('New session state after verification:', newSession);
+
+      if (!newSession) {
+        throw new Error("Failed to establish session after verification");
+      }
 
       toast({
         title: "Success!",
@@ -54,6 +90,7 @@ export default function Verify() {
       
       navigate('/');
     } catch (error: any) {
+      console.error('Verification process error:', error);
       toast({
         title: "Error",
         description: error.message,
@@ -94,7 +131,7 @@ export default function Verify() {
             <Button
               type="submit"
               className="w-full"
-              disabled={loading || !validateVerificationCode(verificationCode)}
+              disabled={loading || !validateVerificationCode(verificationCode.trim())}
             >
               {loading ? "Verifying..." : "Verify"}
             </Button>
@@ -103,4 +140,4 @@ export default function Verify() {
       </div>
     </div>
   );
-};
+}
