@@ -118,10 +118,15 @@ export const useSignUp = () => {
     setError(null);
     
     try {
-      // Use the token parameter for verification instead of phone
+      const storedPhone = sessionStorage.getItem('signupPhone');
+      if (!storedPhone) {
+        throw new Error("Phone number not found. Please try signing up again.");
+      }
+
       const { error } = await supabase.auth.verifyOtp({
+        phone: storedPhone,
         token: cleanCode,
-        type: 'signup'
+        type: 'sms'
       });
 
       if (error) {
