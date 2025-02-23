@@ -11,7 +11,6 @@ import Leaderboard from "./pages/Leaderboard";
 import Roadmap from "./pages/Roadmap";
 import MatchmakingMath from "./pages/MatchmakingMath";
 import HowItWorks from "./pages/HowItWorks";
-import Verify from "./pages/Verify";
 import Dashboard from "./pages/Dashboard";
 import Onboarding from "./pages/Onboarding";
 import Index from "./pages/Index";
@@ -43,7 +42,6 @@ function App() {
             <Route path="/roadmap" element={<Roadmap />} />
             <Route path="/matchmaking-math" element={<MatchmakingMath />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/verify" element={<Verify />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/onboarding/*" element={<Onboarding />} />
             <Route path="/tournaments" element={<Tournaments />} />
