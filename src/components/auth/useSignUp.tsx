@@ -68,7 +68,6 @@ export const useSignUp = () => {
 
       // If we have a referrer ID and the signup was successful, insert the referral
       if (data?.user && referrerId) {
-        // Remove the '+' sign from the phone number for the referral
         const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
         
         const { error: referralError } = await supabase
@@ -104,7 +103,6 @@ export const useSignUp = () => {
   };
 
   const handleVerify = async () => {
-    // Clean and validate the verification code
     const cleanCode = verificationCode.trim();
     
     if (!validateVerificationCode(cleanCode)) {
@@ -117,14 +115,12 @@ export const useSignUp = () => {
     }
 
     setLoading(true);
+    setError(null);
+    
     const fullPhoneNumber = getFullPhoneNumber();
     console.log('Attempting verification with:', { phone: fullPhoneNumber, code: cleanCode });
 
     try {
-      // Check current session first
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log('Current session state:', session);
-
       const { error } = await supabase.auth.verifyOtp({
         phone: fullPhoneNumber,
         token: cleanCode,
@@ -140,6 +136,7 @@ export const useSignUp = () => {
             description: "The verification code has expired. Please request a new one.",
             variant: "destructive",
           });
+          // Return to phone input step to request a new code
           setIsVerificationStep(false);
           return;
         }
@@ -147,24 +144,30 @@ export const useSignUp = () => {
         throw error;
       }
 
-      // Verify the session was updated
-      const { data: { session: newSession } } = await supabase.auth.getSession();
-      console.log('New session state after verification:', newSession);
-
-      if (!newSession) {
+      // After successful verification, check if we have a valid session
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
         throw new Error("Failed to establish session after verification");
       }
 
+      // Clear any stored temporary data
+      sessionStorage.removeItem('signupPhone');
+      sessionStorage.removeItem('referrerId');
+
       toast({
         title: "Success!",
-        description: "Your phone number has been verified.",
+        description: "Your phone number has been verified. Welcome!",
       });
-      
+
+      // Only navigate after confirming we have a valid session
       navigate('/');
+      
     } catch (error: any) {
       console.error('Verification process error:', error);
+      setError(error.message);
       toast({
-        title: "Error",
+        title: "Verification Failed",
         description: error.message,
         variant: "destructive",
       });
