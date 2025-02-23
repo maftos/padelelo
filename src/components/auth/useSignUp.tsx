@@ -56,7 +56,11 @@ export const useSignUp = () => {
         phone: fullPhoneNumber,
         password,
         options: {
-          channel: 'whatsapp'
+          data: {
+            phone: fullPhoneNumber // Store phone in user metadata
+          },
+          channel: 'whatsapp',
+          emailRedirectTo: window.location.origin // Prevent any redirects to /verify
         }
       });
 
@@ -212,3 +216,4 @@ export const useSignUp = () => {
     handleVerify,
   };
 };
+
