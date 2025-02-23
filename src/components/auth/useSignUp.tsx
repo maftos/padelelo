@@ -117,14 +117,11 @@ export const useSignUp = () => {
     setLoading(true);
     setError(null);
     
-    const fullPhoneNumber = getFullPhoneNumber();
-    console.log('Attempting verification with:', { phone: fullPhoneNumber, code: cleanCode });
-
     try {
+      // Use the token parameter for verification instead of phone
       const { error } = await supabase.auth.verifyOtp({
-        phone: fullPhoneNumber,
         token: cleanCode,
-        type: 'signup'  // Changed from 'sms' to 'signup'
+        type: 'signup'
       });
 
       if (error) {
@@ -192,3 +189,4 @@ export const useSignUp = () => {
     handleVerify,
   };
 };
+
