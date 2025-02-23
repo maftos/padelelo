@@ -66,7 +66,6 @@ export const useSignUp = () => {
         return;
       }
 
-      // If we have a referrer ID and the signup was successful, insert the referral
       if (data?.user && referrerId) {
         const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
         
@@ -86,6 +85,7 @@ export const useSignUp = () => {
         }
       }
 
+      // Store the phone number for verification
       sessionStorage.setItem('signupPhone', fullPhoneNumber);
 
       toast({
@@ -124,7 +124,7 @@ export const useSignUp = () => {
       const { error } = await supabase.auth.verifyOtp({
         phone: fullPhoneNumber,
         token: cleanCode,
-        type: 'sms'
+        type: 'signup'  // Changed from 'sms' to 'signup'
       });
 
       if (error) {
