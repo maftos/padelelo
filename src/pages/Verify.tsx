@@ -40,9 +40,11 @@ export default function Verify() {
 
     try {
       const { error } = await supabase.auth.verifyOtp({
-        type: 'signup',
         token: verificationCode,
-        phone
+        type: 'signup',
+        options: {
+          channel: 'whatsapp'
+        }
       });
 
       if (error) {
