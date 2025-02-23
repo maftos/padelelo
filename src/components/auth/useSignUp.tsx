@@ -56,7 +56,11 @@ export const useSignUp = () => {
         phone: fullPhoneNumber,
         password,
         options: {
-          channel: 'whatsapp'
+          data: {
+            phone: fullPhoneNumber // Store phone in user metadata
+          },
+          channel: 'whatsapp',
+          emailRedirectTo: window.location.origin // Prevent any redirects to /verify
         }
       });
 
@@ -67,21 +71,26 @@ export const useSignUp = () => {
       }
 
       if (data?.user && referrerId) {
-        const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
-        
-        const { error: referralError } = await supabase
-          .rpc('insert_referral_temp', {
-            p_referrer_id: referrerId,
-            p_referred_user_whatsapp: phoneWithoutPlus
-          });
+        try {
+          const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
+          
+          const { error: referralError } = await supabase
+            .rpc('insert_referral_temp', {
+              p_referrer_id: referrerId,
+              p_referred_user_whatsapp: phoneWithoutPlus
+            });
 
-        if (referralError) {
-          console.error("Error inserting referral:", referralError);
-          toast({
-            title: "Warning",
-            description: "Your account was created but there was an issue with the referral.",
-            variant: "destructive",
-          });
+          if (referralError) {
+            console.error("Error inserting referral:", referralError);
+            toast({
+              title: "Warning",
+              description: "Your account was created but there was an issue with the referral.",
+              variant: "destructive",
+            });
+          }
+        } catch (err) {
+          console.error("Referral processing error:", err);
+          // Continue with signup even if referral fails
         }
       }
 
@@ -100,6 +109,19 @@ export const useSignUp = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const verifyAndGetSession = async (maxRetries = 3, delay = 1000) => {
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (session) return { session, error: null };
+        if (i < maxRetries - 1) await new Promise(resolve => setTimeout(resolve, delay));
+      } catch (err) {
+        if (i === maxRetries - 1) return { session: null, error: err };
+      }
+    }
+    return { session: null, error: new Error("Failed to establish session after multiple attempts") };
   };
 
   const handleVerify = async () => {
@@ -123,34 +145,34 @@ export const useSignUp = () => {
         throw new Error("Phone number not found. Please try signing up again.");
       }
 
-      const { error } = await supabase.auth.verifyOtp({
+      const { error: verifyError } = await supabase.auth.verifyOtp({
         phone: storedPhone,
         token: cleanCode,
         type: 'sms'
       });
 
-      if (error) {
-        console.error('Verification error:', error);
+      if (verifyError) {
+        console.error('Verification error:', verifyError);
         
-        if (error.message.toLowerCase().includes('expired')) {
+        if (verifyError.message.toLowerCase().includes('expired')) {
           toast({
             title: "Code Expired",
             description: "The verification code has expired. Please request a new one.",
             variant: "destructive",
           });
-          // Return to phone input step to request a new code
           setIsVerificationStep(false);
           return;
         }
         
-        throw error;
+        throw verifyError;
       }
 
-      // After successful verification, check if we have a valid session
-      const { data: { session } } = await supabase.auth.getSession();
+      // Implement retry mechanism for session establishment
+      const { session, error: sessionError } = await verifyAndGetSession();
       
-      if (!session) {
-        throw new Error("Failed to establish session after verification");
+      if (sessionError || !session) {
+        console.error("Session error:", sessionError);
+        throw new Error("Failed to establish session. Please try logging in.");
       }
 
       // Clear any stored temporary data
