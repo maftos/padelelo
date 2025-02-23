@@ -40,28 +40,12 @@ export default function Verify() {
 
     try {
       const { error } = await supabase.auth.verifyOtp({
-        phone: phone,
+        phone,
         token: verificationCode,
         type: 'sms'
       });
 
-      if (error) {
-        console.error("Verification error:", error);
-        if (error.message.toLowerCase().includes("expired")) {
-          toast({
-            title: "Code Expired",
-            description: "This verification code has expired. Please go back and request a new code.",
-            variant: "destructive",
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-          });
-        }
-        return;
-      }
+      if (error) throw error;
 
       toast({
         title: "Success!",
@@ -70,7 +54,6 @@ export default function Verify() {
       
       navigate('/');
     } catch (error: any) {
-      console.error("Verification error:", error);
       toast({
         title: "Error",
         description: error.message,
