@@ -1122,24 +1122,14 @@ export type Database = {
             }
             Returns: string
           }
-      apply_to_tournament:
-        | {
-            Args: {
-              p_tournament_id: string
-              p_player1_id: string
-              p_player2_id?: string
-              p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_tournament_id: string
-              p_player1_id: string
-              p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
-            }
-            Returns: Json
-          }
+      apply_to_tournament: {
+        Args: {
+          p_tournament_id: string
+          p_player1_id: string
+          p_response_status?: Database["public"]["Enums"]["tournament_application_status"]
+        }
+        Returns: Json
+      }
       box:
         | {
             Args: {
@@ -2260,20 +2250,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      publish_tournament:
-        | {
-            Args: {
-              p_tournament_id: string
-              user_a_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              tournament_id: string
-            }
-            Returns: Json
-          }
+      publish_tournament: {
+        Args: {
+          p_tournament_id: string
+          user_a_id: string
+        }
+        Returns: Json
+      }
       respond_friend_request:
         | {
             Args: {

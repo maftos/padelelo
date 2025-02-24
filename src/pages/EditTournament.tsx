@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -159,24 +158,28 @@ export default function EditTournament() {
   };
 
   const handlePublish = async () => {
-    if (!user?.id) {
-      toast.error("You must be logged in to publish a tournament");
-      return;
-    }
-
     try {
+      if (!user || !tournamentId) {
+        toast.error('Unable to publish tournament');
+        return;
+      }
+
       const { error } = await supabase.rpc('publish_tournament', {
-        tournament_id: tournamentId,
+        p_tournament_id: tournamentId,
         user_a_id: user.id
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error publishing tournament:', error);
+        toast.error(error.message);
+        return;
+      }
 
-      toast.success("Tournament published successfully!");
+      toast.success('Tournament published successfully');
       setTournamentStatus('PENDING');
     } catch (error) {
-      console.error('Error publishing tournament:', error);
-      toast.error("Failed to publish tournament");
+      console.error('Error:', error);
+      toast.error('An error occurred while publishing the tournament');
     }
   };
 

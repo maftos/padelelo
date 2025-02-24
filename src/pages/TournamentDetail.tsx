@@ -140,6 +140,32 @@ export default function TournamentDetail() {
     }
   };
 
+  const handleApplyToTournament = async () => {
+    try {
+      if (!user) {
+        toast.error('Please log in to apply for tournaments');
+        return;
+      }
+
+      const { error } = await supabase.rpc('apply_to_tournament', {
+        p_tournament_id: tournament?.tournament_id,
+        p_player1_id: user.id
+      });
+
+      if (error) {
+        console.error('Error applying to tournament:', error);
+        toast.error(error.message);
+        return;
+      }
+
+      toast.success('Successfully applied to tournament');
+      refetch(); // Refresh the tournament data
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('An error occurred while applying to the tournament');
+    }
+  };
+
   const handleNavigateToEdit = () => {
     navigate(`/tournaments/${tournament.tournament_id}/edit`);
   };
@@ -373,7 +399,12 @@ export default function TournamentDetail() {
                 </>
               )}
             </Button>
-            <Button className="flex-1" variant="default">
+            <Button 
+              className="flex-1"
+              variant="default"
+              onClick={handleApplyToTournament}
+              disabled={!user}
+            >
               Register
             </Button>
           </div>
