@@ -16,6 +16,7 @@ import { TournamentBracketType } from "@/components/tournament/TournamentBracket
 import { useAuth } from "@/contexts/AuthContext";
 import { ChevronLeft } from "lucide-react";
 import { TournamentStatus } from "@/types/tournament";
+import { BracketType } from "@/hooks/tournament/use-tournament-form";
 
 interface ViewTournamentResponse {
   status: TournamentStatus;
@@ -25,7 +26,12 @@ interface ViewTournamentResponse {
   venue_id: string | null;
   description: string | null;
   max_players: number;
-  bracket_type: string;
+  bracket_type: BracketType;
+}
+
+interface VenueResponse {
+  venue_id: string;
+  name: string;
 }
 
 export default function EditTournament() {
@@ -92,7 +98,7 @@ export default function EditTournament() {
           setShowEndDate(!!tournament.end_date);
         }
 
-        setVenues(venuesResponse.data || []);
+        setVenues(venuesResponse.data as VenueResponse[] || []);
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error("Failed to load tournament data");
