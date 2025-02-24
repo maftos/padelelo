@@ -78,7 +78,7 @@ export default function EditTournament() {
         }
 
         if (tournamentResponse.data) {
-          const tournament = tournamentResponse.data as ViewTournamentResponse;
+          const tournament = tournamentResponse.data as unknown as ViewTournamentResponse;
           setTournamentStatus(tournament.status);
           const startDate = new Date(tournament.start_date);
           const endDate = tournament.end_date ? new Date(tournament.end_date) : null;
@@ -98,7 +98,9 @@ export default function EditTournament() {
           setShowEndDate(!!tournament.end_date);
         }
 
-        setVenues(venuesResponse.data as VenueResponse[] || []);
+        if (venuesResponse.data) {
+          setVenues(venuesResponse.data as unknown as VenueResponse[]);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
         toast.error("Failed to load tournament data");
