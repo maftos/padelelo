@@ -141,7 +141,7 @@ export default function TournamentDetail() {
   };
 
   const handleNavigateToEdit = () => {
-    navigate(`/tournaments/${tournamentId}/edit`);
+    navigate(`/tournaments/${tournament.tournament_id}/edit`);
   };
 
   const isAdmin = tournament?.admins?.some(admin => admin.user_id === user?.id) || false;
@@ -184,25 +184,25 @@ export default function TournamentDetail() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
           {isAdmin && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="absolute top-4 left-4 bg-background"
-              onClick={handleNavigateToEdit}
-            >
-              <Pencil className="h-4 w-4 text-primary mr-2" />
-              Edit Details
-            </Button>
+            <div className="absolute top-4 right-4 flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-background"
+                onClick={handleNavigateToEdit}
+              >
+                <Pencil className="h-4 w-4 text-primary mr-2" />
+                Edit Details
+              </Button>
+              <Button 
+                variant="outline"
+                size="sm"
+                onClick={() => setInviteDialogOpen(true)}
+              >
+                Invite
+              </Button>
+            </div>
           )}
-          <div className="absolute top-4 right-4 flex gap-2">
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => setInviteDialogOpen(true)}
-            >
-              Invite
-            </Button>
-          </div>
         </div>
 
         <div className="space-y-6">

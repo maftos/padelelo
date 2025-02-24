@@ -43,7 +43,7 @@ export const useTournamentForm = () => {
     venue: "",
     description: "",
     maxPlayers: "",
-    bracketType: "SINGLE_ELIM", // Default to single elimination
+    bracketType: "SINGLE_ELIM",
   });
 
   const validateForm = () => {
@@ -76,9 +76,9 @@ export const useTournamentForm = () => {
     setIsSubmitting(true);
     try {
       const startDateTime = new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
-      const endDateTime = showEndDate 
+      const endDateTime = showEndDate && formData.endDate && formData.endTime
         ? new Date(`${formData.endDate}T${formData.endTime}+04:00`).toISOString()
-        : new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
+        : null;
 
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
@@ -109,11 +109,10 @@ export const useTournamentForm = () => {
     showEndDate,
     setShowEndDate,
     isSubmitting,
-    setIsSubmitting,  // Added this line
+    setIsSubmitting,
     venues,
     setVenues,
     validateForm,
     handleSubmit,
   };
 };
-

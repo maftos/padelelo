@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,8 +13,8 @@ import { TournamentVenue } from "@/components/tournament/TournamentVenue";
 import { TournamentSettings } from "@/components/tournament/TournamentSettings";
 import { TournamentDescription } from "@/components/tournament/TournamentDescription";
 import { TournamentBracketType } from "@/components/tournament/TournamentBracketType";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { ChevronLeft } from "lucide-react";
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
@@ -38,37 +38,41 @@ export default function EditTournament() {
 
   useEffect(() => {
     const fetchTournament = async () => {
-      const { data, error } = await supabase
-        .from('tournaments')
-        .select('*')
-        .eq('tournament_id', tournamentId)
-        .single();
-
-      if (error) {
-        toast.error("Failed to load tournament");
-        return;
-      }
-
-      if (data) {
-        setTournamentStatus(data.status);
-        const startDate = new Date(data.start_date);
-        const endDate = new Date(data.end_date);
-
-        setFormData({
-          name: data.name || "",
-          startDate: startDate.toISOString().split('T')[0],
-          startTime: startDate.toTimeString().slice(0, 5),
-          endDate: endDate.toISOString().split('T')[0],
-          endTime: endDate.toTimeString().slice(0, 5),
-          venue: data.venue_id || "",
-          description: data.description || "",
-          maxPlayers: data.max_players?.toString() || "",
-          bracketType: data.bracket_type,
+      try {
+        const { data, error } = await supabase.rpc('view_tournament', {
+          p_tournament_id: tournamentId,
+          p_user_a_id: user?.id
         });
 
-        if (data.end_date) {
-          setShowEndDate(true);
+        if (error) {
+          toast.error("Failed to load tournament");
+          return;
         }
+
+        if (data) {
+          setTournamentStatus(data.status);
+          const startDate = new Date(data.start_date);
+          const endDate = data.end_date ? new Date(data.end_date) : null;
+
+          setFormData({
+            name: data.name || "",
+            startDate: startDate.toISOString().split('T')[0],
+            startTime: startDate.toTimeString().slice(0, 5),
+            endDate: endDate ? endDate.toISOString().split('T')[0] : "",
+            endTime: endDate ? endDate.toTimeString().slice(0, 5) : "",
+            venue: data.venue_id || "",
+            description: data.description || "",
+            maxPlayers: data.max_players?.toString() || "",
+            bracketType: data.bracket_type,
+          });
+
+          if (data.end_date) {
+            setShowEndDate(true);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching tournament:', error);
+        toast.error("Failed to load tournament data");
       }
     };
 
@@ -81,9 +85,11 @@ export default function EditTournament() {
       setVenues(data as { venue_id: string; name: string; }[]);
     };
 
-    fetchTournament();
-    fetchVenues();
-  }, [tournamentId, setFormData, setShowEndDate, setVenues]);
+    if (user?.id && tournamentId) {
+      fetchTournament();
+      fetchVenues();
+    }
+  }, [tournamentId, setFormData, setShowEndDate, setVenues, user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,9 +101,9 @@ export default function EditTournament() {
     setIsSubmitting(true);
     try {
       const startDateTime = new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
-      const endDateTime = showEndDate 
+      const endDateTime = showEndDate && formData.endDate && formData.endTime
         ? new Date(`${formData.endDate}T${formData.endTime}+04:00`).toISOString()
-        : new Date(`${formData.startDate}T${formData.startTime}+04:00`).toISOString();
+        : null;
 
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
@@ -118,13 +124,17 @@ export default function EditTournament() {
       if (error) throw error;
 
       toast.success("Tournament updated successfully!");
-      navigate("/tournaments");
+      navigate(`/tournaments/${tournamentId}`);
     } catch (error) {
       console.error('Error updating tournament:', error);
       toast.error("Failed to update tournament");
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleBack = () => {
+    navigate(`/tournaments/${tournamentId}`);
   };
 
   const handlePublish = async () => {
@@ -154,6 +164,15 @@ export default function EditTournament() {
       <Navigation />
       <PageContainer>
         <div className="max-w-2xl mx-auto px-4 py-8">
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            className="mb-6"
+          >
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Back to Tournament
+          </Button>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="relative aspect-video rounded-lg bg-gray-100 overflow-hidden">
               <img
