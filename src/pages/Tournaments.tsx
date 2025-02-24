@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { PageHeader } from "@/components/match/PageHeader";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star } from "lucide-react";
+import { Star, Check } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -70,7 +71,7 @@ export default function Tournaments() {
     mutationFn: async ({ tournamentId, newStatus }: { tournamentId: string, newStatus: 'INTERESTED' | 'NOT_INTERESTED' }) => {
       if (!user) throw new Error('User not authenticated');
 
-      const { error: toggleError } = await (supabase.rpc as any)('notify_tournament_interest', {
+      const { error: toggleError } = await supabase.rpc('notify_interest_tournament', {
         p_tournament_id: tournamentId,
         p_player1_id: user.id,
         p_response_status: newStatus
@@ -230,7 +231,7 @@ export default function Tournaments() {
                     }}
                     disabled={toggleInterestMutation.isPending}
                   >
-                    <Star className={tournament.user_interest === 'INTERESTED' ? "fill-current" : ""} />
+                    {tournament.user_interest === 'INTERESTED' ? <Check className="h-4 w-4" /> : <Star className="h-4 w-4" />}
                     {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
                   </Button>
                 </div>

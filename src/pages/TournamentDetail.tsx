@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star, Pencil } from "lucide-react";
+import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star, Pencil, Check } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -120,7 +120,7 @@ export default function TournamentDetail() {
 
       const newStatus = tournament.user_interest === 'INTERESTED' ? 'NOT_INTERESTED' : 'INTERESTED';
 
-      const { error } = await (supabase.rpc as any)('notify_tournament_interest', {
+      const { error } = await supabase.rpc('notify_interest_tournament', {
         p_tournament_id: tournament.tournament_id,
         p_player1_id: user.id,
         p_response_status: newStatus
@@ -361,8 +361,17 @@ export default function TournamentDetail() {
               variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "outline"}
               onClick={handleInterestToggle}
             >
-              <Star className="h-4 w-4 mr-2" />
-              Interested
+              {tournament.user_interest === 'INTERESTED' ? (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Interested
+                </>
+              ) : (
+                <>
+                  <Star className="h-4 w-4 mr-2" />
+                  Interested
+                </>
+              )}
             </Button>
             <Button className="flex-1" variant="default">
               Register
