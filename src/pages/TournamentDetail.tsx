@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -149,7 +150,8 @@ export default function TournamentDetail() {
 
       const { error } = await supabase.rpc('apply_to_tournament', {
         p_tournament_id: tournament?.tournament_id,
-        p_player1_id: user.id
+        p_player1_id: user.id,
+        p_response_status: 'APPLIED' // Add the required status parameter
       });
 
       if (error) {
