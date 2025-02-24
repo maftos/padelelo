@@ -44,26 +44,36 @@ export default function EditTournament() {
     validateForm,
   } = useTournamentForm();
 
-  const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('INCOMPLETE' as TournamentStatus);
+  const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('INCOMPLETE');
+  const [isLoading, setIsLoading] = useState(true);
   
   const defaultPhoto = 'https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/tournament-photos//manuel-pappacena-zTwzxr4BbTA-unsplash.webp';
 
   useEffect(() => {
-    const fetchTournament = async () => {
-      try {
-        const { data, error } = await supabase.rpc('view_tournament', {
-          p_tournament_id: tournamentId,
-          p_user_a_id: user?.id
-        });
+    const fetchData = async () => {
+      if (!user?.id || !tournamentId) return;
 
-        if (error) {
-          toast.error("Failed to load tournament");
-          return;
+      setIsLoading(true);
+      try {
+        const [tournamentResponse, venuesResponse] = await Promise.all([
+          supabase.rpc('view_tournament', {
+            p_tournament_id: tournamentId,
+            p_user_a_id: user.id
+          }),
+          supabase.rpc('get_venues')
+        ]);
+
+        if (tournamentResponse.error) {
+          throw new Error(tournamentResponse.error.message);
         }
 
-        if (data) {
-          const tournament = data as unknown as ViewTournamentResponse;
-          setTournamentStatus(tournament.status as TournamentStatus);
+        if (venuesResponse.error) {
+          throw new Error(venuesResponse.error.message);
+        }
+
+        if (tournamentResponse.data) {
+          const tournament = tournamentResponse.data as ViewTournamentResponse;
+          setTournamentStatus(tournament.status);
           const startDate = new Date(tournament.start_date);
           const endDate = tournament.end_date ? new Date(tournament.end_date) : null;
 
@@ -76,33 +86,23 @@ export default function EditTournament() {
             venue: tournament.venue_id || "",
             description: tournament.description || "",
             maxPlayers: tournament.max_players?.toString() || "",
-            bracketType: tournament.bracket_type as any,
+            bracketType: tournament.bracket_type,
           });
 
-          if (tournament.end_date) {
-            setShowEndDate(true);
-          }
+          setShowEndDate(!!tournament.end_date);
         }
+
+        setVenues(venuesResponse.data || []);
       } catch (error) {
-        console.error('Error fetching tournament:', error);
+        console.error('Error fetching data:', error);
         toast.error("Failed to load tournament data");
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    const fetchVenues = async () => {
-      const { data, error } = await supabase.rpc('get_venues');
-      if (error) {
-        toast.error("Failed to load venues");
-        return;
-      }
-      setVenues(data as { venue_id: string; name: string; }[]);
-    };
-
-    if (user?.id && tournamentId) {
-      fetchTournament();
-      fetchVenues();
-    }
-  }, [tournamentId, setFormData, setShowEndDate, setVenues, user?.id]);
+    fetchData();
+  }, [tournamentId, setFormData, setVenues, user?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -165,12 +165,25 @@ export default function EditTournament() {
       if (error) throw error;
 
       toast.success("Tournament published successfully!");
-      setTournamentStatus('PUBLISHED' as TournamentStatus);
+      setTournamentStatus('PENDING');
     } catch (error) {
       console.error('Error publishing tournament:', error);
       toast.error("Failed to publish tournament");
     }
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <Navigation />
+        <PageContainer>
+          <div className="flex items-center justify-center h-screen">
+            Loading...
+          </div>
+        </PageContainer>
+      </>
+    );
+  }
 
   return (
     <>
@@ -239,7 +252,7 @@ export default function EditTournament() {
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
 
-              {tournamentStatus === ('INCOMPLETE' as TournamentStatus) && (
+              {tournamentStatus === 'INCOMPLETE' && (
                 <Button
                   type="button"
                   variant="secondary"

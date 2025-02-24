@@ -1,5 +1,5 @@
 
-export type TournamentStatus = 'INCOMPLETE' | 'PUBLISHED' | 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+export type TournamentStatus = 'INCOMPLETE' | 'PENDING' | 'COMPLETED' | 'STARTED' | 'DELETED';
 
 export interface Tournament {
   id: string;
