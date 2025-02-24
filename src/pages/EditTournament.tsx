@@ -44,7 +44,7 @@ export default function EditTournament() {
     validateForm,
   } = useTournamentForm();
 
-  const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>("INCOMPLETE");
+  const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('INCOMPLETE' as TournamentStatus);
   
   const defaultPhoto = 'https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/tournament-photos//manuel-pappacena-zTwzxr4BbTA-unsplash.webp';
 
@@ -62,8 +62,8 @@ export default function EditTournament() {
         }
 
         if (data) {
-          const tournament = data as ViewTournamentResponse;
-          setTournamentStatus(tournament.status);
+          const tournament = data as unknown as ViewTournamentResponse;
+          setTournamentStatus(tournament.status as TournamentStatus);
           const startDate = new Date(tournament.start_date);
           const endDate = tournament.end_date ? new Date(tournament.end_date) : null;
 
@@ -165,7 +165,7 @@ export default function EditTournament() {
       if (error) throw error;
 
       toast.success("Tournament published successfully!");
-      setTournamentStatus("PUBLISHED");
+      setTournamentStatus('PUBLISHED' as TournamentStatus);
     } catch (error) {
       console.error('Error publishing tournament:', error);
       toast.error("Failed to publish tournament");
@@ -239,7 +239,7 @@ export default function EditTournament() {
                 {isSubmitting ? "Saving..." : "Save Changes"}
               </Button>
 
-              {tournamentStatus === "INCOMPLETE" && (
+              {tournamentStatus === ('INCOMPLETE' as TournamentStatus) && (
                 <Button
                   type="button"
                   variant="secondary"
