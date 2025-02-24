@@ -1,14 +1,14 @@
 
 import { Badge } from "@/components/ui/badge";
 
-type TournamentStatus = 'INCOMPLETE' | 'PENDING' | 'STARTED' | 'COMPLETED' | 'DELETED';
+export type TournamentStatus = 'INCOMPLETE' | 'PENDING' | 'STARTED' | 'COMPLETED' | 'DELETED';
 
 interface TournamentStatusBadgeProps {
-  status: TournamentStatus;
+  status: string;  // Changed from TournamentStatus to string
 }
 
-const getStatusStyles = (status: TournamentStatus) => {
-  switch (status) {
+const getStatusStyles = (status: string) => {  // Changed from TournamentStatus to string
+  switch (status as TournamentStatus) {
     case 'INCOMPLETE':
       return 'bg-red-500 hover:bg-red-600';
     case 'PENDING':
