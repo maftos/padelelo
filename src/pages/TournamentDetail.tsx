@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { TournamentInviteDialog } from "./TournamentInviteDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 
 interface Tournament {
   tournament_id: string;
@@ -208,7 +209,10 @@ export default function TournamentDetail() {
           <div className="space-y-4">
             <span className="text-lg text-primary">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
             
-            <h1 className="text-3xl font-bold">{tournament.name}</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold">{tournament.name}</h1>
+              <TournamentStatusBadge status={tournament.status} />
+            </div>
             
             <div className="flex items-center gap-2">
               <MapPin className="h-5 w-5 text-muted-foreground" />

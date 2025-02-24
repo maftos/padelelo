@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { PageHeader } from "@/components/match/PageHeader";
@@ -12,6 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 
 interface TournamentAdmin {
   user_id: string;
@@ -80,7 +80,6 @@ export default function Tournaments() {
       return { tournamentId, newStatus };
     },
     onSuccess: (data) => {
-      // Optimistically update the cache
       queryClient.setQueryData(['tournaments', user?.id], (oldData: Tournament[] | undefined) => {
         if (!oldData) return oldData;
         return oldData.map(tournament => {
@@ -172,7 +171,7 @@ export default function Tournaments() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {tournaments?.map((tournament) => {
-            const primaryAdmin: TournamentAdmin = tournament.admins?.[0] || {
+            const primaryAdmin = tournament.admins?.[0] || {
               user_id: '',
               profile_photo: null,
               display_name: 'TO'
@@ -188,6 +187,9 @@ export default function Tournaments() {
                         alt={tournament.name}
                         className="w-full h-full object-cover rounded-t-lg"
                       />
+                      <div className="absolute top-2 left-2">
+                        <TournamentStatusBadge status={tournament.status} />
+                      </div>
                     </div>
                     <CardHeader>
                       <CardTitle className="flex justify-between items-start gap-4">
@@ -240,4 +242,3 @@ export default function Tournaments() {
     </>
   );
 }
-
