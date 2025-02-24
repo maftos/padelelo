@@ -1994,22 +1994,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
-      notify_interest_tournament:
-        | {
-            Args: {
-              p_tournament_id: string
-              p_player1_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_tournament_id: string
-              p_player1_id: string
-              p_response_status: Database["public"]["Enums"]["tournament_application_status"]
-            }
-            Returns: Json
-          }
+      notify_interest_tournament: {
+        Args: {
+          p_tournament_id: string
+          p_player1_id: string
+          p_response_status: Database["public"]["Enums"]["tournament_application_status"]
+        }
+        Returns: Json
+      }
       path: {
         Args: {
           "": unknown
