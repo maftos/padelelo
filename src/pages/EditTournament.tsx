@@ -15,6 +15,18 @@ import { TournamentDescription } from "@/components/tournament/TournamentDescrip
 import { TournamentBracketType } from "@/components/tournament/TournamentBracketType";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChevronLeft } from "lucide-react";
+import { TournamentStatus } from "@/types/tournament";
+
+interface ViewTournamentResponse {
+  status: TournamentStatus;
+  start_date: string;
+  end_date: string | null;
+  name: string;
+  venue_id: string | null;
+  description: string | null;
+  max_players: number;
+  bracket_type: string;
+}
 
 export default function EditTournament() {
   const { tournamentId } = useParams();
@@ -32,7 +44,7 @@ export default function EditTournament() {
     validateForm,
   } = useTournamentForm();
 
-  const [tournamentStatus, setTournamentStatus] = useState<string>("INCOMPLETE");
+  const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>("INCOMPLETE");
   
   const defaultPhoto = 'https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/tournament-photos//manuel-pappacena-zTwzxr4BbTA-unsplash.webp';
 
@@ -50,23 +62,24 @@ export default function EditTournament() {
         }
 
         if (data) {
-          setTournamentStatus(data.status);
-          const startDate = new Date(data.start_date);
-          const endDate = data.end_date ? new Date(data.end_date) : null;
+          const tournament = data as ViewTournamentResponse;
+          setTournamentStatus(tournament.status);
+          const startDate = new Date(tournament.start_date);
+          const endDate = tournament.end_date ? new Date(tournament.end_date) : null;
 
           setFormData({
-            name: data.name || "",
+            name: tournament.name || "",
             startDate: startDate.toISOString().split('T')[0],
             startTime: startDate.toTimeString().slice(0, 5),
             endDate: endDate ? endDate.toISOString().split('T')[0] : "",
             endTime: endDate ? endDate.toTimeString().slice(0, 5) : "",
-            venue: data.venue_id || "",
-            description: data.description || "",
-            maxPlayers: data.max_players?.toString() || "",
-            bracketType: data.bracket_type,
+            venue: tournament.venue_id || "",
+            description: tournament.description || "",
+            maxPlayers: tournament.max_players?.toString() || "",
+            bracketType: tournament.bracket_type as any,
           });
 
-          if (data.end_date) {
+          if (tournament.end_date) {
             setShowEndDate(true);
           }
         }
