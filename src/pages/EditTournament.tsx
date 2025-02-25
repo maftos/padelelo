@@ -127,7 +127,7 @@ export default function EditTournament() {
 
       const { error } = await supabase.rpc('edit_tournament', {
         p_tournament_id: tournamentId,
-        user_a_id: user.id,
+        p_user_a_id: user.id,
         updates: {
           max_players: maxPlayers,
           venue_id: formData.venue,
@@ -183,7 +183,7 @@ export default function EditTournament() {
     try {
       const { error } = await supabase.rpc('publish_tournament', {
         p_tournament_id: tournamentId,
-        user_a_id: user.id
+        p_user_a_id: user.id
       });
 
       if (error) throw error;
