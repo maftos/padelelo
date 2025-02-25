@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -204,213 +203,224 @@ export default function TournamentDetail() {
     <>
       <Navigation />
       <PageContainer className="pb-24 md:pb-6">
-        <div className="relative h-64 -mx-4 sm:-mx-6 mb-6">
-          <img
-            src={tournament.main_photo}
-            alt={tournament.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
-          {isAdmin && (
-            <div className="absolute top-4 right-4 flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="bg-background"
-                onClick={handleNavigateToEdit}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/tournaments')}
+            className="mb-6"
+          >
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Back to Tournaments
+          </Button>
+
+          <div className="relative h-64 -mx-4 sm:-mx-6 mb-6">
+            <img
+              src={tournament.main_photo}
+              alt={tournament.name}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background to-background/0" />
+            {isAdmin && (
+              <div className="absolute top-4 right-4 flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-background"
+                  onClick={handleNavigateToEdit}
+                >
+                  <Pencil className="h-4 w-4 text-primary mr-2" />
+                  Edit Details
+                </Button>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setInviteDialogOpen(true)}
+                >
+                  Invite
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <span className="text-lg text-primary">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
+              
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-bold">{tournament.name}</h1>
+                <TournamentStatusBadge status={tournament.status} />
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <MapPin className="h-5 w-5 text-muted-foreground" />
+                <span className="text-lg">{tournament.venue_name}</span>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                {tournament.admins?.map((admin) => (
+                  <div key={admin.user_id} className="flex items-center gap-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={admin.profile_photo} />
+                      <AvatarFallback>
+                        {admin.display_name?.substring(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="text-muted-foreground">
+                      {tournament.admins.indexOf(admin) === 0 ? 'Organized by ' : 'Co-organized by '}{admin.display_name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tournament Details</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className={`${!isDescriptionExpanded ? 'line-clamp-5' : ''}`}>
+                        {tournament.description?.split('\n').map((paragraph, index) => (
+                          <p key={index} className="text-muted-foreground mb-2">{paragraph}</p>
+                        ))}
+                      </div>
+                      {tournament.description && tournament.description.length > 100 && (
+                        <button
+                          onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                          className="inline-flex items-center gap-1 text-secondary-foreground hover:underline mt-1"
+                        >
+                          {isDescriptionExpanded ? (
+                            <>
+                              See less
+                              <ChevronUp className="h-4 w-4" />
+                            </>
+                          ) : (
+                            <>
+                              See more
+                              <ChevronDown className="h-4 w-4" />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div className="space-y-3">                    
+                      <div className="flex items-center gap-2">
+                        <Trophy className="h-5 w-5 text-muted-foreground" />
+                        <span>Recommended Level: {tournament.recommended_mmr}</span>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Users className="h-5 w-5 text-muted-foreground" />
+                          <span>Your Friends</span>
+                        </div>
+                        <div className="flex -space-x-2 overflow-hidden pl-7">
+                          {tournament.mutual_friends_interested?.map((friend) => (
+                            <Avatar key={friend.friend_id} className="h-8 w-8 border-2 border-background">
+                              <AvatarImage src={friend.profile_photo} />
+                              <AvatarFallback>{friend.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Participants</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Tabs defaultValue="interested" className="w-full">
+                    <TabsList className="w-full">
+                      <TabsTrigger value="interested" className="flex-1">
+                        Interested ({tournament.interested_users?.length || 0})
+                      </TabsTrigger>
+                      <TabsTrigger value="approved" className="flex-1">
+                        Approved ({tournament.approved_users?.length || 0})
+                      </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="interested" className="space-y-4">
+                      {tournament.interested_users?.map(user => (
+                        <div key={user.user_id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={user.profile_photo} />
+                            <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="font-medium">{user.display_name}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </TabsContent>
+                    
+                    <TabsContent value="approved" className="space-y-4">
+                      {tournament.approved_users?.map(user => (
+                        <div key={user.user_id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
+                          <Avatar className="h-12 w-12">
+                            <AvatarImage src={user.profile_photo} />
+                            <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <p className="font-medium">{user.display_name}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </TabsContent>
+                  </Tabs>
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Bracket Type</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-5 w-5 text-muted-foreground" />
+                  <span>{tournament.bracket_type}</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {isMobile && (
+            <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex gap-2">
+              <Button 
+                className="flex-1"
+                variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "outline"}
+                onClick={handleInterestToggle}
               >
-                <Pencil className="h-4 w-4 text-primary mr-2" />
-                Edit Details
+                {tournament.user_interest === 'INTERESTED' ? (
+                  <>
+                    <Check className="h-4 w-4 mr-2" />
+                    Interested
+                  </>
+                ) : (
+                  <>
+                    <Star className="h-4 w-4 mr-2" />
+                    Interested
+                  </>
+                )}
               </Button>
               <Button 
-                variant="outline"
-                size="sm"
-                onClick={() => setInviteDialogOpen(true)}
+                className="flex-1"
+                variant="default"
+                onClick={handleApplyToTournament}
+                disabled={!user}
               >
-                Invite
+                Register
               </Button>
             </div>
           )}
         </div>
-
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <span className="text-lg text-primary">{formatTournamentDate(tournament.start_date, tournament.end_date)}</span>
-            
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold">{tournament.name}</h1>
-              <TournamentStatusBadge status={tournament.status} />
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <MapPin className="h-5 w-5 text-muted-foreground" />
-              <span className="text-lg">{tournament.venue_name}</span>
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-              {tournament.admins?.map((admin) => (
-                <div key={admin.user_id} className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={admin.profile_photo} />
-                    <AvatarFallback>
-                      {admin.display_name?.substring(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-muted-foreground">
-                    {tournament.admins.indexOf(admin) === 0 ? 'Organized by ' : 'Co-organized by '}{admin.display_name}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Tournament Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div>
-                    <div className={`${!isDescriptionExpanded ? 'line-clamp-5' : ''}`}>
-                      {tournament.description?.split('\n').map((paragraph, index) => (
-                        <p key={index} className="text-muted-foreground mb-2">{paragraph}</p>
-                      ))}
-                    </div>
-                    {tournament.description && tournament.description.length > 100 && (
-                      <button
-                        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                        className="inline-flex items-center gap-1 text-secondary-foreground hover:underline mt-1"
-                      >
-                        {isDescriptionExpanded ? (
-                          <>
-                            See less
-                            <ChevronUp className="h-4 w-4" />
-                          </>
-                        ) : (
-                          <>
-                            See more
-                            <ChevronDown className="h-4 w-4" />
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-3">                    
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-5 w-5 text-muted-foreground" />
-                      <span>Recommended Level: {tournament.recommended_mmr}</span>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-muted-foreground" />
-                        <span>Your Friends</span>
-                      </div>
-                      <div className="flex -space-x-2 overflow-hidden pl-7">
-                        {tournament.mutual_friends_interested?.map((friend) => (
-                          <Avatar key={friend.friend_id} className="h-8 w-8 border-2 border-background">
-                            <AvatarImage src={friend.profile_photo} />
-                            <AvatarFallback>{friend.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                          </Avatar>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Participants</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Tabs defaultValue="interested" className="w-full">
-                  <TabsList className="w-full">
-                    <TabsTrigger value="interested" className="flex-1">
-                      Interested ({tournament.interested_users?.length || 0})
-                    </TabsTrigger>
-                    <TabsTrigger value="approved" className="flex-1">
-                      Approved ({tournament.approved_users?.length || 0})
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="interested" className="space-y-4">
-                    {tournament.interested_users?.map(user => (
-                      <div key={user.user_id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src={user.profile_photo} />
-                          <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="font-medium">{user.display_name}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </TabsContent>
-                  
-                  <TabsContent value="approved" className="space-y-4">
-                    {tournament.approved_users?.map(user => (
-                      <div key={user.user_id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src={user.profile_photo} />
-                          <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="font-medium">{user.display_name}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </TabsContent>
-                </Tabs>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Bracket Type</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-muted-foreground" />
-                <span>{tournament.bracket_type}</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {isMobile && (
-          <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border flex gap-2">
-            <Button 
-              className="flex-1"
-              variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "outline"}
-              onClick={handleInterestToggle}
-            >
-              {tournament.user_interest === 'INTERESTED' ? (
-                <>
-                  <Check className="h-4 w-4 mr-2" />
-                  Interested
-                </>
-              ) : (
-                <>
-                  <Star className="h-4 w-4 mr-2" />
-                  Interested
-                </>
-              )}
-            </Button>
-            <Button 
-              className="flex-1"
-              variant="default"
-              onClick={handleApplyToTournament}
-              disabled={!user}
-            >
-              Register
-            </Button>
-          </div>
-        )}
       </PageContainer>
       <TournamentInviteDialog
         open={inviteDialogOpen}

@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { ChevronLeft } from "lucide-react";
 import { TournamentStatus } from "@/types/tournament";
 import { BracketType } from "@/hooks/tournament/use-tournament-form";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface ViewTournamentResponse {
   status: TournamentStatus;
@@ -51,6 +62,7 @@ export default function EditTournament() {
 
   const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('INCOMPLETE');
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
   const defaultPhoto = 'https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/tournament-photos//manuel-pappacena-zTwzxr4BbTA-unsplash.webp';
 
@@ -128,17 +140,15 @@ export default function EditTournament() {
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
       const { error } = await supabase.rpc('edit_tournament', {
-        tournament_id: tournamentId,
-        user_a_id: user.id,
-        updates: {
-          max_players: maxPlayers,
-          venue_id: formData.venue,
-          start_date: startDateTime,
-          end_date: endDateTime,
-          bracket_type: formData.bracketType,
-          name: formData.name,
-          description: formData.description
-        }
+        p_tournament_id: tournamentId,
+        p_user_a_id: user.id,
+        p_max_players: maxPlayers,
+        p_venue_id: formData.venue,
+        p_start_date: startDateTime,
+        p_end_date: endDateTime,
+        p_bracket_type: formData.bracketType,
+        p_name: formData.name,
+        p_description: formData.description
       });
 
       if (error) throw error;
@@ -153,34 +163,30 @@ export default function EditTournament() {
     }
   };
 
-  const handleBack = () => {
-    navigate(`/tournaments/${tournamentId}`);
-  };
+  const handleDelete = async () => {
+    if (!user?.id || !tournamentId) {
+      toast.error("You must be logged in to delete a tournament");
+      return;
+    }
 
-  const handlePublish = async () => {
     try {
-      if (!user || !tournamentId) {
-        toast.error('Unable to publish tournament');
-        return;
-      }
-
-      const { error } = await supabase.rpc('publish_tournament', {
+      const { error } = await supabase.rpc('delete_tournament', {
         p_tournament_id: tournamentId,
-        user_a_id: user.id
+        p_user_a_id: user.id
       });
 
-      if (error) {
-        console.error('Error publishing tournament:', error);
-        toast.error(error.message);
-        return;
-      }
+      if (error) throw error;
 
-      toast.success('Tournament published successfully');
-      setTournamentStatus('PENDING');
+      toast.success("Tournament deleted successfully");
+      navigate('/tournaments');
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('An error occurred while publishing the tournament');
+      console.error('Error deleting tournament:', error);
+      toast.error("Failed to delete tournament");
     }
+  };
+
+  const handleBack = () => {
+    navigate(`/tournaments/${tournamentId}`);
   };
 
   if (isLoading) {
@@ -266,17 +272,34 @@ export default function EditTournament() {
               {tournamentStatus === 'INCOMPLETE' && (
                 <Button
                   type="button"
-                  variant="secondary"
-                  onClick={handlePublish}
+                  variant="destructive"
+                  onClick={() => setShowDeleteDialog(true)}
                   className="flex-1"
                 >
-                  Publish Tournament
+                  Delete Tournament
                 </Button>
               )}
             </div>
           </form>
         </div>
       </PageContainer>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this tournament?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. The tournament will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
