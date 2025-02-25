@@ -87,7 +87,7 @@ export const useTournamentForm = () => {
 
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
-      const { data, error } = await supabase.rpc<CreateTournamentResponse>('create_tournament', {
+      const { data, error } = await supabase.rpc<CreateTournamentResponse, 'create_tournament'>('create_tournament', {
         p_max_players: maxPlayers,
         p_venue_id: formData.venue,
         p_start_date: startDateTime,
