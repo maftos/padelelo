@@ -60,8 +60,8 @@ export default function EditTournament() {
       try {
         const [tournamentResponse, venuesResponse] = await Promise.all([
           supabase.rpc('view_tournament', {
-            tournament_id: tournamentId,
-            user_a_id: user.id
+            p_tournament_id: tournamentId,
+            p_user_a_id: user.id
           }),
           supabase.rpc('get_venues')
         ]);
@@ -126,8 +126,8 @@ export default function EditTournament() {
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
       const { error } = await supabase.rpc('edit_tournament', {
-        tournament_id: tournamentId,
-        user_a_id: user.id,
+        p_tournament_id: tournamentId,
+        p_user_a_id: user.id,
         updates: {
           max_players: maxPlayers,
           venue_id: formData.venue,
@@ -159,8 +159,8 @@ export default function EditTournament() {
 
     try {
       const { error } = await supabase.rpc('delete_tournament', {
-        tournament_id: tournamentId,
-        user_a_id: user.id
+        p_tournament_id: tournamentId,
+        p_user_a_id: user.id
       });
 
       if (error) throw error;
@@ -206,7 +206,7 @@ export default function EditTournament() {
 
           <TournamentForm
             formData={formData}
-            onChange={setFormData}
+            onChange={formData => setFormData(formData)}
             showEndDate={showEndDate}
             setShowEndDate={setShowEndDate}
             venues={venues}
