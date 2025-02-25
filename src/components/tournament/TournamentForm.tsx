@@ -19,7 +19,6 @@ interface TournamentFormProps {
   isSubmitting: boolean;
   validateForm: () => boolean;
   tournamentStatus: TournamentStatus;
-  onDelete: () => void;
   defaultPhoto: string;
 }
 
@@ -33,7 +32,6 @@ export function TournamentForm({
   isSubmitting,
   validateForm,
   tournamentStatus,
-  onDelete,
   defaultPhoto,
 }: TournamentFormProps) {
   return (
@@ -81,7 +79,7 @@ export function TournamentForm({
         />
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex">
         <Button
           type="submit"
           className="flex-1"
@@ -89,18 +87,8 @@ export function TournamentForm({
         >
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
-
-        {tournamentStatus === 'INCOMPLETE' && (
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={onDelete}
-            className="flex-1"
-          >
-            Delete Tournament
-          </Button>
-        )}
       </div>
     </form>
   );
 }
+
