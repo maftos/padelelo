@@ -159,8 +159,8 @@ export default function EditTournament() {
 
     try {
       const { error } = await supabase.rpc('delete_tournament', {
-        p_tournament_id: tournamentId,
-        p_user_a_id: user.id
+        tournament_id: tournamentId,
+        user_a_id: user.id
       });
 
       if (error) throw error;
