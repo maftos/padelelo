@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star, Pencil, Check } from "lucide-react";
+import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star, Pencil, Check, ChevronLeft } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
