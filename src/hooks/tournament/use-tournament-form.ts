@@ -82,7 +82,7 @@ export const useTournamentForm = () => {
 
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
-      const { error } = await supabase.rpc('create_tournament', {
+      const { data, error } = await supabase.rpc('create_tournament', {
         p_max_players: maxPlayers,
         p_venue_id: formData.venue,
         p_start_date: startDateTime,
@@ -95,8 +95,15 @@ export const useTournamentForm = () => {
 
       if (error) throw error;
 
-      toast.success("Tournament created successfully!");
-      navigate("/tournaments");
+      // Check if the operation was successful and get the tournament_id
+      if (data && data.success && data.tournament_id) {
+        toast.success("Tournament created successfully!");
+        // Redirect to the tournament view page
+        navigate(`/tournaments/${data.tournament_id}`);
+      } else {
+        throw new Error('Tournament creation failed');
+      }
+
     } catch (error) {
       console.error('Error creating tournament:', error);
       toast.error("Failed to create tournament");
@@ -118,4 +125,3 @@ export const useTournamentForm = () => {
     handleSubmit,
   };
 };
-
