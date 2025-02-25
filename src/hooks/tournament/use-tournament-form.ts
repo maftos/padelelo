@@ -27,9 +27,15 @@ export interface TournamentFormData {
   bracketType: BracketType;
 }
 
-interface CreateTournamentResponse {
-  success: boolean;
-  tournament_id: string;
+interface CreateTournamentParams {
+  p_max_players: number;
+  p_venue_id: string;
+  p_start_date: string;
+  p_end_date: string | null;
+  p_bracket_type: BracketType;
+  p_user_a_id: string;
+  p_name: string;
+  p_description: string;
 }
 
 export const useTournamentForm = () => {
@@ -87,7 +93,7 @@ export const useTournamentForm = () => {
 
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
-      const { data, error } = await supabase.rpc<CreateTournamentResponse, 'create_tournament'>('create_tournament', {
+      const params: CreateTournamentParams = {
         p_max_players: maxPlayers,
         p_venue_id: formData.venue,
         p_start_date: startDateTime,
@@ -96,12 +102,14 @@ export const useTournamentForm = () => {
         p_user_a_id: user.id,
         p_name: formData.name,
         p_description: formData.description
-      });
+      };
+
+      const { data, error } = await supabase.rpc('create_tournament', params);
 
       if (error) throw error;
 
       // Check if the operation was successful and get the tournament_id
-      if (data && data.success && data.tournament_id) {
+      if (data && typeof data === 'object' && 'success' in data && 'tournament_id' in data) {
         toast.success("Tournament created successfully!");
         // Redirect to the tournament view page
         navigate(`/tournaments/${data.tournament_id}`);
