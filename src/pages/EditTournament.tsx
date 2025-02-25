@@ -7,26 +7,12 @@ import { toast } from "sonner";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { useTournamentForm } from "@/hooks/tournament/use-tournament-form";
-import { TournamentBasicInfo } from "@/components/tournament/TournamentBasicInfo";
-import { TournamentDateTime } from "@/components/tournament/TournamentDateTime";
-import { TournamentVenue } from "@/components/tournament/TournamentVenue";
-import { TournamentSettings } from "@/components/tournament/TournamentSettings";
-import { TournamentDescription } from "@/components/tournament/TournamentDescription";
-import { TournamentBracketType } from "@/components/tournament/TournamentBracketType";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChevronLeft } from "lucide-react";
 import { TournamentStatus } from "@/types/tournament";
 import { BracketType } from "@/hooks/tournament/use-tournament-form";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
+import { TournamentForm } from "@/components/tournament/TournamentForm";
+import { TournamentDeleteDialog } from "@/components/tournament/TournamentDeleteDialog";
 
 interface ViewTournamentResponse {
   status: TournamentStatus;
@@ -74,8 +60,8 @@ export default function EditTournament() {
       try {
         const [tournamentResponse, venuesResponse] = await Promise.all([
           supabase.rpc('view_tournament', {
-            p_tournament_id: tournamentId,
-            p_user_a_id: user.id
+            tournament_id: tournamentId,
+            user_a_id: user.id
           }),
           supabase.rpc('get_venues')
         ]);
@@ -140,15 +126,17 @@ export default function EditTournament() {
       const maxPlayers = formData.maxPlayers ? parseInt(formData.maxPlayers) : 16;
 
       const { error } = await supabase.rpc('edit_tournament', {
-        p_tournament_id: tournamentId,
-        p_user_a_id: user.id,
-        p_max_players: maxPlayers,
-        p_venue_id: formData.venue,
-        p_start_date: startDateTime,
-        p_end_date: endDateTime,
-        p_bracket_type: formData.bracketType,
-        p_name: formData.name,
-        p_description: formData.description
+        tournament_id: tournamentId,
+        user_a_id: user.id,
+        updates: {
+          max_players: maxPlayers,
+          venue_id: formData.venue,
+          start_date: startDateTime,
+          end_date: endDateTime,
+          bracket_type: formData.bracketType,
+          name: formData.name,
+          description: formData.description
+        }
       });
 
       if (error) throw error;
@@ -171,8 +159,8 @@ export default function EditTournament() {
 
     try {
       const { error } = await supabase.rpc('delete_tournament', {
-        p_tournament_id: tournamentId,
-        p_user_a_id: user.id
+        tournament_id: tournamentId,
+        user_a_id: user.id
       });
 
       if (error) throw error;
@@ -216,90 +204,27 @@ export default function EditTournament() {
             Back to Tournament
           </Button>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="relative aspect-video rounded-lg bg-gray-100 overflow-hidden">
-              <img
-                src={defaultPhoto}
-                alt="Tournament cover"
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            <div className="grid gap-6">
-              <TournamentBasicInfo
-                formData={formData}
-                onChange={(data) => setFormData({ ...formData, ...data })}
-              />
-
-              <TournamentDateTime
-                formData={formData}
-                onChange={(data) => setFormData({ ...formData, ...data })}
-                showEndDate={showEndDate}
-                onShowEndDateChange={setShowEndDate}
-              />
-
-              <TournamentVenue
-                formData={formData}
-                onChange={(data) => setFormData({ ...formData, ...data })}
-                venues={venues}
-              />
-
-              <TournamentBracketType
-                formData={formData}
-                onChange={(data) => setFormData({ ...formData, ...data })}
-              />
-
-              <TournamentSettings
-                formData={formData}
-                onChange={(data) => setFormData({ ...formData, ...data })}
-              />
-
-              <TournamentDescription
-                formData={formData}
-                onChange={(data) => setFormData({ ...formData, ...data })}
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={isSubmitting || !validateForm()}
-              >
-                {isSubmitting ? "Saving..." : "Save Changes"}
-              </Button>
-
-              {tournamentStatus === 'INCOMPLETE' && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => setShowDeleteDialog(true)}
-                  className="flex-1"
-                >
-                  Delete Tournament
-                </Button>
-              )}
-            </div>
-          </form>
+          <TournamentForm
+            formData={formData}
+            onChange={setFormData}
+            showEndDate={showEndDate}
+            setShowEndDate={setShowEndDate}
+            venues={venues}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            validateForm={validateForm}
+            tournamentStatus={tournamentStatus}
+            onDelete={() => setShowDeleteDialog(true)}
+            defaultPhoto={defaultPhoto}
+          />
         </div>
       </PageContainer>
 
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this tournament?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. The tournament will be permanently deleted.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <TournamentDeleteDialog
+        showDeleteDialog={showDeleteDialog}
+        setShowDeleteDialog={setShowDeleteDialog}
+        onDelete={handleDelete}
+      />
     </>
   );
 }
