@@ -321,6 +321,39 @@ export type Database = {
           },
         ]
       }
+      push_notifications: {
+        Row: {
+          content_template_id: string | null
+          content_variables: Json | null
+          created_at: string | null
+          event_type: string | null
+          id: number
+          sent_at: string | null
+          updated_at: string | null
+          user_id: number | null
+        }
+        Insert: {
+          content_template_id?: string | null
+          content_variables?: Json | null
+          created_at?: string | null
+          event_type?: string | null
+          id?: never
+          sent_at?: string | null
+          updated_at?: string | null
+          user_id?: number | null
+        }
+        Update: {
+          content_template_id?: string | null
+          content_variables?: Json | null
+          created_at?: string | null
+          event_type?: string | null
+          id?: never
+          sent_at?: string | null
+          updated_at?: string | null
+          user_id?: number | null
+        }
+        Relationships: []
+      }
       ratings_history: {
         Row: {
           change_amount: number | null
@@ -1279,17 +1312,30 @@ export type Database = {
         }
         Returns: string
       }
-      create_tournament: {
-        Args: {
-          p_start_date: string
-          p_end_date: string
-          p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-          p_venue_id: string
-          p_max_players: number
-          p_user_a_id: string
-        }
-        Returns: Json
-      }
+      create_tournament:
+        | {
+            Args: {
+              p_start_date: string
+              p_end_date: string
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_venue_id: string
+              p_max_players: number
+              p_user_a_id: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_start_date: string
+              p_end_date: string
+              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+              p_venue_id: string
+              p_max_players: number
+              p_user_a_id: string
+              p_name: string
+            }
+            Returns: Json
+          }
       delete_tournament: {
         Args: {
           tournament_id: string
@@ -2289,16 +2335,13 @@ export type Database = {
         }
         Returns: string
       }
-      send_whatsapp_notification: {
-        Args: {
-          friend_ids: string[]
-          content_variables: Json
-        }
+      send_whatsapp_message: {
+        Args: Record<PropertyKey, never>
         Returns: Json
       }
-      send_whatsapp_notification_example: {
+      send_whatsapp_message2: {
         Args: Record<PropertyKey, never>
-        Returns: undefined
+        Returns: Json
       }
       share_tournament_friends:
         | {
