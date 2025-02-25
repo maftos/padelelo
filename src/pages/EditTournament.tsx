@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -159,8 +160,8 @@ export default function EditTournament() {
 
     try {
       const { error } = await supabase.rpc('delete_tournament', {
-        tournament_id: tournamentId,
-        user_a_id: user.id
+        p_tournament_id: tournamentId,
+        p_user_a_id: user.id
       });
 
       if (error) throw error;

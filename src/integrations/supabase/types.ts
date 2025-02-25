@@ -1312,47 +1312,23 @@ export type Database = {
         }
         Returns: string
       }
-      create_tournament:
-        | {
-            Args: {
-              p_start_date: string
-              p_end_date: string
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_venue_id: string
-              p_max_players: number
-              p_user_a_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_start_date: string
-              p_end_date: string
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_venue_id: string
-              p_max_players: number
-              p_user_a_id: string
-              p_name: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_start_date: string
-              p_end_date: string
-              p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
-              p_venue_id: string
-              p_max_players: number
-              p_user_a_id: string
-              p_name: string
-              p_description: string
-            }
-            Returns: Json
-          }
+      create_tournament: {
+        Args: {
+          p_start_date: string
+          p_end_date: string
+          p_bracket_type: Database["public"]["Enums"]["tournament_bracket_type"]
+          p_venue_id: string
+          p_max_players: number
+          p_user_a_id: string
+          p_name: string
+          p_description: string
+        }
+        Returns: Json
+      }
       delete_tournament: {
         Args: {
-          tournament_id: string
-          user_a_id: string
+          p_tournament_id: string
+          p_user_a_id: string
         }
         Returns: Json
       }
