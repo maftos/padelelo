@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,7 +7,7 @@ import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { useTournamentForm } from "@/hooks/tournament/use-tournament-form";
 import { useAuth } from "@/contexts/AuthContext";
-import { ChevronLeft, Trash2 } from "lucide-react";
+import { ChevronLeft, Trash2, Upload } from "lucide-react";
 import { TournamentStatus } from "@/types/tournament";
 import { BracketType } from "@/hooks/tournament/use-tournament-form";
 import { TournamentForm } from "@/components/tournament/TournamentForm";
@@ -230,15 +229,27 @@ export default function EditTournament() {
               Back to Tournament
             </Button>
             
-            {tournamentStatus === 'INCOMPLETE' && (
-              <Button
-                variant="destructive"
-                onClick={() => setShowDeleteDialog(true)}
-                size="icon"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {tournamentStatus === 'PENDING' && (
+                <Button
+                  onClick={handlePublish}
+                  disabled={isPublishing}
+                  variant="secondary"
+                >
+                  <Upload className="mr-2 h-4 w-4" />
+                  {isPublishing ? "Publishing..." : "Publish"}
+                </Button>
+              )}
+              {tournamentStatus === 'INCOMPLETE' && (
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowDeleteDialog(true)}
+                  size="icon"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
           </div>
 
           <TournamentForm
@@ -253,19 +264,6 @@ export default function EditTournament() {
             tournamentStatus={tournamentStatus}
             defaultPhoto={defaultPhoto}
           />
-
-          {tournamentStatus === 'PENDING' && (
-            <div className="mt-6">
-              <Button
-                onClick={handlePublish}
-                disabled={isPublishing}
-                className="w-full"
-                variant="secondary"
-              >
-                {isPublishing ? "Publishing..." : "Publish Tournament"}
-              </Button>
-            </div>
-          )}
         </div>
       </PageContainer>
 

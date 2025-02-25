@@ -2280,7 +2280,7 @@ export type Database = {
       publish_tournament: {
         Args: {
           p_tournament_id: string
-          user_a_id: string
+          p_user_a_id: string
         }
         Returns: Json
       }
