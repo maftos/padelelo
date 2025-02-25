@@ -1407,22 +1407,14 @@ export type Database = {
             }
             Returns: string
           }
-      edit_tournament:
-        | {
-            Args: {
-              tournament_id: string
-              updates: Json
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              tournament_id: string
-              user_a_id: string
-              updates: Json
-            }
-            Returns: Json
-          }
+      edit_tournament: {
+        Args: {
+          p_tournament_id: string
+          p_user_a_id: string
+          updates: Json
+        }
+        Returns: Json
+      }
       edit_user_profile:
         | {
             Args: {
