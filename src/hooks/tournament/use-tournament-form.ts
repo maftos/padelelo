@@ -89,7 +89,8 @@ export const useTournamentForm = () => {
         p_end_date: endDateTime,
         p_bracket_type: formData.bracketType,
         p_user_a_id: user.id,
-        p_name: formData.name  // Add the name parameter
+        p_name: formData.name,
+        p_description: formData.description
       });
 
       if (error) throw error;
@@ -117,3 +118,4 @@ export const useTournamentForm = () => {
     handleSubmit,
   };
 };
+
