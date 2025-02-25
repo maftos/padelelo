@@ -8,7 +8,7 @@ import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { useTournamentForm } from "@/hooks/tournament/use-tournament-form";
 import { useAuth } from "@/contexts/AuthContext";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Trash2 } from "lucide-react";
 import { TournamentStatus } from "@/types/tournament";
 import { BracketType } from "@/hooks/tournament/use-tournament-form";
 import { TournamentForm } from "@/components/tournament/TournamentForm";
@@ -195,14 +195,25 @@ export default function EditTournament() {
       <Navigation />
       <PageContainer>
         <div className="max-w-2xl mx-auto px-4 py-8">
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            className="mb-6"
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back to Tournament
-          </Button>
+          <div className="flex justify-between items-center mb-6">
+            <Button
+              variant="ghost"
+              onClick={handleBack}
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Back to Tournament
+            </Button>
+            
+            {tournamentStatus === 'INCOMPLETE' && (
+              <Button
+                variant="destructive"
+                onClick={() => setShowDeleteDialog(true)}
+                size="icon"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
 
           <TournamentForm
             formData={formData}
@@ -214,7 +225,6 @@ export default function EditTournament() {
             isSubmitting={isSubmitting}
             validateForm={validateForm}
             tournamentStatus={tournamentStatus}
-            onDelete={() => setShowDeleteDialog(true)}
             defaultPhoto={defaultPhoto}
           />
         </div>
@@ -228,4 +238,3 @@ export default function EditTournament() {
     </>
   );
 }
-
