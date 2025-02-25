@@ -49,6 +49,7 @@ export default function EditTournament() {
   const [tournamentStatus, setTournamentStatus] = useState<TournamentStatus>('INCOMPLETE');
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
   
   const defaultPhoto = 'https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/tournament-photos//manuel-pappacena-zTwzxr4BbTA-unsplash.webp';
 
@@ -173,6 +174,31 @@ export default function EditTournament() {
     }
   };
 
+  const handlePublish = async () => {
+    if (!user?.id || !tournamentId) {
+      toast.error("You must be logged in to publish a tournament");
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      const { error } = await supabase.rpc('publish_tournament', {
+        p_tournament_id: tournamentId,
+        p_user_a_id: user.id
+      });
+
+      if (error) throw error;
+
+      toast.success("Tournament published successfully!");
+      navigate(`/tournaments/${tournamentId}`);
+    } catch (error) {
+      console.error('Error publishing tournament:', error);
+      toast.error("Failed to publish tournament");
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
   const handleBack = () => {
     navigate(`/tournaments/${tournamentId}`);
   };
@@ -227,6 +253,19 @@ export default function EditTournament() {
             tournamentStatus={tournamentStatus}
             defaultPhoto={defaultPhoto}
           />
+
+          {tournamentStatus === 'PENDING' && (
+            <div className="mt-6">
+              <Button
+                onClick={handlePublish}
+                disabled={isPublishing}
+                className="w-full"
+                variant="secondary"
+              >
+                {isPublishing ? "Publishing..." : "Publish Tournament"}
+              </Button>
+            </div>
+          )}
         </div>
       </PageContainer>
 
@@ -238,3 +277,4 @@ export default function EditTournament() {
     </>
   );
 }
+
