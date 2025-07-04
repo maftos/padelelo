@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,50 +13,60 @@ const mockPlayerMatchingPosts = [
     id: "1",
     title: "Looking for 1 player - intermediate",
     courtName: "RM Club Forbach",
+    distance: "1.2km",
     gameDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
     spotsAvailable: 1,
     description: "Looking for one more player for a friendly match. Mixed levels welcome!",
     existingPlayers: [
-      { id: "u1", name: "Carlos M.", mmr: 3200, avatar: null },
-      { id: "u2", name: "Ana G.", mmr: 2900, avatar: null },
-      { id: "u3", name: "Miguel R.", mmr: 3100, avatar: null }
+      { id: "u1", name: "Carlos M.", mmr: 3200, avatar: null, isHost: true },
+      { id: "u2", name: null, mmr: 2900, avatar: null, isHost: false },
+      { id: "u3", name: "Miguel R.", mmr: 3100, avatar: null, isHost: false },
+      null // Missing player
     ],
     createdBy: "u1",
     preferences: "All genders",
     price: "Rs 400",
-    endTime: "19:00"
+    startTime: "19:00",
+    endTime: "20:30"
   },
   {
     id: "2", 
     title: "Need 2 players - advanced level",
     courtName: "La Isla Beau Plan",
+    distance: "3.7km",
     gameDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
     spotsAvailable: 2,
     description: "Need 2 players for doubles. Intermediate level preferred.",
     existingPlayers: [
-      { id: "u4", name: "Laura S.", mmr: 2750, avatar: null },
-      { id: "u5", name: "David P.", mmr: 2850, avatar: null }
+      { id: "u4", name: "Laura S.", mmr: 2750, avatar: null, isHost: true },
+      { id: "u5", name: null, mmr: 2850, avatar: null, isHost: false },
+      null, // Missing player
+      null  // Missing player
     ],
     createdBy: "u4",
     preferences: "Female only",
     price: "Rs 350",
-    endTime: "20:30"
+    startTime: "18:30",
+    endTime: "20:00"
   },
   {
     id: "3",
     title: "Looking for 1 player - beginner friendly",
     courtName: "Urban Sport Grand Baie",
+    distance: "8.4km",
     gameDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000), // 6 days from now
     spotsAvailable: 1,
     description: "Advanced players welcome. Court already booked for Saturday morning.",
     existingPlayers: [
-      { id: "u6", name: "Roberto K.", mmr: 3500, avatar: null },
-      { id: "u7", name: "Sofia T.", mmr: 3300, avatar: null },
-      { id: "u8", name: "Alejandro V.", mmr: 3400, avatar: null }
+      { id: "u6", name: "Roberto K.", mmr: 3500, avatar: null, isHost: true },
+      { id: "u7", name: null, mmr: 3300, avatar: null, isHost: false },
+      { id: "u8", name: null, mmr: 3400, avatar: null, isHost: false },
+      null // Missing player
     ],
     createdBy: "u6",
     preferences: "All genders", 
     price: "Rs 500",
+    startTime: "17:00",
     endTime: "18:30"
   }
 ];
@@ -87,10 +98,11 @@ const getOrdinalSuffix = (day: number) => {
   }
 };
 
-const calculateAverageMMR = (players: Array<{ mmr: number }>) => {
-  if (players.length === 0) return 0;
-  const total = players.reduce((sum, player) => sum + player.mmr, 0);
-  return Math.round(total / players.length);
+const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
+  const validPlayers = players.filter(player => player !== null) as Array<{ mmr: number }>;
+  if (validPlayers.length === 0) return 0;
+  const total = validPlayers.reduce((sum, player) => sum + player.mmr, 0);
+  return Math.round(total / validPlayers.length);
 };
 
 export default function PlayerMatching() {
@@ -139,7 +151,7 @@ export default function PlayerMatching() {
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
-                      {post.courtName}
+                      {post.courtName} ({post.distance})
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
@@ -147,10 +159,7 @@ export default function PlayerMatching() {
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
-                      {post.gameDate.toLocaleTimeString([], { 
-                        hour: '2-digit', 
-                        minute: '2-digit' 
-                      })} - {post.endTime}
+                      {post.startTime} - {post.endTime}
                     </div>
                   </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
@@ -164,12 +173,6 @@ export default function PlayerMatching() {
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="flex items-center gap-1 text-primary font-semibold">
-                    <Users className="h-4 w-4" />
-                    {post.spotsAvailable} spot{post.spotsAvailable > 1 ? 's' : ''} left
-                  </div>
-                </div>
               </div>
             </CardHeader>
             
@@ -178,28 +181,50 @@ export default function PlayerMatching() {
                 {post.description}
               </CardDescription>
               
-              {/* Existing Players */}
+              {/* Current Players */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-sm">Current Players</h4>
-                  <span className="text-xs text-muted-foreground">
-                    Avg: {calculateAverageMMR(post.existingPlayers)} MMR
-                  </span>
+                  <h4 className="font-medium text-sm">
+                    Current Players (avg: {calculateAverageMMR(post.existingPlayers)} MMR)
+                  </h4>
                 </div>
                 
-                <div className="flex flex-wrap gap-3">
-                  {post.existingPlayers.map((player) => (
-                    <div key={player.id} className="flex items-center gap-2 bg-muted/50 rounded-lg p-2">
-                      <Avatar className="h-8 w-8">
-                        <AvatarImage src={player.avatar || ''} alt={player.name} />
-                        <AvatarFallback className="text-xs">{player.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="text-sm">
-                        <div className="font-medium">{player.name}</div>
-                        <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[0, 1, 2, 3].map((index) => {
+                    const player = post.existingPlayers[index];
+                    
+                    if (player === null) {
+                      return (
+                        <div key={index} className="flex items-center gap-2 bg-muted/30 rounded-lg p-2 border-2 border-dashed border-muted">
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="text-xs bg-muted">?</AvatarFallback>
+                          </Avatar>
+                          <div className="text-sm">
+                            <div className="font-medium text-muted-foreground">Open Slot</div>
+                            <div className="text-xs text-muted-foreground">Waiting for player</div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <div key={player.id} className="flex items-center gap-2 bg-muted/50 rounded-lg p-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
+                          <AvatarFallback className="text-xs">
+                            {player.name ? player.name[0] : 'P'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="text-sm">
+                          <div className="font-medium">
+                            {player.name || 'Player'}
+                            {player.isHost && <span className="text-xs text-primary ml-1">(Host)</span>}
+                          </div>
+                          <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
                 
                 <div className="flex justify-end pt-2">
