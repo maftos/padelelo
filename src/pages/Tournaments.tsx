@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -203,18 +202,8 @@ export default function Tournaments() {
             </div>
           </div>
 
-          {/* Filter and Sort Section - Mobile optimized */}
+          {/* Sort Section - Mobile optimized */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-            {/* Filter badges - Scrollable on mobile */}
-            <div className="w-full overflow-x-auto scrollbar-hide">
-              <div className="flex gap-2 min-w-max pb-2 sm:pb-0">
-                <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">All Tournaments</Badge>
-                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">This Week</Badge>
-                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">Next Month</Badge>
-                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">My Level</Badge>
-              </div>
-            </div>
-            
             {/* Sort options - Mobile friendly */}
             <div className="flex items-center justify-between gap-2 min-w-0">
               <div className="flex items-center gap-2 text-muted-foreground min-w-0 shrink">

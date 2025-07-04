@@ -1,9 +1,7 @@
-
 import { useState } from "react";
 import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNotificationModal";
 import { JoinGameModal } from "@/components/JoinGameModal";
@@ -270,18 +268,8 @@ export default function PlayerMatching() {
           </div>
         </div>
 
-        {/* Filter and Sort Section - Mobile optimized */}
+        {/* Sort Section - Mobile optimized */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-          {/* Filter badges - Scrollable on mobile */}
-          <div className="w-full overflow-x-auto pb-2 sm:pb-0">
-            <div className="flex gap-2 min-w-max px-0">
-              <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">All Posts</Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Near Me</Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Today</Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Tomorrow</Badge>
-            </div>
-          </div>
-          
           {/* Sort options - Mobile friendly */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-muted-foreground min-w-0">
