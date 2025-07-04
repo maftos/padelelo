@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -17,35 +18,35 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#1A1A2E",
-        foreground: "#F9F9F9",
+        background: "#242526",
+        foreground: "#E4E6EA",
         primary: {
-          DEFAULT: "#E94560",
+          DEFAULT: "#1877F2",
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#0F3460",
-          foreground: "#FFFFFF",
+          DEFAULT: "#3A3B3C",
+          foreground: "#E4E6EA",
         },
         accent: {
-          DEFAULT: "#16213E",
-          foreground: "#F9F9F9",
+          DEFAULT: "#3A3B3C",
+          foreground: "#E4E6EA",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+          DEFAULT: "#FA383E",
+          foreground: "#FFFFFF",
         },
         muted: {
-          DEFAULT: "#16213E",
-          foreground: "#8E9196",
+          DEFAULT: "#3A3B3C",
+          foreground: "#B0B3B8",
         },
         popover: {
-          DEFAULT: "#1A1A2E",
-          foreground: "#F9F9F9",
+          DEFAULT: "#242526",
+          foreground: "#E4E6EA",
         },
         card: {
-          DEFAULT: "#16213E",
-          foreground: "#F9F9F9",
+          DEFAULT: "#242526",
+          foreground: "#E4E6EA",
         },
       },
       keyframes: {
@@ -65,7 +66,6 @@ export default {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
-        // New animations
         "slide-in-right": {
           "0%": { transform: "translateX(100%)" },
           "100%": { transform: "translateX(0)" },
@@ -96,7 +96,6 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-up": "slide-up 0.4s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
-        // New animation utilities
         "slide-in-right": "slide-in-right 0.4s ease-out",
         "slide-in-left": "slide-in-left 0.4s ease-out",
         "bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
