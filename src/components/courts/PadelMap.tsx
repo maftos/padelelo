@@ -29,7 +29,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/outdoors-v11',
+        style: 'mapbox://styles/mapbox/satellite-v9',
         center: [57.5522, -20.3484], // Center of Mauritius
         zoom: 10,
         pitch: 45,
