@@ -87,20 +87,20 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     clubs.forEach((club, index) => {
-      // Create custom marker element with proper centering
+      // Create custom marker element with perfect centering
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
       markerElement.style.cssText = `
-        width: 44px;
-        height: 44px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
-        border: 3px solid ${selectedClubId === club.id ? '#059669' : '#10b981'};
+        border: 2px solid ${selectedClubId === club.id ? '#059669' : '#10b981'};
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, border-width 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
         background: white;
         position: relative;
@@ -135,16 +135,16 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           justify-content: center;
           color: white;
           font-weight: bold;
-          font-size: 16px;
+          font-size: 14px;
         ">🏓</div>
         <div style="
           position: absolute;
-          bottom: -3px;
-          right: -3px;
-          width: 14px;
-          height: 14px;
+          bottom: 2px;
+          right: 2px;
+          width: 10px;
+          height: 10px;
           background: #10b981;
-          border: 2px solid white;
+          border: 1px solid white;
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -154,17 +154,19 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         </div>
       `;
 
-      // Create marker with proper centering - this is the key fix
+      // Create marker with precise centering - key fix for alignment
       const marker = new mapboxgl.Marker({
         element: markerElement,
-        anchor: 'center' // Keep center anchor but ensure element is properly sized
+        anchor: 'center', // This ensures the center of the element aligns with coordinates
+        pitchAlignment: 'map', // Keep marker aligned with map
+        rotationAlignment: 'map' // Keep marker rotation aligned with map
       })
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
       // Create popup with improved content and positioning
       const popup = new mapboxgl.Popup({
-        offset: [0, -30], // Position above the marker
+        offset: [0, -25], // Position above the marker (adjusted for smaller marker)
         closeButton: false,
         className: 'custom-popup',
         anchor: 'bottom',
@@ -184,7 +186,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         </div>
       `);
 
-      // Simplified hover behavior using border and shadow effects only
+      // Simplified hover behavior that doesn't affect positioning
       let hoverTimeout: NodeJS.Timeout;
       let showTimeout: NodeJS.Timeout;
       
@@ -204,17 +206,17 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         }, 200);
       };
 
-      // Simple hover effects that don't interfere with positioning
+      // Hover effects that don't interfere with positioning
       const applyHoverEffect = () => {
         markerElement.style.borderColor = '#059669';
-        markerElement.style.borderWidth = '4px';
+        markerElement.style.borderWidth = '3px';
         markerElement.style.boxShadow = '0 6px 16px rgba(0,0,0,0.35)';
       };
       
       const removeHoverEffect = () => {
         if (selectedClubId !== club.id) {
           markerElement.style.borderColor = '#10b981';
-          markerElement.style.borderWidth = '3px';
+          markerElement.style.borderWidth = '2px';
           markerElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
         }
       };
@@ -278,11 +280,11 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       if (club.id === selectedId) {
         element.style.borderColor = '#059669';
-        element.style.borderWidth = '4px';
+        element.style.borderWidth = '3px';
         element.style.boxShadow = '0 6px 16px rgba(0,0,0,0.35)';
       } else {
         element.style.borderColor = '#10b981';
-        element.style.borderWidth = '3px';
+        element.style.borderWidth = '2px';
         element.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
       }
     });
@@ -328,7 +330,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
         }
         .custom-marker {
-          will-change: border-color, border-width, box-shadow;
+          will-change: transform;
         }
       `}</style>
     </div>
