@@ -61,7 +61,7 @@ function App() {
               <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
               <Route path="/tournament/create-tournament" element={<CreateTournament />} />
               <Route path="/padel-courts" element={<PadelCourts />} />
-              <Route path="/player-matching" element={<PlayerMatching />} />
+              <Route path="/open-games" element={<PlayerMatching />} />
             </Routes>
           </MainLayout>
           <Toaster />

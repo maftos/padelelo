@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -243,7 +244,7 @@ export default function PlayerMatching() {
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Player Matching</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Open Games</h1>
               <p className="text-sm sm:text-base text-muted-foreground">Find players to complete your booked courts</p>
             </div>
             
@@ -354,8 +355,8 @@ export default function PlayerMatching() {
                     </h4>
                   </div>
                   
-                  {/* Players grid - 1 column on mobile, 2 on larger screens */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                  {/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
                     {[0, 1, 2, 3].map((index) => {
                       const player = post.existingPlayers[index];
                       
@@ -363,32 +364,33 @@ export default function PlayerMatching() {
                         return (
                           <div 
                             key={index} 
-                            className="flex items-center gap-3 bg-muted/30 rounded-lg p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[60px] touch-manipulation"
+                            className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[50px] sm:min-h-[60px] touch-manipulation"
                             onClick={() => handleJoinGame(post.id)}
                           >
-                            <Avatar className="h-8 w-8 flex-shrink-0">
+                            <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                               <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                              <div className="font-medium text-primary text-sm">Join Game</div>
-                              <div className="text-xs text-muted-foreground">Tap to join</div>
+                              <div className="font-medium text-primary text-xs sm:text-sm">Join Game</div>
+                              <div className="text-xs text-muted-foreground hidden sm:block">Tap to join</div>
                             </div>
                           </div>
                         );
                       }
                       
                       return (
-                        <div key={player.id} className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 min-h-[60px]">
-                          <Avatar className="h-8 w-8 flex-shrink-0">
+                        <div key={player.id} className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px]">
+                          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                             <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
                             <AvatarFallback className="text-xs">
                               {player.name ? player.name[0] : 'P'}
                             </AvatarFallback>
                           </Avatar>
-                          <div className="text-sm flex-1 min-w-0">
+                          <div className="text-xs sm:text-sm flex-1 min-w-0">
                             <div className="font-medium truncate">
                               {player.name || 'Player'}
-                              {player.isHost && <span className="text-xs text-primary ml-1">(Host)</span>}
+                              {/* Show host tag only on desktop */}
+                              {player.isHost && <span className="text-xs text-primary ml-1 hidden sm:inline">(Host)</span>}
                             </div>
                             <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
                           </div>
@@ -406,7 +408,7 @@ export default function PlayerMatching() {
         {mockPlayerMatchingPosts.length === 0 && (
           <div className="text-center py-8 sm:py-12 px-4">
             <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">No player matching posts yet</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-2">No open games yet</h3>
             <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Be the first to post your available court!</p>
             <Button onClick={() => setAddMatchWizardOpen(true)} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
