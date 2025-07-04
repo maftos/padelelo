@@ -1,4 +1,4 @@
-import { Clock, MapPin, Users, Plus, Calendar } from "lucide-react";
+import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,8 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const mockPlayerMatchingPosts = [
   {
     id: "1",
-    courtName: "Club de Padel Madrid",
-    courtLocation: "Madrid Centro",
+    title: "Looking for 1 player - intermediate",
+    courtName: "RM Club Forbach",
     gameDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // 2 days from now
     spotsAvailable: 1,
     description: "Looking for one more player for a friendly match. Mixed levels welcome!",
@@ -19,12 +19,14 @@ const mockPlayerMatchingPosts = [
       { id: "u3", name: "Miguel R.", mmr: 3100, avatar: null }
     ],
     createdBy: "u1",
-    urgency: "medium"
+    preferences: "All genders",
+    price: "Rs 400",
+    endTime: "19:00"
   },
   {
     id: "2", 
-    courtName: "Padel Pro Center",
-    courtLocation: "Barcelona Nord",
+    title: "Need 2 players - advanced level",
+    courtName: "La Isla Beau Plan",
     gameDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
     spotsAvailable: 2,
     description: "Need 2 players for doubles. Intermediate level preferred.",
@@ -33,12 +35,14 @@ const mockPlayerMatchingPosts = [
       { id: "u5", name: "David P.", mmr: 2850, avatar: null }
     ],
     createdBy: "u4",
-    urgency: "high"
+    preferences: "Female only",
+    price: "Rs 350",
+    endTime: "20:30"
   },
   {
     id: "3",
-    courtName: "Sports Club Valencia", 
-    courtLocation: "Valencia Este",
+    title: "Looking for 1 player - beginner friendly",
+    courtName: "Urban Sport Grand Baie",
     gameDate: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000), // 6 days from now
     spotsAvailable: 1,
     description: "Advanced players welcome. Court already booked for Saturday morning.",
@@ -48,57 +52,46 @@ const mockPlayerMatchingPosts = [
       { id: "u8", name: "Alejandro V.", mmr: 3400, avatar: null }
     ],
     createdBy: "u6",
-    urgency: "low"
+    preferences: "All genders", 
+    price: "Rs 500",
+    endTime: "18:30"
   }
 ];
 
-const getUrgencyColor = (urgency: string) => {
-  switch (urgency) {
-    case "high":
-      return "destructive";
-    case "medium":
-      return "default";
-    case "low":
-      return "secondary";
-    default:
-      return "secondary";
-  }
-};
-
-const getUrgencyText = (urgency: string) => {
-  switch (urgency) {
-    case "high":
-      return "Urgent";
-    case "medium":
-      return "This Week";
-    case "low":
-      return "Soon";
-    default:
-      return "Soon";
-  }
-};
-
-const formatGameTime = (date: Date) => {
+const formatGameDate = (date: Date) => {
   const now = new Date();
   const diffTime = date.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const dayName = dayNames[date.getDay()];
+  
   if (diffDays === 1) {
-    return "Tomorrow";
+    return `Tomorrow, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
   } else if (diffDays <= 7) {
-    return `In ${diffDays} days`;
+    return `Next ${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
   } else {
-    return date.toLocaleDateString();
+    return `${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
   }
 };
 
-export default function PlayerMatching() {
-  const calculateAverageMMR = (players: Array<{ mmr: number }>) => {
-    if (players.length === 0) return 0;
-    const total = players.reduce((sum, player) => sum + player.mmr, 0);
-    return Math.round(total / players.length);
-  };
+const getOrdinalSuffix = (day: number) => {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1: return 'st';
+    case 2: return 'nd';
+    case 3: return 'rd';
+    default: return 'th';
+  }
+};
 
+const calculateAverageMMR = (players: Array<{ mmr: number }>) => {
+  if (players.length === 0) return 0;
+  const total = players.reduce((sum, player) => sum + player.mmr, 0);
+  return Math.round(total / players.length);
+};
+
+export default function PlayerMatching() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       {/* Header */}
@@ -116,9 +109,9 @@ export default function PlayerMatching() {
       {/* Filter Section */}
       <div className="flex flex-wrap gap-2 mb-6">
         <Badge variant="outline" className="cursor-pointer hover:bg-accent">All Posts</Badge>
-        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Urgent</Badge>
-        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">This Week</Badge>
         <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Near Me</Badge>
+        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Today</Badge>
+        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Tomorrow</Badge>
       </div>
 
       {/* Posts Grid */}
@@ -128,27 +121,32 @@ export default function PlayerMatching() {
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <CardTitle className="text-lg">{post.courtName}</CardTitle>
-                    <Badge variant={getUrgencyColor(post.urgency)} className="text-xs">
-                      {getUrgencyText(post.urgency)}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <CardTitle className="text-lg mb-2">{post.title}</CardTitle>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
-                      {post.courtLocation}
+                      {post.courtName}
                     </div>
                     <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
-                      {formatGameTime(post.gameDate)}
+                      {formatGameDate(post.gameDate)}
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-4 w-4" />
                       {post.gameDate.toLocaleTimeString([], { 
                         hour: '2-digit', 
                         minute: '2-digit' 
-                      })}
+                      })} - {post.endTime}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <UserCheck className="h-4 w-4" />
+                      {post.preferences}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <DollarSign className="h-4 w-4" />
+                      {post.price}
                     </div>
                   </div>
                 </div>
