@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { PadelClub } from '@/pages/PadelCourts';
@@ -15,6 +15,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
+  const [selectedClubId, setSelectedClubId] = useState<string | null>(null);
 
   const initializeMap = () => {
     if (!mapContainer.current) {
@@ -85,33 +86,34 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     clubs.forEach((club, index) => {
-      // Create custom marker element with proper padel court images
+      // Create custom marker element with proper styling
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
       markerElement.style.cssText = `
         width: 50px;
         height: 50px;
         border-radius: 50%;
-        border: 3px solid #10b981;
+        border: 3px solid ${selectedClubId === club.id ? '#059669' : '#10b981'};
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         transition: all 0.2s ease;
         overflow: hidden;
         background: white;
         position: relative;
+        transform-origin: center;
       `;
       
-      // Use different padel court images for variety
+      // Use more reliable placeholder images with proper fallbacks
       const padelImages = [
-        'https://images.unsplash.com/photo-1544963950-a7a778c6548e?w=100&h=100&fit=crop&crop=center', // Tennis/Padel court
-        'https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=100&h=100&fit=crop&crop=center', // Sports court
-        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=100&fit=crop&crop=center', // Tennis court aerial
-        'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=100&h=100&fit=crop&crop=center', // Sport facility
-        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop&crop=center', // Sports complex
-        'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=100&h=100&fit=crop&crop=center'  // Tennis court
+        '/placeholder.svg', // Using local placeholder as primary
+        'https://images.unsplash.com/photo-1544963950-a7a778c6548e?w=100&h=100&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=100&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=100&h=100&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=100&h=100&fit=crop&crop=center',
+        'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=100&h=100&fit=crop&crop=center'
       ];
       
       const imageUrl = padelImages[index % padelImages.length];
@@ -121,8 +123,20 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           src="${imageUrl}" 
           alt="Padel Court at ${club.name}"
           style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"
-          onerror="this.src='https://images.unsplash.com/photo-1544963950-a7a778c6548e?w=100&h=100&fit=crop&crop=center'"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
         />
+        <div style="
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #10b981, #059669);
+          border-radius: 50%;
+          display: none;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 18px;
+        ">🏓</div>
         <div style="
           position: absolute;
           bottom: -2px;
@@ -136,59 +150,110 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           align-items: center;
           justify-content: center;
         ">
-          <svg width="8" height="8" viewBox="0 0 24 24" fill="white">
-            <circle cx="12" cy="12" r="3"/>
-          </svg>
+          <div style="width: 6px; height: 6px; background: white; border-radius: 50%;"></div>
         </div>
       `;
 
-      // Improved hover effects
-      markerElement.addEventListener('mouseenter', () => {
-        markerElement.style.transform = 'scale(1.2)';
-        markerElement.style.zIndex = '1000';
-        markerElement.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
-      });
-      
-      markerElement.addEventListener('mouseleave', () => {
-        markerElement.style.transform = 'scale(1)';
-        markerElement.style.zIndex = '1';
-        markerElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
-      });
+      // Create hover area (larger than visual marker for easier interaction)
+      const hoverArea = document.createElement('div');
+      hoverArea.style.cssText = `
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        top: -10px;
+        left: -10px;
+        z-index: 1;
+      `;
+      markerElement.appendChild(hoverArea);
 
       // Create marker with proper positioning
       const marker = new mapboxgl.Marker({
         element: markerElement,
-        anchor: 'center' // Center the marker on the coordinates
+        anchor: 'center'
       })
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
-      // Create popup with improved positioning and content
+      // Create popup with improved content and positioning
       const popup = new mapboxgl.Popup({
-        offset: 25, // Offset from the marker
+        offset: [0, -35], // Position above the marker
         closeButton: false,
         className: 'custom-popup',
-        anchor: 'bottom', // Anchor at bottom so popup appears above marker
-        maxWidth: '300px'
+        anchor: 'bottom',
+        maxWidth: '280px'
       }).setHTML(`
-        <div style="padding: 16px; min-width: 250px;">
-          <h3 style="margin: 0 0 8px 0; font-weight: 600; color: #1f2937; font-size: 16px; line-height: 1.3;">${club.name}</h3>
-          <p style="margin: 0 0 8px 0; font-size: 12px; color: #6b7280; line-height: 1.4;">${club.address}</p>
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span style="color: #fbbf24; font-size: 16px;">★</span>
-            <span style="font-size: 13px; color: #1f2937; font-weight: 500;">${club.rating}</span>
-            <span style="font-size: 12px; color: #6b7280;">• ${club.numberOfCourts} courts</span>
+        <div style="padding: 12px; min-width: 220px;">
+          <h3 style="margin: 0 0 6px 0; font-weight: 600; color: #1f2937; font-size: 15px; line-height: 1.3;">${club.name}</h3>
+          <p style="margin: 0 0 6px 0; font-size: 11px; color: #6b7280; line-height: 1.4;">${club.address}</p>
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+            <span style="color: #fbbf24; font-size: 14px;">★</span>
+            <span style="font-size: 12px; color: #1f2937; font-weight: 500;">${club.rating}</span>
+            <span style="font-size: 11px; color: #6b7280;">• ${club.numberOfCourts} courts</span>
           </div>
-          <div style="font-size: 11px; color: #10b981; font-weight: 500; text-align: center; padding-top: 4px; border-top: 1px solid #e5e7eb;">
-            Click marker for details →
+          <div style="font-size: 10px; color: #10b981; font-weight: 500; text-align: center; padding-top: 4px; border-top: 1px solid #e5e7eb;">
+            Click for details →
           </div>
         </div>
       `);
 
-      // Improved click handling
+      // Improved hover behavior with delays
+      let hoverTimeout: NodeJS.Timeout;
+      let showTimeout: NodeJS.Timeout;
+      
+      const showPopup = () => {
+        clearTimeout(hoverTimeout);
+        showTimeout = setTimeout(() => {
+          if (map.current) {
+            popup.setLngLat(club.coordinates).addTo(map.current);
+          }
+        }, 150); // Small delay to prevent flickering
+      };
+      
+      const hidePopup = () => {
+        clearTimeout(showTimeout);
+        hoverTimeout = setTimeout(() => {
+          popup.remove();
+        }, 200);
+      };
+
+      // Enhanced hover effects with subtle scaling
+      const applyHoverEffect = () => {
+        markerElement.style.transform = 'scale(1.1)';
+        markerElement.style.zIndex = '100';
+        markerElement.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+        markerElement.style.borderColor = '#059669';
+      };
+      
+      const removeHoverEffect = () => {
+        if (selectedClubId !== club.id) {
+          markerElement.style.transform = 'scale(1)';
+          markerElement.style.zIndex = '1';
+          markerElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+          markerElement.style.borderColor = '#10b981';
+        }
+      };
+
+      // Event listeners for hover behavior
+      hoverArea.addEventListener('mouseenter', () => {
+        applyHoverEffect();
+        showPopup();
+      });
+      
+      hoverArea.addEventListener('mouseleave', () => {
+        removeHoverEffect();
+        hidePopup();
+      });
+
+      // Click handling with improved feedback
       markerElement.addEventListener('click', (e) => {
         e.stopPropagation();
+        
+        // Update selected state
+        setSelectedClubId(club.id);
         onClubSelect(club);
+        
+        // Update all markers to reflect selection
+        updateMarkerStates(club.id);
         
         // Smooth fly to selected marker
         map.current?.flyTo({
@@ -197,21 +262,9 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           essential: true,
           duration: 1000
         });
-      });
-
-      // Better popup behavior - show on hover, hide on mouse leave
-      let hoverTimeout: NodeJS.Timeout;
-      
-      markerElement.addEventListener('mouseenter', () => {
-        clearTimeout(hoverTimeout);
-        marker.setPopup(popup);
-        popup.addTo(map.current!);
-      });
-
-      markerElement.addEventListener('mouseleave', () => {
-        hoverTimeout = setTimeout(() => {
-          popup.remove();
-        }, 200); // Small delay to allow moving to popup
+        
+        // Hide popup after click
+        hidePopup();
       });
 
       // Keep popup open when hovering over it
@@ -223,12 +276,29 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           });
           
           popupElement.addEventListener('mouseleave', () => {
-            popup.remove();
+            hidePopup();
           });
         }
       });
 
       markers.current.push(marker);
+    });
+  };
+
+  const updateMarkerStates = (selectedId: string) => {
+    markers.current.forEach((marker, index) => {
+      const element = marker.getElement();
+      const club = clubs[index];
+      
+      if (club.id === selectedId) {
+        element.style.borderColor = '#059669';
+        element.style.transform = 'scale(1.05)';
+        element.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+      } else {
+        element.style.borderColor = '#10b981';
+        element.style.transform = 'scale(1)';
+        element.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+      }
     });
   };
 
@@ -261,7 +331,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         .custom-popup .mapboxgl-popup-content {
           background: white;
           border: 1px solid #e5e7eb;
-          border-radius: 12px;
+          border-radius: 8px;
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
           padding: 0;
         }
@@ -270,6 +340,9 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         }
         .mapboxgl-ctrl {
           box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
+        }
+        .custom-marker {
+          will-change: transform;
         }
       `}</style>
     </div>
