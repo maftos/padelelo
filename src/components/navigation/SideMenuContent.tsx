@@ -95,11 +95,11 @@ export const SideMenuContent = ({
       <div className="space-y-1 px-2">
         <SheetClose asChild>
           <Link
-            to="/player-matching"
+            to="/open-games"
             className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
           >
             <Users className="h-4 w-4" />
-            Player Matching
+            Open Games
           </Link>
         </SheetClose>
         <SheetClose asChild>

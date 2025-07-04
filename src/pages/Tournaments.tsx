@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -173,8 +174,8 @@ export default function Tournaments() {
   return (
     <>
       <Navigation />
-      <div className="w-full min-h-screen overflow-x-hidden">
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full">
+      <div className="w-full min-h-screen">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
           {/* Header - Mobile optimized */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
