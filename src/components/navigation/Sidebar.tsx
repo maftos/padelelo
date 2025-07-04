@@ -17,7 +17,7 @@ import {
 
 export const Sidebar = () => {
   const { user, signOut } = useAuth();
-  const { data: profile } = useUserProfile();
+  const { profile } = useUserProfile();
   const location = useLocation();
 
   const navigationItems = [
