@@ -35,13 +35,14 @@ export const SideMenuContent = ({
   if (!user) {
     return (
       <div className="mt-4 space-y-4">
-        <Link
-          to="/login"
-          onClick={onClose}
-          className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          Sign In
-        </Link>
+        <SheetClose asChild>
+          <Link
+            to="/login"
+            className="flex items-center gap-2 text-lg p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            Sign In
+          </Link>
+        </SheetClose>
       </div>
     );
   }
@@ -60,14 +61,15 @@ export const SideMenuContent = ({
             <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
           </div>
         </div>
-        <Link
-          to="/dashboard"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <LayoutDashboard className="h-4 w-4" />
-          Dashboard
-        </Link>
+        <SheetClose asChild>
+          <Link
+            to="/dashboard"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Link>
+        </SheetClose>
       </div>
 
       <Separator className="my-4" />
@@ -75,14 +77,15 @@ export const SideMenuContent = ({
       {/* Primary Actions Section */}
       <div className="space-y-2 px-2">
         <div className="flex flex-col gap-2">
-          <Link
-            to="/register-match"
-            onClick={onClose}
-            className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            <ClipboardEdit className="h-4 w-4" />
-            Register Match
-          </Link>
+          <SheetClose asChild>
+            <Link
+              to="/register-match"
+              className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              <ClipboardEdit className="h-4 w-4" />
+              Register Match
+            </Link>
+          </SheetClose>
         </div>
       </div>
 
@@ -90,38 +93,42 @@ export const SideMenuContent = ({
 
       {/* Main Navigation Section */}
       <div className="space-y-1 px-2">
-        <Link
-          to="/player-matching"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <Users className="h-4 w-4" />
-          Player Matching
-        </Link>
-        <Link
-          to="/tournaments"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <Trophy className="h-4 w-4" />
-          Tournaments
-        </Link>
-        <Link
-          to="/leaderboard"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <BarChart3 className="h-4 w-4" />
-          Leaderboard
-        </Link>
-        <Link
-          to="/padel-courts"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <MapPin className="h-4 w-4" />
-          Padel Courts
-        </Link>
+        <SheetClose asChild>
+          <Link
+            to="/player-matching"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <Users className="h-4 w-4" />
+            Player Matching
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            to="/tournaments"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <Trophy className="h-4 w-4" />
+            Tournaments
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            to="/leaderboard"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Leaderboard
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            to="/padel-courts"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          >
+            <MapPin className="h-4 w-4" />
+            Padel Courts
+          </Link>
+        </SheetClose>
       </div>
 
       <Separator className="my-4" />
