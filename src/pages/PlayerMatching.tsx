@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell } from "lucide-react";
+import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -107,6 +107,18 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 
 export default function PlayerMatching() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [sortBy, setSortBy] = useState("newest");
+
+  const sortOptions = [
+    { value: "newest", label: "Newest" },
+    { value: "nearest", label: "Nearest to Me" },
+    { value: "soonest", label: "Soonest" }
+  ];
+
+  const handleJoinGame = (postId: string) => {
+    console.log("Joining game:", postId);
+    // TODO: Implement join game functionality
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
@@ -132,12 +144,31 @@ export default function PlayerMatching() {
         </div>
       </div>
 
-      {/* Filter Section */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <Badge variant="outline" className="cursor-pointer hover:bg-accent">All Posts</Badge>
-        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Near Me</Badge>
-        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Today</Badge>
-        <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Tomorrow</Badge>
+      {/* Filter and Sort Section */}
+      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+        <div className="flex flex-wrap gap-2">
+          <Badge variant="outline" className="cursor-pointer hover:bg-accent">All Posts</Badge>
+          <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Near Me</Badge>
+          <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Today</Badge>
+          <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Tomorrow</Badge>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+          <div className="flex gap-1">
+            {sortOptions.map((option) => (
+              <Button
+                key={option.value}
+                variant={sortBy === option.value ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setSortBy(option.value)}
+                className="text-xs"
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Posts Grid */}
@@ -195,13 +226,17 @@ export default function PlayerMatching() {
                     
                     if (player === null) {
                       return (
-                        <div key={index} className="flex items-center gap-2 bg-muted/30 rounded-lg p-2 border-2 border-dashed border-muted">
+                        <div 
+                          key={index} 
+                          className="flex items-center gap-2 bg-muted/30 rounded-lg p-2 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 animate-pulse"
+                          onClick={() => handleJoinGame(post.id)}
+                        >
                           <Avatar className="h-8 w-8">
-                            <AvatarFallback className="text-xs bg-muted">?</AvatarFallback>
+                            <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
                           </Avatar>
-                          <div className="text-sm">
-                            <div className="font-medium text-muted-foreground">Open Slot</div>
-                            <div className="text-xs text-muted-foreground">Waiting for player</div>
+                          <div className="flex-1">
+                            <div className="font-medium text-primary text-sm">Join Game</div>
+                            <div className="text-xs text-muted-foreground">Click to join</div>
                           </div>
                         </div>
                       );
@@ -225,13 +260,6 @@ export default function PlayerMatching() {
                       </div>
                     );
                   })}
-                </div>
-                
-                <div className="flex justify-end pt-2">
-                  <Button size="sm" className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    Join Game
-                  </Button>
                 </div>
               </div>
             </CardContent>
