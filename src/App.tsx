@@ -21,6 +21,7 @@ import EditTournament from "./pages/EditTournament";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
+import { MainLayout } from "./components/layouts/MainLayout";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,26 +38,28 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/register-match" element={<RegisterMatch />} />
-            <Route path="/matches" element={<Matches />} />
-            <Route path="/friends" element={<Friends />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/roadmap" element={<Roadmap />} />
-            <Route path="/matchmaking-math" element={<MatchmakingMath />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/onboarding/*" element={<Onboarding />} />
-            <Route path="/tournaments" element={<Tournaments />} />
-            <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
-            <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
-            <Route path="/tournament/create-tournament" element={<CreateTournament />} />
-          </Routes>
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/register-match" element={<RegisterMatch />} />
+              <Route path="/matches" element={<Matches />} />
+              <Route path="/friends" element={<Friends />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/roadmap" element={<Roadmap />} />
+              <Route path="/matchmaking-math" element={<MatchmakingMath />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/onboarding/*" element={<Onboarding />} />
+              <Route path="/tournaments" element={<Tournaments />} />
+              <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
+              <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
+              <Route path="/tournament/create-tournament" element={<CreateTournament />} />
+            </Routes>
+          </MainLayout>
           <Toaster />
         </AuthProvider>
       </Router>
@@ -65,4 +68,3 @@ function App() {
 }
 
 export default App;
-
