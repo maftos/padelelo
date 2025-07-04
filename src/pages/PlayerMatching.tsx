@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,7 +29,8 @@ const mockPlayerMatchingPosts = [
     preferences: "All genders",
     price: "Rs 400",
     startTime: "19:00",
-    endTime: "20:30"
+    endTime: "20:30",
+    createdAt: new Date(Date.now() - 46 * 60 * 1000) // 46 minutes ago
   },
   {
     id: "2", 
@@ -48,7 +50,8 @@ const mockPlayerMatchingPosts = [
     preferences: "Female only",
     price: "Rs 350",
     startTime: "18:30",
-    endTime: "20:00"
+    endTime: "20:00",
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000) // 6 hours ago
   },
   {
     id: "3",
@@ -68,7 +71,92 @@ const mockPlayerMatchingPosts = [
     preferences: "All genders", 
     price: "Rs 500",
     startTime: "17:00",
-    endTime: "18:30"
+    endTime: "18:30",
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
+  },
+  {
+    id: "4",
+    title: "Doubles match - competitive level",
+    courtName: "Ebene Sports Club",
+    distance: "2.1km",
+    gameDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days from now
+    spotsAvailable: 3,
+    description: "Looking for 3 more players for a competitive doubles session.",
+    existingPlayers: [
+      { id: "u9", name: "Sarah D.", mmr: 2950, avatar: null, isHost: true },
+      null, // Missing player
+      null, // Missing player
+      null  // Missing player
+    ],
+    createdBy: "u9",
+    preferences: "All genders",
+    price: "Rs 300",
+    startTime: "20:00",
+    endTime: "21:30",
+    createdAt: new Date(Date.now() - 2 * 60 * 1000) // 2 minutes ago
+  },
+  {
+    id: "5",
+    title: "Morning session - need 2 players",
+    courtName: "Phoenix Sports Complex",
+    distance: "5.8km",
+    gameDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
+    spotsAvailable: 2,
+    description: "Early morning padel session. Perfect for beating the heat!",
+    existingPlayers: [
+      { id: "u10", name: "Mark T.", mmr: 2800, avatar: null, isHost: true },
+      { id: "u11", name: "Jenny L.", mmr: 2950, avatar: null, isHost: false },
+      null, // Missing player
+      null  // Missing player
+    ],
+    createdBy: "u10",
+    preferences: "All genders",
+    price: "Rs 250",
+    startTime: "07:00",
+    endTime: "08:30",
+    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) // 3 days ago
+  },
+  {
+    id: "6",
+    title: "Weekend tournament prep",
+    courtName: "Riverside Sports Center",
+    distance: "4.3km",
+    gameDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 days from now
+    spotsAvailable: 1,
+    description: "Practice session before the weekend tournament. High level players only.",
+    existingPlayers: [
+      { id: "u12", name: "Alex R.", mmr: 3400, avatar: null, isHost: true },
+      { id: "u13", name: "Maria S.", mmr: 3250, avatar: null, isHost: false },
+      { id: "u14", name: "Tom W.", mmr: 3150, avatar: null, isHost: false },
+      null // Missing player
+    ],
+    createdBy: "u12",
+    preferences: "Male only",
+    price: "Rs 450",
+    startTime: "16:00",
+    endTime: "17:30",
+    createdAt: new Date(Date.now() - 15 * 60 * 1000) // 15 minutes ago
+  },
+  {
+    id: "7",
+    title: "Casual Friday evening game",
+    courtName: "Sunset Padel Club",
+    distance: "6.7km",
+    gameDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000), // 4 days from now
+    spotsAvailable: 2,
+    description: "Relaxed game to end the work week. All skill levels welcome!",
+    existingPlayers: [
+      { id: "u15", name: "Nina P.", mmr: 2650, avatar: null, isHost: true },
+      { id: "u16", name: "David K.", mmr: 2700, avatar: null, isHost: false },
+      null, // Missing player
+      null  // Missing player
+    ],
+    createdBy: "u15",
+    preferences: "All genders",
+    price: "Rs 320",
+    startTime: "18:00",
+    endTime: "19:30",
+    createdAt: new Date(Date.now() - 45 * 60 * 1000) // 45 minutes ago
   }
 ];
 
@@ -96,6 +184,26 @@ const getOrdinalSuffix = (day: number) => {
     case 2: return 'nd';
     case 3: return 'rd';
     default: return 'th';
+  }
+};
+
+const formatTimeAgo = (date: Date) => {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMinutes < 1) {
+    return "just now";
+  } else if (diffMinutes < 60) {
+    return `${diffMinutes}m ago`;
+  } else if (diffHours < 24) {
+    return `${diffHours}h ago`;
+  } else if (diffDays === 1) {
+    return "yesterday";
+  } else {
+    return `${diffDays}d ago`;
   }
 };
 
@@ -189,7 +297,12 @@ export default function PlayerMatching() {
             <CardHeader className="pb-4">
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
-                  <CardTitle className="text-lg mb-2">{post.title}</CardTitle>
+                  <div className="flex justify-between items-start mb-2">
+                    <CardTitle className="text-lg">{post.title}</CardTitle>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md">
+                      {formatTimeAgo(post.createdAt)}
+                    </span>
+                  </div>
                   <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
                     <div className="flex items-center gap-1">
                       <MapPin className="h-4 w-4" />
