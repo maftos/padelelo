@@ -15,7 +15,7 @@ export const Navigation = () => {
   if (user) return null;
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background">
+    <nav className="sticky top-0 z-50 w-full border-b border-border bg-card">
       <div className="container flex h-14 items-center justify-between">
         <div className="flex items-center space-x-2">
           <img 

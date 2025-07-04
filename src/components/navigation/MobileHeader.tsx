@@ -17,7 +17,7 @@ export const MobileHeader = () => {
   const hasFriendRequests = friendRequestCount > 0;
 
   return (
-    <header className="lg:hidden sticky top-0 z-50 w-full bg-white border-b border-gray-200">
+    <header className="lg:hidden sticky top-0 z-50 w-full bg-card border-b border-border">
       <div className="flex items-center justify-between px-4 h-14">
         {/* Left: Logo and Menu */}
         <div className="flex items-center gap-3">
@@ -35,7 +35,7 @@ export const MobileHeader = () => {
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-80">
+            <SheetContent side="left" className="p-0 w-80 bg-card">
               <SideMenuContent 
                 user={user}
                 profile={profile}

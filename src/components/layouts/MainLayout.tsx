@@ -11,11 +11,11 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const { user } = useAuth();
 
   if (!user) {
-    return <>{children}</>;
+    return <div className="min-h-screen bg-background">{children}</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Mobile Header */}
       <MobileHeader />
       

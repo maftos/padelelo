@@ -30,9 +30,9 @@ export const AppSidebar = () => {
   const hasFriendRequests = friendRequestCount > 0;
 
   return (
-    <div className="w-64 h-screen bg-white border-r border-gray-200 flex flex-col sticky top-0">
+    <div className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0">
       {/* User Profile Section */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-4 border-b border-border">
         <div className="flex items-center gap-3 mb-4">
           <Avatar className="h-10 w-10">
             <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
@@ -41,10 +41,10 @@ export const AppSidebar = () => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 text-sm">
+            <span className="font-semibold text-foreground text-sm">
               {profile?.display_name || 'Player'}
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               {profile?.current_mmr || 3000} MMR
             </span>
           </div>
@@ -65,7 +65,7 @@ export const AppSidebar = () => {
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative ${
                   isActive
                     ? 'bg-primary/10 text-primary'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
                 }`}
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
@@ -82,11 +82,11 @@ export const AppSidebar = () => {
       </nav>
 
       {/* Sign Out Button */}
-      <div className="p-4 border-t border-gray-100">
+      <div className="p-4 border-t border-border">
         <Button
           variant="ghost"
           onClick={signOut}
-          className="w-full justify-start text-gray-700 hover:bg-gray-100"
+          className="w-full justify-start text-foreground hover:bg-accent hover:text-accent-foreground"
         >
           <Settings className="h-5 w-5 mr-3" />
           Sign Out
