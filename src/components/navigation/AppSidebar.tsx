@@ -1,21 +1,17 @@
 
-import { Home, Trophy, Users, User, MapPin, Calendar, BarChart3, Settings } from "lucide-react";
+import { Home, Trophy, MapPin, Calendar, BarChart3, Settings } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "Register Match", url: "/register-match", icon: Calendar },
-  { title: "My Matches", url: "/matches", icon: BarChart3 },
-  { title: "Friends", url: "/friends", icon: Users },
   { title: "Tournaments", url: "/tournaments", icon: Trophy },
   { title: "Leaderboard", url: "/leaderboard", icon: BarChart3 },
-  { title: "Profile", url: "/profile", icon: User },
   { title: "Padel Courts", url: "/padel-courts", icon: MapPin },
 ];
 
@@ -25,9 +21,6 @@ export const AppSidebar = () => {
   const location = useLocation();
 
   if (!user) return null;
-
-  const friendRequestCount = profile?.friend_requests_count || 0;
-  const hasFriendRequests = friendRequestCount > 0;
 
   return (
     <div className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0">
@@ -70,11 +63,6 @@ export const AppSidebar = () => {
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
                 <span className="flex-1">{item.title}</span>
-                {item.title === 'Friends' && hasFriendRequests && (
-                  <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center text-[10px] p-0">
-                    {friendRequestCount}
-                  </Badge>
-                )}
               </NavLink>
             );
           })}

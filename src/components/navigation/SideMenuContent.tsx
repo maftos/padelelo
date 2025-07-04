@@ -5,16 +5,13 @@ import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-  User, 
-  UserPlus, 
   ClipboardEdit, 
-  Users,
   Trophy,
   MapPin,
   LogOut,
-  LayoutDashboard
+  LayoutDashboard,
+  BarChart3
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 interface SideMenuContentProps {
   user: { id: string } | null;
@@ -47,9 +44,6 @@ export const SideMenuContent = ({
       </div>
     );
   }
-
-  const friendRequestCount = profile?.friend_requests_count || 0;
-  const hasFriendRequests = friendRequestCount > 0;
 
   return (
     <div className="flex flex-col h-full pt-8">
@@ -88,53 +82,12 @@ export const SideMenuContent = ({
             <ClipboardEdit className="h-4 w-4" />
             Register Match
           </Link>
-          <InviteFriendDialog userId={user.id}>
-            <button className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors">
-              <UserPlus className="h-4 w-4" />
-              Invite Friend
-            </button>
-          </InviteFriendDialog>
         </div>
       </div>
 
       <Separator className="my-4" />
 
       {/* Main Navigation Section */}
-      <div className="space-y-1 px-2">
-        <Link
-          to="/matches"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <ClipboardEdit className="h-4 w-4" />
-          My Matches
-        </Link>
-        <Link
-          to="/friends"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <Users className="h-4 w-4" />
-          <span>Friends</span>
-          {hasFriendRequests && (
-            <Badge variant="destructive" className="h-5 w-5 flex items-center justify-center text-[10px]">
-              {friendRequestCount}
-            </Badge>
-          )}
-        </Link>
-        <Link
-          to="/leaderboard"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <Trophy className="h-4 w-4" />
-          Leaderboard
-        </Link>
-      </div>
-
-      <Separator className="my-4" />
-
-      {/* Secondary Navigation Section */}
       <div className="space-y-1 px-2">
         <Link
           to="/tournaments"
@@ -145,12 +98,12 @@ export const SideMenuContent = ({
           Tournaments
         </Link>
         <Link
-          to="/profile"
+          to="/leaderboard"
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <User className="h-4 w-4" />
-          My Profile
+          <BarChart3 className="h-4 w-4" />
+          Leaderboard
         </Link>
         <Link
           to="/padel-courts"
