@@ -32,16 +32,22 @@ interface RecentMatch {
   change_type: string;
   change_amount: number;
   new_mmr: number;
+  old_mmr: number;
   team1_score: number;
   team2_score: number;
-  team1_player1_display_name: string;
-  team1_player1_profile_photo: string;
-  team1_player2_display_name: string;
-  team1_player2_profile_photo: string;
-  team2_player1_display_name: string;
-  team2_player1_profile_photo: string;
-  team2_player2_display_name: string;
-  team2_player2_profile_photo: string;
+  completed_by: string;
+  player1_id: string;
+  player1_display_name: string;
+  player1_profile_photo: string;
+  player2_id: string;
+  player2_display_name: string;
+  player2_profile_photo: string;
+  player3_id: string;
+  player3_display_name: string;
+  player3_profile_photo: string;
+  player4_id: string;
+  player4_display_name: string;
+  player4_profile_photo: string;
 }
 
 export default function Dashboard() {
@@ -254,21 +260,21 @@ export default function Dashboard() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
                           <Avatar className="h-6 w-6">
-                            <AvatarImage src={match.team1_player1_profile_photo} />
+                            <AvatarImage src={match.player1_profile_photo} />
                             <AvatarFallback className="text-xs">
-                              {match.team1_player1_display_name?.substring(0, 2).toUpperCase()}
+                              {match.player1_display_name?.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-sm font-medium">{match.team1_player1_display_name}</span>
+                          <span className="text-sm font-medium">{match.player1_display_name}</span>
                         </div>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-6 w-6">
-                            <AvatarImage src={match.team1_player2_profile_photo} />
+                            <AvatarImage src={match.player2_profile_photo} />
                             <AvatarFallback className="text-xs">
-                              {match.team1_player2_display_name?.substring(0, 2).toUpperCase()}
+                              {match.player2_display_name?.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-sm font-medium">{match.team1_player2_display_name}</span>
+                          <span className="text-sm font-medium">{match.player2_display_name}</span>
                         </div>
                       </div>
 
@@ -282,20 +288,20 @@ export default function Dashboard() {
                       {/* Team 2 */}
                       <div className="flex-1 text-right">
                         <div className="flex items-center justify-end gap-2 mb-1">
-                          <span className="text-sm font-medium">{match.team2_player1_display_name}</span>
+                          <span className="text-sm font-medium">{match.player3_display_name}</span>
                           <Avatar className="h-6 w-6">
-                            <AvatarImage src={match.team2_player1_profile_photo} />
+                            <AvatarImage src={match.player3_profile_photo} />
                             <AvatarFallback className="text-xs">
-                              {match.team2_player1_display_name?.substring(0, 2).toUpperCase()}
+                              {match.player3_display_name?.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         </div>
                         <div className="flex items-center justify-end gap-2">
-                          <span className="text-sm font-medium">{match.team2_player2_display_name}</span>
+                          <span className="text-sm font-medium">{match.player4_display_name}</span>
                           <Avatar className="h-6 w-6">
-                            <AvatarImage src={match.team2_player2_profile_photo} />
+                            <AvatarImage src={match.player4_profile_photo} />
                             <AvatarFallback className="text-xs">
-                              {match.team2_player2_display_name?.substring(0, 2).toUpperCase()}
+                              {match.player4_display_name?.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         </div>
