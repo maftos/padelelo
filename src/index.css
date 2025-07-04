@@ -4,95 +4,89 @@
 
 @layer base {
   :root {
-    /* Athletic Color Palette */
-    --background: 0 0% 100%;
-    --foreground: 215 25% 27%;
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Deep Athletic Navy */
-    --primary: 210 52% 23%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
 
-    /* Electric Blue */
-    --secondary: 199 89% 48%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 45 86% 62%;
+    --secondary-foreground: 240 10% 3.9%;
 
-    /* Soft Gray backgrounds */
-    --muted: 210 40% 98%;
+    --muted: 210 40% 96%;
     --muted-foreground: 215 16% 47%;
 
-    /* Lime Green accent */
-    --accent: 84 81% 44%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 142 76% 42%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 98%;
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 210 52% 23%;
+    --ring: 142 76% 36%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    /* Sidebar theming */
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 215 25% 27%;
-    --sidebar-primary: 210 52% 23%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 98%;
-    --sidebar-accent-foreground: 215 25% 27%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 199 89% 48%;
+    --sidebar-background: 0 0% 98%;
 
-    /* Athletic Premium Gradients */
-    --gradient-athletic: linear-gradient(135deg, hsl(210 52% 23%), hsl(199 89% 48%));
-    --gradient-success: linear-gradient(135deg, hsl(84 81% 44%), hsl(84 81% 54%));
-    --shadow-athletic: 0 4px 20px -4px hsl(210 52% 23% / 0.15);
-    --shadow-premium: 0 8px 30px -8px hsl(210 52% 23% / 0.2);
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 210 52% 23%;
-    --foreground: 0 0% 100%;
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
 
-    --card: 210 45% 26%;
-    --card-foreground: 0 0% 100%;
+    --card: 224 71% 4%;
+    --card-foreground: 213 31% 91%;
 
-    --popover: 210 45% 26%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 213 31% 91%;
 
-    --primary: 0 0% 100%;
-    --primary-foreground: 210 52% 23%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 199 89% 48%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 45 86% 62%;
+    --secondary-foreground: 240 10% 3.9%;
 
-    --muted: 210 45% 26%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215 16% 57%;
 
-    --accent: 84 81% 44%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 142 76% 42%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 63% 31%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 210 45% 26%;
-    --input: 210 45% 26%;
-    --ring: 199 89% 48%;
-
-    --sidebar-background: 210 52% 23%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 199 89% 48%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --ring: 142 76% 36%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 45% 26%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 210 45% 26%;
-    --sidebar-ring: 199 89% 48%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -102,10 +96,6 @@
   }
 
   body {
-    @apply bg-background text-foreground font-inter antialiased;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-roboto-condensed font-medium;
+    @apply bg-background text-foreground;
   }
 }

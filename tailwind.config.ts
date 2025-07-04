@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        'roboto-condensed': ['Roboto Condensed', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
+        display: ['Playfair Display', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -51,14 +51,6 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      backgroundImage: {
-        'gradient-athletic': 'var(--gradient-athletic)',
-        'gradient-success': 'var(--gradient-success)',
-      },
-      boxShadow: {
-        'athletic': 'var(--shadow-athletic)',
-        'premium': 'var(--shadow-premium)',
       },
       keyframes: {
         "accordion-down": {
@@ -102,6 +94,10 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.7" },
         },
+        "shimmer": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -115,6 +111,7 @@ export default {
         "scale-up": "scale-up 0.3s ease-out",
         "rotate-360": "rotate-360 1s linear infinite",
         "pulse-subtle": "pulse-subtle 2s ease-in-out infinite",
+        "shimmer": "shimmer 2s infinite",
       },
     },
   },
