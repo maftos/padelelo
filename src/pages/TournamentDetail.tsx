@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Trophy, Users, ChevronDown, ChevronUp, Settings, Star, Pencil, Check, ChevronLeft } from "lucide-react";
+import { MapPin, Users, ChevronDown, ChevronUp, Settings, Star, Pencil, Check, ChevronLeft } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +15,7 @@ import { useState } from "react";
 import { TournamentInviteDialog } from "./TournamentInviteDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
+import { BracketTypeDisplay } from "@/components/tournament/BracketTypeDisplay";
 
 interface Tournament {
   tournament_id: string;
@@ -150,7 +151,7 @@ export default function TournamentDetail() {
       const { error } = await supabase.rpc('apply_to_tournament', {
         p_tournament_id: tournament?.tournament_id,
         p_player1_id: user.id,
-        p_response_status: 'APPLIED' // Add the required status parameter
+        p_response_status: 'APPLIED'
       });
 
       if (error) {
@@ -160,7 +161,7 @@ export default function TournamentDetail() {
       }
 
       toast.success('Successfully applied to tournament');
-      refetch(); // Refresh the tournament data
+      refetch();
     } catch (error) {
       console.error('Error:', error);
       toast.error('An error occurred while applying to the tournament');
@@ -308,7 +309,7 @@ export default function TournamentDetail() {
                     
                     <div className="space-y-3">                    
                       <div className="flex items-center gap-2">
-                        <Trophy className="h-5 w-5 text-muted-foreground" />
+                        <Star className="h-5 w-5 text-muted-foreground" />
                         <span>Recommended Level: {tournament.recommended_mmr}</span>
                       </div>
                       
@@ -378,17 +379,10 @@ export default function TournamentDetail() {
               </Card>
             </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Bracket Type</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-5 w-5 text-muted-foreground" />
-                  <span>{tournament.bracket_type}</span>
-                </div>
-              </CardContent>
-            </Card>
+            <BracketTypeDisplay 
+              bracketType={tournament.bracket_type} 
+              maxPlayers={tournament.max_participants || 8}
+            />
           </div>
 
           {isMobile && (
