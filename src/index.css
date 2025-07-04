@@ -5,82 +5,82 @@
 
 @layer base {
   :root {
-    --background: 210 11% 15%;
-    --foreground: 213 27% 84%;
+    --background: 36 38 39;
+    --foreground: 228 230 234;
 
-    --card: 210 11% 15%;
-    --card-foreground: 213 27% 84%;
+    --card: 36 38 39;
+    --card-foreground: 228 230 234;
 
-    --popover: 210 11% 15%;
-    --popover-foreground: 213 27% 84%;
+    --popover: 36 38 39;
+    --popover-foreground: 228 230 234;
 
     --primary: 214 100% 59%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 10% 23%;
-    --secondary-foreground: 213 27% 84%;
+    --secondary: 62 64 66;
+    --secondary-foreground: 228 230 234;
 
-    --muted: 210 10% 23%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 62 64 66;
+    --muted-foreground: 176 179 184;
 
-    --accent: 210 10% 23%;
-    --accent-foreground: 213 27% 84%;
+    --accent: 62 64 66;
+    --accent-foreground: 228 230 234;
 
-    --destructive: 358 76% 59%;
+    --destructive: 220 53 69;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 18% 25%;
-    --input: 210 18% 25%;
+    --border: 62 64 66;
+    --input: 62 64 66;
     --ring: 214 100% 59%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 210 11% 15%;
-    --sidebar-foreground: 213 27% 84%;
+    --sidebar-background: 36 38 39;
+    --sidebar-foreground: 228 230 234;
     --sidebar-primary: 214 100% 59%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 10% 23%;
-    --sidebar-accent-foreground: 213 27% 84%;
-    --sidebar-border: 210 18% 25%;
+    --sidebar-accent: 62 64 66;
+    --sidebar-accent-foreground: 228 230 234;
+    --sidebar-border: 62 64 66;
     --sidebar-ring: 214 100% 59%;
   }
 
   .dark {
-    --background: 210 11% 15%;
-    --foreground: 213 27% 84%;
+    --background: 36 38 39;
+    --foreground: 228 230 234;
 
-    --card: 210 11% 15%;
-    --card-foreground: 213 27% 84%;
+    --card: 36 38 39;
+    --card-foreground: 228 230 234;
 
-    --popover: 210 11% 15%;
-    --popover-foreground: 213 27% 84%;
+    --popover: 36 38 39;
+    --popover-foreground: 228 230 234;
 
     --primary: 214 100% 59%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 10% 23%;
-    --secondary-foreground: 213 27% 84%;
+    --secondary: 62 64 66;
+    --secondary-foreground: 228 230 234;
 
-    --muted: 210 10% 23%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 62 64 66;
+    --muted-foreground: 176 179 184;
 
-    --accent: 210 10% 23%;
-    --accent-foreground: 213 27% 84%;
+    --accent: 62 64 66;
+    --accent-foreground: 228 230 234;
 
-    --destructive: 358 76% 59%;
+    --destructive: 220 53 69;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 18% 25%;
-    --input: 210 18% 25%;
+    --border: 62 64 66;
+    --input: 62 64 66;
     --ring: 214 100% 59%;
 
-    --sidebar-background: 210 11% 15%;
-    --sidebar-foreground: 213 27% 84%;
+    --sidebar-background: 36 38 39;
+    --sidebar-foreground: 228 230 234;
     --sidebar-primary: 214 100% 59%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 10% 23%;
-    --sidebar-accent-foreground: 213 27% 84%;
-    --sidebar-border: 210 18% 25%;
+    --sidebar-accent: 62 64 66;
+    --sidebar-accent-foreground: 228 230 234;
+    --sidebar-border: 62 64 66;
     --sidebar-ring: 214 100% 59%;
   }
 }
@@ -91,14 +91,14 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground;
+    font-family: 'Segoe UI', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, Arial, sans-serif;
     font-feature-settings: "rlig" 1, "calt" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Typography hierarchy following Facebook's patterns */
   h1 {
     @apply text-3xl font-bold leading-tight tracking-tight;
   }
@@ -127,7 +127,6 @@
     @apply text-base leading-relaxed;
   }
 
-  /* Consistent button and interactive element styling */
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors;
   }
@@ -136,12 +135,10 @@
     @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-md font-medium transition-colors;
   }
 
-  /* Card styling consistent with Facebook's approach */
   .card-facebook {
     @apply bg-card border border-border rounded-md shadow-sm;
   }
 
-  /* Input styling */
   .input-facebook {
     @apply bg-secondary border border-border rounded-md px-3 py-2 text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors;
   }

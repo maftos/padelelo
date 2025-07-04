@@ -17,23 +17,21 @@ export default {
       fontFamily: {
         sans: [
           'Segoe UI',
-          'SF Pro Display',
+          'Helvetica Neue',
           '-apple-system',
           'BlinkMacSystemFont',
-          'Roboto',
-          'Helvetica Neue',
           'Arial',
           'sans-serif'
         ],
       },
       fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1rem' }],       // 12px - Small labels
-        'sm': ['0.8125rem', { lineHeight: '1.125rem' }], // 13px - Secondary text
-        'base': ['0.9375rem', { lineHeight: '1.375rem' }], // 15px - Primary text
-        'lg': ['1.0625rem', { lineHeight: '1.5rem' }],   // 17px - Large text
-        'xl': ['1.25rem', { lineHeight: '1.75rem' }],    // 20px - Headings
-        '2xl': ['1.5rem', { lineHeight: '2rem' }],       // 24px - Large headings
-        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],  // 30px - Page titles
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['0.9375rem', { lineHeight: '1.375rem' }],
+        'lg': ['1.0625rem', { lineHeight: '1.5rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
       },
       fontWeight: {
         normal: '400',
@@ -42,31 +40,31 @@ export default {
         bold: '700',
       },
       spacing: {
-        '0.5': '0.125rem', // 2px
-        '1': '0.25rem',    // 4px - Base unit
-        '1.5': '0.375rem', // 6px
-        '2': '0.5rem',     // 8px
-        '2.5': '0.625rem', // 10px
-        '3': '0.75rem',    // 12px
-        '3.5': '0.875rem', // 14px
-        '4': '1rem',       // 16px
-        '5': '1.25rem',    // 20px
-        '6': '1.5rem',     // 24px
-        '7': '1.75rem',    // 28px
-        '8': '2rem',       // 32px
-        '10': '2.5rem',    // 40px
-        '12': '3rem',      // 48px
-        '16': '4rem',      // 64px
-        '20': '5rem',      // 80px
-        '24': '6rem',      // 96px
+        '0.5': '0.125rem',
+        '1': '0.25rem',
+        '1.5': '0.375rem',
+        '2': '0.5rem',
+        '2.5': '0.625rem',
+        '3': '0.75rem',
+        '3.5': '0.875rem',
+        '4': '1rem',
+        '5': '1.25rem',
+        '6': '1.5rem',
+        '7': '1.75rem',
+        '8': '2rem',
+        '10': '2.5rem',
+        '12': '3rem',
+        '16': '4rem',
+        '20': '5rem',
+        '24': '6rem',
       },
       borderRadius: {
         'none': '0',
-        'sm': '0.125rem',   // 2px
-        'DEFAULT': '0.5rem', // 8px - Facebook's primary radius
-        'md': '0.5rem',     // 8px
-        'lg': '0.75rem',    // 12px
-        'xl': '1rem',       // 16px
+        'sm': '0.125rem',
+        'DEFAULT': '0.5rem',
+        'md': '0.5rem',
+        'lg': '0.75rem',
+        'xl': '1rem',
         'full': '9999px',
       },
       colors: {
