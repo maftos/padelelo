@@ -18,6 +18,7 @@ import Tournaments from "./pages/Tournaments";
 import TournamentDetail from "./pages/TournamentDetail";
 import CreateTournament from "./pages/CreateTournament";
 import EditTournament from "./pages/EditTournament";
+import PadelCourts from "./pages/PadelCourts";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -58,6 +59,7 @@ function App() {
               <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
               <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
               <Route path="/tournament/create-tournament" element={<CreateTournament />} />
+              <Route path="/padel-courts" element={<PadelCourts />} />
             </Routes>
           </MainLayout>
           <Toaster />
