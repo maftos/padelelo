@@ -10,8 +10,7 @@ import {
   MapPin,
   LogOut,
   LayoutDashboard,
-  BarChart3,
-  UserPlus
+  BarChart3
 } from "lucide-react";
 
 interface SideMenuContentProps {
@@ -90,14 +89,6 @@ export const SideMenuContent = ({
 
       {/* Main Navigation Section */}
       <div className="space-y-1 px-2">
-        <Link
-          to="/player-matching"
-          onClick={onClose}
-          className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-        >
-          <UserPlus className="h-4 w-4" />
-          Player Matching
-        </Link>
         <Link
           to="/tournaments"
           onClick={onClose}
