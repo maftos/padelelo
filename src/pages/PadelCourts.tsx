@@ -132,14 +132,14 @@ const PadelCourts = () => {
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Map Section */}
           <div className="lg:col-span-1">
-            <Card className="h-[600px]">
+            <Card className="h-[700px]">
               <CardHeader>
                 <CardTitle>Interactive Map</CardTitle>
                 <CardDescription>
                   Click on any marker to view club details
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-2 h-[520px]">
+              <CardContent className="p-2 h-[620px]">
                 <PadelMap clubs={sampleClubs} onClubSelect={setSelectedClub} />
               </CardContent>
             </Card>
@@ -148,7 +148,7 @@ const PadelCourts = () => {
           {/* Club Details Section */}
           <div className="lg:col-span-1">
             {selectedClub ? (
-              <Card className="h-[600px] overflow-y-auto">
+              <Card className="h-[700px] overflow-y-auto">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div>
@@ -222,7 +222,7 @@ const PadelCourts = () => {
                 </CardContent>
               </Card>
             ) : (
-              <Card className="h-[600px] flex items-center justify-center">
+              <Card className="h-[700px] flex items-center justify-center">
                 <CardContent className="text-center">
                   <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                   <h3 className="font-semibold mb-2">Select a Padel Club</h3>

@@ -29,7 +29,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/satellite-v9',
+        style: 'mapbox://styles/mapbox/satellite-streets-v11',
         center: [57.5522, -20.3484], // Center of Mauritius
         zoom: 10,
         pitch: 45,
@@ -76,58 +76,85 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     clubs.forEach((club) => {
-      // Create custom marker element
+      // Create custom marker element with photo
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
       markerElement.style.cssText = `
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
         border-radius: 50%;
-        background: hsl(var(--primary));
-        border: 3px solid white;
+        border: 3px solid hsl(var(--primary));
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        transition: transform 0.2s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        background: white;
+        position: relative;
       `;
       
-      // Add tennis/padel icon
+      // Add padel court image
       markerElement.innerHTML = `
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-        </svg>
+        <img 
+          src="https://images.unsplash.com/photo-1544963950-a7a778c6548e?w=100&h=100&fit=crop&crop=center" 
+          alt="Padel Court"
+          style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"
+        />
+        <div style="
+          position: absolute;
+          bottom: -2px;
+          right: -2px;
+          width: 16px;
+          height: 16px;
+          background: hsl(var(--primary));
+          border: 2px solid white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
       `;
 
       // Add hover effect
       markerElement.addEventListener('mouseenter', () => {
-        markerElement.style.transform = 'scale(1.1)';
+        markerElement.style.transform = 'scale(1.15)';
+        markerElement.style.zIndex = '1000';
       });
       markerElement.addEventListener('mouseleave', () => {
         markerElement.style.transform = 'scale(1)';
+        markerElement.style.zIndex = '1';
       });
 
-      // Create marker
-      const marker = new mapboxgl.Marker(markerElement)
+      // Create marker with proper positioning
+      const marker = new mapboxgl.Marker({
+        element: markerElement,
+        anchor: 'center'
+      })
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
-      // Create popup
+      // Create popup with better positioning
       const popup = new mapboxgl.Popup({
-        offset: 25,
+        offset: [0, -60], // Position above the marker
         closeButton: false,
-        className: 'custom-popup'
+        className: 'custom-popup',
+        anchor: 'bottom'
       }).setHTML(`
-        <div style="padding: 8px; min-width: 200px;">
-          <h3 style="margin: 0 0 4px 0; font-weight: 600; color: hsl(var(--foreground));">${club.name}</h3>
-          <p style="margin: 0 0 4px 0; font-size: 12px; color: hsl(var(--muted-foreground));">${club.address}</p>
-          <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 4px;">
-            <span style="color: #fbbf24;">★</span>
-            <span style="font-size: 12px; color: hsl(var(--foreground));">${club.rating}</span>
-            <span style="font-size: 12px; color: hsl(var(--muted-foreground));">• ${club.numberOfCourts} courts</span>
+        <div style="padding: 12px; min-width: 220px; max-width: 280px;">
+          <h3 style="margin: 0 0 6px 0; font-weight: 600; color: hsl(var(--foreground)); font-size: 14px; line-height: 1.2;">${club.name}</h3>
+          <p style="margin: 0 0 6px 0; font-size: 11px; color: hsl(var(--muted-foreground)); line-height: 1.3;">${club.address}</p>
+          <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+            <span style="color: #fbbf24; font-size: 14px;">★</span>
+            <span style="font-size: 12px; color: hsl(var(--foreground)); font-weight: 500;">${club.rating}</span>
+            <span style="font-size: 11px; color: hsl(var(--muted-foreground));">• ${club.numberOfCourts} courts</span>
           </div>
-          <p style="margin: 0; font-size: 11px; color: hsl(var(--muted-foreground));">Click marker for details</p>
+          <p style="margin: 0; font-size: 10px; color: hsl(var(--primary)); font-weight: 500;">Click for details →</p>
         </div>
       `);
 
@@ -143,15 +170,34 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         });
       });
 
-      // Show popup on hover
-      marker.getElement().addEventListener('mouseenter', () => {
-        popup.addTo(map.current!);
-        marker.setPopup(popup);
+      // Show popup on hover with proper event handling
+      let popupTimeout: NodeJS.Timeout;
+      
+      markerElement.addEventListener('mouseenter', () => {
+        clearTimeout(popupTimeout);
+        if (!popup.isOpen()) {
+          marker.setPopup(popup);
+          popup.addTo(map.current!);
+        }
       });
 
-      marker.getElement().addEventListener('mouseleave', () => {
-        popup.remove();
+      markerElement.addEventListener('mouseleave', () => {
+        popupTimeout = setTimeout(() => {
+          popup.remove();
+        }, 100);
       });
+
+      // Keep popup open when hovering over it
+      const popupElement = popup.getElement();
+      if (popupElement) {
+        popupElement.addEventListener('mouseenter', () => {
+          clearTimeout(popupTimeout);
+        });
+        
+        popupElement.addEventListener('mouseleave', () => {
+          popup.remove();
+        });
+      }
 
       markers.current.push(marker);
     });
