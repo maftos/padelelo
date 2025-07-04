@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -31,32 +30,29 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/navigation-night-v1', // Dark colorful navigation style
-        center: [57.5522, -20.3484], // Center of Mauritius
+        style: 'mapbox://styles/mapbox/navigation-night-v1',
+        center: [57.5522, -20.3484],
         zoom: 10,
-        minZoom: 9, // Prevent zooming out too far from Mauritius
-        maxZoom: 16, // Allow detailed zoom for club locations
-        pitch: 0, // Keep it flat (2D)
+        minZoom: 9,
+        maxZoom: 16,
+        pitch: 0,
         bearing: 0
       });
 
       console.log('Map instance created successfully');
 
-      // Add navigation controls
       map.current.addControl(
         new mapboxgl.NavigationControl({
-          visualizePitch: false, // Disable pitch control for 2D experience
+          visualizePitch: false,
         }),
         'top-right'
       );
 
-      // Add scale control
       map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
 
-      // Restrict map bounds to Mauritius area - expanded to include all markers
       const mauritiusBounds = new mapboxgl.LngLatBounds(
-        [57.0, -20.8], // Southwest coordinates
-        [58.1, -19.8]  // Northeast coordinates - expanded to include Le Touessrok (57.8833)
+        [57.0, -20.8],
+        [58.1, -19.8]
       );
       map.current.setMaxBounds(mauritiusBounds);
 
@@ -87,29 +83,28 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     clubs.forEach((club, index) => {
-      // Create custom marker element with static dimensions
+      // Create marker element using the same approach as working project
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
-      markerElement.style.cssText = `
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 3px solid ${selectedClubId === club.id ? '#059669' : '#10b981'};
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        overflow: hidden;
-        background: white;
-        position: relative;
-        transform-origin: center;
-      `;
       
-      // Use more reliable placeholder images with proper fallbacks
+      // Apply styles directly to properties (more reliable than innerHTML)
+      markerElement.style.width = '40px';
+      markerElement.style.height = '40px';
+      markerElement.style.borderRadius = '50%';
+      markerElement.style.border = `3px solid ${selectedClubId === club.id ? '#059669' : '#10b981'}`;
+      markerElement.style.cursor = 'pointer';
+      markerElement.style.display = 'flex';
+      markerElement.style.alignItems = 'center';
+      markerElement.style.justifyContent = 'center';
+      markerElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+      markerElement.style.transition = 'border-color 0.2s ease, box-shadow 0.2s ease';
+      markerElement.style.overflow = 'hidden';
+      markerElement.style.background = 'white';
+      markerElement.style.position = 'relative';
+      
+      // Use reliable placeholder images
       const padelImages = [
-        '/placeholder.svg', // Using local placeholder as primary
+        '/placeholder.svg',
         'https://images.unsplash.com/photo-1544963950-a7a778c6548e?w=100&h=100&fit=crop&crop=center',
         'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=100&fit=crop&crop=center',
         'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=100&h=100&fit=crop&crop=center',
@@ -119,41 +114,48 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       const imageUrl = padelImages[index % padelImages.length];
       
-      markerElement.innerHTML = `
-        <img 
-          src="${imageUrl}" 
-          alt="Padel Court at ${club.name}"
-          style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;"
-          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-        />
-        <div style="
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(135deg, #10b981, #059669);
-          border-radius: 50%;
-          display: none;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 14px;
-        ">🏓</div>
-      `;
+      // Create image element
+      const imgElement = document.createElement('img');
+      imgElement.src = imageUrl;
+      imgElement.alt = `Padel Court at ${club.name}`;
+      imgElement.style.width = '100%';
+      imgElement.style.height = '100%';
+      imgElement.style.objectFit = 'cover';
+      imgElement.style.borderRadius = '50%';
+      
+      // Create fallback element
+      const fallbackElement = document.createElement('div');
+      fallbackElement.style.width = '100%';
+      fallbackElement.style.height = '100%';
+      fallbackElement.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+      fallbackElement.style.borderRadius = '50%';
+      fallbackElement.style.display = 'none';
+      fallbackElement.style.alignItems = 'center';
+      fallbackElement.style.justifyContent = 'center';
+      fallbackElement.style.color = 'white';
+      fallbackElement.style.fontWeight = 'bold';
+      fallbackElement.style.fontSize = '14px';
+      fallbackElement.textContent = '🏓';
+      
+      // Handle image load error
+      imgElement.onerror = () => {
+        imgElement.style.display = 'none';
+        fallbackElement.style.display = 'flex';
+      };
+      
+      markerElement.appendChild(imgElement);
+      markerElement.appendChild(fallbackElement);
 
-      // Create marker with simplified configuration - key fix for alignment
-      const marker = new mapboxgl.Marker({
-        element: markerElement,
-        anchor: 'center' // Only use center anchor for proper geographic positioning
-      })
+      // Create marker using simple approach (like working project)
+      const marker = new mapboxgl.Marker(markerElement)
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
-      // Create popup with improved content and positioning
+      // Create popup
       const popup = new mapboxgl.Popup({
-        offset: [0, -25], // Position above the marker
+        offset: [0, -25],
         closeButton: false,
         className: 'custom-popup',
-        anchor: 'bottom',
         maxWidth: '280px'
       }).setHTML(`
         <div style="padding: 12px; min-width: 220px;">
@@ -170,7 +172,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         </div>
       `);
 
-      // Hover behavior with no dimension changes
+      // Hover behavior
       let hoverTimeout: NodeJS.Timeout;
       let showTimeout: NodeJS.Timeout;
       
@@ -190,7 +192,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         }, 200);
       };
 
-      // Hover effects using only color and shadow - no dimension changes
+      // Hover effects using only color and shadow changes
       const applyHoverEffect = () => {
         markerElement.style.borderColor = '#059669';
         markerElement.style.boxShadow = '0 6px 16px rgba(0,0,0,0.35)';
@@ -203,7 +205,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         }
       };
 
-      // Event listeners for hover behavior
+      // Event listeners
       markerElement.addEventListener('mouseenter', () => {
         applyHoverEffect();
         showPopup();
@@ -214,18 +216,14 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         hidePopup();
       });
 
-      // Click handling with improved feedback
       markerElement.addEventListener('click', (e) => {
         e.stopPropagation();
         
-        // Update selected state
         setSelectedClubId(club.id);
         onClubSelect(club);
         
-        // Update all markers to reflect selection
         updateMarkerStates(club.id);
         
-        // Smooth fly to selected marker
         map.current?.flyTo({
           center: club.coordinates,
           zoom: Math.max(map.current.getZoom(), 13),
@@ -233,7 +231,6 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           duration: 1000
         });
         
-        // Hide popup after click
         hidePopup();
       });
 
@@ -308,9 +305,6 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         }
         .mapboxgl-ctrl {
           box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
-        }
-        .custom-marker {
-          will-change: border-color, box-shadow;
         }
       `}</style>
     </div>
