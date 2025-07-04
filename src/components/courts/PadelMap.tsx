@@ -17,37 +17,59 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
   const markers = useRef<mapboxgl.Marker[]>([]);
 
   const initializeMap = () => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current) {
+      console.error('Map container not found');
+      return;
+    }
 
-    mapboxgl.accessToken = MAPBOX_TOKEN;
+    console.log('Initializing map with token:', MAPBOX_TOKEN.substring(0, 20) + '...');
     
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [57.5522, -20.3484], // Center of Mauritius
-      zoom: 10,
-      pitch: 45,
-      bearing: 0
-    });
+    try {
+      mapboxgl.accessToken = MAPBOX_TOKEN;
+      
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
+        center: [57.5522, -20.3484], // Center of Mauritius
+        zoom: 10,
+        pitch: 45,
+        bearing: 0
+      });
 
-    // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-      }),
-      'top-right'
-    );
+      console.log('Map instance created successfully');
 
-    // Add scale control
-    map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
+      // Add navigation controls
+      map.current.addControl(
+        new mapboxgl.NavigationControl({
+          visualizePitch: true,
+        }),
+        'top-right'
+      );
 
-    map.current.on('load', () => {
-      addClubMarkers();
-    });
+      // Add scale control
+      map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
+
+      map.current.on('load', () => {
+        console.log('Map loaded successfully');
+        addClubMarkers();
+      });
+
+      map.current.on('error', (e) => {
+        console.error('Mapbox error:', e);
+      });
+
+    } catch (error) {
+      console.error('Error initializing map:', error);
+    }
   };
 
   const addClubMarkers = () => {
-    if (!map.current) return;
+    if (!map.current) {
+      console.error('Map not available for adding markers');
+      return;
+    }
+
+    console.log('Adding markers for', clubs.length, 'clubs');
 
     // Clear existing markers
     markers.current.forEach(marker => marker.remove());
@@ -152,8 +174,15 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
 
   return (
     <div className="relative w-full h-full">
-      <div ref={mapContainer} className="absolute inset-0 rounded-lg" />
+      <div 
+        ref={mapContainer} 
+        className="absolute inset-0 rounded-lg"
+        style={{ minHeight: '400px' }}
+      />
       <style>{`
+        .mapboxgl-canvas {
+          outline: none;
+        }
         .custom-popup .mapboxgl-popup-content {
           background: hsl(var(--card));
           border: 1px solid hsl(var(--border));

@@ -139,7 +139,7 @@ const PadelCourts = () => {
                   Click on any marker to view club details
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-2">
+              <CardContent className="p-2 h-[520px]">
                 <PadelMap clubs={sampleClubs} onClubSelect={setSelectedClub} />
               </CardContent>
             </Card>
