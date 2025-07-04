@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -228,7 +227,7 @@ export default function PlayerMatching() {
                       return (
                         <div 
                           key={index} 
-                          className="flex items-center gap-2 bg-muted/30 rounded-lg p-2 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 animate-pulse"
+                          className="flex items-center gap-2 bg-muted/30 rounded-lg p-2 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200"
                           onClick={() => handleJoinGame(post.id)}
                         >
                           <Avatar className="h-8 w-8">
