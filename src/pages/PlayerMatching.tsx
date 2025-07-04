@@ -1,8 +1,10 @@
-import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck } from "lucide-react";
+import { useState } from "react";
+import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNotificationModal";
 
 // Mock data for player matching posts
 const mockPlayerMatchingPosts = [
@@ -92,6 +94,8 @@ const calculateAverageMMR = (players: Array<{ mmr: number }>) => {
 };
 
 export default function PlayerMatching() {
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       {/* Header */}
@@ -100,10 +104,20 @@ export default function PlayerMatching() {
           <h1 className="text-2xl font-bold text-foreground">Player Matching</h1>
           <p className="text-muted-foreground">Find players to complete your booked courts</p>
         </div>
-        <Button className="flex items-center gap-2">
-          <Plus className="h-4 w-4" />
-          Post Your Court
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+            onClick={() => setNotificationModalOpen(true)}
+          >
+            <Bell className="h-4 w-4" />
+            Subscribe to Notifications
+          </Button>
+          <Button className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Post Your Court
+          </Button>
+        </div>
       </div>
 
       {/* Filter Section */}
@@ -212,6 +226,11 @@ export default function PlayerMatching() {
           </Button>
         </div>
       )}
+
+      <PlayerMatchingNotificationModal
+        open={notificationModalOpen}
+        onOpenChange={setNotificationModalOpen}
+      />
     </div>
   );
 }
