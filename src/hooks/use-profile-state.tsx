@@ -122,7 +122,6 @@ export const useProfileState = (userId: string | undefined) => {
         description: "Your profile photo has been updated successfully.",
       });
     } catch (error) {
-      console.error('Error uploading photo:', error);
       toast({
         title: "Upload failed",
         description: "There was an error uploading your photo. Please try again.",
@@ -144,10 +143,6 @@ export const useProfileState = (userId: string | undefined) => {
         return;
       }
 
-      console.log('Updating profile with data:', {
-        userId,
-        formData
-      });
 
       const { error } = await supabase.rpc('edit_user_profile', {
         user_a_id: userId,
@@ -163,7 +158,6 @@ export const useProfileState = (userId: string | undefined) => {
       });
 
       if (error) {
-        console.error('Error updating profile:', error);
         throw error;
       }
 
@@ -176,7 +170,6 @@ export const useProfileState = (userId: string | undefined) => {
 
       setIsEditing(false);
     } catch (error) {
-      console.error('Error updating profile:', error);
       toast({
         title: "Error",
         description: "Failed to update profile. Please try again.",

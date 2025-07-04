@@ -65,7 +65,6 @@ export const useSignUp = () => {
       });
 
       if (signUpError) {
-        console.error("Sign up error:", signUpError);
         setError(handleAuthError(signUpError));
         return;
       }
@@ -81,7 +80,6 @@ export const useSignUp = () => {
             });
 
           if (referralError) {
-            console.error("Error inserting referral:", referralError);
             toast({
               title: "Warning",
               description: "Your account was created but there was an issue with the referral.",
@@ -89,7 +87,6 @@ export const useSignUp = () => {
             });
           }
         } catch (err) {
-          console.error("Referral processing error:", err);
           // Continue with signup even if referral fails
         }
       }
@@ -104,7 +101,6 @@ export const useSignUp = () => {
       
       setIsVerificationStep(true);
     } catch (err: any) {
-      console.error("Unexpected error:", err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -152,8 +148,6 @@ export const useSignUp = () => {
       });
 
       if (verifyError) {
-        console.error('Verification error:', verifyError);
-        
         if (verifyError.message.toLowerCase().includes('expired')) {
           toast({
             title: "Code Expired",
@@ -171,7 +165,6 @@ export const useSignUp = () => {
       const { session, error: sessionError } = await verifyAndGetSession();
       
       if (sessionError || !session) {
-        console.error("Session error:", sessionError);
         throw new Error("Failed to establish session. Please try logging in.");
       }
 
@@ -188,7 +181,6 @@ export const useSignUp = () => {
       navigate('/');
       
     } catch (error: any) {
-      console.error('Verification process error:', error);
       setError(error.message);
       toast({
         title: "Verification Failed",

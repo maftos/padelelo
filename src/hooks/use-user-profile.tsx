@@ -38,21 +38,16 @@ export const useUserProfile = () => {
       if (!user?.id) return null;
       
       try {
-        console.log('Fetching profile for user:', user.id);
         // Get user profile and friend requests count in parallel
         const [profileResponse, friendRequestsResponse] = await Promise.all([
           supabase.rpc('get_user_profile', { user_a_id: user.id }),
           supabase.rpc('friend_requests_counter', { user_a_id: user.id })
         ]);
-        
-        console.log('Friend requests response:', friendRequestsResponse);
 
         // First cast to unknown, then to our defined type, and extract count
         const requestCount = ((friendRequestsResponse.data as unknown) as FriendRequestsCountResponse)?.count || 0;
-        console.log('Extracted request count:', requestCount);
         
         if (profileResponse.error) {
-          console.error('RPC error:', profileResponse.error);
           const { data: tableData, error: tableError } = await supabase
             .from('users')
             .select('*')
@@ -91,10 +86,8 @@ export const useUserProfile = () => {
           friend_requests_count: requestCount
         } as UserProfile;
         
-        console.log('Final profile with friend requests:', finalProfile);
         return finalProfile;
       } catch (error) {
-        console.error('Profile fetch error:', error);
         throw error;
       }
     },

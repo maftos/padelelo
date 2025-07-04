@@ -79,7 +79,6 @@ export const SignInForm = () => {
       });
 
       if (signInError) {
-        console.error("Sign in error:", signInError);
         setError(handleAuthError(signInError));
         return;
       }
@@ -92,7 +91,6 @@ export const SignInForm = () => {
         navigate('/');
       }
     } catch (err: any) {
-      console.error("Unexpected error:", err);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
