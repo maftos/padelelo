@@ -49,7 +49,7 @@ const Friends = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <div className="container mx-auto px-4 py-6">
+      <div className="w-full max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">

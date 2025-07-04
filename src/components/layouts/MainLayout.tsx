@@ -27,7 +27,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         
         {/* Main Content */}
         <main className="flex-1 lg:ml-0">
-          <div className="max-w-4xl mx-auto px-4 py-6">
+          <div className="w-full px-4 py-6">
             {children}
           </div>
         </main>
