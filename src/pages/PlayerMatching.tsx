@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNotificationModal";
+import { JoinGameModal } from "@/components/JoinGameModal";
 
 // Mock data for player matching posts
 const mockPlayerMatchingPosts = [
@@ -106,6 +107,8 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 
 export default function PlayerMatching() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
+  const [selectedGamePost, setSelectedGamePost] = useState<typeof mockPlayerMatchingPosts[0] | null>(null);
   const [sortBy, setSortBy] = useState("newest");
 
   const sortOptions = [
@@ -115,8 +118,12 @@ export default function PlayerMatching() {
   ];
 
   const handleJoinGame = (postId: string) => {
-    console.log("Joining game:", postId);
-    // TODO: Implement join game functionality
+    console.log("Opening join modal for game:", postId);
+    const gamePost = mockPlayerMatchingPosts.find(post => post.id === postId);
+    if (gamePost) {
+      setSelectedGamePost(gamePost);
+      setJoinGameModalOpen(true);
+    }
   };
 
   return (
@@ -282,6 +289,12 @@ export default function PlayerMatching() {
       <PlayerMatchingNotificationModal
         open={notificationModalOpen}
         onOpenChange={setNotificationModalOpen}
+      />
+
+      <JoinGameModal
+        open={joinGameModalOpen}
+        onOpenChange={setJoinGameModalOpen}
+        gamePost={selectedGamePost}
       />
     </div>
   );
