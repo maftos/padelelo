@@ -174,21 +174,21 @@ export default function Tournaments() {
   return (
     <>
       <Navigation />
-      <div className="w-full min-h-screen">
-        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
+      <div className="w-full min-h-screen overflow-x-hidden">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full">
           {/* Header - Mobile optimized */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-              <div className="min-w-0 flex-1">
+              <div className="min-w-0 flex-1 w-full">
                 <h1 className="text-xl sm:text-2xl font-bold text-foreground">Tournaments</h1>
                 <p className="text-sm sm:text-base text-muted-foreground">Discover and join upcoming tournaments</p>
               </div>
               
               {/* Action buttons - Stack on mobile, side by side on larger screens */}
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto shrink-0">
                 <Button 
                   variant="outline" 
-                  className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3"
+                  className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3 w-full sm:w-auto"
                 >
                   <Bell className="h-4 w-4 flex-shrink-0" />
                   <span className="truncate">{isMobile ? "Alerts" : "Tournament Alerts"}</span>
@@ -206,29 +206,29 @@ export default function Tournaments() {
           {/* Filter and Sort Section - Mobile optimized */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             {/* Filter badges - Scrollable on mobile */}
-            <div className="w-full overflow-x-auto pb-2 sm:pb-0">
-              <div className="flex gap-2 min-w-max px-0">
-                <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">All Tournaments</Badge>
-                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">This Week</Badge>
-                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Next Month</Badge>
-                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">My Level</Badge>
+            <div className="w-full overflow-x-auto scrollbar-hide">
+              <div className="flex gap-2 min-w-max pb-2 sm:pb-0">
+                <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">All Tournaments</Badge>
+                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">This Week</Badge>
+                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">Next Month</Badge>
+                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs shrink-0">My Level</Badge>
               </div>
             </div>
             
             {/* Sort options - Mobile friendly */}
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 text-muted-foreground min-w-0">
+            <div className="flex items-center justify-between gap-2 min-w-0">
+              <div className="flex items-center gap-2 text-muted-foreground min-w-0 shrink">
                 <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
                 <span className="text-sm font-medium">Sort by:</span>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 shrink-0">
                 {sortOptions.map((option) => (
                   <Button
                     key={option.value}
                     variant={sortBy === option.value ? "default" : "ghost"}
                     size="sm"
                     onClick={() => setSortBy(option.value)}
-                    className="text-xs h-8 px-2 sm:px-3"
+                    className="text-xs h-8 px-2 sm:px-3 whitespace-nowrap"
                   >
                     {option.label}
                   </Button>
@@ -238,7 +238,7 @@ export default function Tournaments() {
           </div>
 
           {/* Tournaments Grid - Single column with mobile-optimized cards */}
-          <div className="space-y-3 sm:space-y-4">
+          <div className="space-y-3 sm:space-y-4 w-full">
             {tournaments?.map((tournament) => {
               const primaryAdmin = tournament.admins?.[0] || {
                 user_id: '',
@@ -247,7 +247,7 @@ export default function Tournaments() {
               };
               
               return (
-                <Card key={tournament.tournament_id} className="hover:shadow-md transition-shadow w-full">
+                <Card key={tournament.tournament_id} className="hover:shadow-md transition-shadow w-full overflow-hidden">
                   <div className="relative h-32 sm:h-48 w-full">
                     <img
                       src={tournament.main_photo || '/placeholder.svg'}
@@ -260,14 +260,14 @@ export default function Tournaments() {
                   </div>
                   
                   <CardHeader className="pb-3 sm:pb-4 px-3 sm:px-6">
-                    <div className="flex justify-between items-start gap-2 sm:gap-4">
+                    <div className="flex justify-between items-start gap-2 sm:gap-4 min-w-0">
                       <div className="flex-1 min-w-0">
                         <Link to={`/tournaments/${tournament.tournament_id}`}>
-                          <CardTitle className="text-base sm:text-lg hover:text-primary transition-colors cursor-pointer line-clamp-2 leading-tight">
+                          <CardTitle className="text-base sm:text-lg hover:text-primary transition-colors cursor-pointer line-clamp-2 leading-tight break-words">
                             {tournament.name}
                           </CardTitle>
                         </Link>
-                        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
+                        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2 min-w-0">
                           <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
                             <AvatarImage src={primaryAdmin.profile_photo || undefined} />
                             <AvatarFallback className="text-xs">
@@ -281,7 +281,7 @@ export default function Tournaments() {
                   </CardHeader>
                   
                   <CardContent className="pt-0 space-y-3 sm:space-y-4 px-3 sm:px-6">
-                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed break-words">
                       {tournament.description}
                     </p>
                     
@@ -293,7 +293,7 @@ export default function Tournaments() {
                           {formatTournamentDate(tournament.start_date, tournament.end_date)}
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 sm:gap-4">
+                      <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
                         <div className="flex items-center gap-1">
                           <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 flex-shrink-0" />
                           <span>
