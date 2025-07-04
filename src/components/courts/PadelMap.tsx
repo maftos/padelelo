@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -52,10 +53,10 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       // Add scale control
       map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
 
-      // Restrict map bounds to Mauritius area
+      // Restrict map bounds to Mauritius area - expanded to include all markers
       const mauritiusBounds = new mapboxgl.LngLatBounds(
         [57.0, -20.8], // Southwest coordinates
-        [58.0, -19.8]  // Northeast coordinates
+        [58.1, -19.8]  // Northeast coordinates - expanded to include Le Touessrok (57.8833)
       );
       map.current.setMaxBounds(mauritiusBounds);
 
