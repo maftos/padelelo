@@ -17,11 +17,11 @@ const Leaderboard = () => {
   const { selectedPlayer, setSelectedPlayer, handleSendFriendRequest } = useFriendRequests(userId);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       <Navigation />
-      <main className="container py-8 px-4">
-        <div className="grid md:grid-cols-[1fr,auto] gap-8">
-          <div className="space-y-4 animate-fade-in">
+      <main className="container py-12 px-4 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-[1fr,320px] gap-8">
+          <div className="space-y-8 animate-fade-in">
             <LeaderboardHeader 
               filters={filters}
               onGenderChange={handleGenderChange}
@@ -36,7 +36,7 @@ const Leaderboard = () => {
             />
           </div>
           
-          <div className="md:w-80">
+          <div className="lg:sticky lg:top-24 lg:h-fit">
             <RecentMatches />
           </div>
         </div>
