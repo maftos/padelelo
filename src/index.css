@@ -26,7 +26,7 @@
     --accent: 210 10% 23%;
     --accent-foreground: 213 27% 84%;
 
-    --destructive: 358 75% 59%;
+    --destructive: 358 76% 59%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 210 18% 25%;
@@ -67,7 +67,7 @@
     --accent: 210 10% 23%;
     --accent-foreground: 213 27% 84%;
 
-    --destructive: 358 75% 59%;
+    --destructive: 358 76% 59%;
     --destructive-foreground: 0 0% 100%;
 
     --border: 210 18% 25%;
@@ -91,6 +91,58 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Typography hierarchy following Facebook's patterns */
+  h1 {
+    @apply text-3xl font-bold leading-tight tracking-tight;
+  }
+
+  h2 {
+    @apply text-2xl font-semibold leading-tight tracking-tight;
+  }
+
+  h3 {
+    @apply text-xl font-semibold leading-normal;
+  }
+
+  h4 {
+    @apply text-lg font-medium leading-normal;
+  }
+
+  h5 {
+    @apply text-base font-medium leading-normal;
+  }
+
+  h6 {
+    @apply text-sm font-medium leading-normal;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
+  }
+
+  /* Consistent button and interactive element styling */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2 rounded-md font-medium transition-colors;
+  }
+
+  /* Card styling consistent with Facebook's approach */
+  .card-facebook {
+    @apply bg-card border border-border rounded-md shadow-sm;
+  }
+
+  /* Input styling */
+  .input-facebook {
+    @apply bg-secondary border border-border rounded-md px-3 py-2 text-base placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary transition-colors;
   }
 }

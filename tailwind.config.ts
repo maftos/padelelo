@@ -14,39 +14,94 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: [
+          'Segoe UI',
+          'SF Pro Display',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Roboto',
+          'Helvetica Neue',
+          'Arial',
+          'sans-serif'
+        ],
+      },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1rem' }],       // 12px - Small labels
+        'sm': ['0.8125rem', { lineHeight: '1.125rem' }], // 13px - Secondary text
+        'base': ['0.9375rem', { lineHeight: '1.375rem' }], // 15px - Primary text
+        'lg': ['1.0625rem', { lineHeight: '1.5rem' }],   // 17px - Large text
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],    // 20px - Headings
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],       // 24px - Large headings
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],  // 30px - Page titles
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+        semibold: '600',
+        bold: '700',
+      },
+      spacing: {
+        '0.5': '0.125rem', // 2px
+        '1': '0.25rem',    // 4px - Base unit
+        '1.5': '0.375rem', // 6px
+        '2': '0.5rem',     // 8px
+        '2.5': '0.625rem', // 10px
+        '3': '0.75rem',    // 12px
+        '3.5': '0.875rem', // 14px
+        '4': '1rem',       // 16px
+        '5': '1.25rem',    // 20px
+        '6': '1.5rem',     // 24px
+        '7': '1.75rem',    // 28px
+        '8': '2rem',       // 32px
+        '10': '2.5rem',    // 40px
+        '12': '3rem',      // 48px
+        '16': '4rem',      // 64px
+        '20': '5rem',      // 80px
+        '24': '6rem',      // 96px
+      },
+      borderRadius: {
+        'none': '0',
+        'sm': '0.125rem',   // 2px
+        'DEFAULT': '0.5rem', // 8px - Facebook's primary radius
+        'md': '0.5rem',     // 8px
+        'lg': '0.75rem',    // 12px
+        'xl': '1rem',       // 16px
+        'full': '9999px',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "#242526",
-        foreground: "#E4E6EA",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#1877F2",
-          foreground: "#FFFFFF",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#3A3B3C",
-          foreground: "#E4E6EA",
-        },
-        accent: {
-          DEFAULT: "#3A3B3C",
-          foreground: "#E4E6EA",
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "#FA383E",
-          foreground: "#FFFFFF",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
-          DEFAULT: "#3A3B3C",
-          foreground: "#B0B3B8",
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
         },
         popover: {
-          DEFAULT: "#242526",
-          foreground: "#E4E6EA",
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
         },
         card: {
-          DEFAULT: "#242526",
-          foreground: "#E4E6EA",
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
       },
       keyframes: {
