@@ -30,7 +30,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11', // Colorful street style
+        style: 'mapbox://styles/mapbox/navigation-night-v1', // Dark colorful navigation style
         center: [57.5522, -20.3484], // Center of Mauritius
         zoom: 10,
         minZoom: 9, // Prevent zooming out too far from Mauritius
@@ -86,7 +86,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     clubs.forEach((club, index) => {
-      // Create custom marker element with proper styling
+      // Create custom marker element with simplified styling
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
       markerElement.style.cssText = `
@@ -99,11 +99,10 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-        transition: all 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
         overflow: hidden;
         background: white;
         position: relative;
-        transform-origin: center;
       `;
       
       // Use more reliable placeholder images with proper fallbacks
@@ -184,7 +183,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         </div>
       `);
 
-      // Improved hover behavior with delays
+      // Simplified hover behavior using border and shadow effects only
       let hoverTimeout: NodeJS.Timeout;
       let showTimeout: NodeJS.Timeout;
       
@@ -194,7 +193,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           if (map.current) {
             popup.setLngLat(club.coordinates).addTo(map.current);
           }
-        }, 150); // Small delay to prevent flickering
+        }, 150);
       };
       
       const hidePopup = () => {
@@ -204,20 +203,18 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         }, 200);
       };
 
-      // Enhanced hover effects with subtle scaling
+      // Simple hover effects that don't interfere with positioning
       const applyHoverEffect = () => {
-        markerElement.style.transform = 'scale(1.1)';
-        markerElement.style.zIndex = '100';
-        markerElement.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
         markerElement.style.borderColor = '#059669';
+        markerElement.style.borderWidth = '4px';
+        markerElement.style.boxShadow = '0 6px 16px rgba(0,0,0,0.35)';
       };
       
       const removeHoverEffect = () => {
         if (selectedClubId !== club.id) {
-          markerElement.style.transform = 'scale(1)';
-          markerElement.style.zIndex = '1';
-          markerElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
           markerElement.style.borderColor = '#10b981';
+          markerElement.style.borderWidth = '3px';
+          markerElement.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
         }
       };
 
@@ -280,11 +277,11 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       if (club.id === selectedId) {
         element.style.borderColor = '#059669';
-        element.style.transform = 'scale(1.05)';
-        element.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+        element.style.borderWidth = '4px';
+        element.style.boxShadow = '0 6px 16px rgba(0,0,0,0.35)';
       } else {
         element.style.borderColor = '#10b981';
-        element.style.transform = 'scale(1)';
+        element.style.borderWidth = '3px';
         element.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
       }
     });
@@ -330,7 +327,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           box-shadow: 0 0 10px 2px rgba(0,0,0,0.1);
         }
         .custom-marker {
-          will-change: transform;
+          will-change: border-color, border-width, box-shadow;
         }
       `}</style>
     </div>
