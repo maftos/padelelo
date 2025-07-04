@@ -30,7 +30,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11', // Simple 2D light style
+        style: 'mapbox://styles/mapbox/streets-v11', // Colorful street style
         center: [57.5522, -20.3484], // Center of Mauritius
         zoom: 10,
         minZoom: 9, // Prevent zooming out too far from Mauritius
@@ -154,18 +154,6 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         </div>
       `;
 
-      // Create hover area (larger than visual marker for easier interaction)
-      const hoverArea = document.createElement('div');
-      hoverArea.style.cssText = `
-        position: absolute;
-        width: 70px;
-        height: 70px;
-        top: -10px;
-        left: -10px;
-        z-index: 1;
-      `;
-      markerElement.appendChild(hoverArea);
-
       // Create marker with proper positioning
       const marker = new mapboxgl.Marker({
         element: markerElement,
@@ -234,12 +222,12 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       };
 
       // Event listeners for hover behavior
-      hoverArea.addEventListener('mouseenter', () => {
+      markerElement.addEventListener('mouseenter', () => {
         applyHoverEffect();
         showPopup();
       });
       
-      hoverArea.addEventListener('mouseleave', () => {
+      markerElement.addEventListener('mouseleave', () => {
         removeHoverEffect();
         hidePopup();
       });
