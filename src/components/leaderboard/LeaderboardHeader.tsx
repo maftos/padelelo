@@ -2,12 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -47,18 +47,18 @@ export const LeaderboardHeader = ({
           <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Top 25 Players</span>
         </div>
         
-        <Sheet>
-          <SheetTrigger asChild>
+        <Dialog>
+          <DialogTrigger asChild>
             <Button variant="outline" className="shadow-sm border-2 hover:border-primary/20 transition-all duration-200">
               <Filter className="h-4 w-4 mr-2" />
               Filters
             </Button>
-          </SheetTrigger>
-          <SheetContent className="w-80">
-            <SheetHeader>
-              <SheetTitle className="text-xl">Filter Rankings</SheetTitle>
-            </SheetHeader>
-            <div className="space-y-8 mt-8">
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl">Filter Rankings</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-6 mt-6">
               <div className="space-y-3">
                 <Label className="text-base font-medium">Gender</Label>
                 <Select value={filters.gender} onValueChange={onGenderChange}>
@@ -84,8 +84,8 @@ export const LeaderboardHeader = ({
                 />
               </div>
             </div>
-          </SheetContent>
-        </Sheet>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
