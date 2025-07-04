@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { MatchHeader } from "./MatchHeader";
 import { TeamDisplay } from "./TeamDisplay";
@@ -61,15 +62,15 @@ export const MatchHistoryCard = ({
   };
 
   return (
-    <Card className="p-4 space-y-4">
+    <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-lg hover:shadow-xl transition-all duration-200 p-6 space-y-6">
       <MatchHeader
         changeType={change_type}
         createdAt={created_at}
         changeAmount={change_amount}
       />
       
-      <div className="space-y-4">
-        <div className="flex items-center justify-between gap-2">
+      <div className="space-y-6">
+        <div className="flex items-center justify-between gap-4">
           <TeamDisplay
             player1DisplayName={team1_player1_display_name}
             player1ProfilePhoto={team1_player1_profile_photo}
@@ -79,10 +80,10 @@ export const MatchHistoryCard = ({
             player2IsCompleter={isMatchCompleter(player2_id)}
           />
 
-          <div className="flex items-center gap-2 font-semibold">
-            <span>{team1_score}</span>
-            <span className="text-muted-foreground">-</span>
-            <span>{team2_score}</span>
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-accent/20 to-accent/30 border border-accent/30">
+            <span className="text-2xl font-bold text-foreground">{team1_score}</span>
+            <span className="text-lg text-muted-foreground">-</span>
+            <span className="text-2xl font-bold text-foreground">{team2_score}</span>
           </div>
 
           <TeamDisplay
