@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -238,209 +239,211 @@ export default function PlayerMatching() {
   };
 
   return (
-    <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
-      {/* Header - Optimized for mobile */}
-      <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-foreground">Player Matching</h1>
-            <p className="text-sm sm:text-base text-muted-foreground">Find players to complete your booked courts</p>
+    <div className="w-full min-h-screen">
+      <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
+        {/* Header - Optimized for mobile */}
+        <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Player Matching</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Find players to complete your booked courts</p>
+            </div>
+            
+            {/* Action buttons - Stack on mobile, side by side on larger screens */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button 
+                variant="outline" 
+                className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3"
+                onClick={() => setNotificationModalOpen(true)}
+              >
+                <Bell className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{isMobile ? "Notifications" : "Subscribe to Notifications"}</span>
+              </Button>
+              <Button 
+                className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3"
+                onClick={() => setAddMatchWizardOpen(true)}
+              >
+                <Plus className="h-4 w-4 flex-shrink-0" />
+                <span className="truncate">Post Your Court</span>
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Filter and Sort Section - Mobile optimized */}
+        <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+          {/* Filter badges - Scrollable on mobile */}
+          <div className="w-full overflow-x-auto pb-2 sm:pb-0">
+            <div className="flex gap-2 min-w-max px-0">
+              <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">All Posts</Badge>
+              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Near Me</Badge>
+              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Today</Badge>
+              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Tomorrow</Badge>
+            </div>
           </div>
           
-          {/* Action buttons - Stack on mobile, side by side on larger screens */}
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Button 
-              variant="outline" 
-              className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10"
-              onClick={() => setNotificationModalOpen(true)}
-            >
-              <Bell className="h-4 w-4" />
-              {isMobile ? "Notifications" : "Subscribe to Notifications"}
-            </Button>
-            <Button 
-              className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10"
-              onClick={() => setAddMatchWizardOpen(true)}
-            >
-              <Plus className="h-4 w-4" />
-              Post Your Court
-            </Button>
+          {/* Sort options - Mobile friendly */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-muted-foreground min-w-0">
+              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm font-medium">Sort by:</span>
+            </div>
+            <div className="flex gap-1">
+              {sortOptions.map((option) => (
+                <Button
+                  key={option.value}
+                  variant={sortBy === option.value ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setSortBy(option.value)}
+                  className="text-xs h-8 px-2 sm:px-3"
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Filter and Sort Section - Mobile optimized */}
-      <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-        {/* Filter badges - Scrollable on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
-          <div className="flex gap-2 min-w-max">
-            <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">All Posts</Badge>
-            <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">Near Me</Badge>
-            <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">Today</Badge>
-            <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">Tomorrow</Badge>
-          </div>
-        </div>
-        
-        {/* Sort options - Mobile friendly */}
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <ArrowUpDown className="h-4 w-4" />
-            <span className="text-sm font-medium">Sort by:</span>
-          </div>
-          <div className="flex gap-1">
-            {sortOptions.map((option) => (
-              <Button
-                key={option.value}
-                variant={sortBy === option.value ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setSortBy(option.value)}
-                className="text-xs h-8 px-2 sm:px-3"
-              >
-                {option.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Posts Grid - Single column with mobile-optimized cards */}
-      <div className="space-y-3 sm:space-y-4">
-        {mockPlayerMatchingPosts.map((post) => (
-          <Card key={post.id} className="hover:shadow-md transition-shadow">
-            <CardHeader className="pb-3 sm:pb-4">
-              <div className="flex justify-between items-start gap-3 sm:gap-4">
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-2 gap-2">
-                    <CardTitle className="text-base sm:text-lg leading-tight pr-2">
-                      {post.title}
-                    </CardTitle>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
-                      {formatTimeAgo(post.createdAt)}
-                    </span>
-                  </div>
-                  
-                  {/* Location and Date - Stack on mobile */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
-                    <div className="flex items-center gap-1 min-w-0">
-                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span className="truncate">{post.courtName} ({post.distance})</span>
+        {/* Posts Grid - Single column with mobile-optimized cards */}
+        <div className="space-y-3 sm:space-y-4">
+          {mockPlayerMatchingPosts.map((post) => (
+            <Card key={post.id} className="hover:shadow-md transition-shadow w-full">
+              <CardHeader className="pb-3 sm:pb-4 px-3 sm:px-6">
+                <div className="flex justify-between items-start gap-2 sm:gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                      <CardTitle className="text-base sm:text-lg leading-tight">
+                        {post.title}
+                      </CardTitle>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
+                        {formatTimeAgo(post.createdAt)}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span className="text-xs sm:text-sm">{formatGameDate(post.gameDate)}</span>
-                    </div>
-                  </div>
-                  
-                  {/* Time and Additional Info - Stack on mobile */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{post.startTime} - {post.endTime}</span>
-                    </div>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="flex items-center gap-1">
-                        <UserCheck className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span>{post.preferences}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span>{post.price}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="pt-0">
-              <CardDescription className="mb-3 sm:mb-4 text-sm leading-relaxed">
-                {post.description}
-              </CardDescription>
-              
-              {/* Current Players - Mobile optimized grid */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-medium text-sm">
-                    Current Players (avg: {calculateAverageMMR(post.existingPlayers)} MMR)
-                  </h4>
-                </div>
-                
-                {/* Players grid - 1 column on mobile, 2 on larger screens */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                  {[0, 1, 2, 3].map((index) => {
-                    const player = post.existingPlayers[index];
                     
-                    if (player === null) {
+                    {/* Location and Date - Stack on mobile */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
+                      <div className="flex items-center gap-1 min-w-0">
+                        <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span className="truncate">{post.courtName} ({post.distance})</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm">{formatGameDate(post.gameDate)}</span>
+                      </div>
+                    </div>
+                    
+                    {/* Time and Additional Info - Stack on mobile */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span>{post.startTime} - {post.endTime}</span>
+                      </div>
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="flex items-center gap-1">
+                          <UserCheck className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <span>{post.preferences}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                          <span>{post.price}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="pt-0 px-3 sm:px-6">
+                <CardDescription className="mb-3 sm:mb-4 text-sm leading-relaxed">
+                  {post.description}
+                </CardDescription>
+                
+                {/* Current Players - Mobile optimized grid */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-sm">
+                      Current Players (avg: {calculateAverageMMR(post.existingPlayers)} MMR)
+                    </h4>
+                  </div>
+                  
+                  {/* Players grid - 1 column on mobile, 2 on larger screens */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                    {[0, 1, 2, 3].map((index) => {
+                      const player = post.existingPlayers[index];
+                      
+                      if (player === null) {
+                        return (
+                          <div 
+                            key={index} 
+                            className="flex items-center gap-3 bg-muted/30 rounded-lg p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[60px] touch-manipulation"
+                            onClick={() => handleJoinGame(post.id)}
+                          >
+                            <Avatar className="h-8 w-8 flex-shrink-0">
+                              <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium text-primary text-sm">Join Game</div>
+                              <div className="text-xs text-muted-foreground">Tap to join</div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
                       return (
-                        <div 
-                          key={index} 
-                          className="flex items-center gap-3 bg-muted/30 rounded-lg p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[60px] touch-manipulation"
-                          onClick={() => handleJoinGame(post.id)}
-                        >
+                        <div key={player.id} className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 min-h-[60px]">
                           <Avatar className="h-8 w-8 flex-shrink-0">
-                            <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                            <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
+                            <AvatarFallback className="text-xs">
+                              {player.name ? player.name[0] : 'P'}
+                            </AvatarFallback>
                           </Avatar>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-medium text-primary text-sm">Join Game</div>
-                            <div className="text-xs text-muted-foreground">Tap to join</div>
+                          <div className="text-sm flex-1 min-w-0">
+                            <div className="font-medium truncate">
+                              {player.name || 'Player'}
+                              {player.isHost && <span className="text-xs text-primary ml-1">(Host)</span>}
+                            </div>
+                            <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
                           </div>
                         </div>
                       );
-                    }
-                    
-                    return (
-                      <div key={player.id} className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 min-h-[60px]">
-                        <Avatar className="h-8 w-8 flex-shrink-0">
-                          <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
-                          <AvatarFallback className="text-xs">
-                            {player.name ? player.name[0] : 'P'}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="text-sm flex-1 min-w-0">
-                          <div className="font-medium truncate">
-                            {player.name || 'Player'}
-                            {player.isHost && <span className="text-xs text-primary ml-1">(Host)</span>}
-                          </div>
-                          <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                    })}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Empty State */}
-      {mockPlayerMatchingPosts.length === 0 && (
-        <div className="text-center py-8 sm:py-12 px-4">
-          <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-          <h3 className="text-base sm:text-lg font-semibold mb-2">No player matching posts yet</h3>
-          <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Be the first to post your available court!</p>
-          <Button onClick={() => setAddMatchWizardOpen(true)} className="w-full sm:w-auto">
-            <Plus className="h-4 w-4 mr-2" />
-            Post Your Court
-          </Button>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      )}
 
-      {/* Modals */}
-      <PlayerMatchingNotificationModal
-        open={notificationModalOpen}
-        onOpenChange={setNotificationModalOpen}
-      />
+        {/* Empty State */}
+        {mockPlayerMatchingPosts.length === 0 && (
+          <div className="text-center py-8 sm:py-12 px-4">
+            <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold mb-2">No player matching posts yet</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Be the first to post your available court!</p>
+            <Button onClick={() => setAddMatchWizardOpen(true)} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-2" />
+              Post Your Court
+            </Button>
+          </div>
+        )}
 
-      <JoinGameModal
-        open={joinGameModalOpen}
-        onOpenChange={setJoinGameModalOpen}
-        gamePost={selectedGamePost}
-      />
+        {/* Modals */}
+        <PlayerMatchingNotificationModal
+          open={notificationModalOpen}
+          onOpenChange={setNotificationModalOpen}
+        />
 
-      <AddOpenMatchWizard
-        open={addMatchWizardOpen}
-        onOpenChange={setAddMatchWizardOpen}
-      />
+        <JoinGameModal
+          open={joinGameModalOpen}
+          onOpenChange={setJoinGameModalOpen}
+          gamePost={selectedGamePost}
+        />
+
+        <AddOpenMatchWizard
+          open={addMatchWizardOpen}
+          onOpenChange={setAddMatchWizardOpen}
+        />
+      </div>
     </div>
   );
 }

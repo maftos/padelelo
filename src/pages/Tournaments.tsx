@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -173,179 +174,181 @@ export default function Tournaments() {
   return (
     <>
       <Navigation />
-      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
-        {/* Header - Mobile optimized */}
-        <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Tournaments</h1>
-              <p className="text-sm sm:text-base text-muted-foreground">Discover and join upcoming tournaments</p>
+      <div className="w-full min-h-screen">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
+          {/* Header - Mobile optimized */}
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl font-bold text-foreground">Tournaments</h1>
+                <p className="text-sm sm:text-base text-muted-foreground">Discover and join upcoming tournaments</p>
+              </div>
+              
+              {/* Action buttons - Stack on mobile, side by side on larger screens */}
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3"
+                >
+                  <Bell className="h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">{isMobile ? "Alerts" : "Tournament Alerts"}</span>
+                </Button>
+                <Link to="/tournament/create-tournament" className="w-full sm:w-auto">
+                  <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full px-3">
+                    <Plus className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">Create Tournament</span>
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Filter and Sort Section - Mobile optimized */}
+          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
+            {/* Filter badges - Scrollable on mobile */}
+            <div className="w-full overflow-x-auto pb-2 sm:pb-0">
+              <div className="flex gap-2 min-w-max px-0">
+                <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">All Tournaments</Badge>
+                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">This Week</Badge>
+                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">Next Month</Badge>
+                <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-2 sm:px-3 py-1 text-xs">My Level</Badge>
+              </div>
             </div>
             
-            {/* Action buttons - Stack on mobile, side by side on larger screens */}
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <Button 
-                variant="outline" 
-                className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10"
-              >
-                <Bell className="h-4 w-4" />
-                {isMobile ? "Alerts" : "Tournament Alerts"}
-              </Button>
+            {/* Sort options - Mobile friendly */}
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-muted-foreground min-w-0">
+                <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
+                <span className="text-sm font-medium">Sort by:</span>
+              </div>
+              <div className="flex gap-1">
+                {sortOptions.map((option) => (
+                  <Button
+                    key={option.value}
+                    variant={sortBy === option.value ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setSortBy(option.value)}
+                    className="text-xs h-8 px-2 sm:px-3"
+                  >
+                    {option.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Tournaments Grid - Single column with mobile-optimized cards */}
+          <div className="space-y-3 sm:space-y-4">
+            {tournaments?.map((tournament) => {
+              const primaryAdmin = tournament.admins?.[0] || {
+                user_id: '',
+                profile_photo: null,
+                display_name: 'TO'
+              };
+              
+              return (
+                <Card key={tournament.tournament_id} className="hover:shadow-md transition-shadow w-full">
+                  <div className="relative h-32 sm:h-48 w-full">
+                    <img
+                      src={tournament.main_photo || '/placeholder.svg'}
+                      alt={tournament.name}
+                      className="w-full h-full object-cover rounded-t-lg"
+                    />
+                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
+                      <TournamentStatusBadge status={tournament.status} />
+                    </div>
+                  </div>
+                  
+                  <CardHeader className="pb-3 sm:pb-4 px-3 sm:px-6">
+                    <div className="flex justify-between items-start gap-2 sm:gap-4">
+                      <div className="flex-1 min-w-0">
+                        <Link to={`/tournaments/${tournament.tournament_id}`}>
+                          <CardTitle className="text-base sm:text-lg hover:text-primary transition-colors cursor-pointer line-clamp-2 leading-tight">
+                            {tournament.name}
+                          </CardTitle>
+                        </Link>
+                        <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
+                          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
+                            <AvatarImage src={primaryAdmin.profile_photo || undefined} />
+                            <AvatarFallback className="text-xs">
+                              {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="truncate">TO: {primaryAdmin.display_name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0 space-y-3 sm:space-y-4 px-3 sm:px-6">
+                    <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                      {tournament.description}
+                    </p>
+                    
+                    {/* Tournament info - Stack on mobile */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1 min-w-0">
+                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0" />
+                        <span className="font-medium truncate">
+                          {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 flex-shrink-0" />
+                          <span>
+                            <span className="font-medium">{tournament.recommended_mmr}</span>
+                            <span className="text-muted-foreground ml-1">MMR</span>
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
+                          <span>
+                            <span className="font-medium">{tournament.responded_count}</span>
+                            <span className="text-muted-foreground ml-1">interested</span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Interest Button - Full width on mobile */}
+                    <div className="pt-2">
+                      <Button
+                        variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
+                        size="sm"
+                        className="w-full gap-2 h-9 sm:h-10 touch-manipulation"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleInterestToggle(tournament.tournament_id, tournament.user_interest);
+                        }}
+                        disabled={toggleInterestMutation.isPending}
+                      >
+                        {tournament.user_interest === 'INTERESTED' ? <Check className="h-4 w-4" /> : <Star className="h-4 w-4" />}
+                        {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Empty State - Mobile optimized */}
+          {tournaments && tournaments.length === 0 && (
+            <div className="text-center py-8 sm:py-12 px-4">
+              <Calendar className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">No tournaments yet</h3>
+              <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Be the first to create a tournament!</p>
               <Link to="/tournament/create-tournament">
-                <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full sm:w-auto">
-                  <Plus className="h-4 w-4" />
+                <Button className="w-full sm:w-auto">
+                  <Plus className="h-4 w-4 mr-2" />
                   Create Tournament
                 </Button>
               </Link>
             </div>
-          </div>
+          )}
         </div>
-
-        {/* Filter and Sort Section - Mobile optimized */}
-        <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-          {/* Filter badges - Scrollable on mobile */}
-          <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-hide">
-            <div className="flex gap-2 min-w-max">
-              <Badge variant="outline" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">All Tournaments</Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">This Week</Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">Next Month</Badge>
-              <Badge variant="secondary" className="cursor-pointer hover:bg-accent whitespace-nowrap px-3 py-1">My Level</Badge>
-            </div>
-          </div>
-          
-          {/* Sort options - Mobile friendly */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <ArrowUpDown className="h-4 w-4" />
-              <span className="text-sm font-medium">Sort by:</span>
-            </div>
-            <div className="flex gap-1">
-              {sortOptions.map((option) => (
-                <Button
-                  key={option.value}
-                  variant={sortBy === option.value ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setSortBy(option.value)}
-                  className="text-xs h-8 px-2 sm:px-3"
-                >
-                  {option.label}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Tournaments Grid - Single column with mobile-optimized cards */}
-        <div className="space-y-3 sm:space-y-4">
-          {tournaments?.map((tournament) => {
-            const primaryAdmin = tournament.admins?.[0] || {
-              user_id: '',
-              profile_photo: null,
-              display_name: 'TO'
-            };
-            
-            return (
-              <Card key={tournament.tournament_id} className="hover:shadow-md transition-shadow">
-                <div className="relative h-32 sm:h-48 w-full">
-                  <img
-                    src={tournament.main_photo || '/placeholder.svg'}
-                    alt={tournament.name}
-                    className="w-full h-full object-cover rounded-t-lg"
-                  />
-                  <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-                    <TournamentStatusBadge status={tournament.status} />
-                  </div>
-                </div>
-                
-                <CardHeader className="pb-3 sm:pb-4">
-                  <div className="flex justify-between items-start gap-3 sm:gap-4">
-                    <div className="flex-1 min-w-0">
-                      <Link to={`/tournaments/${tournament.tournament_id}`}>
-                        <CardTitle className="text-base sm:text-lg hover:text-primary transition-colors cursor-pointer line-clamp-2 leading-tight pr-2">
-                          {tournament.name}
-                        </CardTitle>
-                      </Link>
-                      <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mt-1 sm:mt-2">
-                        <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
-                          <AvatarImage src={primaryAdmin.profile_photo || undefined} />
-                          <AvatarFallback className="text-xs">
-                            {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="truncate">TO: {primaryAdmin.display_name}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="pt-0 space-y-3 sm:space-y-4">
-                  <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                    {tournament.description}
-                  </p>
-                  
-                  {/* Tournament info - Stack on mobile */}
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500 flex-shrink-0" />
-                      <span className="font-medium truncate">
-                        {formatTournamentDate(tournament.start_date, tournament.end_date)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="flex items-center gap-1">
-                        <Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 flex-shrink-0" />
-                        <span>
-                          <span className="font-medium">{tournament.recommended_mmr}</span>
-                          <span className="text-muted-foreground ml-1">MMR</span>
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Users className="h-3 w-3 sm:h-4 sm:w-4 text-green-500 flex-shrink-0" />
-                        <span>
-                          <span className="font-medium">{tournament.responded_count}</span>
-                          <span className="text-muted-foreground ml-1">interested</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Interest Button - Full width on mobile */}
-                  <div className="pt-2">
-                    <Button
-                      variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
-                      size="sm"
-                      className="w-full gap-2 h-9 sm:h-10 touch-manipulation"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleInterestToggle(tournament.tournament_id, tournament.user_interest);
-                      }}
-                      disabled={toggleInterestMutation.isPending}
-                    >
-                      {tournament.user_interest === 'INTERESTED' ? <Check className="h-4 w-4" /> : <Star className="h-4 w-4" />}
-                      {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* Empty State - Mobile optimized */}
-        {tournaments && tournaments.length === 0 && (
-          <div className="text-center py-8 sm:py-12 px-4">
-            <Calendar className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">No tournaments yet</h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Be the first to create a tournament!</p>
-            <Link to="/tournament/create-tournament">
-              <Button className="w-full sm:w-auto">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Tournament
-              </Button>
-            </Link>
-          </div>
-        )}
       </div>
     </>
   );
