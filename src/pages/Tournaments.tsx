@@ -1,17 +1,18 @@
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import { PageHeader } from "@/components/match/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Check, MapPin, Users, Calendar } from "lucide-react";
+import { Star, Check, MapPin, Users, Calendar, Plus, ArrowUpDown, Bell } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
+import { useState } from "react";
 
 interface TournamentAdmin {
   user_id: string;
@@ -37,6 +38,13 @@ interface Tournament {
 export default function Tournaments() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [sortBy, setSortBy] = useState("newest");
+
+  const sortOptions = [
+    { value: "newest", label: "Newest" },
+    { value: "soonest", label: "Soonest" },
+    { value: "popular", label: "Most Popular" }
+  ];
 
   const { data: tournaments, isLoading, error } = useQuery({
     queryKey: ['tournaments', user?.id],
@@ -163,15 +171,59 @@ export default function Tournaments() {
   return (
     <>
       <Navigation />
-      <PageContainer>
+      <div className="container mx-auto px-4 py-6 max-w-4xl">
+        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <PageHeader title="Tournaments" description="View upcoming tournaments" />
-          <Link to="/tournament/create-tournament">
-            <Button className="w-full sm:w-auto">Create Tournament</Button>
-          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Tournaments</h1>
+            <p className="text-muted-foreground">Discover and join upcoming tournaments</p>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+            >
+              <Bell className="h-4 w-4" />
+              Tournament Alerts
+            </Button>
+            <Link to="/tournament/create-tournament">
+              <Button className="flex items-center gap-2">
+                <Plus className="h-4 w-4" />
+                Create Tournament
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Filter and Sort Section */}
+        <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="cursor-pointer hover:bg-accent">All Tournaments</Badge>
+            <Badge variant="secondary" className="cursor-pointer hover:bg-accent">This Week</Badge>
+            <Badge variant="secondary" className="cursor-pointer hover:bg-accent">Next Month</Badge>
+            <Badge variant="secondary" className="cursor-pointer hover:bg-accent">My Level</Badge>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
+            <div className="flex gap-1">
+              {sortOptions.map((option) => (
+                <Button
+                  key={option.value}
+                  variant={sortBy === option.value ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setSortBy(option.value)}
+                  className="text-xs"
+                >
+                  {option.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Tournaments Grid - Single Column Layout */}
+        <div className="grid gap-4">
           {tournaments?.map((tournament) => {
             const primaryAdmin = tournament.admins?.[0] || {
               user_id: '',
@@ -180,92 +232,105 @@ export default function Tournaments() {
             };
             
             return (
-              <Card key={tournament.tournament_id} className="transition-all hover:bg-accent overflow-hidden">
-                <Link to={`/tournaments/${tournament.tournament_id}`} className="block">
-                  <div className="relative h-48 w-full">
-                    <img
-                      src={tournament.main_photo || '/placeholder.svg'}
-                      alt={tournament.name}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-3 left-3">
-                      <TournamentStatusBadge status={tournament.status} />
+              <Card key={tournament.tournament_id} className="hover:shadow-md transition-shadow">
+                <div className="relative h-48 w-full">
+                  <img
+                    src={tournament.main_photo || '/placeholder.svg'}
+                    alt={tournament.name}
+                    className="w-full h-full object-cover rounded-t-lg"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <TournamentStatusBadge status={tournament.status} />
+                  </div>
+                </div>
+                
+                <CardHeader className="pb-4">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <Link to={`/tournaments/${tournament.tournament_id}`}>
+                        <CardTitle className="text-lg hover:text-primary transition-colors cursor-pointer line-clamp-2">
+                          {tournament.name}
+                        </CardTitle>
+                      </Link>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground mt-2">
+                        <Avatar className="h-6 w-6">
+                          <AvatarImage src={primaryAdmin.profile_photo || undefined} />
+                          <AvatarFallback className="text-xs">
+                            {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>TO: {primaryAdmin.display_name}</span>
+                      </div>
                     </div>
                   </div>
-                  
-                  <CardHeader className="pb-3">
-                    <div className="flex justify-between items-start gap-3">
-                      <CardTitle className="flex-1 text-lg leading-tight line-clamp-2">
-                        {tournament.name}
-                      </CardTitle>
-                      <Avatar className="h-8 w-8 flex-shrink-0">
-                        <AvatarImage src={primaryAdmin.profile_photo || undefined} />
-                        <AvatarFallback className="text-xs">
-                          {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      TO: {primaryAdmin.display_name}
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="pt-0 space-y-4">
-                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
-                      {tournament.description}
-                    </p>
-                    
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                        <span className="font-medium">
-                          {formatTournamentDate(tournament.start_date, tournament.end_date)}
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm">
-                          <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
-                          <span>
-                            <span className="font-medium">{tournament.recommended_mmr}</span>
-                            <span className="text-muted-foreground ml-1">MMR</span>
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-sm">
-                          <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
-                          <span>
-                            <span className="font-medium">{tournament.responded_count}</span>
-                            <span className="text-muted-foreground ml-1">interested</span>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Link>
+                </CardHeader>
                 
-                {/* Interest button outside the link to prevent navigation when clicked */}
-                <div className="px-6 pb-4">
-                  <Button
-                    variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
-                    size="sm"
-                    className="w-full gap-2"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleInterestToggle(tournament.tournament_id, tournament.user_interest);
-                    }}
-                    disabled={toggleInterestMutation.isPending}
-                  >
-                    {tournament.user_interest === 'INTERESTED' ? <Check className="h-4 w-4" /> : <Star className="h-4 w-4" />}
-                    {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
-                  </Button>
-                </div>
+                <CardContent className="pt-0 space-y-4">
+                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                    {tournament.description}
+                  </p>
+                  
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4 text-blue-500" />
+                      <span className="font-medium">
+                        {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      <span>
+                        <span className="font-medium">{tournament.recommended_mmr}</span>
+                        <span className="text-muted-foreground ml-1">MMR</span>
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Users className="h-4 w-4 text-green-500" />
+                      <span>
+                        <span className="font-medium">{tournament.responded_count}</span>
+                        <span className="text-muted-foreground ml-1">interested</span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Interest Button */}
+                  <div className="pt-2">
+                    <Button
+                      variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
+                      size="sm"
+                      className="w-full gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleInterestToggle(tournament.tournament_id, tournament.user_interest);
+                      }}
+                      disabled={toggleInterestMutation.isPending}
+                    >
+                      {tournament.user_interest === 'INTERESTED' ? <Check className="h-4 w-4" /> : <Star className="h-4 w-4" />}
+                      {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
+                    </Button>
+                  </div>
+                </CardContent>
               </Card>
             );
           })}
         </div>
-      </PageContainer>
+
+        {/* Empty State */}
+        {tournaments && tournaments.length === 0 && (
+          <div className="text-center py-12">
+            <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">No tournaments yet</h3>
+            <p className="text-muted-foreground mb-4">Be the first to create a tournament!</p>
+            <Link to="/tournament/create-tournament">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Tournament
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
     </>
   );
 }
