@@ -10,10 +10,8 @@ import {
   ClipboardEdit, 
   Users,
   Trophy,
-  Sparkles,
-  Calculator,
+  MapPin,
   LogOut,
-  Info,
   LayoutDashboard
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -139,28 +137,28 @@ export const SideMenuContent = ({
       {/* Secondary Navigation Section */}
       <div className="space-y-1 px-2">
         <Link
-          to="/how-it-works"
+          to="/tournaments"
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <Info className="h-4 w-4" />
-          How It Works
+          <Trophy className="h-4 w-4" />
+          Tournaments
         </Link>
         <Link
-          to="/roadmap"
+          to="/profile"
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <Sparkles className="h-4 w-4" />
-          Feature Updates
+          <User className="h-4 w-4" />
+          My Profile
         </Link>
         <Link
-          to="/matchmaking-math"
+          to="/padel-courts"
           onClick={onClose}
           className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
         >
-          <Calculator className="h-4 w-4" />
-          Matchmaking Math
+          <MapPin className="h-4 w-4" />
+          Padel Courts
         </Link>
       </div>
 
