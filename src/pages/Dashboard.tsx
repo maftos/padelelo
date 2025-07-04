@@ -8,8 +8,9 @@ import { PageContainer } from "@/components/layouts/PageContainer";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, Calendar, ChevronRight, Users, TrendingUp, Star, UserPlus, UserCheck } from "lucide-react";
+import { Trophy, Calendar, ChevronRight, Users, TrendingUp, Star, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SuggestedFriends } from "@/components/dashboard/SuggestedFriends";
 
 interface UserProfile {
   display_name: string;
@@ -33,13 +34,14 @@ interface RecentMatch {
   new_mmr: number;
   team1_score: number;
   team2_score: number;
-}
-
-interface Friend {
-  friend_id: string;
-  display_name: string;
-  profile_photo: string | null;
-  created_at: string;
+  team1_player1_display_name: string;
+  team1_player1_profile_photo: string;
+  team1_player2_display_name: string;
+  team1_player2_profile_photo: string;
+  team2_player1_display_name: string;
+  team2_player1_profile_photo: string;
+  team2_player2_display_name: string;
+  team2_player2_profile_photo: string;
 }
 
 export default function Dashboard() {
@@ -94,19 +96,6 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
-  const { data: friends } = useQuery({
-    queryKey: ['friends', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return [];
-      const { data, error } = await supabase.rpc('view_my_friends', {
-        i_user_id: user.id
-      });
-      if (error) throw error;
-      return (data as Friend[]).slice(0, 4);
-    },
-    enabled: !!user?.id
-  });
-
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
 
@@ -115,27 +104,6 @@ export default function Dashboard() {
       <Navigation />
       <PageContainer>
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Welcome Header */}
-          <div className="bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg p-6 border border-primary/10">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-foreground mb-1">
-                  Welcome back, {profileData?.display_name}! 👋
-                </h1>
-                <p className="text-muted-foreground">
-                  Ready to dominate the court today?
-                </p>
-              </div>
-              <div className="flex items-center gap-3 bg-background/60 backdrop-blur rounded-lg px-4 py-2 border">
-                <Trophy className="h-5 w-5 text-yellow-500" />
-                <div className="text-right">
-                  <p className="text-lg font-bold text-foreground">{profileData?.current_mmr || 0}</p>
-                  <p className="text-xs text-muted-foreground">MMR</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* Profile Card */}
           <Link to="/profile" className="block">
             <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.01] group">
@@ -148,9 +116,16 @@ export default function Dashboard() {
                         {profileData?.display_name?.substring(0, 2) || 'NP'}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="flex-1">
                       <CardTitle className="text-xl">{profileData?.display_name}</CardTitle>
                       <CardDescription className="mt-1">View and edit your profile</CardDescription>
+                      <div className="flex items-center gap-2 mt-2 bg-background/60 backdrop-blur rounded-lg px-3 py-1 border w-fit">
+                        <Trophy className="h-4 w-4 text-yellow-500" />
+                        <div className="text-sm">
+                          <span className="font-bold text-foreground">{profileData?.current_mmr || 0}</span>
+                          <span className="text-muted-foreground ml-1">MMR</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground group-hover:translate-x-1 transition-all" />
@@ -208,12 +183,12 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Friends Management */}
+            {/* Suggested Friends */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-3">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5 text-purple-500" />
-                  <CardTitle className="text-lg">Friends</CardTitle>
+                  <CardTitle className="text-lg">Suggested Friends</CardTitle>
                 </div>
                 <Link to="/friends">
                   <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
@@ -221,44 +196,8 @@ export default function Dashboard() {
                   </Button>
                 </Link>
               </CardHeader>
-              <CardContent className="space-y-3">
-                {friends && friends.length > 0 ? (
-                  <>
-                    {friends.map((friend) => (
-                      <div key={friend.friend_id} className="flex items-center justify-between p-3 rounded-lg bg-accent/30 border border-accent/40">
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src={friend.profile_photo || ''} alt={friend.display_name} />
-                            <AvatarFallback className="text-xs">
-                              {friend.display_name.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{friend.display_name}</p>
-                          </div>
-                        </div>
-                        <UserCheck className="h-4 w-4 text-green-500" />
-                      </div>
-                    ))}
-                    <Link to="/friends">
-                      <Button variant="outline" size="sm" className="w-full">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Add More Friends
-                      </Button>
-                    </Link>
-                  </>
-                ) : (
-                  <div className="text-center py-8">
-                    <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground text-sm mb-3">No friends yet</p>
-                    <Link to="/friends">
-                      <Button variant="outline" size="sm">
-                        <UserPlus className="h-4 w-4 mr-2" />
-                        Find Friends
-                      </Button>
-                    </Link>
-                  </div>
-                )}
+              <CardContent>
+                <SuggestedFriends userId={user?.id} />
               </CardContent>
             </Card>
           </div>
@@ -279,8 +218,8 @@ export default function Dashboard() {
             <CardContent className="space-y-3">
               {recentMatches && recentMatches.length > 0 ? (
                 recentMatches.map((match) => (
-                  <div key={match.match_id} className="p-3 rounded-lg bg-accent/30 border border-accent/40">
-                    <div className="flex justify-between items-center">
+                  <div key={match.match_id} className="p-4 rounded-lg bg-accent/30 border border-accent/40">
+                    <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center gap-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                           match.change_type === 'WIN' ? 'bg-green-100' : 'bg-red-100'
@@ -300,17 +239,66 @@ export default function Dashboard() {
                           </p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                          match.change_type === 'WIN' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {match.change_type === 'WIN' ? '+' : '-'}{match.change_amount} MMR
+                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
+                        match.change_type === 'WIN' 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {match.change_type === 'WIN' ? '+' : '-'}{match.change_amount} MMR
+                      </div>
+                    </div>
+                    
+                    {/* Match Details with Player Photos */}
+                    <div className="flex items-center justify-between gap-4 p-3 bg-background/60 rounded-lg border">
+                      {/* Team 1 */}
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={match.team1_player1_profile_photo} />
+                            <AvatarFallback className="text-xs">
+                              {match.team1_player1_display_name?.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm font-medium">{match.team1_player1_display_name}</span>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          New: {match.new_mmr}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={match.team1_player2_profile_photo} />
+                            <AvatarFallback className="text-xs">
+                              {match.team1_player2_display_name?.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm font-medium">{match.team1_player2_display_name}</span>
+                        </div>
+                      </div>
+
+                      {/* Score */}
+                      <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-background border">
+                        <span className="text-lg font-bold">{match.team1_score}</span>
+                        <span className="text-muted-foreground">-</span>
+                        <span className="text-lg font-bold">{match.team2_score}</span>
+                      </div>
+
+                      {/* Team 2 */}
+                      <div className="flex-1 text-right">
+                        <div className="flex items-center justify-end gap-2 mb-1">
+                          <span className="text-sm font-medium">{match.team2_player1_display_name}</span>
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={match.team2_player1_profile_photo} />
+                            <AvatarFallback className="text-xs">
+                              {match.team2_player1_display_name?.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
+                        <div className="flex items-center justify-end gap-2">
+                          <span className="text-sm font-medium">{match.team2_player2_display_name}</span>
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={match.team2_player2_profile_photo} />
+                            <AvatarFallback className="text-xs">
+                              {match.team2_player2_display_name?.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        </div>
                       </div>
                     </div>
                   </div>
