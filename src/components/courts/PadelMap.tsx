@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -86,12 +87,12 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     clubs.forEach((club, index) => {
-      // Create custom marker element with simplified styling
+      // Create custom marker element with proper centering
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
       markerElement.style.cssText = `
-        width: 50px;
-        height: 50px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         border: 3px solid ${selectedClubId === club.id ? '#059669' : '#10b981'};
         cursor: pointer;
@@ -134,14 +135,14 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           justify-content: center;
           color: white;
           font-weight: bold;
-          font-size: 18px;
+          font-size: 16px;
         ">🏓</div>
         <div style="
           position: absolute;
-          bottom: -2px;
-          right: -2px;
-          width: 16px;
-          height: 16px;
+          bottom: -3px;
+          right: -3px;
+          width: 14px;
+          height: 14px;
           background: #10b981;
           border: 2px solid white;
           border-radius: 50%;
@@ -149,21 +150,21 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           align-items: center;
           justify-content: center;
         ">
-          <div style="width: 6px; height: 6px; background: white; border-radius: 50%;"></div>
+          <div style="width: 4px; height: 4px; background: white; border-radius: 50%;"></div>
         </div>
       `;
 
-      // Create marker with proper positioning
+      // Create marker with proper centering - this is the key fix
       const marker = new mapboxgl.Marker({
         element: markerElement,
-        anchor: 'center'
+        anchor: 'center' // Keep center anchor but ensure element is properly sized
       })
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
       // Create popup with improved content and positioning
       const popup = new mapboxgl.Popup({
-        offset: [0, -35], // Position above the marker
+        offset: [0, -30], // Position above the marker
         closeButton: false,
         className: 'custom-popup',
         anchor: 'bottom',
