@@ -9,11 +9,13 @@ interface ProfileFormState {
   display_name: string;
   nationality: string;
   gender: string;
-  location: string;
-  languages: string;
   profile_photo: string;
   current_mmr: number;
   whatsapp_number: string;
+  years_playing: string;
+  favorite_position: string;
+  playing_style: string;
+  favorite_shot: string;
 }
 
 export const useProfileState = (userId: string | undefined) => {
@@ -24,11 +26,13 @@ export const useProfileState = (userId: string | undefined) => {
     display_name: "",
     nationality: "",
     gender: "",
-    location: "",
-    languages: "",
     profile_photo: "",
     current_mmr: 0,
     whatsapp_number: "",
+    years_playing: "",
+    favorite_position: "",
+    playing_style: "",
+    favorite_shot: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -55,11 +59,13 @@ export const useProfileState = (userId: string | undefined) => {
         display_name: profileInfo.display_name || "",
         nationality: profileInfo.nationality || "",
         gender: profileInfo.gender || "",
-        location: profileInfo.location || "",
-        languages: Array.isArray(profileInfo.languages) ? profileInfo.languages.join(", ") : "",
         profile_photo: profileInfo.profile_photo || "",
         current_mmr: profileInfo.current_mmr || 0,
         whatsapp_number: profileInfo.whatsapp_number || "",
+        years_playing: "", // New field - will be empty initially
+        favorite_position: "", // New field - will be empty initially
+        playing_style: "", // New field - will be empty initially
+        favorite_shot: "", // New field - will be empty initially
       });
       
       return profileInfo;
@@ -154,12 +160,12 @@ export const useProfileState = (userId: string | undefined) => {
         new_display_name: formData.display_name,
         new_gender: formData.gender,
         new_date_of_birth: null,
-        new_languages: formData.languages.split(',').map(lang => lang.trim()),
+        new_languages: [], // Empty array since we removed languages
         new_preferred_language: null,
         new_profile_photo: formData.profile_photo,
         new_whatsapp_number: formData.whatsapp_number,
         new_nationality: formData.nationality,
-        new_location: formData.location
+        new_location: null // Set to null since we removed location
       });
 
       if (error) {

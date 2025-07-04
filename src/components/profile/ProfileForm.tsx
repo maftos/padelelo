@@ -1,17 +1,22 @@
+
 import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { countries } from "@/lib/countries";
 
 interface ProfileFormData {
   display_name: string;
   nationality: string;
   gender: string;
-  location: string;
-  languages: string;
   current_mmr: string | number;
   profile_photo?: string;
+  years_playing: string;
+  favorite_position: string;
+  playing_style: string;
+  favorite_shot: string;
+  whatsapp_number: string;
 }
 
 interface ProfileFormProps {
@@ -33,11 +38,10 @@ export const ProfileForm: FC<ProfileFormProps> = ({
   onEdit,
   onCancel,
 }) => {
-  const languageArray = formData.languages.split(',').map(lang => lang.trim()).filter(Boolean);
-
   return (
-    <div className="space-y-8 max-w-2xl mx-auto bg-card rounded-lg p-6 shadow-sm">
+    <div className="space-y-8 max-w-3xl mx-auto bg-card rounded-lg p-6 shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Display Name */}
         <div className="space-y-2">
           <Label htmlFor="displayName">Display Name</Label>
           {isEditing ? (
@@ -56,24 +60,39 @@ export const ProfileForm: FC<ProfileFormProps> = ({
           )}
         </div>
 
+        {/* Nationality Dropdown */}
         <div className="space-y-2">
           <Label htmlFor="nationality">Nationality</Label>
           {isEditing ? (
-            <Input
-              id="nationality"
-              value={formData.nationality}
-              onChange={(e) => onFormChange("nationality", e.target.value)}
-            />
+            <Select 
+              value={formData.nationality} 
+              onValueChange={(value) => onFormChange("nationality", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select nationality" />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {countries.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    <div className="flex items-center gap-2">
+                      <span>{country.flag}</span>
+                      <span>{country.code}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           ) : (
             <Input
               id="nationality"
-              value={formData.nationality}
+              value={countries.find(c => c.code === formData.nationality)?.code || formData.nationality}
               readOnly
               className="bg-muted"
             />
           )}
         </div>
 
+        {/* Gender */}
         <div className="space-y-2">
           <Label>Gender</Label>
           {isEditing ? (
@@ -104,56 +123,150 @@ export const ProfileForm: FC<ProfileFormProps> = ({
           )}
         </div>
 
+        {/* WhatsApp Number */}
         <div className="space-y-2">
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="whatsapp">WhatsApp Number</Label>
           {isEditing ? (
             <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) => onFormChange("location", e.target.value)}
+              id="whatsapp"
+              value={formData.whatsapp_number}
+              onChange={(e) => onFormChange("whatsapp_number", e.target.value)}
+              placeholder="+230 xxxx xxxx"
             />
           ) : (
             <Input
-              id="location"
-              value={formData.location}
+              id="whatsapp"
+              value={formData.whatsapp_number}
               readOnly
               className="bg-muted"
             />
           )}
         </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="languages">Languages</Label>
+        {/* Years Playing Padel */}
+        <div className="space-y-2">
+          <Label htmlFor="yearsPlaying">Years Playing Padel</Label>
           {isEditing ? (
-            <div className="space-y-2">
-              <Input
-                id="languages"
-                value={formData.languages}
-                onChange={(e) => onFormChange("languages", e.target.value)}
-                placeholder="e.g., English, French"
-              />
-              <p className="text-sm text-muted-foreground">
-                Separate languages with commas
-              </p>
-            </div>
+            <Select 
+              value={formData.years_playing} 
+              onValueChange={(value) => onFormChange("years_playing", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select experience" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="beginner">Beginner (Less than 1 year)</SelectItem>
+                <SelectItem value="1-2">1-2 years</SelectItem>
+                <SelectItem value="3-5">3-5 years</SelectItem>
+                <SelectItem value="5+">5+ years</SelectItem>
+                <SelectItem value="expert">Expert (10+ years)</SelectItem>
+              </SelectContent>
+            </Select>
           ) : (
-            <div className="flex flex-wrap gap-2">
-              {languageArray.map((language, index) => (
-                <Badge key={index} variant="secondary">
-                  {language}
-                </Badge>
-              ))}
-            </div>
+            <Input
+              id="yearsPlaying"
+              value={formData.years_playing}
+              readOnly
+              className="bg-muted"
+            />
           )}
         </div>
 
+        {/* Favorite Position */}
         <div className="space-y-2">
+          <Label htmlFor="favoritePosition">Favorite Position</Label>
+          {isEditing ? (
+            <Select 
+              value={formData.favorite_position} 
+              onValueChange={(value) => onFormChange("favorite_position", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select position" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="left">Left Side (Backhand)</SelectItem>
+                <SelectItem value="right">Right Side (Forehand)</SelectItem>
+                <SelectItem value="both">Both Sides</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="favoritePosition"
+              value={formData.favorite_position}
+              readOnly
+              className="bg-muted"
+            />
+          )}
+        </div>
+
+        {/* Playing Style */}
+        <div className="space-y-2">
+          <Label htmlFor="playingStyle">Playing Style</Label>
+          {isEditing ? (
+            <Select 
+              value={formData.playing_style} 
+              onValueChange={(value) => onFormChange("playing_style", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select style" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="aggressive">Aggressive</SelectItem>
+                <SelectItem value="defensive">Defensive</SelectItem>
+                <SelectItem value="balanced">Balanced</SelectItem>
+                <SelectItem value="power">Power Player</SelectItem>
+                <SelectItem value="tactical">Tactical</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="playingStyle"
+              value={formData.playing_style}
+              readOnly
+              className="bg-muted"
+            />
+          )}
+        </div>
+
+        {/* Favorite Shot */}
+        <div className="space-y-2">
+          <Label htmlFor="favoriteShot">Favorite Shot</Label>
+          {isEditing ? (
+            <Select 
+              value={formData.favorite_shot} 
+              onValueChange={(value) => onFormChange("favorite_shot", value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select shot" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="smash">Smash</SelectItem>
+                <SelectItem value="volley">Volley</SelectItem>
+                <SelectItem value="lob">Lob</SelectItem>
+                <SelectItem value="bandeja">Bandeja</SelectItem>
+                <SelectItem value="vibora">Víbora</SelectItem>
+                <SelectItem value="drop-shot">Drop Shot</SelectItem>
+                <SelectItem value="wall-shot">Wall Shot (Pared)</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : (
+            <Input
+              id="favoriteShot"
+              value={formData.favorite_shot}
+              readOnly
+              className="bg-muted"
+            />
+          )}
+        </div>
+
+        {/* Current MMR - Read Only */}
+        <div className="space-y-2 md:col-span-2">
           <Label htmlFor="mmr">Current MMR</Label>
           <Input
             id="mmr"
             value={formData.current_mmr}
             readOnly
-            className="bg-accent/50 text-accent-foreground font-medium"
+            className="bg-accent/50 text-accent-foreground font-medium max-w-xs"
           />
         </div>
       </div>
