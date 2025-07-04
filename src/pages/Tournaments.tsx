@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { PageHeader } from "@/components/match/PageHeader";
@@ -165,14 +164,14 @@ export default function Tournaments() {
     <>
       <Navigation />
       <PageContainer>
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <PageHeader title="Tournaments" description="View upcoming tournaments" />
           <Link to="/tournament/create-tournament">
-            <Button>Create Tournament</Button>
+            <Button className="w-full sm:w-auto">Create Tournament</Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {tournaments?.map((tournament) => {
             const primaryAdmin = tournament.admins?.[0] || {
               user_id: '',
@@ -181,78 +180,76 @@ export default function Tournaments() {
             };
             
             return (
-              <div key={tournament.tournament_id} className="relative">
-                <Link to={`/tournaments/${tournament.tournament_id}`}>
-                  <Card className="transition-all hover:bg-accent h-full overflow-hidden">
-                    <div className="relative h-64 w-full">
-                      <img
-                        src={tournament.main_photo || '/placeholder.svg'}
-                        alt={tournament.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <TournamentStatusBadge status={tournament.status} />
+              <Card key={tournament.tournament_id} className="transition-all hover:bg-accent overflow-hidden">
+                <Link to={`/tournaments/${tournament.tournament_id}`} className="block">
+                  <div className="relative h-48 w-full">
+                    <img
+                      src={tournament.main_photo || '/placeholder.svg'}
+                      alt={tournament.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <TournamentStatusBadge status={tournament.status} />
+                    </div>
+                  </div>
+                  
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start gap-3">
+                      <CardTitle className="flex-1 text-lg leading-tight line-clamp-2">
+                        {tournament.name}
+                      </CardTitle>
+                      <Avatar className="h-8 w-8 flex-shrink-0">
+                        <AvatarImage src={primaryAdmin.profile_photo || undefined} />
+                        <AvatarFallback className="text-xs">
+                          {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      TO: {primaryAdmin.display_name}
+                    </div>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0 space-y-4">
+                    <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                      {tournament.description}
+                    </p>
+                    
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <Calendar className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                        <span className="font-medium">
+                          {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm">
+                          <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
+                          <span>
+                            <span className="font-medium">{tournament.recommended_mmr}</span>
+                            <span className="text-muted-foreground ml-1">MMR</span>
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-sm">
+                          <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
+                          <span>
+                            <span className="font-medium">{tournament.responded_count}</span>
+                            <span className="text-muted-foreground ml-1">interested</span>
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <CardHeader className="pb-4">
-                      <CardTitle className="flex justify-between items-start gap-4 text-xl">
-                        <span className="line-clamp-2">{tournament.name}</span>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground flex-shrink-0">
-                          <Avatar className="h-10 w-10">
-                            <AvatarImage src={primaryAdmin.profile_photo || undefined} />
-                            <AvatarFallback className="text-xs">
-                              {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-4">
-                        <p className="text-muted-foreground line-clamp-3 text-base leading-relaxed">
-                          {tournament.description}
-                        </p>
-                        
-                        <div className="grid grid-cols-1 gap-3">
-                          <div className="flex items-center gap-3 text-sm">
-                            <Calendar className="h-4 w-4 text-blue-500 flex-shrink-0" />
-                            <span className="font-medium">
-                              {formatTournamentDate(tournament.start_date, tournament.end_date)}
-                            </span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3 text-sm">
-                              <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
-                              <span>
-                                <span className="font-medium">{tournament.recommended_mmr}</span>
-                                <span className="text-muted-foreground ml-1">MMR</span>
-                              </span>
-                            </div>
-                            
-                            <div className="flex items-center gap-3 text-sm">
-                              <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
-                              <span>
-                                <span className="font-medium">{tournament.responded_count}</span>
-                                <span className="text-muted-foreground ml-1">interested</span>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span className="text-xs">Tournament Organizer:</span>
-                          <span className="font-medium text-foreground">{primaryAdmin.display_name}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  </CardContent>
                 </Link>
-                <div className="absolute bottom-6 right-6 z-10">
+                
+                {/* Interest button outside the link to prevent navigation when clicked */}
+                <div className="px-6 pb-4">
                   <Button
                     variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
                     size="sm"
-                    className="gap-2 shadow-lg"
+                    className="w-full gap-2"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -264,7 +261,7 @@ export default function Tournaments() {
                     {toggleInterestMutation.isPending ? 'Updating...' : 'Interested'}
                   </Button>
                 </div>
-              </div>
+              </Card>
             );
           })}
         </div>
