@@ -1,8 +1,7 @@
-
 import { Card } from "@/components/ui/card";
 import { MatchHeader } from "./MatchHeader";
 import { TeamDisplay } from "./TeamDisplay";
-import { MatchFooter } from "./MatchFooter";
+import { TrendingUp, Trophy } from "lucide-react";
 
 interface MatchHistoryCardProps {
   old_mmr: number;
@@ -66,14 +65,39 @@ export const MatchHistoryCard = ({
   };
 
   return (
-    <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-lg hover:shadow-xl transition-all duration-200 p-4 space-y-4">
-      <MatchHeader
-        changeType={change_type}
-        createdAt={created_at}
-        changeAmount={change_amount}
-      />
+    <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.01] p-4 space-y-4 bg-background border border-border">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+            change_type === "WIN" ? 'bg-green-100' : 'bg-red-100'
+          }`}>
+            {change_type === "WIN" ? (
+              <Trophy className="w-5 h-5 text-green-600" />
+            ) : (
+              <TrendingUp className="w-5 h-5 text-red-600 rotate-180" />
+            )}
+          </div>
+          <div>
+            <p className="font-semibold text-foreground text-base">
+              {change_type === "WIN" ? "Victory" : "Defeat"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {new Date(created_at).toLocaleDateString()}
+            </p>
+          </div>
+        </div>
+        <div className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-semibold ${
+          change_type === "WIN" 
+            ? "bg-green-100 text-green-700 border border-green-200" 
+            : "bg-red-100 text-red-700 border border-red-200"
+        }`}>
+          {change_type === "WIN" ? "+" : "-"}{change_amount} MMR
+        </div>
+      </div>
       
-      <div className="flex items-center justify-between gap-4">
+      {/* Match Details */}
+      <div className="flex items-center justify-between gap-4 p-4 bg-accent/30 rounded-lg border border-accent/40">
         {/* Left side - Team 1 */}
         <div className="flex-1">
           <TeamDisplay
@@ -87,10 +111,10 @@ export const MatchHistoryCard = ({
         </div>
 
         {/* Center - Score */}
-        <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-accent/20 to-accent/30 border border-accent/30">
-          <span className="text-2xl font-bold text-foreground">{team1_score}</span>
+        <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-background border border-border shadow-sm">
+          <span className="text-xl font-bold text-foreground">{team1_score}</span>
           <span className="text-lg text-muted-foreground">-</span>
-          <span className="text-2xl font-bold text-foreground">{team2_score}</span>
+          <span className="text-xl font-bold text-foreground">{team2_score}</span>
         </div>
 
         {/* Right side - Team 2 */}
@@ -105,22 +129,24 @@ export const MatchHistoryCard = ({
             isRightAligned
           />
         </div>
+      </div>
 
-        {/* MMR Section - Moved to the right */}
-        <div className="flex items-center gap-4 ml-6">
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground mb-1">Previous</p>
-            <p className="text-sm font-semibold text-foreground">{formatMmr(old_mmr)}</p>
-          </div>
-          <div className="flex items-center">
-            <div className="h-px w-8 bg-gradient-to-r from-primary to-secondary"></div>
-          </div>
-          <div className="text-center">
-            <p className="text-xs text-muted-foreground mb-1">New</p>
-            <p className="text-sm font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {formatMmr(new_mmr)}
-            </p>
-          </div>
+      {/* MMR Change */}
+      <div className="flex items-center justify-center gap-4 pt-2">
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground mb-1">Previous</p>
+          <p className="text-sm font-semibold text-foreground">{formatMmr(old_mmr)}</p>
+        </div>
+        <div className="flex items-center">
+          <div className="h-px w-8 bg-gradient-to-r from-primary/50 to-primary"></div>
+          <TrendingUp className="h-4 w-4 text-primary mx-1" />
+          <div className="h-px w-8 bg-gradient-to-r from-primary to-primary/50"></div>
+        </div>
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground mb-1">New</p>
+          <p className="text-sm font-semibold text-primary">
+            {formatMmr(new_mmr)}
+          </p>
         </div>
       </div>
     </Card>
