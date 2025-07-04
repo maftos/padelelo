@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNotificationModal";
 import { JoinGameModal } from "@/components/JoinGameModal";
+import { AddOpenMatchWizard } from "@/components/AddOpenMatchWizard";
 
 // Mock data for player matching posts
 const mockPlayerMatchingPosts = [
@@ -108,6 +109,7 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 export default function PlayerMatching() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
   const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
+  const [addMatchWizardOpen, setAddMatchWizardOpen] = useState(false);
   const [selectedGamePost, setSelectedGamePost] = useState<typeof mockPlayerMatchingPosts[0] | null>(null);
   const [sortBy, setSortBy] = useState("newest");
 
@@ -143,7 +145,10 @@ export default function PlayerMatching() {
             <Bell className="h-4 w-4" />
             Subscribe to Notifications
           </Button>
-          <Button className="flex items-center gap-2">
+          <Button 
+            className="flex items-center gap-2"
+            onClick={() => setAddMatchWizardOpen(true)}
+          >
             <Plus className="h-4 w-4" />
             Post Your Court
           </Button>
@@ -279,7 +284,7 @@ export default function PlayerMatching() {
           <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">No player matching posts yet</h3>
           <p className="text-muted-foreground mb-4">Be the first to post your available court!</p>
-          <Button>
+          <Button onClick={() => setAddMatchWizardOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Post Your Court
           </Button>
@@ -295,6 +300,11 @@ export default function PlayerMatching() {
         open={joinGameModalOpen}
         onOpenChange={setJoinGameModalOpen}
         gamePost={selectedGamePost}
+      />
+
+      <AddOpenMatchWizard
+        open={addMatchWizardOpen}
+        onOpenChange={setAddMatchWizardOpen}
       />
     </div>
   );
