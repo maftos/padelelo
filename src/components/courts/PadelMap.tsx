@@ -1,65 +1,49 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { PadelClub } from '@/pages/PadelCourts';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { AlertCircle } from 'lucide-react';
 
 interface PadelMapProps {
   clubs: PadelClub[];
   onClubSelect: (club: PadelClub) => void;
 }
 
+// Mapbox public token (safe to store in client-side code)
+const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFmbWFhZm1hYWFmIiwiYSI6ImNtY29wN3V2ZTBjOHMybXIyYTF6MzlqYm4ifQ.8ijZH3a-tm0juZeb_PW7ig';
+
 export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
-  const [mapboxToken, setMapboxToken] = useState('');
-  const [tokenError, setTokenError] = useState(false);
-  const [mapInitialized, setMapInitialized] = useState(false);
 
-  const initializeMap = (token: string) => {
-    if (!mapContainer.current || !token) return;
+  const initializeMap = () => {
+    if (!mapContainer.current) return;
 
-    try {
-      mapboxgl.accessToken = token;
-      
-      map.current = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/satellite-streets-v12',
-        center: [57.5522, -20.3484], // Center of Mauritius
-        zoom: 10,
-        pitch: 45,
-        bearing: 0
-      });
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+    
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: [57.5522, -20.3484], // Center of Mauritius
+      zoom: 10,
+      pitch: 45,
+      bearing: 0
+    });
 
-      // Add navigation controls
-      map.current.addControl(
-        new mapboxgl.NavigationControl({
-          visualizePitch: true,
-        }),
-        'top-right'
-      );
+    // Add navigation controls
+    map.current.addControl(
+      new mapboxgl.NavigationControl({
+        visualizePitch: true,
+      }),
+      'top-right'
+    );
 
-      // Add scale control
-      map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
+    // Add scale control
+    map.current.addControl(new mapboxgl.ScaleControl(), 'bottom-left');
 
-      map.current.on('load', () => {
-        addClubMarkers();
-        setMapInitialized(true);
-        setTokenError(false);
-      });
-
-      map.current.on('error', (e) => {
-        console.error('Mapbox error:', e);
-        setTokenError(true);
-      });
-
-    } catch (error) {
-      console.error('Error initializing map:', error);
-      setTokenError(true);
-    }
+    map.current.on('load', () => {
+      addClubMarkers();
+    });
   };
 
   const addClubMarkers = () => {
@@ -151,87 +135,20 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     });
   };
 
-  const handleTokenSubmit = () => {
-    if (mapboxToken.trim()) {
-      initializeMap(mapboxToken.trim());
-    }
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleTokenSubmit();
-    }
-  };
-
   useEffect(() => {
+    initializeMap();
+    
     return () => {
       markers.current.forEach(marker => marker.remove());
       map.current?.remove();
     };
   }, []);
 
-  if (!mapInitialized && !tokenError) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center p-6 space-y-4">
-        <div className="text-center space-y-2">
-          <h3 className="font-semibold">Mapbox Token Required</h3>
-          <p className="text-sm text-muted-foreground">
-            Please enter your Mapbox public token to view the map
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Get your free token at{" "}
-            <a 
-              href="https://mapbox.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              mapbox.com
-            </a>
-          </p>
-        </div>
-        <div className="w-full max-w-sm space-y-2">
-          <Input
-            type="text"
-            placeholder="pk.eyJ1IjoieW91cnVzZXJuYW1lIiwi..."
-            value={mapboxToken}
-            onChange={(e) => setMapboxToken(e.target.value)}
-            onKeyPress={handleKeyPress}
-          />
-          <Button 
-            onClick={handleTokenSubmit} 
-            className="w-full"
-            disabled={!mapboxToken.trim()}
-          >
-            Load Map
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (tokenError) {
-    return (
-      <div className="h-full flex flex-col items-center justify-center p-6 space-y-4">
-        <AlertCircle className="h-12 w-12 text-destructive" />
-        <div className="text-center space-y-2">
-          <h3 className="font-semibold text-destructive">Map Loading Error</h3>
-          <p className="text-sm text-muted-foreground">
-            Invalid Mapbox token or network error. Please check your token and try again.
-          </p>
-        </div>
-        <Button 
-          onClick={() => {
-            setTokenError(false);
-            setMapboxToken('');
-          }} 
-          variant="outline"
-        >
-          Try Again
-        </Button>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (map.current) {
+      addClubMarkers();
+    }
+  }, [clubs]);
 
   return (
     <div className="relative w-full h-full">
