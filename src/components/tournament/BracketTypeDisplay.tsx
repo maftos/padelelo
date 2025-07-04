@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, Clock, MapPin } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface BracketTypeDisplayProps {
   bracketType: string;
@@ -37,6 +38,7 @@ function AmericanoDisplay({ maxPlayers }: { maxPlayers: number }) {
   const numTeams = maxPlayers / 2;
   const courts = 2;
   const rounds = generateAmericanoRounds(maxPlayers);
+  const playerRankings = generatePlayerRankings(maxPlayers);
 
   return (
     <Card>
@@ -51,7 +53,7 @@ function AmericanoDisplay({ maxPlayers }: { maxPlayers: number }) {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="schedule">Schedule</TabsTrigger>
-            <TabsTrigger value="teams">Teams & Rotations</TabsTrigger>
+            <TabsTrigger value="rankings">Rankings</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview" className="space-y-4">
@@ -94,71 +96,162 @@ function AmericanoDisplay({ maxPlayers }: { maxPlayers: number }) {
           </TabsContent>
           
           <TabsContent value="schedule" className="space-y-4">
+            <div className="space-y-4">
+              {rounds.map((round, index) => (
+                <div key={index} className="space-y-2">
+                  <h4 className="font-semibold text-sm text-muted-foreground">
+                    Round {index + 1}
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <MatchCard 
+                      courtNumber={1}
+                      team1Player1={round.court1.teamA[0]}
+                      team1Player2={round.court1.teamA[1]}
+                      team2Player1={round.court1.teamB[0]}
+                      team2Player2={round.court1.teamB[1]}
+                    />
+                    <MatchCard 
+                      courtNumber={2}
+                      team1Player1={round.court2.teamA[0]}
+                      team1Player2={round.court2.teamA[1]}
+                      team2Player1={round.court2.teamB[0]}
+                      team2Player2={round.court2.teamB[1]}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="rankings" className="space-y-4">
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-16">Round</TableHead>
-                    <TableHead>Court 1</TableHead>
-                    <TableHead>Court 2</TableHead>
-                    <TableHead className="w-20">Duration</TableHead>
+                    <TableHead className="w-16">Rank</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead className="text-center">Points</TableHead>
+                    <TableHead className="text-center">Matches</TableHead>
+                    <TableHead className="text-center">Win Rate</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {rounds.map((round, index) => (
+                  {playerRankings.map((player, index) => (
                     <TableRow key={index}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">Team A</Badge>
-                            <span className="text-sm">{round.court1.teamA.join(" & ")}</span>
-                          </div>
-                          <div className="text-xs text-muted-foreground">vs</div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">Team B</Badge>
-                            <span className="text-sm">{round.court1.teamB.join(" & ")}</span>
-                          </div>
+                      <TableCell className="font-medium">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">{index + 1}</span>
+                          {index < 3 && (
+                            <Trophy className={`h-4 w-4 ${
+                              index === 0 ? 'text-yellow-500' : 
+                              index === 1 ? 'text-gray-400' : 'text-amber-600'
+                            }`} />
+                          )}
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">Team C</Badge>
-                            <span className="text-sm">{round.court2.teamA.join(" & ")}</span>
-                          </div>
-                          <div className="text-xs text-muted-foreground">vs</div>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="text-xs">Team D</Badge>
-                            <span className="text-sm">{round.court2.teamB.join(" & ")}</span>
-                          </div>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src={player.profilePhoto} />
+                            <AvatarFallback>{player.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">{player.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-muted-foreground">20 min</TableCell>
+                      <TableCell className="text-center font-semibold">
+                        {player.points}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        {player.matchesPlayed}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <span className={`font-medium ${
+                          player.winRate >= 70 ? 'text-green-600' :
+                          player.winRate >= 50 ? 'text-yellow-600' : 'text-red-600'
+                        }`}>
+                          {player.winRate}%
+                        </span>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </div>
           </TabsContent>
-          
-          <TabsContent value="teams" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Array.from({ length: maxPlayers }, (_, i) => `Player ${i + 1}`).map((player, index) => (
-                <div key={index} className="p-3 border rounded-lg">
-                  <div className="font-medium mb-2">{player}</div>
-                  <div className="text-sm text-muted-foreground">
-                    Partners with: {getPlayerPartners(index + 1, rounds).join(", ")}
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    Plays against: {getPlayerOpponents(index + 1, rounds).join(", ")}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
         </Tabs>
       </CardContent>
+    </Card>
+  );
+}
+
+function MatchCard({ 
+  courtNumber, 
+  team1Player1, 
+  team1Player2, 
+  team2Player1, 
+  team2Player2 
+}: {
+  courtNumber: number;
+  team1Player1: string;
+  team1Player2: string;
+  team2Player1: string;
+  team2Player2: string;
+}) {
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
+
+  return (
+    <Card className="p-3 hover:bg-muted/50 transition-colors">
+      <div className="space-y-2">
+        <div className="flex justify-between items-center text-xs text-muted-foreground">
+          <span>Court {courtNumber}</span>
+          <span>20 min</span>
+        </div>
+        
+        <div className="flex items-center justify-between gap-2">
+          {/* Team 1 */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <Avatar className="h-5 w-5 shrink-0">
+                <AvatarFallback>{getInitials(team1Player1)}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs truncate">{team1Player1}</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Avatar className="h-5 w-5 shrink-0">
+                <AvatarFallback>{getInitials(team1Player2)}</AvatarFallback>
+              </Avatar>
+              <span className="text-xs truncate">{team1Player2}</span>
+            </div>
+          </div>
+
+          {/* VS indicator */}
+          <div className="px-2">
+            <span className="text-xs text-muted-foreground">vs</span>
+          </div>
+
+          {/* Team 2 */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-end gap-1.5">
+              <span className="text-xs truncate">{team2Player1}</span>
+              <Avatar className="h-5 w-5 shrink-0">
+                <AvatarFallback>{getInitials(team2Player1)}</AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="flex items-center justify-end gap-1.5 mt-1">
+              <span className="text-xs truncate">{team2Player2}</span>
+              <Avatar className="h-5 w-5 shrink-0">
+                <AvatarFallback>{getInitials(team2Player2)}</AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 }
@@ -210,40 +303,16 @@ function generateAmericanoRounds(numPlayers: number) {
   ];
 }
 
-function getPlayerPartners(playerNum: number, rounds: any[]): string[] {
-  const partners = new Set<string>();
-  const playerName = `Player ${playerNum}`;
-  
-  rounds.forEach(round => {
-    [round.court1, round.court2].forEach(court => {
-      [court.teamA, court.teamB].forEach(team => {
-        if (team.includes(playerName)) {
-          team.forEach((player: string) => {
-            if (player !== playerName) {
-              partners.add(player);
-            }
-          });
-        }
-      });
-    });
-  });
-  
-  return Array.from(partners);
-}
+function generatePlayerRankings(numPlayers: number) {
+  // Generate sample player rankings with realistic data
+  const players = Array.from({ length: numPlayers }, (_, i) => ({
+    name: `Player ${i + 1}`,
+    profilePhoto: `https://api.dicebear.com/7.x/avataaars/svg?seed=player${i + 1}`,
+    points: Math.floor(Math.random() * 20) + 5, // 5-25 points
+    matchesPlayed: 6, // In Americano, each player plays same number of matches
+    winRate: Math.floor(Math.random() * 60) + 20 // 20-80% win rate
+  }));
 
-function getPlayerOpponents(playerNum: number, rounds: any[]): string[] {
-  const opponents = new Set<string>();
-  const playerName = `Player ${playerNum}`;
-  
-  rounds.forEach(round => {
-    [round.court1, round.court2].forEach(court => {
-      if (court.teamA.includes(playerName)) {
-        court.teamB.forEach((player: string) => opponents.add(player));
-      } else if (court.teamB.includes(playerName)) {
-        court.teamA.forEach((player: string) => opponents.add(player));
-      }
-    });
-  });
-  
-  return Array.from(opponents);
+  // Sort by points (descending)
+  return players.sort((a, b) => b.points - a.points);
 }
