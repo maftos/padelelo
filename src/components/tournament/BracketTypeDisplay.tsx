@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -35,10 +34,17 @@ export function BracketTypeDisplay({ bracketType, maxPlayers = 8 }: BracketTypeD
 }
 
 function AmericanoDisplay({ maxPlayers }: { maxPlayers: number }) {
-  const numTeams = maxPlayers / 2;
   const courts = 2;
   const rounds = generateAmericanoRounds(maxPlayers);
   const playerRankings = generatePlayerRankings(maxPlayers);
+  const teamType = "Duo"; // Since Americano involves pairs
+  const roundTimeMinutes = 15;
+  const totalTimeMinutes = rounds.length * roundTimeMinutes;
+  const totalHours = Math.floor(totalTimeMinutes / 60);
+  const remainingMinutes = totalTimeMinutes % 60;
+  const totalTimeFormatted = totalHours > 0 
+    ? `${totalHours}h${remainingMinutes > 0 ? `${remainingMinutes}m` : ''} (${roundTimeMinutes}min)`
+    : `${totalTimeMinutes}m (${roundTimeMinutes}min)`;
 
   return (
     <Card>
@@ -65,8 +71,8 @@ function AmericanoDisplay({ maxPlayers }: { maxPlayers: number }) {
               </div>
               <div className="text-center p-3 bg-muted rounded-lg">
                 <Trophy className="h-6 w-6 mx-auto mb-2 text-primary" />
-                <div className="text-2xl font-bold">{numTeams}</div>
-                <div className="text-sm text-muted-foreground">Teams</div>
+                <div className="text-2xl font-bold">{teamType}</div>
+                <div className="text-sm text-muted-foreground">Team Type</div>
               </div>
               <div className="text-center p-3 bg-muted rounded-lg">
                 <MapPin className="h-6 w-6 mx-auto mb-2 text-primary" />
@@ -75,23 +81,34 @@ function AmericanoDisplay({ maxPlayers }: { maxPlayers: number }) {
               </div>
               <div className="text-center p-3 bg-muted rounded-lg">
                 <Clock className="h-6 w-6 mx-auto mb-2 text-primary" />
-                <div className="text-2xl font-bold">{rounds.length}</div>
-                <div className="text-sm text-muted-foreground">Rounds</div>
+                <div className="text-2xl font-bold">{totalTimeFormatted}</div>
+                <div className="text-sm text-muted-foreground">Duration</div>
               </div>
             </div>
             <div className="prose prose-sm max-w-none">
               <h4>How Americano Works:</h4>
-              <p>
-                In Americano format, all players rotate partners and opponents throughout the tournament. 
-                Each player will partner with different teammates and face all other players as opponents, 
-                ensuring a fair and balanced competition.
-              </p>
-              <ul>
-                <li>Players form temporary teams that change each round</li>
-                <li>Points are tracked individually for final ranking</li>
-                <li>Multiple courts run simultaneously</li>
-                <li>Equal playing time for all participants</li>
-              </ul>
+              <div className="space-y-2">
+                <p className="flex items-start gap-2">
+                  <span>🔄</span>
+                  <span><strong>Partner Rotation:</strong> Players form temporary teams that change each round</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span>🎯</span>
+                  <span><strong>Individual Scoring:</strong> Points are tracked individually for final ranking</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span>🏟️</span>
+                  <span><strong>Multi-Court Play:</strong> Multiple courts run simultaneously for faster games</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span>⚖️</span>
+                  <span><strong>Equal Playing Time:</strong> All participants get the same amount of game time</span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <span>🤝</span>
+                  <span><strong>Fair Competition:</strong> Everyone plays with and against everyone else</span>
+                </p>
+              </div>
             </div>
           </TabsContent>
           
