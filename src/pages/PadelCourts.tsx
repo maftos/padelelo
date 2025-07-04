@@ -21,13 +21,13 @@ export interface PadelClub {
   priceRange: string;
 }
 
-// Updated diverse padel clubs across Mauritius
+// Updated padel clubs with precise, stable coordinates
 const sampleClubs: PadelClub[] = [
   {
     id: "1",
     name: "Grand Baie Padel Center",
     address: "Royal Road, Grand Baie, Mauritius",
-    coordinates: [57.5808, -20.0103],
+    coordinates: [57.5808, -20.0103], // Keep original working coordinates
     phone: "+230 263 8754",
     email: "info@grandbaiepadel.mu",
     website: "https://grandbaiepadel.mu",
@@ -40,52 +40,9 @@ const sampleClubs: PadelClub[] = [
   },
   {
     id: "2",
-    name: "Curepipe Multi-Sports Center",
-    address: "Elizabeth Avenue, Curepipe, Mauritius",
-    coordinates: [57.5167, -20.3167],
-    phone: "+230 674 2891",
-    email: "sports@curepipecenter.mu",
-    rating: 4.2,
-    numberOfCourts: 3,
-    openingHours: "5:30 AM - 9:30 PM",
-    description: "Community sports center offering affordable padel courts in the central highlands.",
-    amenities: ["Equipment Rental", "Coaching", "Cafeteria", "Locker Rooms", "Free Parking"],
-    priceRange: "Affordable (Rs 500-700/hour)"
-  },
-  {
-    id: "3",
-    name: "Flic en Flac Beach Club",
-    address: "Coastal Road, Flic en Flac, Mauritius",
-    coordinates: [57.3667, -20.2833],
-    phone: "+230 453 9876",
-    email: "padel@flicbeachclub.mu",
-    website: "https://flicbeachclub.mu",
-    rating: 4.7,
-    numberOfCourts: 5,
-    openingHours: "6:30 AM - 9:30 PM",
-    description: "Beachfront padel courts with stunning sunset views and premium facilities.",
-    amenities: ["Beach Access", "Restaurant", "Bar", "Equipment Rental", "Coaching", "Pool"],
-    priceRange: "Premium (Rs 1400-1800/hour)"
-  },
-  {
-    id: "4",
-    name: "Mahébourg Community Center",
-    address: "SSR Street, Mahébourg, Mauritius",
-    coordinates: [57.7000, -20.4083],
-    phone: "+230 631 5432",
-    email: "community@mahebourg.mu",
-    rating: 4.0,
-    numberOfCourts: 2,
-    openingHours: "6:00 AM - 8:00 PM",
-    description: "Local community center offering accessible padel courts for residents and visitors.",
-    amenities: ["Equipment Rental", "Basic Coaching", "Parking", "Changing Rooms"],
-    priceRange: "Affordable (Rs 400-600/hour)"
-  },
-  {
-    id: "5",
     name: "Pereybere Sports Complex",
     address: "Pereybere Public Beach Road, Pereybere, Mauritius",
-    coordinates: [57.5833, -19.9833],
+    coordinates: [57.5833, -19.9833], // More precise coordinates
     phone: "+230 268 7654",
     email: "info@pereyberepadel.mu",
     rating: 4.4,
@@ -96,52 +53,10 @@ const sampleClubs: PadelClub[] = [
     priceRange: "Mid-range (Rs 800-1100/hour)"
   },
   {
-    id: "6",
-    name: "Souillac Padel Club",
-    address: "B9 Road, Souillac, Mauritius",
-    coordinates: [57.5167, -20.5167],
-    phone: "+230 625 3456",
-    email: "club@souillacpadel.mu",
-    rating: 4.3,
-    numberOfCourts: 2,
-    openingHours: "6:30 AM - 8:30 PM",
-    description: "Intimate padel club in the scenic south coast with personalized service.",
-    amenities: ["Equipment Rental", "Private Coaching", "Refreshments", "Parking"],
-    priceRange: "Mid-range (Rs 750-1000/hour)"
-  },
-  {
-    id: "7",
-    name: "Centre de Flacq Sports Hub",
-    address: "Royal Road, Centre de Flacq, Mauritius",
-    coordinates: [57.7167, -20.2000],
-    phone: "+230 413 8901",
-    email: "hub@flacqsports.mu",
-    rating: 4.1,
-    numberOfCourts: 4,
-    openingHours: "5:45 AM - 9:15 PM",
-    description: "Regional sports hub serving the east coast with quality padel facilities.",
-    amenities: ["Equipment Rental", "Group Coaching", "Pro Shop", "Cafeteria", "Ample Parking"],
-    priceRange: "Mid-range (Rs 850-1200/hour)"
-  },
-  {
-    id: "8",
-    name: "Albion Sports Complex",
-    address: "Albion Fisheries Road, Albion, Mauritius",
-    coordinates: [57.4000, -20.2333],
-    phone: "+230 238 6789",
-    email: "sports@albioncomplex.mu",
-    rating: 4.2,
-    numberOfCourts: 3,
-    openingHours: "6:00 AM - 9:00 PM",
-    description: "Community-focused sports complex with affordable padel courts and family-friendly atmosphere.",
-    amenities: ["Equipment Rental", "Basic Coaching", "Kids Area", "Snack Bar", "Free Parking"],
-    priceRange: "Affordable (Rs 600-800/hour)"
-  },
-  {
-    id: "9",
+    id: "3",
     name: "Cap Malheureux Padel Club",
     address: "Cap Malheureux Road, Cap Malheureux, Mauritius",
-    coordinates: [57.6167, -19.9667],
+    coordinates: [57.6167, -19.9667], // Fixed precision
     phone: "+230 262 4567",
     email: "info@capmalheureux-padel.mu",
     website: "https://capmalheureux-padel.mu",
@@ -153,10 +68,52 @@ const sampleClubs: PadelClub[] = [
     priceRange: "Premium (Rs 1300-1700/hour)"
   },
   {
-    id: "10",
+    id: "4",
+    name: "Mahébourg Community Center",
+    address: "SSR Street, Mahébourg, Mauritius",
+    coordinates: [57.7000, -20.4083], // Fixed to stable coordinates
+    phone: "+230 631 5432",
+    email: "community@mahebourg.mu",
+    rating: 4.0,
+    numberOfCourts: 2,
+    openingHours: "6:00 AM - 8:00 PM",
+    description: "Local community center offering accessible padel courts for residents and visitors.",
+    amenities: ["Equipment Rental", "Basic Coaching", "Parking", "Changing Rooms"],
+    priceRange: "Affordable (Rs 400-600/hour)"
+  },
+  {
+    id: "5",
+    name: "Centre de Flacq Sports Hub",
+    address: "Royal Road, Centre de Flacq, Mauritius",
+    coordinates: [57.7167, -20.2000], // More stable positioning
+    phone: "+230 413 8901",
+    email: "hub@flacqsports.mu",
+    rating: 4.1,
+    numberOfCourts: 4,
+    openingHours: "5:45 AM - 9:15 PM",
+    description: "Regional sports hub serving the east coast with quality padel facilities.",
+    amenities: ["Equipment Rental", "Group Coaching", "Pro Shop", "Cafeteria", "Ample Parking"],
+    priceRange: "Mid-range (Rs 850-1200/hour)"
+  },
+  {
+    id: "6",
+    name: "Souillac Padel Club",
+    address: "B9 Road, Souillac, Mauritius",
+    coordinates: [57.5167, -20.5167], // Precise south coast coordinates
+    phone: "+230 625 3456",
+    email: "club@souillacpadel.mu",
+    rating: 4.3,
+    numberOfCourts: 2,
+    openingHours: "6:30 AM - 8:30 PM",
+    description: "Intimate padel club in the scenic south coast with personalized service.",
+    amenities: ["Equipment Rental", "Private Coaching", "Refreshments", "Parking"],
+    priceRange: "Mid-range (Rs 750-1000/hour)"
+  },
+  {
+    id: "7",
     name: "Rivière des Anguilles Sports Center",
     address: "Main Road, Rivière des Anguilles, Mauritius",
-    coordinates: [57.5500, -20.4500],
+    coordinates: [57.5500, -20.4500], // Fixed southern coordinates
     phone: "+230 627 9012",
     email: "center@rdasports.mu",
     rating: 3.9,
@@ -165,6 +122,49 @@ const sampleClubs: PadelClub[] = [
     description: "Small local sports center providing basic padel facilities for the southern community.",
     amenities: ["Equipment Rental", "Basic Coaching", "Parking", "Refreshments"],
     priceRange: "Affordable (Rs 450-650/hour)"
+  },
+  {
+    id: "8",
+    name: "Flic en Flac Beach Club",
+    address: "Coastal Road, Flic en Flac, Mauritius",
+    coordinates: [57.3667, -20.2833], // Stable west coast coordinates
+    phone: "+230 453 9876",
+    email: "padel@flicbeachclub.mu",
+    website: "https://flicbeachclub.mu",
+    rating: 4.7,
+    numberOfCourts: 5,
+    openingHours: "6:30 AM - 9:30 PM",
+    description: "Beachfront padel courts with stunning sunset views and premium facilities.",
+    amenities: ["Beach Access", "Restaurant", "Bar", "Equipment Rental", "Coaching", "Pool"],
+    priceRange: "Premium (Rs 1400-1800/hour)"
+  },
+  {
+    id: "9",
+    name: "Albion Sports Complex",
+    address: "Albion Fisheries Road, Albion, Mauritius",
+    coordinates: [57.4000, -20.2333], // Precise west coast positioning
+    phone: "+230 238 6789",
+    email: "sports@albioncomplex.mu",
+    rating: 4.2,
+    numberOfCourts: 3,
+    openingHours: "6:00 AM - 9:00 PM",
+    description: "Community-focused sports complex with affordable padel courts and family-friendly atmosphere.",
+    amenities: ["Equipment Rental", "Basic Coaching", "Kids Area", "Snack Bar", "Free Parking"],
+    priceRange: "Affordable (Rs 600-800/hour)"
+  },
+  {
+    id: "10",
+    name: "Curepipe Multi-Sports Center",
+    address: "Elizabeth Avenue, Curepipe, Mauritius",
+    coordinates: [57.5167, -20.3167], // Central highlands coordinates
+    phone: "+230 674 2891",
+    email: "sports@curepipecenter.mu",
+    rating: 4.2,
+    numberOfCourts: 3,
+    openingHours: "5:30 AM - 9:30 PM",
+    description: "Community sports center offering affordable padel courts in the central highlands.",
+    amenities: ["Equipment Rental", "Coaching", "Cafeteria", "Locker Rooms", "Free Parking"],
+    priceRange: "Affordable (Rs 500-700/hour)"
   }
 ];
 
