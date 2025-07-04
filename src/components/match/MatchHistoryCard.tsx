@@ -61,16 +61,21 @@ export const MatchHistoryCard = ({
     return isCompleter;
   };
 
+  const formatMmr = (mmr: number) => {
+    return mmr?.toFixed(0) || '0';
+  };
+
   return (
-    <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-lg hover:shadow-xl transition-all duration-200 p-6 space-y-6">
+    <Card className="bg-card/50 backdrop-blur-sm border border-border/50 shadow-lg hover:shadow-xl transition-all duration-200 p-4 space-y-4">
       <MatchHeader
         changeType={change_type}
         createdAt={created_at}
         changeAmount={change_amount}
       />
       
-      <div className="space-y-6">
-        <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4">
+        {/* Left side - Team 1 */}
+        <div className="flex-1">
           <TeamDisplay
             player1DisplayName={team1_player1_display_name}
             player1ProfilePhoto={team1_player1_profile_photo}
@@ -79,13 +84,17 @@ export const MatchHistoryCard = ({
             player1IsCompleter={isMatchCompleter(player1_id)}
             player2IsCompleter={isMatchCompleter(player2_id)}
           />
+        </div>
 
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-accent/20 to-accent/30 border border-accent/30">
-            <span className="text-2xl font-bold text-foreground">{team1_score}</span>
-            <span className="text-lg text-muted-foreground">-</span>
-            <span className="text-2xl font-bold text-foreground">{team2_score}</span>
-          </div>
+        {/* Center - Score */}
+        <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-gradient-to-r from-accent/20 to-accent/30 border border-accent/30">
+          <span className="text-2xl font-bold text-foreground">{team1_score}</span>
+          <span className="text-lg text-muted-foreground">-</span>
+          <span className="text-2xl font-bold text-foreground">{team2_score}</span>
+        </div>
 
+        {/* Right side - Team 2 */}
+        <div className="flex-1">
           <TeamDisplay
             player1DisplayName={team2_player1_display_name}
             player1ProfilePhoto={team2_player1_profile_photo}
@@ -97,7 +106,22 @@ export const MatchHistoryCard = ({
           />
         </div>
 
-        <MatchFooter oldMmr={old_mmr} newMmr={new_mmr} />
+        {/* MMR Section - Moved to the right */}
+        <div className="flex items-center gap-4 ml-6">
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground mb-1">Previous</p>
+            <p className="text-sm font-semibold text-foreground">{formatMmr(old_mmr)}</p>
+          </div>
+          <div className="flex items-center">
+            <div className="h-px w-8 bg-gradient-to-r from-primary to-secondary"></div>
+          </div>
+          <div className="text-center">
+            <p className="text-xs text-muted-foreground mb-1">New</p>
+            <p className="text-sm font-semibold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+              {formatMmr(new_mmr)}
+            </p>
+          </div>
+        </div>
       </div>
     </Card>
   );
