@@ -80,23 +80,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
-      // Create popup
-      const popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: false
-      }).setHTML(`
-        <div style="padding: 10px; min-width: 200px;">
-          <h3 style="margin: 0 0 5px 0; font-weight: bold;">${club.name}</h3>
-          <p style="margin: 0 0 5px 0; font-size: 12px; color: #666;">${club.address}</p>
-          <div style="display: flex; align-items: center; gap: 5px;">
-            <span style="color: #fbbf24;">★</span>
-            <span style="font-size: 12px;">${club.rating}</span>
-            <span style="font-size: 12px; color: #666;">• ${club.numberOfCourts} courts</span>
-          </div>
-        </div>
-      `);
-
-      // Add click event
+      // Add click event only
       markerElement.addEventListener('click', () => {
         onClubSelect(club);
         
@@ -106,19 +90,6 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
           zoom: 13,
           duration: 1000
         });
-      });
-
-      // Add hover events
-      markerElement.addEventListener('mouseenter', () => {
-        markerElement.style.backgroundColor = '#059669';
-        markerElement.style.transform = 'scale(1.1)';
-        popup.setLngLat(club.coordinates).addTo(map.current!);
-      });
-
-      markerElement.addEventListener('mouseleave', () => {
-        markerElement.style.backgroundColor = '#10b981';
-        markerElement.style.transform = 'scale(1)';
-        popup.remove();
       });
 
       markers.current.push(marker);
