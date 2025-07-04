@@ -26,6 +26,7 @@ export const SignUpForm = () => {
   useEffect(() => {
     if (referrerId) {
       sessionStorage.setItem('referrerId', referrerId);
+      console.log('Saved referrerId to session storage:', referrerId);
     }
   }, [referrerId]);
 

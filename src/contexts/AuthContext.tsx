@@ -38,6 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Get initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
       if (error) {
+        console.error('Error getting session:', error);
         handleAuthError();
         return;
       }
@@ -53,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session);
       
       if (event === 'SIGNED_OUT') {
         handleAuthError();
@@ -106,6 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Navigate to login page
       navigate('/login');
     } catch (error: any) {
+      console.error("Error signing out:", error);
       // Even if there's an error, we want to clear the local state
       setSession(null);
       setUser(null);
