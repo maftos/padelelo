@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, Check } from "lucide-react";
+import { Star, Check, MapPin, Users, Calendar } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -114,10 +114,12 @@ export default function Tournaments() {
 
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
     try {
-      const formattedStartDate = format(new Date(startDate), 'PPP');
+      const start = new Date(startDate);
+      const formattedStartDate = format(start, 'MMM dd, yyyy');
       
       if (endDate) {
-        const formattedEndDate = format(new Date(endDate), 'PPP');
+        const end = new Date(endDate);
+        const formattedEndDate = format(end, 'MMM dd, yyyy');
         return `${formattedStartDate} - ${formattedEndDate}`;
       }
       
@@ -170,7 +172,7 @@ export default function Tournaments() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {tournaments?.map((tournament) => {
             const primaryAdmin = tournament.admins?.[0] || {
               user_id: '',
@@ -181,49 +183,76 @@ export default function Tournaments() {
             return (
               <div key={tournament.tournament_id} className="relative">
                 <Link to={`/tournaments/${tournament.tournament_id}`}>
-                  <Card className="transition-all hover:bg-accent h-full">
-                    <div className="relative h-48 w-full">
+                  <Card className="transition-all hover:bg-accent h-full overflow-hidden">
+                    <div className="relative h-64 w-full">
                       <img
                         src={tournament.main_photo || '/placeholder.svg'}
                         alt={tournament.name}
-                        className="w-full h-full object-cover rounded-t-lg"
+                        className="w-full h-full object-cover"
                       />
-                      <div className="absolute top-2 left-2">
+                      <div className="absolute top-4 left-4">
                         <TournamentStatusBadge status={tournament.status} />
                       </div>
                     </div>
-                    <CardHeader>
-                      <CardTitle className="flex justify-between items-start gap-4">
-                        <span>{tournament.name}</span>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <Avatar className="h-8 w-8">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex justify-between items-start gap-4 text-xl">
+                        <span className="line-clamp-2">{tournament.name}</span>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground flex-shrink-0">
+                          <Avatar className="h-10 w-10">
                             <AvatarImage src={primaryAdmin.profile_photo || undefined} />
-                            <AvatarFallback>
+                            <AvatarFallback className="text-xs">
                               {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         </div>
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
-                        <p className="text-sm font-medium">
-                          {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                    <CardContent className="pt-0">
+                      <div className="space-y-4">
+                        <p className="text-muted-foreground line-clamp-3 text-base leading-relaxed">
+                          {tournament.description}
                         </p>
-                        <div className="flex justify-between items-center text-sm">
-                          <span>MMR: {tournament.recommended_mmr}</span>
-                          <span>{tournament.responded_count} interested</span>
+                        
+                        <div className="grid grid-cols-1 gap-3">
+                          <div className="flex items-center gap-3 text-sm">
+                            <Calendar className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                            <span className="font-medium">
+                              {formatTournamentDate(tournament.start_date, tournament.end_date)}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-sm">
+                              <Star className="h-4 w-4 text-yellow-500 flex-shrink-0" />
+                              <span>
+                                <span className="font-medium">{tournament.recommended_mmr}</span>
+                                <span className="text-muted-foreground ml-1">MMR</span>
+                              </span>
+                            </div>
+                            
+                            <div className="flex items-center gap-3 text-sm">
+                              <Users className="h-4 w-4 text-green-500 flex-shrink-0" />
+                              <span>
+                                <span className="font-medium">{tournament.responded_count}</span>
+                                <span className="text-muted-foreground ml-1">interested</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span className="text-xs">Tournament Organizer:</span>
+                          <span className="font-medium text-foreground">{primaryAdmin.display_name}</span>
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 </Link>
-                <div className="absolute bottom-4 right-4 z-10">
+                <div className="absolute bottom-6 right-6 z-10">
                   <Button
                     variant={tournament.user_interest === 'INTERESTED' ? "secondary" : "default"}
                     size="sm"
-                    className="gap-2"
+                    className="gap-2 shadow-lg"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
