@@ -1,6 +1,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronRight, Crown, Award } from "lucide-react";
+import { ChevronRight, Crown, Award, User, UserX } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -56,6 +56,15 @@ export const LeaderboardTable = ({
     return "text-muted-foreground";
   };
 
+  const getGenderIcon = (gender: string | null) => {
+    if (gender?.toLowerCase() === 'male') {
+      return <User className="w-4 h-4 text-blue-500" />;
+    } else if (gender?.toLowerCase() === 'female') {
+      return <User className="w-4 h-4 text-pink-500" />;
+    }
+    return <UserX className="w-4 h-4 text-gray-400" />;
+  };
+
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-xl overflow-hidden">
       <div className="overflow-x-auto">
@@ -66,7 +75,7 @@ export const LeaderboardTable = ({
               <TableHead className="font-bold text-foreground text-sm md:text-base min-w-[140px]">Player</TableHead>
               {!isMobile && (
                 <>
-                  <TableHead className="font-bold text-foreground text-base">Gender</TableHead>
+                  <TableHead className="font-bold text-foreground text-base w-[60px]">Gender</TableHead>
                   <TableHead className="font-bold text-foreground text-base">Country</TableHead>
                 </>
               )}
@@ -117,17 +126,23 @@ export const LeaderboardTable = ({
                         )}
                       </p>
                       {isMobile && (
-                        <p className="text-xs text-muted-foreground truncate">
-                          {player.nationality || 'Unknown'} • {player.gender ? player.gender.charAt(0).toUpperCase() + player.gender.slice(1) : 'N/A'}
-                        </p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span className="truncate">{player.nationality || 'Unknown'}</span>
+                          <span>•</span>
+                          <div className="flex items-center gap-1">
+                            {getGenderIcon(player.gender)}
+                          </div>
+                        </div>
                       )}
                     </div>
                   </div>
                 </TableCell>
                 {!isMobile && (
                   <>
-                    <TableCell className="text-base">
-                      <span className="capitalize">{player.gender || 'N/A'}</span>
+                    <TableCell className="text-center">
+                      <div className="flex justify-center">
+                        {getGenderIcon(player.gender)}
+                      </div>
                     </TableCell>
                     <TableCell className="text-base">{player.nationality || 'Unknown'}</TableCell>
                   </>
