@@ -100,7 +100,14 @@ export const PhoneStep = ({
       )}
       
       <div className="space-y-2">
-        <Label>WhatsApp Number</Label>
+        <Label className="flex items-center gap-2">
+          <img 
+            src="/lovable-uploads/e100e7ea-aafc-4f26-9457-8d6fbd2159bc.png" 
+            alt="WhatsApp" 
+            className="w-5 h-5" 
+          />
+          WhatsApp Number
+        </Label>
         <div className="flex gap-2">
           <Select 
             value={countryCode} 
@@ -133,20 +140,9 @@ export const PhoneStep = ({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label>Password</Label>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
-          minLength={6}
-        />
-      </div>
-
       <Button 
         type="submit"
-        disabled={loading || !phoneNumber || !password}
+        disabled={loading || !phoneNumber}
         className="w-full"
       >
         {loading ? "Processing..." : "Sign Up"}

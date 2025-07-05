@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
@@ -41,26 +40,20 @@ export const useSignUp = () => {
         return;
       }
 
-      if (!isPasswordValid()) {
-        setError("Password must be at least 6 characters long");
-        return;
-      }
-      
       setLoading(true);
       setError(null);
 
       const fullPhoneNumber = getFullPhoneNumber();
       const referrerId = sessionStorage.getItem('referrerId');
       
-      const { data, error: signUpError } = await supabase.auth.signUp({
+      // For signup, we use passwordless auth (OTP only)
+      const { data, error: signUpError } = await supabase.auth.signInWithOtp({
         phone: fullPhoneNumber,
-        password,
         options: {
           data: {
-            phone: fullPhoneNumber // Store phone in user metadata
+            phone: fullPhoneNumber
           },
-          channel: 'whatsapp',
-          emailRedirectTo: window.location.origin // Prevent any redirects to /verify
+          channel: 'whatsapp'
         }
       });
 
@@ -70,7 +63,8 @@ export const useSignUp = () => {
         return;
       }
 
-      if (data?.user && referrerId) {
+      // Store referral info if exists
+      if (referrerId) {
         try {
           const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
           
@@ -216,4 +210,3 @@ export const useSignUp = () => {
     handleVerify,
   };
 };
-
