@@ -55,13 +55,16 @@ const SignUp = () => {
             <SignUpForm />
             
             {!isVerificationStep && (
-              <div className="text-center space-y-2">
-                <p className="text-sm text-muted-foreground">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">
                   Already have an account?
                 </p>
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/login">Sign In</Link>
-                </Button>
+                <Link 
+                  to="/login" 
+                  className="text-sm text-primary hover:underline underline-offset-4"
+                >
+                  Sign in
+                </Link>
               </div>
             )}
           </div>

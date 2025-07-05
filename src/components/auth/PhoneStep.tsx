@@ -100,14 +100,7 @@ export const PhoneStep = ({
       )}
       
       <div className="space-y-2">
-        <Label className="flex items-center gap-2">
-          <img 
-            src="/lovable-uploads/e100e7ea-aafc-4f26-9457-8d6fbd2159bc.png" 
-            alt="WhatsApp" 
-            className="w-5 h-5" 
-          />
-          WhatsApp Number
-        </Label>
+        <Label>WhatsApp Number</Label>
         <div className="flex gap-2">
           <Select 
             value={countryCode} 

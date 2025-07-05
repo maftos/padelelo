@@ -22,13 +22,16 @@ const Login = () => {
           <div className="bg-card rounded-lg p-6 shadow-lg space-y-6">
             <SignInForm />
             
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-2">
                 Don't have an account?
               </p>
-              <Button asChild variant="outline" className="w-full">
-                <Link to="/signup">Create Account</Link>
-              </Button>
+              <Link 
+                to="/signup" 
+                className="text-sm text-primary hover:underline underline-offset-4"
+              >
+                Create account
+              </Link>
             </div>
           </div>
         </div>
