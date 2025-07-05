@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -19,7 +20,7 @@ export const HeroSection = () => {
           </p>
           <div className="flex flex-wrap gap-4">
             <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-              <Link to="/register-match">Start Playing</Link>
+              <Link to="/signup">Start Playing</Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-foreground/20 text-foreground hover:bg-foreground/10">
               <Link to="/leaderboard">View Rankings</Link>

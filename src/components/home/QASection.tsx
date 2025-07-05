@@ -16,8 +16,8 @@ export const QASection = () => {
           <AccordionItem value="item-1">
             <AccordionTrigger>How can I join PadelELO?</AccordionTrigger>
             <AccordionContent>
-              PadelELO is currently an invite-only platform. To join, you need to be referred by an existing member 
-              (see the leaderboard - and request an invitation).
+              Simply click "Start Playing" to create your account and join our padel community. 
+              You can sign up with your WhatsApp number and start tracking your matches right away.
             </AccordionContent>
           </AccordionItem>
 
