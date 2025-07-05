@@ -7,11 +7,13 @@ import { useReferrer } from "@/hooks/use-referrer";
 import { Navigation } from "@/components/Navigation";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useSignUp } from "@/components/auth/useSignUp";
 
 const SignUp = () => {
   const [searchParams] = useSearchParams();
   const referrerId = searchParams.get('ref');
   const { data: referrer, isLoading: isLoadingReferrer } = useReferrer(referrerId);
+  const { isVerificationStep } = useSignUp();
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,7 +28,7 @@ const SignUp = () => {
           </div>
           
           <div className="bg-card rounded-lg p-6 shadow-lg space-y-6">
-            {referrerId && (
+            {referrerId && !isVerificationStep && (
               <div className="flex flex-col items-center gap-4 pb-6 border-b">
                 {isLoadingReferrer ? (
                   <div className="space-y-4 w-full flex flex-col items-center">
@@ -52,14 +54,16 @@ const SignUp = () => {
             
             <SignUpForm />
             
-            <div className="text-center space-y-2">
-              <p className="text-sm text-muted-foreground">
-                Already have an account?
-              </p>
-              <Button asChild variant="outline" className="w-full">
-                <Link to="/login">Sign In</Link>
-              </Button>
-            </div>
+            {!isVerificationStep && (
+              <div className="text-center space-y-2">
+                <p className="text-sm text-muted-foreground">
+                  Already have an account?
+                </p>
+                <Button asChild variant="outline" className="w-full">
+                  <Link to="/login">Sign In</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,9 +29,9 @@ export const SignInForm = () => {
   };
 
   const formatPhoneDisplay = (phone: string) => {
-    if (phone.length <= 4) return phone;
-    if (phone.length <= 7) return phone.replace(/(\d{1})(\d{3})/, '$1 $2');
-    return phone.replace(/(\d{1})(\d{3})(\d{4})/, '$1 $2 $3');
+    if (phone.length <= 1) return phone;
+    if (phone.length <= 4) return phone.replace(/(\d{1})(\d{0,3})/, '$1 $2').trim();
+    return phone.replace(/(\d{1})(\d{3})(\d{0,4})/, '$1 $2 $3').trim();
   };
 
   const handleAuthError = (error: AuthError) => {
@@ -157,7 +156,7 @@ export const SignInForm = () => {
               onValueChange={setCountryCode}
               disabled={loading || passwordlessLoading}
             >
-              <SelectTrigger className="w-[100px]">
+              <SelectTrigger className="w-[90px]">
                 <SelectValue placeholder="Code" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">
@@ -210,7 +209,7 @@ export const SignInForm = () => {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            Or
           </span>
         </div>
       </div>
@@ -223,10 +222,10 @@ export const SignInForm = () => {
           className="w-full"
           variant="outline"
         >
-          {passwordlessLoading ? "Sending SMS..." : "Sign In with SMS Code"}
+          {passwordlessLoading ? "Sending WhatsApp..." : "Sign In via WhatsApp"}
         </Button>
         <p className="text-xs text-muted-foreground text-center">
-          We'll send you a verification code via SMS
+          We'll send you a verification code via WhatsApp
         </p>
       </form>
     </div>
