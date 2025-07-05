@@ -156,7 +156,7 @@ export const SignInForm = () => {
               onValueChange={setCountryCode}
               disabled={loading || passwordlessLoading}
             >
-              <SelectTrigger className="w-[90px]">
+              <SelectTrigger className="w-[110px]">
                 <SelectValue placeholder="Code" />
               </SelectTrigger>
               <SelectContent className="max-h-[300px]">

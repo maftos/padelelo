@@ -107,7 +107,7 @@ export const PhoneStep = ({
             onValueChange={setCountryCode}
             disabled={loading}
           >
-            <SelectTrigger className="w-[90px]">
+            <SelectTrigger className="w-[110px]">
               <SelectValue placeholder="Code" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
