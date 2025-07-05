@@ -18,6 +18,7 @@ export const SignInForm = () => {
   const [countryCode, setCountryCode] = useState("+230");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordlessLoading, setPasswordlessLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -29,7 +30,9 @@ export const SignInForm = () => {
   };
 
   const formatPhoneDisplay = (phone: string) => {
-    return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
+    if (phone.length <= 4) return phone;
+    if (phone.length <= 7) return phone.replace(/(\d{1})(\d{3})/, '$1 $2');
+    return phone.replace(/(\d{1})(\d{3})(\d{4})/, '$1 $2 $3');
   };
 
   const handleAuthError = (error: AuthError) => {
@@ -99,66 +102,133 @@ export const SignInForm = () => {
     }
   };
 
+  const handlePasswordlessSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      setPasswordlessLoading(true);
+      setError(null);
+
+      const fullPhoneNumber = countryCode + phoneNumber;
+
+      if (!validatePhoneNumber(phoneNumber)) {
+        setError("Please enter a valid phone number");
+        return;
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithOtp({
+        phone: fullPhoneNumber,
+      });
+
+      if (signInError) {
+        console.error("Passwordless sign in error:", signInError);
+        setError(handleAuthError(signInError));
+        return;
+      }
+
+      toast({
+        title: "SMS Sent!",
+        description: "Please check your phone for the verification code",
+      });
+
+    } catch (err: any) {
+      console.error("Unexpected error:", err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setPasswordlessLoading(false);
+    }
+  };
+
   return (
-    <form onSubmit={handleSignIn} className="space-y-4">
+    <div className="space-y-6">
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
       
-      <div className="space-y-2">
-        <Label>WhatsApp Number</Label>
-        <div className="flex gap-2">
-          <Select 
-            value={countryCode} 
-            onValueChange={setCountryCode}
-            disabled={loading}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Country Code" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {countries.map((country) => (
-                <SelectItem 
-                  key={country.code} 
-                  value={country.dial_code}
-                >
-                  {country.flag} {country.dial_code} ({country.code})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
+      {/* Password Login Form */}
+      <form onSubmit={handleSignIn} className="space-y-4">
+        <div className="space-y-2">
+          <Label>WhatsApp Number</Label>
+          <div className="flex gap-2">
+            <Select 
+              value={countryCode} 
+              onValueChange={setCountryCode}
+              disabled={loading || passwordlessLoading}
+            >
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Code" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px]">
+                {countries.map((country) => (
+                  <SelectItem 
+                    key={country.code} 
+                    value={country.dial_code}
+                  >
+                    {country.flag} {country.dial_code}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <Input
+              type="tel"
+              placeholder="Phone number"
+              value={formatPhoneDisplay(phoneNumber)}
+              onChange={handlePhoneChange}
+              className="flex-1"
+              disabled={loading || passwordlessLoading}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Password</Label>
           <Input
-            type="tel"
-            placeholder="Phone number"
-            value={formatPhoneDisplay(phoneNumber)}
-            onChange={handlePhoneChange}
-            className="flex-1"
-            disabled={loading}
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading || passwordlessLoading}
+            minLength={6}
           />
+        </div>
+
+        <Button 
+          type="submit"
+          disabled={loading || passwordlessLoading || !phoneNumber || !password}
+          className="w-full"
+        >
+          {loading ? "Signing in..." : "Sign In with Password"}
+        </Button>
+      </form>
+
+      {/* Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            Or continue with
+          </span>
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label>Password</Label>
-        <Input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
-          minLength={6}
-        />
-      </div>
-
-      <Button 
-        type="submit"
-        disabled={loading || !phoneNumber || !password}
-        className="w-full"
-      >
-        {loading ? "Signing in..." : "Sign In"}
-      </Button>
-    </form>
+      {/* Passwordless Login Form */}
+      <form onSubmit={handlePasswordlessSignIn} className="space-y-4">
+        <Button 
+          type="submit"
+          disabled={loading || passwordlessLoading || !phoneNumber}
+          className="w-full"
+          variant="outline"
+        >
+          {passwordlessLoading ? "Sending SMS..." : "Sign In with SMS Code"}
+        </Button>
+        <p className="text-xs text-muted-foreground text-center">
+          We'll send you a verification code via SMS
+        </p>
+      </form>
+    </div>
   );
 };

@@ -44,7 +44,9 @@ export const PhoneStep = ({
   };
 
   const formatPhoneDisplay = (phone: string) => {
-    return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
+    if (phone.length <= 4) return phone;
+    if (phone.length <= 7) return phone.replace(/(\d{1})(\d{3})/, '$1 $2');
+    return phone.replace(/(\d{1})(\d{3})(\d{4})/, '$1 $2 $3');
   };
 
   if (isVerificationStep) {
@@ -105,8 +107,8 @@ export const PhoneStep = ({
             onValueChange={setCountryCode}
             disabled={loading}
           >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Country Code" />
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Code" />
             </SelectTrigger>
             <SelectContent className="max-h-[300px]">
               {countries.map((country) => (
@@ -114,7 +116,7 @@ export const PhoneStep = ({
                   key={country.code} 
                   value={country.dial_code}
                 >
-                  {country.flag} {country.dial_code} ({country.code})
+                  {country.flag} {country.dial_code}
                 </SelectItem>
               ))}
             </SelectContent>
