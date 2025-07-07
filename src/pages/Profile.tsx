@@ -17,12 +17,12 @@ const Profile = () => {
   const targetUserId = profileUserId || currentUser?.id;
   const isOwnProfile = !profileUserId || profileUserId === currentUser?.id;
   
-  const { userId } = useUserProfile();
   const {
     isLoading,
     isEditing,
     uploading,
     formData,
+    profileData,
     setIsEditing,
     handleFormChange,
     handleGenderSelect,
@@ -35,23 +35,58 @@ const Profile = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <main className="container max-w-4xl mx-auto py-8 px-4">
-          <div className="text-center space-y-2">
-            <Skeleton className="h-8 w-48 mx-auto" />
-            <Skeleton className="h-4 w-64 mx-auto" />
-          </div>
-          <div className="mt-8 space-y-6">
-            <div className="flex flex-col items-center gap-4">
-              <Skeleton className="h-24 w-24 rounded-full" />
-              <Skeleton className="h-8 w-24" />
-            </div>
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="space-y-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-10 w-full" />
+        <main className="container max-w-6xl mx-auto py-8 px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Profile Info Skeleton */}
+            <div className="lg:col-span-1">
+              <div className="space-y-6">
+                {/* Profile Hero Card Skeleton */}
+                <div className="p-6 rounded-lg border bg-card">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <Skeleton className="h-24 w-24 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-8 w-48" />
+                      <div className="flex justify-center gap-2">
+                        <Skeleton className="h-6 w-16" />
+                        <Skeleton className="h-6 w-20" />
+                        <Skeleton className="h-6 w-12" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-10 w-full" />
+                  </div>
                 </div>
-              ))}
+              </div>
+            </div>
+
+            {/* Right Column - Stats and Activity Skeleton */}
+            <div className="lg:col-span-2">
+              <div className="space-y-6">
+                {/* Stats Grid Skeleton */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="p-4 rounded-lg border bg-card">
+                      <Skeleton className="h-4 w-16 mb-2" />
+                      <Skeleton className="h-8 w-20" />
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Activity Feed Skeleton */}
+                <div className="p-6 rounded-lg border bg-card">
+                  <Skeleton className="h-6 w-32 mb-4" />
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="flex-1">
+                          <Skeleton className="h-4 w-full mb-1" />
+                          <Skeleton className="h-3 w-24" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </main>
@@ -88,7 +123,7 @@ const Profile = () => {
             isEditing={isEditing && isOwnProfile}
             uploading={uploading}
             formData={formData}
-            profileData={undefined} // Will be populated when backend integration is ready
+            profileData={profileData}
             onPhotoUpload={handlePhotoUpload}
             onFormChange={handleFormChange}
             onGenderSelect={handleGenderSelect}

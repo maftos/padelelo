@@ -78,7 +78,7 @@ export const ProfileContent = ({
       <div className="lg:col-span-2">
         <div className="space-y-6">
           <StatsGrid profileData={{
-            current_mmr: formData.current_mmr || 3000,
+            current_mmr: profileData?.profile?.current_mmr || formData.current_mmr || 3000,
             level: 1,
             total_xp: 0
           }} />

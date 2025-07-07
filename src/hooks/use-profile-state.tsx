@@ -3,7 +3,28 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 import { UserProfile } from "./use-user-profile";
+
+interface ViewProfileResponse {
+  profile: {
+    id: string;
+    first_name: string | null;
+    last_name: string | null;
+    created_at: string;
+    gender: string | null;
+    location: string | null;
+    profile_photo: string | null;
+    current_mmr: number;
+    nationality: string | null;
+  };
+  friendship: {
+    exists: boolean;
+    status: string | null;
+    created_at: string | null;
+    friendship_id: number | null;
+  };
+}
 
 interface ProfileFormState {
   first_name: string;
@@ -16,7 +37,8 @@ interface ProfileFormState {
   favorite_position: string;
 }
 
-export const useProfileState = (userId: string | undefined) => {
+export const useProfileState = (profileUserId: string | undefined) => {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -32,34 +54,31 @@ export const useProfileState = (userId: string | undefined) => {
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
-    queryKey: ["profile", userId],
+    queryKey: ["profile", profileUserId],
     queryFn: async () => {
-      if (!userId) return null;
+      if (!profileUserId || !user?.id) return null;
       
       const { data, error } = await supabase.rpc('view_profile', {
-        user_a_id: userId,
-        user_b_id: userId
+        user_a_id: user.id,
+        user_b_id: profileUserId
       });
       
       if (error) throw error;
       if (!data) return null;
       
-      // Cast the data to UserProfile type
-      const profileInfo = data as unknown as UserProfile;
+      // The view_profile function returns { profile: {...}, friendship: {...} }
+      const response = data as unknown as ViewProfileResponse;
+      const profileInfo = response.profile;
+      const friendshipInfo = response.friendship;
       
       // Validate the required fields
       if (!profileInfo.id) {
         throw new Error('Invalid profile data structure');
       }
       
-      // Split display_name into first_name and last_name for editing
-      const nameParts = (profileInfo.display_name || "").split(" ");
-      const firstName = nameParts[0] || "";
-      const lastName = nameParts.slice(1).join(" ") || "";
-      
       setFormData({
-        first_name: firstName,
-        last_name: lastName,
+        first_name: profileInfo.first_name || "",
+        last_name: profileInfo.last_name || "",
         nationality: profileInfo.nationality || "",
         gender: profileInfo.gender || "",
         profile_photo: profileInfo.profile_photo || "",
@@ -68,9 +87,9 @@ export const useProfileState = (userId: string | undefined) => {
         favorite_position: "", // New field - will be empty initially
       });
       
-      return profileInfo;
+      return { profile: profileInfo, friendship: friendshipInfo };
     },
-    enabled: !!userId,
+    enabled: !!profileUserId && !!user?.id,
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: true,
@@ -141,7 +160,7 @@ export const useProfileState = (userId: string | undefined) => {
 
   const handleSave = async () => {
     try {
-      if (!userId) {
+      if (!profileUserId) {
         toast({
           title: "Error",
           description: "User ID not found. Please try logging in again.",
@@ -151,7 +170,7 @@ export const useProfileState = (userId: string | undefined) => {
       }
 
       console.log('Updating profile with data:', {
-        userId,
+        profileUserId,
         formData
       });
 
@@ -159,7 +178,7 @@ export const useProfileState = (userId: string | undefined) => {
       const displayName = `${formData.first_name} ${formData.last_name}`.trim();
 
       const { error } = await supabase.rpc('edit_user_profile', {
-        user_a_id: userId,
+        user_a_id: profileUserId,
         new_display_name: displayName,
         new_gender: formData.gender,
         new_date_of_birth: null,
