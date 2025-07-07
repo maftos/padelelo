@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -121,19 +122,6 @@ const CreateMatchWizard = () => {
     }
   };
 
-  const getStepDescription = () => {
-    switch (currentStep) {
-      case 1:
-        return "Choose up to 4 players for your match";
-      case 2:
-        return "Set location, date, time, and fee details";
-      case 3:
-        return "Add more info for your announcement";
-      default:
-        return "";
-    }
-  };
-
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
@@ -157,23 +145,7 @@ const CreateMatchWizard = () => {
       {/* Step Content */}
       <Card>
         <CardContent className="p-6">
-          <div className="space-y-6">
-            {currentStep === 1 ? (
-              // For step 1, don't show the title and description
-              renderStepContent()
-            ) : currentStep === 3 ? (
-              // For step 3, don't show title/description as it's handled in the component
-              renderStepContent()
-            ) : (
-              <>
-                <div>
-                  <h2 className="text-xl font-semibold">{getStepTitle()}</h2>
-                  <p className="text-sm text-muted-foreground">{getStepDescription()}</p>
-                </div>
-                {renderStepContent()}
-              </>
-            )}
-          </div>
+          {renderStepContent()}
         </CardContent>
       </Card>
 

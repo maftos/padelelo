@@ -2,9 +2,9 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { MapPin, DollarSign } from "lucide-react";
 import { DateTimePickers } from "./DateTimePickers";
+import { StepHeader } from "./StepHeader";
 
 interface LocationDetailsData {
   location: string;
@@ -32,15 +32,11 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
   return (
     <div className="space-y-6">
-      {/* Title with badge for incomplete matches */}
-      <div className="flex items-center gap-2">
-        <h2 className="text-xl font-semibold">Match Details</h2>
-        {!hasAllPlayers && (
-          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-            Open Game
-          </Badge>
-        )}
-      </div>
+      <StepHeader 
+        title="Match Details"
+        description="Set location, date, time, and fee details"
+        showOpenGameBadge={!hasAllPlayers}
+      />
 
       {/* Location */}
       <div className="space-y-3">
