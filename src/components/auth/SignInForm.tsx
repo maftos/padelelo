@@ -25,7 +25,9 @@ export const SignInForm = () => {
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = e.target.value.replace(/\D/g, '');
-    setPhoneNumber(cleaned);
+    if (cleaned.length <= 8) {
+      setPhoneNumber(cleaned);
+    }
   };
 
   const formatPhoneDisplay = (phone: string) => {
@@ -224,9 +226,6 @@ export const SignInForm = () => {
         >
           {passwordlessLoading ? "Sending WhatsApp..." : "Sign In via WhatsApp"}
         </Button>
-        <p className="text-xs text-muted-foreground text-center">
-          We'll send you a verification code via WhatsApp
-        </p>
       </form>
     </div>
   );

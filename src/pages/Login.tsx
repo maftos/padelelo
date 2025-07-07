@@ -19,7 +19,7 @@ const Login = () => {
             </p>
           </div>
           
-          <div className="bg-card rounded-lg p-6 shadow-lg space-y-6">
+          <div className="bg-card border border-border rounded-lg p-6 shadow-xl backdrop-blur-sm space-y-6">
             <SignInForm />
             
             <div className="text-center">

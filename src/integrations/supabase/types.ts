@@ -276,24 +276,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matches_player1_id_fkey"
-            columns: ["team1_player1_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "matches_player2_id_fkey"
             columns: ["team1_player2_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matches_player2_id_fkey"
-            columns: ["team1_player2_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
           {
@@ -304,24 +290,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matches_player3_id_fkey"
-            columns: ["team2_player1_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "matches_player4_id_fkey"
             columns: ["team2_player2_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matches_player4_id_fkey"
-            columns: ["team2_player2_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -415,24 +387,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ratings_history_partner_id_fkey"
-            columns: ["partner_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "ratings_history_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ratings_history_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -471,13 +429,6 @@ export type Database = {
             columns: ["referrer_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "referrals_referrer_id_fkey"
-            columns: ["referrer_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -543,13 +494,6 @@ export type Database = {
             columns: ["player1_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_player"
-            columns: ["player1_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
           {
@@ -681,13 +625,6 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fk_user"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
         ]
       }
       user_actions: {
@@ -718,13 +655,6 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_actions_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
             referencedColumns: ["id"]
           },
         ]
@@ -765,63 +695,44 @@ export type Database = {
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "user_experience_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users_sorted_by_mmr"
-            referencedColumns: ["id"]
-          },
         ]
       }
       users: {
         Row: {
           created_at: string | null
           current_mmr: number | null
-          date_of_birth: string | null
-          display_name: string
-          email: string | null
+          first_name: string | null
           gender: string | null
           id: string
           is_onboarded: boolean | null
-          languages: string[] | null
+          last_name: string | null
           location: string | null
           nationality: string | null
-          preferred_language: string | null
           profile_photo: string | null
-          whatsapp_number: string | null
         }
         Insert: {
           created_at?: string | null
           current_mmr?: number | null
-          date_of_birth?: string | null
-          display_name: string
-          email?: string | null
+          first_name?: string | null
           gender?: string | null
           id: string
           is_onboarded?: boolean | null
-          languages?: string[] | null
+          last_name?: string | null
           location?: string | null
           nationality?: string | null
-          preferred_language?: string | null
           profile_photo?: string | null
-          whatsapp_number?: string | null
         }
         Update: {
           created_at?: string | null
           current_mmr?: number | null
-          date_of_birth?: string | null
-          display_name?: string
-          email?: string | null
+          first_name?: string | null
           gender?: string | null
           id?: string
           is_onboarded?: boolean | null
-          languages?: string[] | null
+          last_name?: string | null
           location?: string | null
           nationality?: string | null
-          preferred_language?: string | null
           profile_photo?: string | null
-          whatsapp_number?: string | null
         }
         Relationships: []
       }
@@ -905,24 +816,6 @@ export type Database = {
           f_table_schema?: unknown | null
           srid?: number | null
           type?: string | null
-        }
-        Relationships: []
-      }
-      users_sorted_by_mmr: {
-        Row: {
-          created_at: string | null
-          current_mmr: number | null
-          date_of_birth: string | null
-          display_name: string | null
-          email: string | null
-          gender: string | null
-          id: string | null
-          languages: string[] | null
-          location: string | null
-          nationality: string | null
-          preferred_language: string | null
-          profile_photo: string | null
-          whatsapp_number: string | null
         }
         Relationships: []
       }
@@ -1603,10 +1496,6 @@ export type Database = {
           p_change_items: string[]
           p_title: string
         }
-        Returns: undefined
-      }
-      insert_referral_temp: {
-        Args: { p_referrer_id: string; p_referred_user_whatsapp: string }
         Returns: undefined
       }
       json: {

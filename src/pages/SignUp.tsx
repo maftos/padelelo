@@ -27,7 +27,7 @@ const SignUp = () => {
             </p>
           </div>
           
-          <div className="bg-card rounded-lg p-6 shadow-lg space-y-6">
+          <div className="bg-card border border-border rounded-lg p-6 shadow-xl backdrop-blur-sm space-y-6">
             {referrerId && !isVerificationStep && (
               <div className="flex flex-col items-center gap-4 pb-6 border-b">
                 {isLoadingReferrer ? (
