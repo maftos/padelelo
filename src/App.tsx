@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
-import RegisterMatch from "./pages/RegisterMatch";
+import ManageMatches from "./pages/ManageMatches";
 import EditMatch from "./pages/EditMatch";
 import Matches from "./pages/Matches";
 import Friends from "./pages/Friends";
@@ -48,7 +48,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/register-match" element={<RegisterMatch />} />
+              <Route path="/manage-matches" element={<ManageMatches />} />
               <Route path="/edit-match/:matchId" element={<EditMatch />} />
               <Route path="/matches" element={<Matches />} />
               <Route path="/friends" element={<Friends />} />

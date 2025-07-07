@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
@@ -67,12 +66,12 @@ const EditMatch = () => {
 
   const handleSaveChanges = () => {
     toast.success("Match details updated successfully");
-    navigate("/register-match");
+    navigate("/manage-matches");
   };
 
   const handleAdvertiseAsOpenGame = () => {
     toast.success("Match advertised as open game");
-    navigate("/register-match");
+    navigate("/manage-matches");
   };
 
   const formatDateTime = () => {
@@ -93,7 +92,7 @@ const EditMatch = () => {
         <PageContainer>
           <div className="text-center py-8">
             <p className="text-muted-foreground">Match not found</p>
-            <Button onClick={() => navigate("/register-match")} className="mt-4">
+            <Button onClick={() => navigate("/manage-matches")} className="mt-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Matches
             </Button>
@@ -111,7 +110,7 @@ const EditMatch = () => {
           {/* Header */}
           <div className="flex items-center gap-4">
             <Button 
-              onClick={() => navigate("/register-match")} 
+              onClick={() => navigate("/manage-matches")} 
               variant="ghost" 
               size="sm"
             >
