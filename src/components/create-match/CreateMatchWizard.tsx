@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Megaphone } from "lucide-react";
+import { ArrowLeft, ArrowRight, Megaphone, Users } from "lucide-react";
 import { PlayersStep } from "./PlayersStep";
 import { LocationDetailsStep } from "./LocationDetailsStep";
 import { GameAnnouncementStep } from "./GameAnnouncementStep";
@@ -32,7 +32,8 @@ const CreateMatchWizard = () => {
     gameDescription: ""
   });
 
-  const totalSteps = 3;
+  const isOpenGame = wizardData.selectedPlayers.length < 4;
+  const totalSteps = isOpenGame ? 3 : 2;
 
   const updateWizardData = (data: Partial<WizardData>) => {
     setWizardData(prev => ({ ...prev, ...data }));
@@ -51,7 +52,11 @@ const CreateMatchWizard = () => {
   };
 
   const handleFinish = () => {
-    toast.success("Match created successfully!");
+    if (isOpenGame) {
+      toast.success("Open game published successfully!");
+    } else {
+      toast.success("Match created successfully!");
+    }
     navigate("/manage-matches");
   };
 
@@ -61,7 +66,7 @@ const CreateMatchWizard = () => {
         return wizardData.selectedPlayers.length > 0;
       case 2:
         // For incomplete matches (less than 4 players), require all fields
-        if (wizardData.selectedPlayers.length < 4) {
+        if (isOpenGame) {
           return wizardData.location && wizardData.matchDate && wizardData.matchTime && wizardData.feePerPlayer;
         }
         return true; // For complete matches, details are optional
@@ -122,6 +127,32 @@ const CreateMatchWizard = () => {
     }
   };
 
+  const getNextButtonContent = () => {
+    if (currentStep === totalSteps) {
+      if (isOpenGame) {
+        return (
+          <>
+            <Megaphone className="h-4 w-4 mr-2" />
+            Publish Open Game
+          </>
+        );
+      } else {
+        return (
+          <>
+            <Users className="h-4 w-4 mr-2" />
+            Create Match
+          </>
+        );
+      }
+    }
+    return (
+      <>
+        Next
+        <ArrowRight className="h-4 w-4 ml-2" />
+      </>
+    );
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
@@ -161,25 +192,13 @@ const CreateMatchWizard = () => {
               {currentStep === 1 ? "Back" : "Previous"}
             </Button>
 
-            {currentStep === totalSteps ? (
-              <Button
-                onClick={handleFinish}
-                disabled={!canProceed()}
-                size="lg"
-              >
-                <Megaphone className="h-4 w-4 mr-2" />
-                Publish Open Game
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                size="lg"
-              >
-                Next
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            )}
+            <Button
+              onClick={handleFinish}
+              disabled={!canProceed()}
+              size="lg"
+            >
+              {getNextButtonContent()}
+            </Button>
           </div>
         </CardContent>
       </Card>
