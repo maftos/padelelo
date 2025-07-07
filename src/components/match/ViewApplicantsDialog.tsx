@@ -1,4 +1,3 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { Users, UserCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Applicant {
   id: string;
@@ -32,6 +32,7 @@ export const ViewApplicantsDialog = ({
   applicants = [] 
 }: ViewApplicantsDialogProps) => {
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   // Mock applicants data with friends and others
   const mockApplicants: Applicant[] = [
@@ -104,7 +105,8 @@ export const ViewApplicantsDialog = ({
 
   const handleProfileClick = (applicantId: string) => {
     console.log('Navigate to profile:', applicantId);
-    // TODO: Navigate to user profile
+    navigate(`/profile/${applicantId}`);
+    onOpenChange(false);
   };
 
   const renderApplicantSection = (title: string, sectionApplicants: Applicant[]) => {
@@ -123,12 +125,6 @@ export const ViewApplicantsDialog = ({
               className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
               onClick={() => handleProfileClick(applicant.id)}
             >
-              <div onClick={(e) => handleApplicantToggle(applicant.id, e)} className="flex-shrink-0">
-                <Checkbox
-                  checked={selectedApplicants.includes(applicant.id)}
-                  disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
-                />
-              </div>
               <div className="flex items-center gap-3 flex-1">
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={applicant.profile_photo} />
@@ -144,6 +140,12 @@ export const ViewApplicantsDialog = ({
                     </Badge>
                   </div>
                 </div>
+              </div>
+              <div onClick={(e) => handleApplicantToggle(applicant.id, e)} className="flex-shrink-0">
+                <Checkbox
+                  checked={selectedApplicants.includes(applicant.id)}
+                  disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
+                />
               </div>
             </div>
           ))}

@@ -1,21 +1,32 @@
 
-import { Button } from "@/components/ui/button";
 import { ProfileHeroCard } from "./ProfileHeroCard";
+import { ProfileForm } from "./ProfileForm";
 import { StatsGrid } from "./StatsGrid";
 import { ActivityFeed } from "./ActivityFeed";
-import { ProfileForm } from "./ProfileForm";
+
+interface ProfileFormState {
+  first_name: string;
+  last_name: string;
+  nationality: string;
+  gender: string;
+  profile_photo: string;
+  current_mmr: number;
+  years_playing: string;
+  favorite_position: string;
+}
 
 interface ProfileContentProps {
   isEditing: boolean;
   uploading: boolean;
-  formData: any;
+  formData: ProfileFormState;
   profileData: any;
   onPhotoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFormChange: (field: string, value: string) => void;
   onGenderSelect: (gender: string) => void;
   onSave: () => void;
   onEdit: () => void;
-  onCancel: () => Promise<void>;
+  onCancel: () => void;
+  isOwnProfile?: boolean;
 }
 
 export const ProfileContent = ({
@@ -28,54 +39,43 @@ export const ProfileContent = ({
   onGenderSelect,
   onSave,
   onEdit,
-  onCancel
+  onCancel,
+  isOwnProfile = true
 }: ProfileContentProps) => {
-  if (isEditing) {
-    // Show editing interface
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Edit Profile</h2>
-          <div className="flex gap-3">
-            <Button onClick={onSave} size="sm">
-              Save Changes
-            </Button>
-            <Button variant="outline" onClick={onCancel} size="sm">
-              Cancel
-            </Button>
-          </div>
-        </div>
-        
-        <ProfileForm
-          formData={formData}
-          isEditing={isEditing}
-          uploading={uploading}
-          onFormChange={onFormChange}
-          onGenderSelect={onGenderSelect}
-          onPhotoUpload={onPhotoUpload}
-          onSave={onSave}
-          onEdit={onEdit}
-          onCancel={onCancel}
-        />
-      </div>
-    );
-  }
-
-  // Show viewer-oriented profile
   return (
-    <div className="space-y-8">
-      {/* Hero Profile Card */}
-      <ProfileHeroCard
-        profileData={profileData || formData}
-        isEditing={isEditing}
-        onEdit={onEdit}
-      />
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Left Column - Profile Info */}
+      <div className="lg:col-span-1">
+        <div className="space-y-6">
+          <ProfileHeroCard 
+            isEditing={isEditing}
+            uploading={uploading}
+            formData={formData}
+            profileData={profileData}
+            onPhotoUpload={onPhotoUpload}
+            onEdit={onEdit}
+            onSave={onSave}
+            onCancel={onCancel}
+            isOwnProfile={isOwnProfile}
+          />
+          
+          {isEditing && isOwnProfile && (
+            <ProfileForm
+              formData={formData}
+              onFormChange={onFormChange}
+              onGenderSelect={onGenderSelect}
+            />
+          )}
+        </div>
+      </div>
 
-      {/* Stats Grid */}
-      <StatsGrid profileData={profileData || formData} />
-
-      {/* Activity Feed */}
-      <ActivityFeed />
+      {/* Right Column - Stats and Activity */}
+      <div className="lg:col-span-2">
+        <div className="space-y-6">
+          <StatsGrid />
+          <ActivityFeed />
+        </div>
+      </div>
     </div>
   );
 };

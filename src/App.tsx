@@ -49,6 +49,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/manage-matches" element={<ManageMatches />} />
               <Route path="/create-match" element={<CreateMatch />} />
               <Route path="/edit-match/:matchId" element={<EditMatch />} />
