@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayerSelectionStep } from "./match/PlayerSelectionStep";
@@ -104,10 +103,8 @@ export const MatchForm = () => {
 
   const handlePartnerSelect = async (partnerId: string) => {
     setSelectedPartnerId(partnerId);
-    const success = await calculateMMR(partnerId);
-    if (success) {
-      setPage(3); // Go to score input
-    }
+    // calculateMMR handles the page navigation internally, so we don't need to check its return value
+    await calculateMMR(partnerId);
   };
 
   // Helper function to get the correct team players based on selected partner
