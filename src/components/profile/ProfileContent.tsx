@@ -68,7 +68,6 @@ export const ProfileContent = ({
               onGenderSelect={onGenderSelect}
               onPhotoUpload={onPhotoUpload}
               onSave={onSave}
-              onEdit={onEdit}
               onCancel={onCancel}
             />
           )}
