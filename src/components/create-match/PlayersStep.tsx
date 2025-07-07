@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { toast } from "sonner";
@@ -53,6 +54,11 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
     }
   };
 
+  const handleRemovePlayer = (playerId: string) => {
+    if (playerId === profile?.id) return; // Can't remove current user
+    onPlayersChange(selectedPlayers.filter(p => p !== playerId));
+  };
+
   const filteredPlayers = playerOptions.filter(player => 
     player.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
     player.id !== profile?.id
@@ -60,11 +66,6 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 text-sm font-medium">
-        <Users className="h-4 w-4" />
-        Players ({selectedPlayers.length}/4)
-      </div>
-      
       {/* Search */}
       <Input
         placeholder="Search for players..."
@@ -88,6 +89,16 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
                 <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">You</span>
               )}
             </div>
+            {playerId !== profile?.id && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleRemovePlayer(playerId)}
+                className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         ))}
       </div>
@@ -113,12 +124,6 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
               </div>
             ))}
           </div>
-        </div>
-      )}
-
-      {selectedPlayers.length < 4 && (
-        <div className="text-sm text-muted-foreground p-3 bg-muted/30 rounded">
-          {4 - selectedPlayers.length} more player{4 - selectedPlayers.length > 1 ? 's' : ''} needed
         </div>
       )}
     </div>

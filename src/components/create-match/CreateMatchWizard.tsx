@@ -167,12 +167,18 @@ const CreateMatchWizard = () => {
       <Card>
         <CardContent className="p-6">
           <div className="space-y-6">
-            <div>
-              <h2 className="text-xl font-semibold">{getStepTitle()}</h2>
-              <p className="text-sm text-muted-foreground">{getStepDescription()}</p>
-            </div>
-            
-            {renderStepContent()}
+            {currentStep === 1 ? (
+              // For step 1, don't show the title and description
+              renderStepContent()
+            ) : (
+              <>
+                <div>
+                  <h2 className="text-xl font-semibold">{getStepTitle()}</h2>
+                  <p className="text-sm text-muted-foreground">{getStepDescription()}</p>
+                </div>
+                {renderStepContent()}
+              </>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -182,12 +188,11 @@ const CreateMatchWizard = () => {
         <CardContent className="p-6">
           <div className="flex justify-between">
             <Button
-              onClick={handlePrevious}
-              disabled={currentStep === 1}
+              onClick={currentStep === 1 ? () => navigate("/manage-matches") : handlePrevious}
               variant="outline"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Previous
+              {currentStep === 1 ? "Back" : "Previous"}
             </Button>
 
             {currentStep === totalSteps ? (
