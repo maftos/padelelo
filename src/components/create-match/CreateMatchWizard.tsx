@@ -129,7 +129,7 @@ const CreateMatchWizard = () => {
       case 2:
         return "Set location, date, time, and fee details";
       case 3:
-        return "Create an announcement for your open game";
+        return "Add more info for your announcement";
       default:
         return "";
     }
@@ -139,14 +139,6 @@ const CreateMatchWizard = () => {
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button 
-          onClick={() => navigate("/manage-matches")} 
-          variant="ghost" 
-          size="sm"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
-        </Button>
         <div className="flex-1">
           <h1 className="text-2xl font-bold">Create New Match</h1>
           <p className="text-sm text-muted-foreground">

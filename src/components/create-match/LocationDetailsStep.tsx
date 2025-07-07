@@ -1,6 +1,8 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { MapPin, Calendar, Clock, DollarSign } from "lucide-react";
 
 interface LocationDetailsData {
@@ -17,6 +19,14 @@ interface LocationDetailsStepProps {
 }
 
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
+  // Mock venues data - in a real app this would come from the venues table
+  const venues = [
+    { venue_id: "venue1", name: "Padel Club Mauritius" },
+    { venue_id: "venue2", name: "Sports Complex Grand Bay" },
+    { venue_id: "venue3", name: "Elite Padel Center" },
+    { venue_id: "venue4", name: "Coastal Sports Club" }
+  ];
+
   const formatDateTime = () => {
     if (!data.matchDate || !data.matchTime) return "";
     const date = new Date(`${data.matchDate}T${data.matchTime}`);
@@ -33,11 +43,12 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
   return (
     <div className="space-y-6">
-      {requiresDetails && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <p className="text-sm text-amber-700">
-            <span className="text-red-500">*</span> Required fields - Since you haven't added all 4 players, these details are mandatory for others to join your match.
-          </p>
+      {!hasAllPlayers && (
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">Match Details</h2>
+          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
+            Open Game
+          </Badge>
         </div>
       )}
 
@@ -47,12 +58,18 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
           <MapPin className="h-4 w-4" />
           Location {requiresDetails && <span className="text-destructive">*</span>}
         </div>
-        <Input
-          value={data.location}
-          onChange={(e) => onDataChange({ location: e.target.value })}
-          placeholder="Enter match location"
-          required={requiresDetails}
-        />
+        <Select value={data.location} onValueChange={(value) => onDataChange({ location: value })}>
+          <SelectTrigger>
+            <SelectValue placeholder={requiresDetails ? "Choose a venue" : "Choose a venue (optional)"} />
+          </SelectTrigger>
+          <SelectContent>
+            {venues.map((venue) => (
+              <SelectItem key={venue.venue_id} value={venue.venue_id}>
+                {venue.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Date & Time */}
