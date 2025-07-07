@@ -81,7 +81,8 @@ export const ViewApplicantsDialog = ({
   const friends = displayApplicants.filter(applicant => applicant.isFriend);
   const others = displayApplicants.filter(applicant => !applicant.isFriend);
 
-  const handleApplicantToggle = (applicantId: string) => {
+  const handleApplicantToggle = (applicantId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent profile click when clicking checkbox
     setSelectedApplicants(prev => {
       if (prev.includes(applicantId)) {
         return prev.filter(id => id !== applicantId);
@@ -117,16 +118,18 @@ export const ViewApplicantsDialog = ({
         </h3>
         <div className="space-y-2">
           {sectionApplicants.map((applicant) => (
-            <div key={applicant.id} className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors">
-              <Checkbox
-                checked={selectedApplicants.includes(applicant.id)}
-                onCheckedChange={() => handleApplicantToggle(applicant.id)}
-                disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
-              />
-              <div 
-                className="flex items-center gap-3 flex-1 cursor-pointer"
-                onClick={() => handleProfileClick(applicant.id)}
-              >
+            <div 
+              key={applicant.id} 
+              className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+              onClick={() => handleProfileClick(applicant.id)}
+            >
+              <div onClick={(e) => handleApplicantToggle(applicant.id, e)} className="flex-shrink-0">
+                <Checkbox
+                  checked={selectedApplicants.includes(applicant.id)}
+                  disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
+                />
+              </div>
+              <div className="flex items-center gap-3 flex-1">
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={applicant.profile_photo} />
                   <AvatarFallback>
@@ -139,11 +142,6 @@ export const ViewApplicantsDialog = ({
                     <Badge variant="outline" className="text-xs">
                       {applicant.current_mmr} MMR
                     </Badge>
-                    {applicant.isFriend && (
-                      <Badge variant="secondary" className="text-xs">
-                        Friend
-                      </Badge>
-                    )}
                   </div>
                 </div>
               </div>
