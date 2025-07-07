@@ -218,12 +218,12 @@ export default function PlayerMatching() {
   const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
   const [addMatchWizardOpen, setAddMatchWizardOpen] = useState(false);
   const [selectedGamePost, setSelectedGamePost] = useState<typeof mockPlayerMatchingPosts[0] | null>(null);
-  const [sortBy, setSortBy] = useState("newest");
+  const [sortBy, setSortBy] = useState("today");
   const isMobile = useIsMobile();
 
   const sortOptions = [
-    { value: "newest", label: "Newest" },
-    { value: "nearest", label: "Nearest to Me" },
+    { value: "today", label: "Today" },
+    { value: "friends", label: "Friends" },
     { value: "soonest", label: "Soonest" }
   ];
 
@@ -255,7 +255,7 @@ export default function PlayerMatching() {
                 onClick={() => setNotificationModalOpen(true)}
               >
                 <Bell className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{isMobile ? "Notifications" : "Subscribe to Notifications"}</span>
+                <span className="truncate">Notify Me</span>
               </Button>
             </div>
           </div>
@@ -264,11 +264,7 @@ export default function PlayerMatching() {
         {/* Sort Section - Mobile optimized */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
           {/* Sort options - Mobile friendly */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-muted-foreground min-w-0">
-              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
-              <span className="text-sm font-medium">Sort by:</span>
-            </div>
+          <div className="flex items-center justify-center gap-2">
             <div className="flex gap-1">
               {sortOptions.map((option) => (
                 <Button
