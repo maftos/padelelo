@@ -18,25 +18,15 @@ export const FinalStep = () => {
     
     setIsSubmitting(true);
     try {
-      // Update user profile
-      const { error: updateError } = await supabase.rpc('edit_user_profile', {
-        user_a_id: user.id,
-        new_display_name: `${localStorage.getItem('onboarding_first_name')} ${localStorage.getItem('onboarding_last_name')}`,
-        new_gender: localStorage.getItem('onboarding_gender'),
-        new_date_of_birth: null,
-        new_languages: [],
-        new_preferred_language: null,
-        new_profile_photo: localStorage.getItem('onboarding_photo') || null,
-        new_whatsapp_number: null,
-        new_nationality: localStorage.getItem('onboarding_nationality'),
-        new_location: null
+      // Complete onboarding with all user data
+      const { error: completeError } = await supabase.rpc('complete_onboarding', {
+        p_user_a_id: user.id,
+        p_first_name: localStorage.getItem('onboarding_first_name') || '',
+        p_last_name: localStorage.getItem('onboarding_last_name') || '',
+        p_gender: localStorage.getItem('onboarding_gender') || '',
+        p_nationality: localStorage.getItem('onboarding_nationality') || '',
+        p_profile_photo: localStorage.getItem('onboarding_photo') || ''
       });
-
-      if (updateError) throw updateError;
-
-      // Complete onboarding
-      const { error: completeError } = await supabase
-        .rpc('complete_onboarding', { user_a_id: user.id });
 
       if (completeError) throw completeError;
 

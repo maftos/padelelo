@@ -1053,7 +1053,14 @@ export type Database = {
         Returns: undefined
       }
       complete_onboarding: {
-        Args: { user_a_id: string }
+        Args: {
+          p_user_a_id: string
+          p_first_name: string
+          p_last_name: string
+          p_gender: string
+          p_nationality: string
+          p_profile_photo: string
+        }
         Returns: Json
       }
       create_match: {
