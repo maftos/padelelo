@@ -24,6 +24,7 @@ interface SideMenuContentProps {
     profile_photo?: string | null;
     current_mmr?: number | null;
     friend_requests_count?: number | null;
+    is_onboarded?: boolean | null;
   };
 }
 
@@ -48,6 +49,41 @@ export const SideMenuContent = ({
             Sign In
           </Link>
         </SheetClose>
+      </div>
+    );
+  }
+
+  // Check if user hasn't completed onboarding
+  if (profile?.is_onboarded === false || profile?.is_onboarded === null) {
+    return (
+      <div className="flex flex-col h-full pt-8 px-2">
+        <div className="text-center space-y-4">
+          <h3 className="font-semibold text-foreground">Complete Your Profile</h3>
+          <p className="text-sm text-muted-foreground">
+            Please finish setting up your profile to access all features.
+          </p>
+          <SheetClose asChild>
+            <Link
+              to="/onboarding"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Continue Setup
+            </Link>
+          </SheetClose>
+        </div>
+        
+        <div className="mt-auto px-2">
+          <button 
+            onClick={() => {
+              onSignOut();
+              onClose();
+            }}
+            className="flex items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Sign Out
+          </button>
+        </div>
       </div>
     );
   }
