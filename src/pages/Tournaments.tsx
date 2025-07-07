@@ -19,7 +19,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface TournamentAdmin {
   user_id: string;
   profile_photo: string | null;
-  display_name: string;
+  first_name: string;
+  last_name: string;
 }
 
 interface Tournament {
@@ -233,7 +234,8 @@ export default function Tournaments() {
               const primaryAdmin = tournament.admins?.[0] || {
                 user_id: '',
                 profile_photo: null,
-                display_name: 'TO'
+                first_name: 'Tournament',
+                last_name: 'Organizer'
               };
               
               return (
@@ -261,10 +263,10 @@ export default function Tournaments() {
                           <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
                             <AvatarImage src={primaryAdmin.profile_photo || undefined} />
                             <AvatarFallback className="text-xs">
-                              {primaryAdmin.display_name.substring(0, 2).toUpperCase()}
+                              {`${primaryAdmin.first_name || ''} ${primaryAdmin.last_name || ''}`.trim().substring(0, 2).toUpperCase() || 'TO'}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="truncate">TO: {primaryAdmin.display_name}</span>
+                          <span className="truncate">TO: {`${primaryAdmin.first_name || ''} ${primaryAdmin.last_name || ''}`.trim() || 'Tournament Organizer'}</span>
                         </div>
                       </div>
                     </div>

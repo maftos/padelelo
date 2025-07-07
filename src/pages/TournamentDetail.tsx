@@ -29,8 +29,8 @@ interface Tournament {
   interested_count: number;
   user_interest: 'INTERESTED' | 'NOT_INTERESTED' | null;
   main_photo: string;
-  admin_display_name: string;
-  admin_profile_photo: string;
+  admin_first_name: string;
+  admin_last_name: string;
   venue_name: string;
   venue_location: [number, number];
   total_participants: number;
@@ -45,25 +45,29 @@ interface Tournament {
   admins: Array<{
     user_id: string;
     profile_photo: string;
-    display_name: string;
+    first_name: string;
+    last_name: string;
   }>;
   mutual_friends_interested: Array<{
     friend_id: string;
     profile_photo: string;
-    display_name: string;
+    first_name: string;
+    last_name: string;
   }>;
   mutual_friends_count: number;
   interested_users: Array<{
     user_id: string;
     status: string;
     profile_photo: string;
-    display_name: string;
+    first_name: string;
+    last_name: string;
   }>;
   approved_users: Array<{
     user_id: string;
     status: string;
     profile_photo: string;
-    display_name: string;
+    first_name: string;
+    last_name: string;
   }>;
 }
 
@@ -263,11 +267,11 @@ export default function TournamentDetail() {
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={admin.profile_photo} />
                       <AvatarFallback>
-                        {admin.display_name?.substring(0, 2).toUpperCase()}
+                        {`${admin.first_name || ''} ${admin.last_name || ''}`.trim().substring(0, 2).toUpperCase() || 'TO'}
                       </AvatarFallback>
                     </Avatar>
                     <span className="text-muted-foreground">
-                      {tournament.admins.indexOf(admin) === 0 ? 'Organized by ' : 'Co-organized by '}{admin.display_name}
+                      {tournament.admins.indexOf(admin) === 0 ? 'Organized by ' : 'Co-organized by '}{`${admin.first_name || ''} ${admin.last_name || ''}`.trim() || 'Tournament Organizer'}
                     </span>
                   </div>
                 ))}
@@ -322,7 +326,7 @@ export default function TournamentDetail() {
                           {tournament.mutual_friends_interested?.map((friend) => (
                             <Avatar key={friend.friend_id} className="h-8 w-8 border-2 border-background">
                               <AvatarImage src={friend.profile_photo} />
-                              <AvatarFallback>{friend.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                              <AvatarFallback>{`${friend.first_name || ''} ${friend.last_name || ''}`.trim().substring(0, 2).toUpperCase() || 'FR'}</AvatarFallback>
                             </Avatar>
                           ))}
                         </div>
@@ -352,10 +356,10 @@ export default function TournamentDetail() {
                         <div key={user.user_id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
                           <Avatar className="h-12 w-12">
                             <AvatarImage src={user.profile_photo} />
-                            <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>{`${user.first_name || ''} ${user.last_name || ''}`.trim().substring(0, 2).toUpperCase() || 'US'}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <p className="font-medium">{user.display_name}</p>
+                            <p className="font-medium">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User'}</p>
                           </div>
                         </div>
                       ))}
@@ -366,10 +370,10 @@ export default function TournamentDetail() {
                         <div key={user.user_id} className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted">
                           <Avatar className="h-12 w-12">
                             <AvatarImage src={user.profile_photo} />
-                            <AvatarFallback>{user.display_name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>{`${user.first_name || ''} ${user.last_name || ''}`.trim().substring(0, 2).toUpperCase() || 'US'}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1">
-                            <p className="font-medium">{user.display_name}</p>
+                            <p className="font-medium">{`${user.first_name || ''} ${user.last_name || ''}`.trim() || 'User'}</p>
                           </div>
                         </div>
                       ))}
