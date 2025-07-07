@@ -1,12 +1,15 @@
 
 import { Button } from "@/components/ui/button";
-import { ProfileAvatar } from "./ProfileAvatar";
+import { ProfileHeroCard } from "./ProfileHeroCard";
+import { StatsGrid } from "./StatsGrid";
+import { ActivityFeed } from "./ActivityFeed";
 import { ProfileForm } from "./ProfileForm";
 
 interface ProfileContentProps {
   isEditing: boolean;
   uploading: boolean;
   formData: any;
+  profileData: any;
   onPhotoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onFormChange: (field: string, value: string) => void;
   onGenderSelect: (gender: string) => void;
@@ -19,6 +22,7 @@ export const ProfileContent = ({
   isEditing,
   uploading,
   formData,
+  profileData,
   onPhotoUpload,
   onFormChange,
   onGenderSelect,
@@ -26,52 +30,52 @@ export const ProfileContent = ({
   onEdit,
   onCancel
 }: ProfileContentProps) => {
-  return (
-    <div className="space-y-8">
-      <div className="flex flex-col items-center gap-4">
-        <ProfileAvatar
-          profilePhoto={formData.profile_photo}
-          firstName={formData.first_name}
-          lastName={formData.last_name}
-          isEditing={isEditing}
-          uploading={uploading}
-          onPhotoUpload={onPhotoUpload}
-        />
-        {!isEditing ? (
-          <Button 
-            onClick={onEdit}
-            className="w-full max-w-[200px]"
-          >
-            Edit Profile
-          </Button>
-        ) : (
-          <div className="flex gap-4 w-full max-w-[400px] justify-center">
-            <Button 
-              onClick={onSave}
-              className="flex-1"
-            >
+  if (isEditing) {
+    // Show editing interface
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Edit Profile</h2>
+          <div className="flex gap-3">
+            <Button onClick={onSave} size="sm">
               Save Changes
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={onCancel}
-              className="flex-1"
-            >
+            <Button variant="outline" onClick={onCancel} size="sm">
               Cancel
             </Button>
           </div>
-        )}
+        </div>
+        
+        <ProfileForm
+          formData={formData}
+          isEditing={isEditing}
+          uploading={uploading}
+          onFormChange={onFormChange}
+          onGenderSelect={onGenderSelect}
+          onPhotoUpload={onPhotoUpload}
+          onSave={onSave}
+          onEdit={onEdit}
+          onCancel={onCancel}
+        />
       </div>
+    );
+  }
 
-      <ProfileForm
-        formData={formData}
+  // Show viewer-oriented profile
+  return (
+    <div className="space-y-8">
+      {/* Hero Profile Card */}
+      <ProfileHeroCard
+        profileData={profileData || formData}
         isEditing={isEditing}
-        onFormChange={onFormChange}
-        onGenderSelect={onGenderSelect}
-        onSave={onSave}
         onEdit={onEdit}
-        onCancel={onCancel}
       />
+
+      {/* Stats Grid */}
+      <StatsGrid profileData={profileData || formData} />
+
+      {/* Activity Feed */}
+      <ActivityFeed />
     </div>
   );
 };

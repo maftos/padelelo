@@ -1,212 +1,152 @@
 
-import { FC } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { countries } from "@/lib/countries";
-
-interface ProfileFormData {
-  first_name: string;
-  last_name: string;
-  nationality: string;
-  gender: string;
-  current_mmr: string | number;
-  profile_photo?: string;
-  years_playing: string;
-  favorite_position: string;
-}
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Camera, Upload } from "lucide-react";
+import { useRef } from "react";
 
 interface ProfileFormProps {
-  formData: ProfileFormData;
+  formData: any;
   isEditing: boolean;
+  uploading: boolean;
   onFormChange: (field: string, value: string) => void;
   onGenderSelect: (gender: string) => void;
+  onPhotoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSave: () => void;
   onEdit: () => void;
-  onCancel: () => void;
+  onCancel: () => Promise<void>;
 }
 
-export const ProfileForm: FC<ProfileFormProps> = ({
+export const ProfileForm = ({
   formData,
   isEditing,
+  uploading,
   onFormChange,
   onGenderSelect,
+  onPhotoUpload,
   onSave,
   onEdit,
-  onCancel,
-}) => {
+  onCancel
+}: ProfileFormProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getInitials = () => {
+    const first = formData.first_name?.[0]?.toUpperCase() || '';
+    const last = formData.last_name?.[0]?.toUpperCase() || '';
+    return first + last || '?';
+  };
+
+  const handleAvatarClick = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
   return (
-    <div className="space-y-8 max-w-3xl mx-auto bg-card rounded-lg p-6 shadow-sm">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* First Name */}
-        <div className="space-y-2">
-          <Label htmlFor="firstName">First Name</Label>
-          {isEditing ? (
-            <Input
-              id="firstName"
-              value={formData.first_name}
-              onChange={(e) => onFormChange("first_name", e.target.value)}
-            />
-          ) : (
-            <Input
-              id="firstName"
-              value={formData.first_name}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Last Name */}
-        <div className="space-y-2">
-          <Label htmlFor="lastName">Last Name</Label>
-          {isEditing ? (
-            <Input
-              id="lastName"
-              value={formData.last_name}
-              onChange={(e) => onFormChange("last_name", e.target.value)}
-            />
-          ) : (
-            <Input
-              id="lastName"
-              value={formData.last_name}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Nationality Dropdown */}
-        <div className="space-y-2">
-          <Label htmlFor="nationality">Nationality</Label>
-          {isEditing ? (
-            <Select 
-              value={formData.nationality} 
-              onValueChange={(value) => onFormChange("nationality", value)}
+    <div className="space-y-6">
+      {/* Photo Upload Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Profile Photo</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <Avatar 
+              className="h-32 w-32 cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={handleAvatarClick}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select nationality" />
-              </SelectTrigger>
-              <SelectContent className="max-h-60">
-                {countries.map((country) => (
-                  <SelectItem key={country.code} value={country.code}>
-                    <div className="flex items-center gap-2">
-                      <span>{country.flag}</span>
-                      <span>{country.code}</span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          ) : (
+              <AvatarImage src={formData.profile_photo || ''} alt="Profile" />
+              <AvatarFallback className="text-2xl font-semibold bg-gradient-to-br from-primary/20 to-secondary/20">
+                {getInitials()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 hover:opacity-100 transition-opacity cursor-pointer" onClick={handleAvatarClick}>
+              <Camera className="h-8 w-8 text-white" />
+            </div>
+          </div>
+          
+          <Button
+            variant="outline"
+            onClick={handleAvatarClick}
+            disabled={uploading}
+            className="flex items-center gap-2"
+          >
+            <Upload className="h-4 w-4" />
+            {uploading ? 'Uploading...' : 'Change Photo'}
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={onPhotoUpload}
+            className="hidden"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Basic Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Basic Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                value={formData.first_name}
+                onChange={(e) => onFormChange('first_name', e.target.value)}
+                placeholder="Enter your first name"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                value={formData.last_name}
+                onChange={(e) => onFormChange('last_name', e.target.value)}
+                placeholder="Enter your last name"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="nationality">Nationality</Label>
             <Input
               id="nationality"
-              value={countries.find(c => c.code === formData.nationality)?.code || formData.nationality}
-              readOnly
-              className="bg-muted"
+              value={formData.nationality}
+              onChange={(e) => onFormChange('nationality', e.target.value)}
+              placeholder="Enter your nationality"
             />
-          )}
-        </div>
+          </div>
 
-        {/* Gender */}
-        <div className="space-y-2">
-          <Label>Gender</Label>
-          {isEditing ? (
-            <div className="flex gap-4">
-              <Button
-                type="button"
-                variant={formData.gender === "MALE" ? "default" : "outline"}
-                onClick={() => onGenderSelect("MALE")}
-                className="flex-1"
-              >
-                Male
-              </Button>
-              <Button
-                type="button"
-                variant={formData.gender === "FEMALE" ? "default" : "outline"}
-                onClick={() => onGenderSelect("FEMALE")}
-                className="flex-1"
-              >
-                Female
-              </Button>
-            </div>
-          ) : (
-            <Input
+          <div className="space-y-3">
+            <Label>Gender</Label>
+            <RadioGroup
               value={formData.gender}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Years Playing Padel */}
-        <div className="space-y-2">
-          <Label htmlFor="yearsPlaying">Years Playing Padel</Label>
-          {isEditing ? (
-            <Select 
-              value={formData.years_playing} 
-              onValueChange={(value) => onFormChange("years_playing", value)}
+              onValueChange={onGenderSelect}
+              className="flex flex-row space-x-6"
             >
-              <SelectTrigger>
-                <SelectValue placeholder="Select experience" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="beginner">Beginner (Less than 1 year)</SelectItem>
-                <SelectItem value="1-2">1-2 years</SelectItem>
-                <SelectItem value="3-5">3-5 years</SelectItem>
-                <SelectItem value="5+">5+ years</SelectItem>
-                <SelectItem value="expert">Expert (10+ years)</SelectItem>
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input
-              id="yearsPlaying"
-              value={formData.years_playing}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Favorite Position */}
-        <div className="space-y-2">
-          <Label htmlFor="favoritePosition">Favorite Position</Label>
-          {isEditing ? (
-            <Select 
-              value={formData.favorite_position} 
-              onValueChange={(value) => onFormChange("favorite_position", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select position" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="left">Left Side (Backhand)</SelectItem>
-                <SelectItem value="right">Right Side (Forehand)</SelectItem>
-                <SelectItem value="both">Both Sides</SelectItem>
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input
-              id="favoritePosition"
-              value={formData.favorite_position}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Current MMR - Read Only */}
-        <div className="space-y-2 md:col-span-2">
-          <Label htmlFor="mmr">Current MMR</Label>
-          <Input
-            id="mmr"
-            value={formData.current_mmr}
-            readOnly
-            className="bg-accent/50 text-accent-foreground font-medium max-w-xs"
-          />
-        </div>
-      </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="male" id="male" />
+                <Label htmlFor="male">Male</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="female" id="female" />
+                <Label htmlFor="female">Female</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="other" id="other" />
+                <Label htmlFor="other">Other</Label>
+              </div>
+            </RadioGroup>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

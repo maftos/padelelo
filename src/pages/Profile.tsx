@@ -1,11 +1,9 @@
-
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileContent } from "@/components/profile/ProfileContent";
-import { UserActivity } from "@/components/profile/UserActivity";
 import { useProfileState } from "@/hooks/use-profile-state";
 
 const Profile = () => {
@@ -61,17 +59,21 @@ const Profile = () => {
         />
       </Helmet>
       <Navigation />
-      <main className="container max-w-4xl mx-auto py-8 px-4">
+      <main className="container max-w-6xl mx-auto py-8 px-4">
         <div className="space-y-8">
-          <ProfileHeader 
-            title="My Profile"
-            description="Manage your profile information"
-          />
+          {/* Only show ProfileHeader when editing */}
+          {isEditing && (
+            <ProfileHeader 
+              title="Edit Profile"
+              description="Update your profile information"
+            />
+          )}
 
           <ProfileContent
             isEditing={isEditing}
             uploading={uploading}
             formData={formData}
+            profileData={undefined} // Will be populated when backend integration is ready
             onPhotoUpload={handlePhotoUpload}
             onFormChange={handleFormChange}
             onGenderSelect={handleGenderSelect}
@@ -82,11 +84,6 @@ const Profile = () => {
               await refetch();
             }}
           />
-
-          {/* User Activity Section */}
-          <div className="mt-12">
-            <UserActivity userId={userId} />
-          </div>
         </div>
       </main>
     </div>
