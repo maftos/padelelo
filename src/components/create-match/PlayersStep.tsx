@@ -7,7 +7,6 @@ import { X } from "lucide-react";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { toast } from "sonner";
-import { StepHeader } from "./StepHeader";
 
 interface PlayersStepProps {
   selectedPlayers: string[];
@@ -69,11 +68,6 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
 
   return (
     <div className="space-y-6">
-      <StepHeader 
-        title="Select Players"
-        description="Choose up to 4 players for your match"
-      />
-
       {/* Search */}
       <Input
         placeholder="Search for players..."

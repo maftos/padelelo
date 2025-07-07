@@ -153,6 +153,14 @@ const CreateMatchWizard = () => {
     );
   };
 
+  const handleButtonClick = () => {
+    if (currentStep === totalSteps) {
+      handleFinish();
+    } else {
+      handleNext();
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
@@ -193,7 +201,7 @@ const CreateMatchWizard = () => {
             </Button>
 
             <Button
-              onClick={handleFinish}
+              onClick={handleButtonClick}
               disabled={!canProceed()}
               size="lg"
             >
