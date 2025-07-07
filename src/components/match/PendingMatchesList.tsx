@@ -84,7 +84,7 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
   if (pendingMatches.length === 0) {
     return (
       <div className="text-center py-8">
-        <div className="text-muted-foreground">No pending matches</div>
+        <div className="text-muted-foreground">No confirmed matches</div>
         <p className="text-sm text-muted-foreground mt-1">Create a match to get started</p>
       </div>
     );
@@ -119,24 +119,21 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
                       <span className="text-sm text-muted-foreground">Padel Club Mauritius (0.5km)</span>
                     </div>
                     
-                    <div className="flex items-center gap-3">
-                      <span className="text-sm text-muted-foreground">Players:</span>
-                      <div className="flex items-center gap-2">
-                        {playerIds.map((playerId, index) => (
-                          <div key={playerId} className="flex items-center gap-1">
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src={getPlayerPhoto(playerId)} />
-                              <AvatarFallback className="text-xs">
-                                {getInitials(getPlayerName(playerId))}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">{getPlayerName(playerId)}</span>
-                            {index < playerIds.length - 1 && (
-                              <span className="text-muted-foreground mx-1">•</span>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                    <div className="flex items-center gap-2">
+                      {playerIds.map((playerId, index) => (
+                        <div key={playerId} className="flex items-center gap-1">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={getPlayerPhoto(playerId)} />
+                            <AvatarFallback className="text-xs">
+                              {getInitials(getPlayerName(playerId))}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm">{getPlayerName(playerId)}</span>
+                          {index < playerIds.length - 1 && (
+                            <span className="text-muted-foreground mx-1">•</span>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>

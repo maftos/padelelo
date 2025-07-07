@@ -127,7 +127,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
       spotsAvailable: remainingSpots,
       applicantsCount,
       description: "Your open game waiting for more players to join",
-      publishedAt: new Date(game.created_at),
+      publishedAt: new Date(Date.now() - 46 * 60 * 1000), // 46 minutes ago
       existingPlayers: [
         game.team1_player1_id ? { id: "u1", name: "You", mmr: 3000, avatar: null, isHost: true } : null,
         game.team1_player2_id ? { id: "u2", name: null, mmr: 2900, avatar: null, isHost: false } : null,
@@ -155,7 +155,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                     {post.title}
                   </CardTitle>
                   <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
-                    Published {formatTimeAgo(post.publishedAt)}
+                    Published 46m ago
                   </span>
                 </div>
                 
