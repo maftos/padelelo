@@ -62,8 +62,14 @@ export const ProfileContent = ({
           {isEditing && isOwnProfile && (
             <ProfileForm
               formData={formData}
+              isEditing={isEditing}
+              uploading={uploading}
               onFormChange={onFormChange}
               onGenderSelect={onGenderSelect}
+              onPhotoUpload={onPhotoUpload}
+              onSave={onSave}
+              onEdit={onEdit}
+              onCancel={onCancel}
             />
           )}
         </div>
@@ -72,7 +78,11 @@ export const ProfileContent = ({
       {/* Right Column - Stats and Activity */}
       <div className="lg:col-span-2">
         <div className="space-y-6">
-          <StatsGrid />
+          <StatsGrid profileData={{
+            current_mmr: formData.current_mmr || 3000,
+            level: 1,
+            total_xp: 0
+          }} />
           <ActivityFeed />
         </div>
       </div>

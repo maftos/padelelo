@@ -49,7 +49,8 @@ export const ProfileHeroCard = ({
             isEditing={isEditing && isOwnProfile}
             uploading={uploading}
             profilePhoto={formData.profile_photo}
-            displayName={displayName}
+            firstName={formData.first_name}
+            lastName={formData.last_name}
             onPhotoUpload={onPhotoUpload}
           />
           
