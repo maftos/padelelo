@@ -64,7 +64,7 @@ export const PhotoStep = () => {
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('avatars')
+        .from('user-photos')
         .upload(filePath, webpFile);
 
       if (uploadError) {
@@ -72,7 +72,7 @@ export const PhotoStep = () => {
       }
 
       const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
+        .from('user-photos')
         .getPublicUrl(filePath);
 
       setPhotoUrl(publicUrl);
