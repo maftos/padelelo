@@ -62,6 +62,7 @@ export function useMatchForm() {
       return;
     }
 
+    // Move to location selection step
     setPage(2);
   };
 

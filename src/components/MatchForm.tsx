@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayerSelectionStep } from "./match/PlayerSelectionStep";
+import { LocationSelectionStep } from "./match/LocationSelectionStep";
 import { ScoreInputStep } from "./match/ScoreInputStep";
 import { PendingMatchesList } from "./match/PendingMatchesList";
 import { useMatchForm } from "@/hooks/use-match-form";
@@ -12,6 +13,7 @@ import { Plus } from "lucide-react";
 export const MatchForm = () => {
   const [selectedPendingMatchId, setSelectedPendingMatchId] = useState<string>();
   const [showCreateMatch, setShowCreateMatch] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   const {
     page,
@@ -61,7 +63,7 @@ export const MatchForm = () => {
   const handleSelectPendingMatch = (matchId: string) => {
     setSelectedPendingMatchId(matchId);
     // Load match data and proceed to score input
-    setPage(2); // Skip to score input for pending matches
+    setPage(3); // Skip to score input for pending matches
   };
 
   const handleCreateNewMatch = () => {
@@ -73,7 +75,16 @@ export const MatchForm = () => {
   const handleBackToPendingMatches = () => {
     setShowCreateMatch(false);
     setSelectedPendingMatchId(undefined);
+    setSelectedLocation("");
     resetForm();
+  };
+
+  const handleLocationNext = async () => {
+    // Here you would typically create the match in the database
+    // For now, we'll just show a success message and reset
+    console.log("Creating match with players:", selectedPlayers, "at location:", selectedLocation);
+    // You can add actual match creation logic here
+    handleBackToPendingMatches();
   };
 
   // Helper function to get the correct team players based on selected partner
@@ -124,7 +135,7 @@ export const MatchForm = () => {
         {selectedPendingMatchId && (
           <div className="text-center">
             <Button 
-              onClick={() => setPage(2)}
+              onClick={() => setPage(3)}
               variant="default"
               size="lg"
             >
@@ -143,9 +154,11 @@ export const MatchForm = () => {
           <p className="text-sm text-muted-foreground">
             {page === 1
               ? `Select Players (${3 - (selectedPlayers.length - 1)} left)`
-              : page === 2 && !selectedPendingMatchId
-              ? "Select Partner"
-              : "Enter match score"}
+              : page === 2
+              ? "Select Location (Optional)"
+              : selectedPendingMatchId
+              ? "Enter match score"
+              : "Select Partner"}
           </p>
           {page === 1 && showCreateMatch && (
             <div className="flex gap-2">
@@ -194,9 +207,14 @@ export const MatchForm = () => {
           onNext={handleNext}
           isCalculating={isCalculating}
         />
-      ) : page === 2 && !selectedPendingMatchId ? (
-        // Team formation step for new matches
-        <div>Team formation step would go here</div>
+      ) : page === 2 && showCreateMatch ? (
+        <LocationSelectionStep
+          selectedLocation={selectedLocation}
+          onLocationChange={setSelectedLocation}
+          onBack={() => setPage(1)}
+          onNext={handleLocationNext}
+          isSubmitting={isSubmitting}
+        />
       ) : (
         <ScoreInputStep
           teamPlayers={teamPlayers}
