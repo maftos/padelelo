@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -82,8 +83,7 @@ export const ViewApplicantsDialog = ({
   const friends = displayApplicants.filter(applicant => applicant.isFriend);
   const others = displayApplicants.filter(applicant => !applicant.isFriend);
 
-  const handleApplicantToggle = (applicantId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent profile click when clicking checkbox
+  const handleApplicantToggle = (applicantId: string) => {
     setSelectedApplicants(prev => {
       if (prev.includes(applicantId)) {
         return prev.filter(id => id !== applicantId);
@@ -122,10 +122,13 @@ export const ViewApplicantsDialog = ({
           {sectionApplicants.map((applicant) => (
             <div 
               key={applicant.id} 
-              className="flex items-center gap-3 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
-              onClick={() => handleProfileClick(applicant.id)}
+              className="flex items-center border rounded-lg overflow-hidden hover:bg-muted/50 transition-colors"
             >
-              <div className="flex items-center gap-3 flex-1">
+              {/* Left half - Profile click area */}
+              <div 
+                className="flex items-center gap-3 p-3 flex-1 cursor-pointer"
+                onClick={() => handleProfileClick(applicant.id)}
+              >
                 <Avatar className="w-10 h-10">
                   <AvatarImage src={applicant.profile_photo} />
                   <AvatarFallback>
@@ -141,7 +144,12 @@ export const ViewApplicantsDialog = ({
                   </div>
                 </div>
               </div>
-              <div onClick={(e) => handleApplicantToggle(applicant.id, e)} className="flex-shrink-0">
+              
+              {/* Right half - Selection toggle area */}
+              <div 
+                className="p-3 cursor-pointer flex items-center justify-center min-w-[60px]"
+                onClick={() => handleApplicantToggle(applicant.id)}
+              >
                 <Checkbox
                   checked={selectedApplicants.includes(applicant.id)}
                   disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
