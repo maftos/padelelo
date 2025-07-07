@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayerSelectionStep } from "./match/PlayerSelectionStep";
@@ -170,17 +171,17 @@ export const MatchForm = () => {
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
+    <Card className="w-full max-w-3xl mx-auto shadow-none bg-transparent md:bg-card md:shadow-sm">
       <div className="space-y-4">
-        <div className="flex justify-between items-center px-4">
-          <p className="text-sm text-muted-foreground">
+        <div className="flex justify-between items-center px-4 py-3">
+          <p className="text-lg font-semibold">
             {page === 1
-              ? `Select Players (${3 - (selectedPlayers.length - 1)} left)`
+              ? "Select Players (up to 3)"
               : page === 2 && showCreateMatch
               ? "Select Location (Optional)"
               : page === 2 && selectedPendingMatchId
               ? "Choose Your Partner"
-              : "Enter match score"}
+              : "Enter Match Score"}
           </p>
           {page === 1 && showCreateMatch && (
             <div className="flex gap-2">
@@ -193,7 +194,7 @@ export const MatchForm = () => {
               </Button>
               <Button
                 onClick={handleNext}
-                disabled={selectedPlayers.length < 1 || isCalculating}
+                disabled={isCalculating}
                 size="sm"
               >
                 {getButtonText()}
@@ -203,63 +204,65 @@ export const MatchForm = () => {
         </div>
       </div>
 
-      {page === 1 && showCreateMatch ? (
-        <PlayerSelectionStep
-          selectedPlayers={selectedPlayers}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          playerOptions={playerOptions}
-          onPlayerSelect={(playerId) => {
-            if (selectedPlayers.includes(playerId)) {
-              // Remove player only if it's not the current user
-              if (playerId !== profile?.id) {
-                if (player1 === playerId) setPlayer1("");
-                if (player2 === playerId) setPlayer2("");
-                if (player3 === playerId) setPlayer3("");
-                if (player4 === playerId) setPlayer4("");
+      <div className="px-4 pb-4">
+        {page === 1 && showCreateMatch ? (
+          <PlayerSelectionStep
+            selectedPlayers={selectedPlayers}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            playerOptions={playerOptions}
+            onPlayerSelect={(playerId) => {
+              if (selectedPlayers.includes(playerId)) {
+                // Remove player only if it's not the current user
+                if (playerId !== profile?.id) {
+                  if (player1 === playerId) setPlayer1("");
+                  if (player2 === playerId) setPlayer2("");
+                  if (player3 === playerId) setPlayer3("");
+                  if (player4 === playerId) setPlayer4("");
+                }
+              } else if (selectedPlayers.length < 4) {
+                // Add player to first available slot
+                if (!player1) setPlayer1(playerId);
+                else if (!player2) setPlayer2(playerId);
+                else if (!player3) setPlayer3(playerId);
+                else if (!player4) setPlayer4(playerId);
               }
-            } else if (selectedPlayers.length < 4) {
-              // Add player to first available slot
-              if (!player1) setPlayer1(playerId);
-              else if (!player2) setPlayer2(playerId);
-              else if (!player3) setPlayer3(playerId);
-              else if (!player4) setPlayer4(playerId);
-            }
-          }}
-          onNext={handleNext}
-          isCalculating={isCalculating}
-        />
-      ) : page === 2 && showCreateMatch ? (
-        <LocationSelectionStep
-          selectedLocation={selectedLocation}
-          onLocationChange={setSelectedLocation}
-          onBack={() => setPage(1)}
-          onNext={handleLocationNext}
-          isSubmitting={isSubmitting}
-        />
-      ) : page === 2 && selectedPendingMatchId ? (
-        <TeamFormationStep
-          players={getPotentialPartners()}
-          getPlayerName={getPlayerName}
-          getPlayerPhoto={getPlayerPhoto}
-          onPlayerSelect={handlePartnerSelect}
-          selectedPartnerId={selectedPartnerId}
-          onBack={handleBackToPendingMatches}
-          isCalculating={isCalculating}
-        />
-      ) : (
-        <ScoreInputStep
-          teamPlayers={teamPlayers}
-          getPlayerName={getPlayerName}
-          getPlayerPhoto={getPlayerPhoto}
-          scores={scores}
-          setScores={setScores}
-          mmrData={mmrData}
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-          onBack={handleBackToPendingMatches}
-        />
-      )}
+            }}
+            onNext={handleNext}
+            isCalculating={isCalculating}
+          />
+        ) : page === 2 && showCreateMatch ? (
+          <LocationSelectionStep
+            selectedLocation={selectedLocation}
+            onLocationChange={setSelectedLocation}
+            onBack={() => setPage(1)}
+            onNext={handleLocationNext}
+            isSubmitting={isSubmitting}
+          />
+        ) : page === 2 && selectedPendingMatchId ? (
+          <TeamFormationStep
+            players={getPotentialPartners()}
+            getPlayerName={getPlayerName}
+            getPlayerPhoto={getPlayerPhoto}
+            onPlayerSelect={handlePartnerSelect}
+            selectedPartnerId={selectedPartnerId}
+            onBack={handleBackToPendingMatches}
+            isCalculating={isCalculating}
+          />
+        ) : (
+          <ScoreInputStep
+            teamPlayers={teamPlayers}
+            getPlayerName={getPlayerName}
+            getPlayerPhoto={getPlayerPhoto}
+            scores={scores}
+            setScores={setScores}
+            mmrData={mmrData}
+            onSubmit={handleSubmit}
+            isSubmitting={isSubmitting}
+            onBack={handleBackToPendingMatches}
+          />
+        )}
+      </div>
     </Card>
   );
 };

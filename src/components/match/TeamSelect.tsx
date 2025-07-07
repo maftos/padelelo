@@ -25,6 +25,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   onPlayerSelect,
   currentUserProfile,
 }) => {
+  // Allow up to 4 total players (current user + 3 others)
   const maxPlayersSelected = selectedPlayers.length >= 4;
 
   return (

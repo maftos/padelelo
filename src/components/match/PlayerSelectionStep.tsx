@@ -25,7 +25,6 @@ export const PlayerSelectionStep = ({
   isCalculating
 }: PlayerSelectionStepProps) => {
   const { profile } = useUserProfile();
-  const playersLeftToSelect = 3 - (selectedPlayers.length - 1);
   const availablePlayers = playerOptions.filter(p => p.id !== profile?.id);
 
   return (
