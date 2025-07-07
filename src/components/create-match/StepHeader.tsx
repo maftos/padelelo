@@ -9,7 +9,7 @@ interface StepHeaderProps {
 
 export const StepHeader = ({ title, description, showOpenGameBadge = false }: StepHeaderProps) => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <div className="flex items-center gap-2">
         <h2 className="text-xl font-semibold">{title}</h2>
         {showOpenGameBadge && (

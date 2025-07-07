@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -21,17 +22,32 @@ export const DateTimePickers = ({
   onTimeChange, 
   required = false 
 }: DateTimePickersProps) => {
+  const [dateOpen, setDateOpen] = useState(false);
+  const [timeOpen, setTimeOpen] = useState(false);
+
   const timeOptions = Array.from({ length: 96 }, (_, i) => {
     const hours = Math.floor(i / 4);
     const minutes = (i % 4) * 15;
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   });
 
+  const handleDateSelect = (selectedDate: Date | undefined) => {
+    if (selectedDate) {
+      onDateChange(format(selectedDate, 'yyyy-MM-dd'));
+      setDateOpen(false);
+    }
+  };
+
+  const handleTimeSelect = (timeOption: string) => {
+    onTimeChange(timeOption);
+    setTimeOpen(false);
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Date Picker */}
       <div className="relative">
-        <Popover>
+        <Popover open={dateOpen} onOpenChange={setDateOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -59,9 +75,7 @@ export const DateTimePickers = ({
             <Calendar
               mode="single"
               selected={date ? new Date(date) : undefined}
-              onSelect={(selectedDate) =>
-                onDateChange(selectedDate ? format(selectedDate, 'yyyy-MM-dd') : '')
-              }
+              onSelect={handleDateSelect}
               disabled={(selectedDate) =>
                 selectedDate < new Date()
               }
@@ -74,7 +88,7 @@ export const DateTimePickers = ({
 
       {/* Time Picker */}
       <div className="relative">
-        <Popover>
+        <Popover open={timeOpen} onOpenChange={setTimeOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -108,7 +122,7 @@ export const DateTimePickers = ({
                     "justify-start font-normal",
                     time === timeOption && "bg-accent text-accent-foreground"
                   )}
-                  onClick={() => onTimeChange(timeOption)}
+                  onClick={() => handleTimeSelect(timeOption)}
                 >
                   {format(new Date(`2000-01-01T${timeOption}`), "h:mm a")}
                 </Button>

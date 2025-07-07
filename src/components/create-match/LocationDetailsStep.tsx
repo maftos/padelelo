@@ -71,13 +71,12 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-sm font-medium">
           <DollarSign className="h-4 w-4" />
-          Fee per Player {requiresDetails && <span className="text-destructive">*</span>}
+          Fee per Player
         </div>
         <Input
           value={data.feePerPlayer}
           onChange={(e) => onDataChange({ feePerPlayer: e.target.value })}
-          placeholder="Enter fee amount"
-          required={requiresDetails}
+          placeholder="Enter fee amount (optional)"
         />
       </div>
     </div>
