@@ -39,15 +39,10 @@ export const NameStep = () => {
 
         <Card>
           <CardContent className="p-6 space-y-6">
-            <div className="flex items-center gap-2 text-sm font-medium mb-4">
-              <User className="h-4 w-4" />
-              Personal Information
-            </div>
-            
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="first_name" className="text-sm font-medium">
-                  First Name <span className="text-destructive">*</span>
+                  First Name
                 </Label>
                 <Input
                   id="first_name"
@@ -60,7 +55,7 @@ export const NameStep = () => {
               
               <div className="space-y-2">
                 <Label htmlFor="last_name" className="text-sm font-medium">
-                  Last Name <span className="text-destructive">*</span>
+                  Last Name
                 </Label>
                 <Input
                   id="last_name"

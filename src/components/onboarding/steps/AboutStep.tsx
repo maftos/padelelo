@@ -18,20 +18,15 @@ export const AboutStep = () => {
 
         <Card>
           <CardContent className="p-6 space-y-6">
-            <div className="flex items-center gap-2 text-sm font-medium mb-4">
-              <Info className="h-4 w-4" />
-              Platform Features
-            </div>
-            
             <div className="space-y-4">
               <div className="flex items-center gap-4 p-4 rounded-lg border">
                 <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                   <ClipboardEdit className="h-5 w-5 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-medium">Register Matches</h3>
+                  <h3 className="font-medium">Open Games</h3>
                   <p className="text-sm text-muted-foreground">
-                    Keep track of all your matches and results
+                    Find a last minute player replacement
                   </p>
                 </div>
               </div>
@@ -41,9 +36,9 @@ export const AboutStep = () => {
                   <TrendingUp className="h-5 w-5 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-medium">Increase your Rating</h3>
+                  <h3 className="font-medium">Leaderboard</h3>
                   <p className="text-sm text-muted-foreground">
-                    Win matches to climb the leaderboard
+                    Compete against other players of your level
                   </p>
                 </div>
               </div>
@@ -53,9 +48,9 @@ export const AboutStep = () => {
                   <History className="h-5 w-5 text-primary" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-medium">Track your History</h3>
+                  <h3 className="font-medium">Tournaments</h3>
                   <p className="text-sm text-muted-foreground">
-                    View your progress and statistics over time
+                    Join a local tournament in your area
                   </p>
                 </div>
               </div>

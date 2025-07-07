@@ -33,7 +33,7 @@ export const GenderStep = () => {
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center gap-2 text-sm font-medium mb-4">
               <User className="h-4 w-4" />
-              Gender Selection <span className="text-destructive">*</span>
+              What's your gender?
             </div>
             
             <div className="grid gap-3">

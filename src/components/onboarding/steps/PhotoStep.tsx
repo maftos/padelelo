@@ -97,17 +97,12 @@ export const PhotoStep = () => {
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Add a photo</h1>
           <p className="text-muted-foreground">
-            This step is optional, but it helps other players recognize you
+            Help other players recognize you.
           </p>
         </div>
 
         <Card>
           <CardContent className="p-6 space-y-6">
-            <div className="flex items-center gap-2 text-sm font-medium mb-4">
-              <Camera className="h-4 w-4" />
-              Profile Photo
-            </div>
-            
             <div className="flex flex-col items-center gap-4">
               <div className="relative">
                 <Avatar className="h-24 w-24">

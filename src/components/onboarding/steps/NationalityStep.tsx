@@ -53,7 +53,7 @@ export const NationalityStep = () => {
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center gap-2 text-sm font-medium mb-4">
               <Globe className="h-4 w-4" />
-              Country <span className="text-destructive">*</span>
+              Nationality
             </div>
             
             <div className="space-y-2">
