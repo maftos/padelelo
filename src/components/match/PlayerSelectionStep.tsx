@@ -27,18 +27,9 @@ export const PlayerSelectionStep = ({
   const { profile } = useUserProfile();
   const playersLeftToSelect = 3 - (selectedPlayers.length - 1);
   const availablePlayers = playerOptions.filter(p => p.id !== profile?.id);
-  
-  // Dynamic button text based on selected players (excluding current user)
-  const selectedPlayersCount = selectedPlayers.length - 1; // Subtract 1 for current user
-  const getButtonText = () => {
-    if (selectedPlayersCount <= 2) {
-      return "Next (Open Match)";
-    }
-    return "Next";
-  };
 
   return (
-    <div className="px-4">
+    <div>
       <div className="relative max-w-sm mb-4">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
@@ -66,16 +57,6 @@ export const PlayerSelectionStep = ({
         currentUserProfile={profile}
         onPlayerSelect={onPlayerSelect}
       />
-      
-      <div className="pt-4 mt-4">
-        <Button 
-          onClick={onNext}
-          disabled={selectedPlayers.length < 1 || isCalculating}
-          className="w-full"
-        >
-          {getButtonText()}
-        </Button>
-      </div>
     </div>
   );
 };

@@ -135,6 +135,15 @@ export const MatchForm = () => {
     return [player2, player3, player4].filter(p => p !== player1);
   };
 
+  // Dynamic button text based on selected players (excluding current user)
+  const selectedPlayersCount = selectedPlayers.length - 1; // Subtract 1 for current user
+  const getButtonText = () => {
+    if (selectedPlayersCount <= 2) {
+      return "Next (Open Match)";
+    }
+    return "Next";
+  };
+
   // Show pending matches list initially
   if (!showCreateMatch && page === 1) {
     return (
@@ -163,7 +172,7 @@ export const MatchForm = () => {
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center px-4">
           <p className="text-sm text-muted-foreground">
             {page === 1
               ? `Select Players (${3 - (selectedPlayers.length - 1)} left)`
@@ -174,13 +183,22 @@ export const MatchForm = () => {
               : "Enter match score"}
           </p>
           {page === 1 && showCreateMatch && (
-            <Button
-              variant="outline"
-              onClick={handleBackToPendingMatches}
-              size="sm"
-            >
-              Back
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleBackToPendingMatches}
+                size="sm"
+              >
+                Back
+              </Button>
+              <Button
+                onClick={handleNext}
+                disabled={selectedPlayers.length < 1 || isCalculating}
+                size="sm"
+              >
+                {getButtonText()}
+              </Button>
+            </div>
           )}
         </div>
       </div>
