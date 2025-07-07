@@ -32,15 +32,6 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
   return (
     <div className="space-y-6">
-      {!hasAllPlayers && (
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold">Match Details</h2>
-          <Badge variant="secondary" className="bg-green-100 text-green-700 border-green-200">
-            Open Game
-          </Badge>
-        </div>
-      )}
-
       {/* Location */}
       <div className="space-y-3">
         <div className="flex items-center gap-2 text-sm font-medium">

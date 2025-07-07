@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Megaphone } from "lucide-react";
 import { PlayersStep } from "./PlayersStep";
 import { LocationDetailsStep } from "./LocationDetailsStep";
 import { GameAnnouncementStep } from "./GameAnnouncementStep";
@@ -116,7 +115,7 @@ const CreateMatchWizard = () => {
       case 2:
         return "Match Details";
       case 3:
-        return "Game Announcement";
+        return "Match Details";
       default:
         return "";
     }
@@ -162,6 +161,9 @@ const CreateMatchWizard = () => {
             {currentStep === 1 ? (
               // For step 1, don't show the title and description
               renderStepContent()
+            ) : currentStep === 3 ? (
+              // For step 3, don't show title/description as it's handled in the component
+              renderStepContent()
             ) : (
               <>
                 <div>
@@ -193,7 +195,8 @@ const CreateMatchWizard = () => {
                 disabled={!canProceed()}
                 size="lg"
               >
-                Create Match
+                <Megaphone className="h-4 w-4 mr-2" />
+                Publish Open Game
               </Button>
             ) : (
               <Button
