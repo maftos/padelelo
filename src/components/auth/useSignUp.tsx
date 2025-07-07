@@ -63,30 +63,7 @@ export const useSignUp = () => {
         return;
       }
 
-      // Store referral info if exists
-      if (referrerId) {
-        try {
-          const phoneWithoutPlus = fullPhoneNumber.replace('+', '');
-          
-          const { error: referralError } = await supabase
-            .rpc('insert_referral_temp', {
-              p_referrer_id: referrerId,
-              p_referred_user_whatsapp: phoneWithoutPlus
-            });
-
-          if (referralError) {
-            console.error("Error inserting referral:", referralError);
-            toast({
-              title: "Warning",
-              description: "Your account was created but there was an issue with the referral.",
-              variant: "destructive",
-            });
-          }
-        } catch (err) {
-          console.error("Referral processing error:", err);
-          // Continue with signup even if referral fails
-        }
-      }
+      // Referral functionality removed
 
       // Store the phone number for verification
       sessionStorage.setItem('signupPhone', fullPhoneNumber);

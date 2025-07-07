@@ -5,22 +5,16 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export interface UserProfile {
   id: string;
-  display_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  display_name?: string | null; // Computed field
   created_at: string | null;
   gender: string | null;
-  date_of_birth: string | null;
   location: string | null;
-  languages: string[] | null;
-  preferred_language: string | null;
   profile_photo: string | null;
-  whatsapp_number: string | null;
   current_mmr: number | null;
   nationality: string | null;
   is_onboarded: boolean | null;
-  email: string | null;
-  level: number | null;
-  xp_levelup: number | null;
-  total_xp_levelup: number | null;
   friend_requests_count: number | null;
 }
 

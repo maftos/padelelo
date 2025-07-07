@@ -8,13 +8,22 @@ export const useLeaderboardData = () => {
     queryKey: ['leaderboard'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('users_sorted_by_mmr')
-        .select('*')
-        .limit(25)
-        .order('current_mmr', { ascending: false });
+        .from('users')
+        .select('id, first_name, last_name, profile_photo, current_mmr, nationality, gender')
+        .order('current_mmr', { ascending: false })
+        .limit(25);
 
       if (error) throw error;
-      return data as LeaderboardPlayer[];
+      
+      // Transform the data to match LeaderboardPlayer interface
+      return data?.map(user => ({
+        id: user.id,
+        display_name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Anonymous',
+        profile_photo: user.profile_photo,
+        current_mmr: user.current_mmr || 0,
+        nationality: user.nationality,
+        gender: user.gender
+      })) as LeaderboardPlayer[] || [];
     },
   });
 };

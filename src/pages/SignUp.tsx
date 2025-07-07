@@ -40,12 +40,12 @@ const SignUp = () => {
                     <Avatar className="h-16 w-16">
                       <AvatarImage src={referrer.profile_photo} />
                       <AvatarFallback>
-                        {referrer.display_name?.substring(0, 2).toUpperCase()}
+                        {`${referrer.first_name || ''} ${referrer.last_name || ''}`.trim().substring(0, 2).toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="text-center">
                       <p className="text-sm text-muted-foreground">Invited by</p>
-                      <p className="font-medium">{referrer.display_name}</p>
+                      <p className="font-medium">{`${referrer.first_name || ''} ${referrer.last_name || ''}`.trim() || 'User'}</p>
                     </div>
                   </>
                 ) : null}
