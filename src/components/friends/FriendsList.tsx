@@ -26,8 +26,8 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
       if (!userId) return [];
       
       console.log('Fetching friends for user:', userId);
-      const { data, error } = await supabase.rpc('view_my_friends', {
-        i_user_id: userId
+      const { data, error } = await supabase.rpc('get_my_friends', {
+        p_user_a_id: userId
       });
       
       if (error) {
@@ -36,7 +36,7 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
       }
       
       console.log('Friends data:', data);
-      return data as Friend[];
+      return data as unknown as Friend[];
     },
     enabled: !!userId,
   });

@@ -8,9 +8,8 @@ import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { FriendsList } from "@/components/friends/FriendsList";
 import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
-import { Users, Home } from "lucide-react";
+import { Users } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Friends = () => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
@@ -59,30 +58,14 @@ const Friends = () => {
             </div>
           </div>
 
-          {/* Tabs Navigation */}
-          <Tabs defaultValue="home" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="home" className="flex items-center gap-2">
-                <Home className="h-4 w-4" />
-                Home
-              </TabsTrigger>
-              <TabsTrigger value="friends" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                My Friends
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="home" className="space-y-6">
-              <FriendRequests />
-              <SuggestedFriends userId={userId} />
-            </TabsContent>
-
-            <TabsContent value="friends">
-              <div className="bg-accent rounded-lg p-4">
-                <FriendsList userId={userId} />
-              </div>
-            </TabsContent>
-          </Tabs>
+          {/* Combined Content */}
+          <div className="space-y-8">
+            <FriendRequests />
+            <SuggestedFriends userId={userId} />
+            <div className="bg-accent rounded-lg p-4">
+              <FriendsList userId={userId} />
+            </div>
+          </div>
         </div>
       </div>
     </div>

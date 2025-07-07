@@ -1442,6 +1442,10 @@ export type Database = {
           player4_profile_photo: string
         }[]
       }
+      get_my_friends: {
+        Args: { p_user_a_id: string }
+        Returns: Json
+      }
       get_proj4_from_srid: {
         Args: { "": number }
         Returns: string
@@ -1457,17 +1461,6 @@ export type Database = {
           xp_amount: number
           is_completed: boolean
           is_claimed: boolean
-        }[]
-      }
-      get_user_friends: {
-        Args: { i_user_id: string }
-        Returns: {
-          friend_id: string
-          status: Database["public"]["Enums"]["friendship_status"]
-          created_at: string
-          display_name: string
-          profile_photo: string
-          current_mmr: number
         }[]
       }
       get_venues: {
