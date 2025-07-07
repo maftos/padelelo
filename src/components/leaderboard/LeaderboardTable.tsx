@@ -13,7 +13,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LeaderboardPlayer {
   id: string;
-  display_name: string;
+  first_name: string | null;
+  last_name: string | null;
   profile_photo: string | null;
   current_mmr: number;
   nationality: string | null;
@@ -41,12 +42,13 @@ export const LeaderboardTable = ({
     return changes[index] || 0;
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (firstName: string | null, lastName: string | null) => {
+    const name = `${firstName || ''} ${lastName || ''}`.trim();
     return name
       .split(' ')
       .map(word => word[0])
       .join('')
-      .toUpperCase();
+      .toUpperCase() || 'U';
   };
 
   const getRankIcon = (index: number) => {
@@ -127,14 +129,14 @@ export const LeaderboardTable = ({
                 <TableCell className="px-2 md:px-4">
                   <div className="flex items-center gap-2 md:gap-3 min-w-0">
                     <Avatar className="h-8 w-8 md:h-12 md:w-12 ring-2 ring-background shadow-md flex-shrink-0">
-                      <AvatarImage src={player.profile_photo || ''} alt={player.display_name || ''} />
+                      <AvatarImage src={player.profile_photo || ''} alt={`${player.first_name || ''} ${player.last_name || ''}`.trim() || 'User'} />
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-secondary/20 text-primary font-semibold text-xs md:text-sm">
-                        {getInitials(player.display_name || 'User')}
+                        {getInitials(player.first_name, player.last_name)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1 min-w-0 flex-1">
                       <p className="font-semibold text-foreground text-xs md:text-base leading-none truncate">
-                        {player.display_name}
+                        {`${player.first_name || ''} ${player.last_name || ''}`.trim() || 'User'}
                         {userId === player.id && (
                           <span className="ml-1 md:ml-2 text-xs bg-primary/10 text-primary px-1 md:px-2 py-1 rounded-full">You</span>
                         )}

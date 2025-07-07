@@ -18,7 +18,8 @@ export const useLeaderboardData = () => {
       // Transform the data to match LeaderboardPlayer interface
       return data?.map(user => ({
         id: user.id,
-        display_name: `${user.first_name || ''} ${user.last_name || ''}`.trim() || 'Anonymous',
+        first_name: user.first_name,
+        last_name: user.last_name,
         profile_photo: user.profile_photo,
         current_mmr: user.current_mmr || 0,
         nationality: user.nationality,

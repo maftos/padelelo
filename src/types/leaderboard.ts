@@ -1,7 +1,8 @@
 
 export interface LeaderboardPlayer {
   id: string;
-  display_name: string;
+  first_name: string | null;
+  last_name: string | null;
   profile_photo: string | null;
   current_mmr: number;
   nationality: string | null;

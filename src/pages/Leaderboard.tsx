@@ -5,18 +5,21 @@ import { RecentMatches } from "@/components/RecentMatches";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
-import { AddFriendDialog } from "@/components/leaderboard/AddFriendDialog";
 import { useLeaderboardFilters } from "@/hooks/use-leaderboard-filters";
 import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
-import { useFriendRequests } from "@/hooks/use-friend-requests";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 const Leaderboard = () => {
   const { userId } = useUserProfile();
   const { filters, handleGenderChange, handleFriendsOnlyChange } = useLeaderboardFilters();
   const { data: leaderboardData, isLoading } = useLeaderboardData();
-  const { selectedPlayer, setSelectedPlayer, handleSendFriendRequest } = useFriendRequests(userId);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  const handlePlayerSelect = (player: any) => {
+    navigate(`/profile/${player.id}`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
@@ -34,7 +37,7 @@ const Leaderboard = () => {
               isLoading={isLoading}
               data={leaderboardData}
               userId={userId}
-              onPlayerSelect={setSelectedPlayer}
+              onPlayerSelect={handlePlayerSelect}
             />
           </div>
           
@@ -45,12 +48,6 @@ const Leaderboard = () => {
           )}
         </div>
       </main>
-
-      <AddFriendDialog 
-        player={selectedPlayer}
-        onClose={() => setSelectedPlayer(null)}
-        onSendRequest={handleSendFriendRequest}
-      />
     </div>
   );
 };
