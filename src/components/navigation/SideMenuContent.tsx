@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -62,7 +63,7 @@ export const SideMenuContent = ({
           </Avatar>
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-medium truncate">{profile?.display_name || 'Player'} (#{ranking}) ({rankingChange > 0 ? '+' : ''}{rankingChange})</span>
+              <span className="font-medium truncate">{profile?.display_name || 'Player'} (#{ranking}) (<span className={rankingChange < 0 ? "text-red-600" : "text-green-600"}>{rankingChange > 0 ? '+' : ''}{rankingChange}</span>)</span>
             </div>
             <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
           </div>

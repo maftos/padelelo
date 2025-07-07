@@ -74,7 +74,7 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
             <div>
               <div className="flex flex-col md:flex-row items-center md:items-baseline gap-2 md:gap-3">
                 <h1 className="text-3xl font-bold text-foreground">
-                  {displayName} (#{ranking}) ({rankingChange > 0 ? '+' : ''}{rankingChange})
+                  {displayName} (#{ranking}) (<span className={rankingChange < 0 ? "text-red-600" : "text-green-600"}>{rankingChange > 0 ? '+' : ''}{rankingChange}</span>)
                 </h1>
               </div>
             </div>

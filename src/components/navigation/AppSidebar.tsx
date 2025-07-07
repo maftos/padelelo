@@ -1,3 +1,4 @@
+
 import { Home, Trophy, MapPin, Calendar, BarChart3, Settings, Users } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,7 +42,7 @@ export const AppSidebar = () => {
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2">
               <span className="font-semibold text-foreground text-sm truncate">
-                {profile?.display_name || 'Player'} (#{ranking}) ({rankingChange > 0 ? '+' : ''}{rankingChange})
+                {profile?.display_name || 'Player'} (#{ranking}) (<span className={rankingChange < 0 ? "text-red-600" : "text-green-600"}>{rankingChange > 0 ? '+' : ''}{rankingChange}</span>)
               </span>
             </div>
             <span className="text-xs text-muted-foreground">
