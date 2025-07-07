@@ -1,13 +1,20 @@
 
-import { MatchForm } from "@/components/MatchForm";
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { PendingMatchesList } from "@/components/match/PendingMatchesList";
+import { useState } from "react";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
+  const [selectedMatchId, setSelectedMatchId] = useState<string>();
+
+  const handleSelectMatch = (matchId: string) => {
+    setSelectedMatchId(matchId);
+    // Additional logic for handling match selection can go here
+  };
 
   return (
     <>
@@ -34,12 +41,12 @@ const ManageMatches = () => {
             </div>
           </div>
 
-          {/* Main Content - Only pending matches, no redundant form */}
+          {/* Main Content - Pending matches list */}
           <div className="space-y-3 sm:space-y-4 w-full">
-            {/* This would be where pending matches list goes */}
-            <div className="text-center py-8 text-muted-foreground">
-              <p>Your pending matches will appear here</p>
-            </div>
+            <PendingMatchesList 
+              onSelectMatch={handleSelectMatch}
+              selectedMatchId={selectedMatchId}
+            />
           </div>
         </div>
       </div>
