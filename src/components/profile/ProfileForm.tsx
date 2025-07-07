@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +15,7 @@ interface ProfileFormProps {
   onGenderSelect: (gender: string) => void;
   onPhotoUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onSave: () => void;
-  onEdit: () => void;
-  onCancel: () => Promise<void>;
+  onCancel: () => void;
 }
 
 export const ProfileForm = ({
@@ -28,7 +26,6 @@ export const ProfileForm = ({
   onGenderSelect,
   onPhotoUpload,
   onSave,
-  onEdit,
   onCancel
 }: ProfileFormProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
