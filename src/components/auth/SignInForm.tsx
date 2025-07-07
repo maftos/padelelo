@@ -119,6 +119,9 @@ export const SignInForm = () => {
 
       const { error: signInError } = await supabase.auth.signInWithOtp({
         phone: fullPhoneNumber,
+        options: {
+          channel: 'whatsapp'
+        }
       });
 
       if (signInError) {
@@ -128,8 +131,8 @@ export const SignInForm = () => {
       }
 
       toast({
-        title: "SMS Sent!",
-        description: "Please check your phone for the verification code",
+        title: "WhatsApp Message Sent!",
+        description: "Please check your WhatsApp for the verification code",
       });
 
     } catch (err: any) {
