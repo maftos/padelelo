@@ -19,7 +19,7 @@ const RegisterMatch = () => {
               </div>
               <CardTitle className="text-2xl">Register Match</CardTitle>
               <CardDescription className="text-base">
-                Record your padel match results and update your rating
+                Select a pending match to add scores, or create a new match
               </CardDescription>
             </CardHeader>
           </Card>
@@ -29,10 +29,10 @@ const RegisterMatch = () => {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-primary" />
-                <CardTitle className="text-xl">Match Details</CardTitle>
+                <CardTitle className="text-xl">Match Management</CardTitle>
               </div>
               <CardDescription>
-                Select the players and enter the match results
+                Manage your pending matches and add results
               </CardDescription>
             </CardHeader>
             <CardContent>

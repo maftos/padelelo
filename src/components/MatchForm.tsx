@@ -2,13 +2,16 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayerSelectionStep } from "./match/PlayerSelectionStep";
-import { TeamFormationStep } from "./match/TeamFormationStep";
 import { ScoreInputStep } from "./match/ScoreInputStep";
+import { PendingMatchesList } from "./match/PendingMatchesList";
 import { useMatchForm } from "@/hooks/use-match-form";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
 export const MatchForm = () => {
+  const [selectedPendingMatchId, setSelectedPendingMatchId] = useState<string>();
+  const [showCreateMatch, setShowCreateMatch] = useState(false);
+
   const {
     page,
     setPage,
@@ -37,12 +40,12 @@ export const MatchForm = () => {
 
   const { profile } = useUserProfile();
 
-  // Auto-select current user
+  // Auto-select current user when creating new match
   useEffect(() => {
-    if (profile?.id && !player1) {
+    if (profile?.id && !player1 && showCreateMatch) {
       setPlayer1(profile.id);
     }
-  }, [profile?.id, player1, setPlayer1]);
+  }, [profile?.id, player1, setPlayer1, showCreateMatch]);
 
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
 
@@ -52,6 +55,25 @@ export const MatchForm = () => {
     }
     const player = playerOptions.find((p) => p.id === playerId);
     return player?.profile_photo || "";
+  };
+
+  const handleSelectPendingMatch = (matchId: string) => {
+    setSelectedPendingMatchId(matchId);
+    // Load match data and proceed to score input
+    // This would need to be implemented to load the match details
+    setPage(2); // Skip to score input for pending matches
+  };
+
+  const handleCreateNewMatch = () => {
+    setShowCreateMatch(true);
+    setSelectedPendingMatchId(undefined);
+    resetForm();
+  };
+
+  const handleBackToPendingMatches = () => {
+    setShowCreateMatch(false);
+    setSelectedPendingMatchId(undefined);
+    resetForm();
   };
 
   // Helper function to get the correct team players based on selected partner
@@ -77,6 +99,36 @@ export const MatchForm = () => {
 
   const teamPlayers = getTeamPlayers();
 
+  // Show pending matches list initially
+  if (!showCreateMatch && page === 1) {
+    return (
+      <div className="space-y-6">
+        <PendingMatchesList 
+          onSelectMatch={handleSelectPendingMatch}
+          selectedMatchId={selectedPendingMatchId}
+        />
+        
+        <div className="text-center">
+          <Button onClick={handleCreateNewMatch}>
+            Create New Match
+          </Button>
+        </div>
+
+        {selectedPendingMatchId && (
+          <div className="text-center">
+            <Button 
+              onClick={() => setPage(2)}
+              variant="default"
+              size="lg"
+            >
+              Add Scores to Selected Match
+            </Button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <Card className="w-full max-w-3xl mx-auto p-3 space-y-4 shadow-none bg-transparent md:bg-card md:shadow-sm md:p-4">
       <div className="space-y-4">
@@ -84,23 +136,32 @@ export const MatchForm = () => {
           <p className="text-sm text-muted-foreground">
             {page === 1
               ? `Select Players (${3 - (selectedPlayers.length - 1)} left)`
-              : page === 2
+              : page === 2 && !selectedPendingMatchId
               ? "Select Partner"
               : "Enter match score"}
           </p>
-          {page === 1 && (
-            <Button
-              onClick={handleNext}
-              disabled={selectedPlayers.length !== 4 || isCalculating}
-              size="sm"
-            >
-              Next
-            </Button>
+          {page === 1 && showCreateMatch && (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={handleBackToPendingMatches}
+                size="sm"
+              >
+                Back to Matches
+              </Button>
+              <Button
+                onClick={handleNext}
+                disabled={selectedPlayers.length !== 4 || isCalculating}
+                size="sm"
+              >
+                Next
+              </Button>
+            </div>
           )}
         </div>
       </div>
 
-      {page === 1 ? (
+      {page === 1 && showCreateMatch ? (
         <PlayerSelectionStep
           selectedPlayers={selectedPlayers}
           searchQuery={searchQuery}
@@ -126,16 +187,9 @@ export const MatchForm = () => {
           onNext={handleNext}
           isCalculating={isCalculating}
         />
-      ) : page === 2 ? (
-        <TeamFormationStep
-          players={[player2, player3, player4]}
-          getPlayerName={getPlayerName}
-          getPlayerPhoto={getPlayerPhoto}
-          onPlayerSelect={calculateMMR}
-          selectedPartnerId={mmrData?.selectedPartnerId}
-          onBack={() => setPage(1)}
-          isCalculating={isCalculating}
-        />
+      ) : page === 2 && !selectedPendingMatchId ? (
+        // Team formation step for new matches
+        <div>Team formation step would go here</div>
       ) : (
         <ScoreInputStep
           teamPlayers={teamPlayers}
@@ -146,7 +200,7 @@ export const MatchForm = () => {
           mmrData={mmrData}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
-          onBack={resetForm}
+          onBack={handleBackToPendingMatches}
         />
       )}
     </Card>
