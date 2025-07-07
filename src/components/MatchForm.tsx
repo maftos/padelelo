@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlayerSelectionStep } from "./match/PlayerSelectionStep";
@@ -16,6 +15,9 @@ export const MatchForm = () => {
   const [selectedPendingMatchId, setSelectedPendingMatchId] = useState<string>();
   const [showCreateMatch, setShowCreateMatch] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedTime, setSelectedTime] = useState("");
+  const [feePerPlayer, setFeePerPlayer] = useState("");
   const [selectedPartnerId, setSelectedPartnerId] = useState<string>();
 
   const { pendingMatches } = usePendingMatches();
@@ -55,6 +57,7 @@ export const MatchForm = () => {
   }, [profile?.id, player1, setPlayer1, showCreateMatch]);
 
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
+  const hasAllPlayers = selectedPlayers.length === 4;
 
   const getPlayerPhoto = (playerId: string) => {
     if (playerId === profile?.id) {
@@ -90,6 +93,9 @@ export const MatchForm = () => {
     setShowCreateMatch(false);
     setSelectedPendingMatchId(undefined);
     setSelectedLocation("");
+    setSelectedDate(new Date().toISOString().split('T')[0]);
+    setSelectedTime("");
+    setFeePerPlayer("");
     setSelectedPartnerId(undefined);
     resetForm();
   };
@@ -97,7 +103,13 @@ export const MatchForm = () => {
   const handleLocationNext = async () => {
     // Here you would typically create the match in the database
     // For now, we'll just show a success message and reset
-    console.log("Creating match with players:", selectedPlayers, "at location:", selectedLocation);
+    console.log("Creating match with:", {
+      players: selectedPlayers,
+      location: selectedLocation,
+      date: selectedDate,
+      time: selectedTime,
+      fee: feePerPlayer
+    });
     // You can add actual match creation logic here
     handleBackToPendingMatches();
   };
@@ -178,7 +190,7 @@ export const MatchForm = () => {
             {page === 1
               ? "Select Players (Up to 3)"
               : page === 2 && showCreateMatch
-              ? "Select Location (Optional)"
+              ? "Match Details"
               : page === 2 && selectedPendingMatchId
               ? "Choose Your Partner"
               : "Enter Match Score"}
@@ -235,9 +247,16 @@ export const MatchForm = () => {
           <LocationSelectionStep
             selectedLocation={selectedLocation}
             onLocationChange={setSelectedLocation}
+            selectedDate={selectedDate}
+            onDateChange={setSelectedDate}
+            selectedTime={selectedTime}
+            onTimeChange={setSelectedTime}
+            feePerPlayer={feePerPlayer}
+            onFeeChange={setFeePerPlayer}
             onBack={() => setPage(1)}
             onNext={handleLocationNext}
             isSubmitting={isSubmitting}
+            hasAllPlayers={hasAllPlayers}
           />
         ) : page === 2 && selectedPendingMatchId ? (
           <TeamFormationStep
