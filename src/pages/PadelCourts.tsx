@@ -1,5 +1,7 @@
 
 import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Clock, Phone, Mail, Star } from "lucide-react";
@@ -21,155 +23,74 @@ export interface PadelClub {
   priceRange: string;
 }
 
-// Updated padel clubs with precise, stable coordinates
-const sampleClubs: PadelClub[] = [
-  {
-    id: "1",
-    name: "Grand Baie Padel Center",
-    address: "Royal Road, Grand Baie, Mauritius",
-    coordinates: [57.5808, -20.0103], // Keep original working coordinates
-    phone: "+230 263 8754",
-    email: "info@grandbaiepadel.mu",
-    website: "https://grandbaiepadel.mu",
-    rating: 4.5,
-    numberOfCourts: 4,
-    openingHours: "6:00 AM - 10:00 PM",
-    description: "Modern padel center in the heart of Grand Baie with professional coaching and equipment rental.",
-    amenities: ["Professional Coaching", "Equipment Rental", "Pro Shop", "Changing Rooms", "Parking"],
-    priceRange: "Mid-range (Rs 900-1300/hour)"
-  },
-  {
-    id: "2",
-    name: "Pereybere Sports Complex",
-    address: "Pereybere Public Beach Road, Pereybere, Mauritius",
-    coordinates: [57.5833, -19.9833], // More precise coordinates
-    phone: "+230 268 7654",
-    email: "info@pereyberepadel.mu",
-    rating: 4.4,
-    numberOfCourts: 3,
-    openingHours: "6:00 AM - 9:00 PM",
-    description: "Modern sports complex near the beach with well-maintained padel courts.",
-    amenities: ["Equipment Rental", "Coaching", "Beach Access", "Restaurant", "Shower Facilities"],
-    priceRange: "Mid-range (Rs 800-1100/hour)"
-  },
-  {
-    id: "3",
-    name: "Cap Malheureux Padel Club",
-    address: "Cap Malheureux Road, Cap Malheureux, Mauritius",
-    coordinates: [57.6167, -19.9667], // Fixed precision
-    phone: "+230 262 4567",
-    email: "info@capmalheureux-padel.mu",
-    website: "https://capmalheureux-padel.mu",
-    rating: 4.6,
-    numberOfCourts: 6,
-    openingHours: "6:30 AM - 10:00 PM",
-    description: "Premium padel club at the northern tip of Mauritius with panoramic ocean views.",
-    amenities: ["Professional Coaching", "Equipment Rental", "Restaurant", "Pro Shop", "Event Hosting"],
-    priceRange: "Premium (Rs 1300-1700/hour)"
-  },
-  {
-    id: "4",
-    name: "Mahébourg Community Center",
-    address: "SSR Street, Mahébourg, Mauritius",
-    coordinates: [57.7000, -20.4083], // Fixed to stable coordinates
-    phone: "+230 631 5432",
-    email: "community@mahebourg.mu",
-    rating: 4.0,
-    numberOfCourts: 2,
-    openingHours: "6:00 AM - 8:00 PM",
-    description: "Local community center offering accessible padel courts for residents and visitors.",
-    amenities: ["Equipment Rental", "Basic Coaching", "Parking", "Changing Rooms"],
-    priceRange: "Affordable (Rs 400-600/hour)"
-  },
-  {
-    id: "5",
-    name: "Centre de Flacq Sports Hub",
-    address: "Royal Road, Centre de Flacq, Mauritius",
-    coordinates: [57.7167, -20.2000], // More stable positioning
-    phone: "+230 413 8901",
-    email: "hub@flacqsports.mu",
-    rating: 4.1,
-    numberOfCourts: 4,
-    openingHours: "5:45 AM - 9:15 PM",
-    description: "Regional sports hub serving the east coast with quality padel facilities.",
-    amenities: ["Equipment Rental", "Group Coaching", "Pro Shop", "Cafeteria", "Ample Parking"],
-    priceRange: "Mid-range (Rs 850-1200/hour)"
-  },
-  {
-    id: "6",
-    name: "Souillac Padel Club",
-    address: "B9 Road, Souillac, Mauritius",
-    coordinates: [57.5167, -20.5167], // Precise south coast coordinates
-    phone: "+230 625 3456",
-    email: "club@souillacpadel.mu",
-    rating: 4.3,
-    numberOfCourts: 2,
-    openingHours: "6:30 AM - 8:30 PM",
-    description: "Intimate padel club in the scenic south coast with personalized service.",
-    amenities: ["Equipment Rental", "Private Coaching", "Refreshments", "Parking"],
-    priceRange: "Mid-range (Rs 750-1000/hour)"
-  },
-  {
-    id: "7",
-    name: "Rivière des Anguilles Sports Center",
-    address: "Main Road, Rivière des Anguilles, Mauritius",
-    coordinates: [57.5500, -20.4500], // Fixed southern coordinates
-    phone: "+230 627 9012",
-    email: "center@rdasports.mu",
-    rating: 3.9,
-    numberOfCourts: 1,
-    openingHours: "6:00 AM - 7:30 PM",
-    description: "Small local sports center providing basic padel facilities for the southern community.",
-    amenities: ["Equipment Rental", "Basic Coaching", "Parking", "Refreshments"],
-    priceRange: "Affordable (Rs 450-650/hour)"
-  },
-  {
-    id: "8",
-    name: "Flic en Flac Beach Club",
-    address: "Coastal Road, Flic en Flac, Mauritius",
-    coordinates: [57.3667, -20.2833], // Stable west coast coordinates
-    phone: "+230 453 9876",
-    email: "padel@flicbeachclub.mu",
-    website: "https://flicbeachclub.mu",
-    rating: 4.7,
-    numberOfCourts: 5,
-    openingHours: "6:30 AM - 9:30 PM",
-    description: "Beachfront padel courts with stunning sunset views and premium facilities.",
-    amenities: ["Beach Access", "Restaurant", "Bar", "Equipment Rental", "Coaching", "Pool"],
-    priceRange: "Premium (Rs 1400-1800/hour)"
-  },
-  {
-    id: "9",
-    name: "Albion Sports Complex",
-    address: "Albion Fisheries Road, Albion, Mauritius",
-    coordinates: [57.4000, -20.2333], // Precise west coast positioning
-    phone: "+230 238 6789",
-    email: "sports@albioncomplex.mu",
-    rating: 4.2,
-    numberOfCourts: 3,
-    openingHours: "6:00 AM - 9:00 PM",
-    description: "Community-focused sports complex with affordable padel courts and family-friendly atmosphere.",
-    amenities: ["Equipment Rental", "Basic Coaching", "Kids Area", "Snack Bar", "Free Parking"],
-    priceRange: "Affordable (Rs 600-800/hour)"
-  },
-  {
-    id: "10",
-    name: "Curepipe Multi-Sports Center",
-    address: "Elizabeth Avenue, Curepipe, Mauritius",
-    coordinates: [57.5167, -20.3167], // Central highlands coordinates
-    phone: "+230 674 2891",
-    email: "sports@curepipecenter.mu",
-    rating: 4.2,
-    numberOfCourts: 3,
-    openingHours: "5:30 AM - 9:30 PM",
-    description: "Community sports center offering affordable padel courts in the central highlands.",
-    amenities: ["Equipment Rental", "Coaching", "Cafeteria", "Locker Rooms", "Free Parking"],
-    priceRange: "Affordable (Rs 500-700/hour)"
-  }
-];
-
 const PadelCourts = () => {
   const [selectedClub, setSelectedClub] = useState<PadelClub | null>(null);
+
+  const { data: venues, isLoading, error } = useQuery({
+    queryKey: ['venues'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_all_venues');
+      
+      if (error) {
+        console.error('Error fetching venues:', error);
+        throw error;
+      }
+      
+      return data;
+    },
+  });
+
+  // Transform venue data to PadelClub format
+  const clubs: PadelClub[] = Array.isArray(venues) ? venues.map((venue: any) => ({
+    id: venue.venue_id,
+    name: venue.name,
+    address: venue.location || 'Address not available',
+    coordinates: venue.coordinates || [57.5522, -20.3484], // Default to center of Mauritius
+    phone: venue.phone_number,
+    email: venue.email_address,
+    website: venue.website_url,
+    rating: 4.0, // Default rating since not in venue data
+    numberOfCourts: Array.isArray(venue.courts) ? venue.courts.length : 1,
+    openingHours: venue.opening_hours || 'Hours not available',
+    description: 'Professional padel facility',
+    amenities: ['Equipment Rental', 'Coaching', 'Parking'],
+    priceRange: 'Contact for pricing'
+  })) : [];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="w-full max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-muted-foreground">Loading venues...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="w-full max-w-7xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-center h-96">
+            <div className="text-center">
+              <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="font-semibold mb-2">Error loading venues</h3>
+              <p className="text-muted-foreground text-sm">
+                Unable to load padel courts. Please try again later.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -199,7 +120,7 @@ const PadelCourts = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-2 h-[620px]">
-                <PadelMap clubs={sampleClubs} onClubSelect={setSelectedClub} />
+                <PadelMap clubs={clubs} onClubSelect={setSelectedClub} />
               </CardContent>
             </Card>
           </div>

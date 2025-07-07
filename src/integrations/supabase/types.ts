@@ -1384,6 +1384,14 @@ export type Database = {
         Args: { "": string }
         Returns: unknown
       }
+      get_all_venues: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_all_venues_json: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       get_feature_updates: {
         Args: Record<PropertyKey, never>
         Returns: {
