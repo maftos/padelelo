@@ -8,9 +8,11 @@ import { useState } from "react";
 
 interface Friend {
   friend_id: string;
-  display_name: string;
+  first_name: string;
+  last_name: string;
   profile_photo: string | null;
   created_at: string;
+  current_mmr: number;
 }
 
 interface FriendsListProps {
@@ -50,9 +52,10 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
     );
   }
 
-  const filteredFriends = friends?.filter(friend =>
-    friend.display_name?.toLowerCase()?.includes(searchQuery.toLowerCase()) || false
-  ) || [];
+  const filteredFriends = friends?.filter(friend => {
+    const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
+    return displayName.toLowerCase().includes(searchQuery.toLowerCase());
+  }) || [];
 
   return (
     <div className="space-y-6">
@@ -85,25 +88,32 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
         </div>
       ) : (
         <div className="space-y-3">
-          {filteredFriends.map((friend) => (
-            <div 
-              key={friend.friend_id}
-              className="flex items-center space-x-4 p-4 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer bg-background shadow-sm"
-            >
-              <Avatar>
-                <AvatarImage src={friend.profile_photo || ''} alt={friend.display_name} />
-                <AvatarFallback>
-                  {friend.display_name?.substring(0, 2).toUpperCase() || 'FR'}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{friend.display_name}</p>
-                <p className="text-xs text-muted-foreground">
-                  Friend since {new Date(friend.created_at).toLocaleDateString()}
-                </p>
+          {filteredFriends.map((friend) => {
+            const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
+            return (
+              <div 
+                key={friend.friend_id}
+                className="flex items-center space-x-4 p-4 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer bg-background shadow-sm"
+              >
+                <Avatar>
+                  <AvatarImage src={friend.profile_photo || ''} alt={displayName} />
+                  <AvatarFallback>
+                    {displayName.substring(0, 2).toUpperCase() || 'FR'}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">{displayName}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Friend since {new Date(friend.created_at).toLocaleDateString()}
+                  </p>
+                  <div className="flex items-center gap-1 mt-1">
+                    <span className="text-xs text-muted-foreground">MMR:</span>
+                    <span className="text-xs font-medium">{friend.current_mmr}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

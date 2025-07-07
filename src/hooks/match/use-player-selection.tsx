@@ -47,11 +47,11 @@ export function usePlayerSelection() {
     queryFn: async () => {
       if (!userId) return [];
       try {
-        const { data, error } = await supabase.rpc('view_my_friends', {
-          i_user_id: userId
+        const { data, error } = await supabase.rpc('get_my_friends', {
+          p_user_a_id: userId
         });
         if (error) throw error;
-        return data;
+        return data as unknown as any[];
       } catch (error) {
         console.error('Error fetching friends:', error);
         throw error;
@@ -63,21 +63,22 @@ export function usePlayerSelection() {
   // Filter player options based on search query
   const playerOptions: PlayerOption[] = [
     { id: userId || "current-user", name: "Me" },
-    ...friends
-      .filter(friend => 
-        friend.display_name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-      .map(friend => ({
+    ...((friends as any[]) || [])
+      .filter((friend: any) => {
+        const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
+        return displayName.toLowerCase().includes(searchQuery.toLowerCase());
+      })
+      .map((friend: any) => ({
         id: friend.friend_id,
-        name: friend.display_name,
+        name: `${friend.first_name || ''} ${friend.last_name || ''}`.trim(),
         profile_photo: friend.profile_photo
       }))
   ];
 
   const getPlayerName = (playerId: string) => {
     if (playerId === userId) return "Me";
-    const friend = friends.find(f => f.friend_id === playerId);
-    return friend ? friend.display_name : "Unknown";
+    const friend = ((friends as any[]) || []).find((f: any) => f.friend_id === playerId);
+    return friend ? `${friend.first_name || ''} ${friend.last_name || ''}`.trim() : "Unknown";
   };
 
   return {

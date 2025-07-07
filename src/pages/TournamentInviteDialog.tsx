@@ -31,12 +31,12 @@ export function TournamentInviteDialog({
     queryFn: async () => {
       if (!user?.id) return [];
       
-      const { data, error } = await supabase.rpc('view_my_friends', {
-        i_user_id: user.id
+      const { data, error } = await supabase.rpc('get_my_friends', {
+        p_user_a_id: user.id
       });
       
       if (error) throw error;
-      return data;
+      return data as unknown as any[];
     },
     enabled: !!user?.id,
   });
@@ -95,32 +95,35 @@ export function TournamentInviteDialog({
           <div className="space-y-4">
             <h3 className="text-sm font-medium">Or invite your friends:</h3>
             <div className="max-h-[300px] overflow-y-auto space-y-2">
-              {friends.map((friend) => (
-                <div
-                  key={friend.friend_id}
-                  className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
-                    selectedFriends.includes(friend.friend_id)
-                      ? 'bg-primary/10'
-                      : 'hover:bg-accent'
-                  }`}
-                  onClick={() => handleToggleFriend(friend.friend_id)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={friend.profile_photo} />
-                      <AvatarFallback>
-                        {friend.display_name.substring(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{friend.display_name}</span>
+              {((friends as any[]) || []).map((friend: any) => {
+                const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
+                return (
+                  <div
+                    key={friend.friend_id}
+                    className={`flex items-center justify-between p-2 rounded-lg transition-colors ${
+                      selectedFriends.includes(friend.friend_id)
+                        ? 'bg-primary/10'
+                        : 'hover:bg-accent'
+                    }`}
+                    onClick={() => handleToggleFriend(friend.friend_id)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={friend.profile_photo} />
+                        <AvatarFallback>
+                          {displayName.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium">{displayName}</span>
+                    </div>
+                    {selectedFriends.includes(friend.friend_id) && (
+                      <div className="h-2 w-2 rounded-full bg-primary" />
+                    )}
                   </div>
-                  {selectedFriends.includes(friend.friend_id) && (
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

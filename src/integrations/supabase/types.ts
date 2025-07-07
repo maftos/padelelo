@@ -2821,16 +2821,6 @@ export type Database = {
         Args: { user_a_id_public: string }
         Returns: Json
       }
-      view_my_friends: {
-        Args: { i_user_id: string }
-        Returns: {
-          friend_id: string
-          status: string
-          created_at: string
-          display_name: string
-          profile_photo: string
-        }[]
-      }
       view_profile: {
         Args: { user_a_id: string; user_b_id: string }
         Returns: Json
