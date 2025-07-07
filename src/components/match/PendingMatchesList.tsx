@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePendingMatches } from "@/hooks/use-pending-matches";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { Clock, Users } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface PendingMatchesListProps {
   onSelectMatch: (matchId: string) => void;
@@ -16,20 +17,48 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    return {
-      date: date.toLocaleDateString(),
-      time: date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    const options: Intl.DateTimeFormatOptions = { 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
     };
+    const formattedDate = date.toLocaleDateString('en-GB', options);
+    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    // Add ordinal suffix to day
+    const day = date.getDate();
+    const suffix = day % 10 === 1 && day !== 11 ? 'st' : 
+                   day % 10 === 2 && day !== 12 ? 'nd' : 
+                   day % 10 === 3 && day !== 13 ? 'rd' : 'th';
+    
+    return formattedDate.replace(`${day}`, `${day}${suffix}`) + ` @ ${time}`;
   };
 
   const getPlayersList = (match: any) => {
-    const players = [
-      getPlayerName(match.team1_player1_id),
-      getPlayerName(match.team1_player2_id), 
-      getPlayerName(match.team2_player1_id),
-      getPlayerName(match.team2_player2_id)
+    return [
+      match.team1_player1_id,
+      match.team1_player2_id, 
+      match.team2_player1_id,
+      match.team2_player2_id
     ];
-    return players.join(", ");
+  };
+
+  const getPlayerPhoto = (playerId: string) => {
+    // Mock profile photos for demo
+    const mockPhotos: { [key: string]: string } = {
+      "player2": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+      "player3": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      "player4": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+      "player5": "https://images.unsplash.com/photo-1494790108755-2616b612b630?w=150&h=150&fit=crop&crop=face",
+      "player6": "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop&crop=face",
+      "player7": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face"
+    };
+    
+    return mockPhotos[playerId] || "";
+  };
+
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
   if (isLoading) {
@@ -52,7 +81,8 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
   return (
     <div className="space-y-3">
       {pendingMatches.map((match) => {
-        const { date, time } = formatDateTime(match.match_date);
+        const formattedDateTime = formatDateTime(match.match_date);
+        const playerIds = getPlayersList(match);
         
         return (
           <Card
@@ -67,16 +97,29 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-4 w-4 text-primary" />
-                    <span className="font-medium">4 Players Match</span>
+                  <div className="flex items-center gap-2 mb-3">
+                    <Clock className="h-4 w-4 text-primary" />
+                    <span className="font-medium">{formattedDateTime}</span>
                   </div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    Players: {getPlayersList(match)}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Clock className="h-4 w-4" />
-                    <span>{date} at {time}</span>
+                  
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-muted-foreground">Players:</span>
+                    <div className="flex items-center gap-2">
+                      {playerIds.map((playerId, index) => (
+                        <div key={playerId} className="flex items-center gap-1">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={getPlayerPhoto(playerId)} />
+                            <AvatarFallback className="text-xs">
+                              {getInitials(getPlayerName(playerId))}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm">{getPlayerName(playerId)}</span>
+                          {index < playerIds.length - 1 && (
+                            <span className="text-muted-foreground mx-1">•</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
