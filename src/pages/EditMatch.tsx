@@ -16,7 +16,7 @@ const EditMatch = () => {
   const { matchId } = useParams<{ matchId: string }>();
   const navigate = useNavigate();
   const { getPlayerName } = usePlayerSelection();
-  const { pendingMatches } = usePendingMatches();
+  const { pendingMatches, deletePendingMatch, isDeletingMatch } = usePendingMatches();
   
   const match = pendingMatches.find(m => m.match_id === matchId);
   
@@ -72,6 +72,15 @@ const EditMatch = () => {
   const handleAdvertiseAsOpenGame = () => {
     toast.success("Match advertised as open game");
     navigate("/manage-matches");
+  };
+
+  const handleDeleteMatch = () => {
+    if (!matchId) return;
+    
+    if (confirm('Are you sure you want to delete this match? This action cannot be undone.')) {
+      deletePendingMatch(matchId);
+      navigate("/manage-matches");
+    }
   };
 
   const formatDateTime = () => {
@@ -223,6 +232,16 @@ const EditMatch = () => {
                 >
                   <Globe className="h-4 w-4 mr-2" />
                   Advertise as Open Game
+                </Button>
+
+                <Button 
+                  onClick={handleDeleteMatch}
+                  variant="destructive" 
+                  className="w-full"
+                  disabled={isDeletingMatch}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  {isDeletingMatch ? 'Deleting...' : 'Delete Match'}
                 </Button>
               </div>
             </CardContent>

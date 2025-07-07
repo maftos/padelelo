@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { usePendingMatches } from "@/hooks/use-pending-matches";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
-import { Clock, Users, Edit, Plus, Trash2 } from "lucide-react";
+import { Clock, Users, Edit, Plus, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,7 @@ interface PendingMatchesListProps {
 }
 
 export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMatchesListProps) => {
-  const { pendingMatches, isLoading, deletePendingMatch, isDeletingMatch } = usePendingMatches();
+  const { pendingMatches, isLoading } = usePendingMatches();
   const { getPlayerName } = usePlayerSelection();
   const navigate = useNavigate();
 
@@ -73,13 +73,6 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
     navigate(`/edit-match/${matchId}`);
   };
 
-  const handleDelete = (matchId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (confirm('Are you sure you want to delete this match?')) {
-      deletePendingMatch(matchId);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -116,9 +109,14 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-2 mb-2">
                       <Clock className="h-4 w-4 text-primary" />
                       <span className="font-medium">{formattedDateTime}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 mb-3">
+                      <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">Padel Club Mauritius (0.5km)</span>
                     </div>
                     
                     <div className="flex items-center gap-3">
@@ -160,15 +158,6 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Edit
-                  </Button>
-                  <Button 
-                    onClick={(e) => handleDelete(match.match_id, e)}
-                    variant="outline"
-                    size="sm"
-                    disabled={isDeletingMatch}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
                   </Button>
                 </div>
               </div>
