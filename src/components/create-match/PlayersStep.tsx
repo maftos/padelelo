@@ -59,9 +59,11 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
     onPlayersChange(selectedPlayers.filter(p => p !== playerId));
   };
 
+  // Filter out selected players from available players list
   const filteredPlayers = playerOptions.filter(player => 
     player.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-    player.id !== profile?.id
+    player.id !== profile?.id &&
+    !selectedPlayers.includes(player.id) // This line filters out already selected players
   );
 
   return (

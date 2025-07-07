@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Calendar, Clock, DollarSign } from "lucide-react";
+import { MapPin, DollarSign } from "lucide-react";
+import { DateTimePickers } from "./DateTimePickers";
 
 interface LocationDetailsData {
   location: string;
@@ -26,18 +27,6 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
     { venue_id: "venue3", name: "Elite Padel Center" },
     { venue_id: "venue4", name: "Coastal Sports Club" }
   ];
-
-  const formatDateTime = () => {
-    if (!data.matchDate || !data.matchTime) return "";
-    const date = new Date(`${data.matchDate}T${data.matchTime}`);
-    return date.toLocaleDateString('en-GB', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   const requiresDetails = !hasAllPlayers;
 
@@ -73,39 +62,13 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
       </div>
 
       {/* Date & Time */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="date">
-            Date {requiresDetails && <span className="text-destructive">*</span>}
-          </Label>
-          <Input
-            id="date"
-            type="date"
-            value={data.matchDate}
-            onChange={(e) => onDataChange({ matchDate: e.target.value })}
-            required={requiresDetails}
-          />
-        </div>
-        <div>
-          <Label htmlFor="time">
-            Time {requiresDetails && <span className="text-destructive">*</span>}
-          </Label>
-          <Input
-            id="time"
-            type="time"
-            value={data.matchTime}
-            onChange={(e) => onDataChange({ matchTime: e.target.value })}
-            required={requiresDetails}
-          />
-        </div>
-      </div>
-
-      {data.matchDate && data.matchTime && (
-        <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded">
-          <Clock className="h-4 w-4 inline mr-2" />
-          {formatDateTime()}
-        </div>
-      )}
+      <DateTimePickers
+        date={data.matchDate}
+        time={data.matchTime}
+        onDateChange={(date) => onDataChange({ matchDate: date })}
+        onTimeChange={(time) => onDataChange({ matchTime: time })}
+        required={requiresDetails}
+      />
 
       {/* Fee Per Player */}
       <div className="space-y-3">
