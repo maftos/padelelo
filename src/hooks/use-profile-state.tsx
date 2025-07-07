@@ -36,8 +36,9 @@ export const useProfileState = (userId: string | undefined) => {
     queryFn: async () => {
       if (!userId) return null;
       
-      const { data, error } = await supabase.rpc('get_user_profile', {
-        user_a_id: userId
+      const { data, error } = await supabase.rpc('view_profile', {
+        user_a_id: userId,
+        user_b_id: userId
       });
       
       if (error) throw error;

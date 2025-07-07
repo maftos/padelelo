@@ -33,11 +33,8 @@ export const useUserProfile = () => {
       
       try {
         console.log('Fetching profile for user:', user.id);
-        // Get user profile and friend requests count in parallel
-        const [profileResponse, friendRequestsResponse] = await Promise.all([
-          supabase.rpc('get_user_profile', { user_a_id: user.id }),
-          supabase.rpc('friend_requests_counter', { user_a_id: user.id })
-        ]);
+        // Get friend requests count and user onboarding status
+        const friendRequestsResponse = await supabase.rpc('friend_requests_counter', { user_a_id: user.id });
         
         console.log('Friend requests response:', friendRequestsResponse);
 
@@ -45,43 +42,17 @@ export const useUserProfile = () => {
         const requestCount = ((friendRequestsResponse.data as unknown) as FriendRequestsCountResponse)?.count || 0;
         console.log('Extracted request count:', requestCount);
         
-        if (profileResponse.error) {
-          console.error('RPC error:', profileResponse.error);
-          const { data: tableData, error: tableError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .maybeSingle();
-          
-          if (tableError) throw tableError;
-          return {
-            ...tableData,
-            friend_requests_count: requestCount
-          } as UserProfile;
-        }
+        // Get the user data directly from the users table
+        const { data: tableData, error: tableError } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
         
-        if (!profileResponse.data) {
-          const { data: tableData, error: tableError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .maybeSingle();
-          
-          if (tableError) throw tableError;
-          return {
-            ...tableData,
-            friend_requests_count: requestCount
-          } as UserProfile;
-        }
-        
-        // Cast the JSON response to UserProfile after verifying it has the required shape
-        const typedData = profileResponse.data as unknown as UserProfile;
-        if (!typedData.id) {
-          throw new Error('Invalid profile data structure');
-        }
+        if (tableError) throw tableError;
         
         const finalProfile = {
-          ...typedData,
+          ...tableData,
           friend_requests_count: requestCount
         } as UserProfile;
         

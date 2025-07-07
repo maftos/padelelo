@@ -15,7 +15,8 @@ import { SuggestedFriends } from "@/components/dashboard/SuggestedFriends";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface UserProfile {
-  display_name: string;
+  first_name: string | null;
+  last_name: string | null;
   profile_photo: string;
   current_mmr: number;
 }
@@ -71,11 +72,13 @@ export default function Dashboard() {
     queryKey: ['userProfile', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
-      const { data, error } = await supabase.rpc('get_user_profile', {
-        user_a_id: user.id
-      });
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
       if (error) throw error;
-      return data[0] as UserProfile;
+      return data as UserProfile;
     },
     enabled: !!user?.id
   });
@@ -126,12 +129,12 @@ export default function Dashboard() {
                     <Avatar className="h-12 w-12 sm:h-16 sm:w-16 border-2 border-primary/20 flex-shrink-0">
                       <AvatarImage src={profileData?.profile_photo} />
                       <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm sm:text-base">
-                        {profileData?.display_name?.substring(0, 2) || 'NP'}
+                        {`${profileData?.first_name || ''} ${profileData?.last_name || ''}`.trim().substring(0, 2) || 'NP'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                        <CardTitle className="text-lg sm:text-xl truncate">{profileData?.display_name}</CardTitle>
+                        <CardTitle className="text-lg sm:text-xl truncate">{`${profileData?.first_name || ''} ${profileData?.last_name || ''}`.trim() || 'User'}</CardTitle>
                         <div className="flex items-center gap-2 flex-shrink-0">
                           <span className="text-sm text-muted-foreground">#{ranking}</span>
                           <Badge 

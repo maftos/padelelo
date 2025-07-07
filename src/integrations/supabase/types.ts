@@ -1033,6 +1033,10 @@ export type Database = {
           team2_win_mmr_change_amount: number
         }[]
       }
+      check_onboarding: {
+        Args: { user_a_id: string }
+        Returns: Json
+      }
       claim_achievement: {
         Args: { i_user_id: string; i_achievement_id: number }
         Returns: Json
@@ -1465,10 +1469,6 @@ export type Database = {
           profile_photo: string
           current_mmr: number
         }[]
-      }
-      get_user_profile: {
-        Args: { user_a_id: string }
-        Returns: Json
       }
       get_venues: {
         Args: Record<PropertyKey, never>
@@ -2865,6 +2865,10 @@ export type Database = {
           display_name: string
           profile_photo: string
         }[]
+      }
+      view_profile: {
+        Args: { user_a_id: string; user_b_id: string }
+        Returns: Json
       }
       view_tournament: {
         Args: { p_tournament_id: string; p_user_a_id?: string }
