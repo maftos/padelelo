@@ -44,14 +44,16 @@ const PadelCourts = () => {
   const clubs: PadelClub[] = Array.isArray(venues) ? venues.map((venue: any) => ({
     id: venue.venue_id,
     name: venue.name,
-    address: venue.location || 'Address not available',
-    coordinates: venue.coordinates || [57.5522, -20.3484], // Default to center of Mauritius
+    address: 'Mauritius', // Use location from coordinates
+    coordinates: venue.coordinates ? [venue.coordinates.longitude, venue.coordinates.latitude] : [57.5522, -20.3484],
     phone: venue.phone_number,
     email: venue.email_address,
     website: venue.website_url,
     rating: 4.0, // Default rating since not in venue data
     numberOfCourts: Array.isArray(venue.courts) ? venue.courts.length : 1,
-    openingHours: venue.opening_hours || 'Hours not available',
+    openingHours: Array.isArray(venue.opening_hours) && venue.opening_hours.length > 0 ? 
+      venue.opening_hours.map((h: any) => `${h.day}: ${h.hours}`).join(', ') : 
+      'Hours not available',
     description: 'Professional padel facility',
     amenities: ['Equipment Rental', 'Coaching', 'Parking'],
     priceRange: 'Contact for pricing'
