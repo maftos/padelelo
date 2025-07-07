@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
@@ -117,19 +118,9 @@ const EditMatch = () => {
       <PageContainer>
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Header */}
-          <div className="flex items-center gap-4">
-            <Button 
-              onClick={() => navigate("/manage-matches")} 
-              variant="ghost" 
-              size="sm"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-            <div className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-primary" />
-              <h1 className="text-2xl font-bold">Edit Match Details</h1>
-            </div>
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary" />
+            <h1 className="text-2xl font-bold">Edit Match Details</h1>
           </div>
 
           {/* Main Content */}
@@ -221,6 +212,11 @@ const EditMatch = () => {
           <Card>
             <CardContent className="p-6">
               <div className="grid gap-3">
+                <Button onClick={() => navigate("/manage-matches")} variant="outline" className="w-full">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
+                  Back to Matches
+                </Button>
+                
                 <Button onClick={handleSaveChanges} className="w-full">
                   Save Changes
                 </Button>
