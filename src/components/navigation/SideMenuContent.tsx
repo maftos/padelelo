@@ -89,11 +89,11 @@ export const SideMenuContent = ({
         <div className="flex flex-col gap-2">
           <SheetClose asChild>
             <Link
-              to="/register-match"
+              to="/manage-matches"
               className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             >
               <ClipboardEdit className="h-4 w-4" />
-              Register Match
+              My Matches
             </Link>
           </SheetClose>
         </div>

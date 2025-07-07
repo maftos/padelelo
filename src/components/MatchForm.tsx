@@ -11,15 +11,11 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { usePendingMatches } from "@/hooks/use-pending-matches";
 import { useState, useEffect } from "react";
 import { Plus, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export const MatchForm = () => {
+  const navigate = useNavigate();
   const [selectedPendingMatchId, setSelectedPendingMatchId] = useState<string>();
-  const [showCreateMatch, setShowCreateMatch] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedTime, setSelectedTime] = useState("");
-  const [feePerPlayer, setFeePerPlayer] = useState("");
-  const [selectedPartnerId, setSelectedPartnerId] = useState<string>();
 
   const { pendingMatches } = usePendingMatches();
 
@@ -41,24 +37,14 @@ export const MatchForm = () => {
     isSubmitting,
     playerOptions,
     getPlayerName,
-    handleNext,
     handleSubmit,
     calculateMMR,
-    searchQuery,
-    setSearchQuery,
     resetForm
   } = useMatchForm();
 
   const { profile } = useUserProfile();
 
-  useEffect(() => {
-    if (profile?.id && !player1 && showCreateMatch) {
-      setPlayer1(profile.id);
-    }
-  }, [profile?.id, player1, setPlayer1, showCreateMatch]);
-
   const selectedPlayers = [player1, player2, player3, player4].filter(Boolean);
-  const hasAllPlayers = selectedPlayers.length === 4;
 
   const getPlayerPhoto = (playerId: string) => {
     if (playerId === profile?.id) {
@@ -85,53 +71,28 @@ export const MatchForm = () => {
   };
 
   const handleCreateNewMatch = () => {
-    setShowCreateMatch(true);
-    setSelectedPendingMatchId(undefined);
-    resetForm();
+    navigate("/create-match");
   };
 
   const handleBackToPendingMatches = () => {
-    setShowCreateMatch(false);
     setSelectedPendingMatchId(undefined);
-    setSelectedLocation("");
-    setSelectedDate(new Date().toISOString().split('T')[0]);
-    setSelectedTime("");
-    setFeePerPlayer("");
-    setSelectedPartnerId(undefined);
     resetForm();
   };
 
-  const handleLocationNext = async () => {
-    // Here you would typically create the match in the database
-    // For now, we'll just show a success message and reset
-    console.log("Creating match with:", {
-      players: selectedPlayers,
-      location: selectedLocation,
-      date: selectedDate,
-      time: selectedTime,
-      fee: feePerPlayer
-    });
-    // You can add actual match creation logic here
-    handleBackToPendingMatches();
-  };
-
   const handlePartnerSelect = async (partnerId: string) => {
-    setSelectedPartnerId(partnerId);
     // calculateMMR handles the page navigation internally, so we don't need to check its return value
     await calculateMMR(partnerId);
   };
 
   // Helper function to get the correct team players based on selected partner
   const getTeamPlayers = () => {
-    if (!selectedPartnerId) return null;
-
     const team1Players = {
       player1Id: player1,
-      player2Id: selectedPartnerId
+      player2Id: selectedPartner
     };
 
     const remainingPlayers = [player2, player3, player4].filter(
-      p => p !== selectedPartnerId
+      p => p !== selectedPartner
     );
 
     const team2Players = {
@@ -142,24 +103,17 @@ export const MatchForm = () => {
     return { team1Players, team2Players };
   };
 
-  const teamPlayers = getTeamPlayers();
-
   // Get potential partners (excluding current user)
   const getPotentialPartners = () => {
     return [player2, player3, player4].filter(p => p !== player1);
   };
 
-  // Dynamic button text based on selected players (excluding current user)
-  const selectedPlayersCount = selectedPlayers.length - 1; // Subtract 1 for current user
-  const getButtonText = () => {
-    if (selectedPlayersCount <= 2) {
-      return "Next (Open Match)";
-    }
-    return "Next";
-  };
+  // Find selected partner from MMR data
+  const selectedPartner = mmrData?.find(data => data.player_id !== player1)?.player_id;
+  const teamPlayers = selectedPartner ? getTeamPlayers() : null;
 
   // Show pending matches list initially
-  if (!showCreateMatch && page === 1) {
+  if (!selectedPendingMatchId && page === 1) {
     return (
       <div className="space-y-6">
         <PendingMatchesList 
@@ -183,7 +137,7 @@ export const MatchForm = () => {
     );
   }
 
-  // Create match flow with similar layout to EditMatch
+  // Handle pending match flow
   return (
     <div className="space-y-6">
       {/* Header with back button and title */}
@@ -198,19 +152,13 @@ export const MatchForm = () => {
         </Button>
         <div>
           <h2 className="text-xl font-semibold">
-            {page === 1
-              ? "Select Players"
-              : page === 2 && showCreateMatch
-              ? "Match Details"
-              : page === 2 && selectedPendingMatchId
+            {page === 2 && selectedPendingMatchId
               ? "Choose Your Partner"
               : "Enter Match Score"}
           </h2>
           <p className="text-sm text-muted-foreground">
-            {page === 1 
-              ? "Add up to 3 players to your match"
-              : page === 2 && showCreateMatch
-              ? "Set the match location, date, and time"
+            {page === 2 
+              ? "Select who you want to partner with for this match"
               : "Complete your match setup"}
           </p>
         </div>
@@ -219,66 +167,14 @@ export const MatchForm = () => {
       {/* Main Content Card */}
       <Card>
         <div className="p-6">
-          {page === 1 && showCreateMatch ? (
-            <div className="space-y-6">
-              <PlayerSelectionStep
-                selectedPlayers={selectedPlayers}
-                searchQuery={searchQuery}
-                setSearchQuery={setSearchQuery}
-                playerOptions={playerOptions}
-                onPlayerSelect={(playerId) => {
-                  if (selectedPlayers.includes(playerId)) {
-                    // Remove player only if it's not the current user
-                    if (playerId !== profile?.id) {
-                      if (player1 === playerId) setPlayer1("");
-                      if (player2 === playerId) setPlayer2("");
-                      if (player3 === playerId) setPlayer3("");
-                      if (player4 === playerId) setPlayer4("");
-                    }
-                  } else if (selectedPlayers.length < 4) {
-                    // Add player to first available slot
-                    if (!player1) setPlayer1(playerId);
-                    else if (!player2) setPlayer2(playerId);
-                    else if (!player3) setPlayer3(playerId);
-                    else if (!player4) setPlayer4(playerId);
-                  }
-                }}
-                onNext={handleNext}
-                isCalculating={isCalculating}
-              />
-              <div className="flex justify-end">
-                <Button
-                  onClick={handleNext}
-                  disabled={isCalculating}
-                  size="lg"
-                >
-                  {getButtonText()}
-                </Button>
-              </div>
-            </div>
-          ) : page === 2 && showCreateMatch ? (
-            <LocationSelectionStep
-              selectedLocation={selectedLocation}
-              onLocationChange={setSelectedLocation}
-              selectedDate={selectedDate}
-              onDateChange={setSelectedDate}
-              selectedTime={selectedTime}
-              onTimeChange={setSelectedTime}
-              feePerPlayer={feePerPlayer}
-              onFeeChange={setFeePerPlayer}
-              onBack={() => setPage(1)}
-              onNext={handleLocationNext}
-              isSubmitting={isSubmitting}
-              hasAllPlayers={hasAllPlayers}
-            />
-          ) : page === 2 && selectedPendingMatchId ? (
+          {page === 2 && selectedPendingMatchId ? (
             <div className="space-y-6">
               <TeamFormationStep
                 players={getPotentialPartners()}
                 getPlayerName={getPlayerName}
                 getPlayerPhoto={getPlayerPhoto}
                 onPlayerSelect={handlePartnerSelect}
-                selectedPartnerId={selectedPartnerId}
+                selectedPartnerId={selectedPartner}
                 onBack={handleBackToPendingMatches}
                 isCalculating={isCalculating}
               />

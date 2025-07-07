@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ManageMatches from "./pages/ManageMatches";
+import CreateMatch from "./pages/CreateMatch";
 import EditMatch from "./pages/EditMatch";
 import Matches from "./pages/Matches";
 import Friends from "./pages/Friends";
@@ -49,6 +50,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/manage-matches" element={<ManageMatches />} />
+              <Route path="/create-match" element={<CreateMatch />} />
               <Route path="/edit-match/:matchId" element={<EditMatch />} />
               <Route path="/matches" element={<Matches />} />
               <Route path="/friends" element={<Friends />} />

@@ -10,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
-  { title: "Register Match", url: "/register-match", icon: Calendar },
+  { title: "My Matches", url: "/manage-matches", icon: Calendar },
   { title: "Open Games", url: "/open-games", icon: Users },
   { title: "Tournaments", url: "/tournaments", icon: Trophy },
   { title: "Leaderboard", url: "/leaderboard", icon: BarChart3 },
