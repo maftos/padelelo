@@ -171,12 +171,12 @@ export const MatchForm = () => {
   }
 
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-none bg-transparent md:bg-card md:shadow-sm">
+    <div className="w-full max-w-3xl mx-auto">
       <div className="space-y-4">
         <div className="flex justify-between items-center px-4 py-3">
           <p className="text-lg font-semibold">
             {page === 1
-              ? "Select Players (up to 3)"
+              ? "Select Players (Up to 3)"
               : page === 2 && showCreateMatch
               ? "Select Location (Optional)"
               : page === 2 && selectedPendingMatchId
@@ -204,7 +204,7 @@ export const MatchForm = () => {
         </div>
       </div>
 
-      <div className="px-4 pb-4">
+      <div>
         {page === 1 && showCreateMatch ? (
           <PlayerSelectionStep
             selectedPlayers={selectedPlayers}
@@ -263,6 +263,6 @@ export const MatchForm = () => {
           />
         )}
       </div>
-    </Card>
+    </div>
   );
 };
