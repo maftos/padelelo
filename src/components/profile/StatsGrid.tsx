@@ -29,6 +29,13 @@ export const StatsGrid = ({ profileData }: StatsGridProps) => {
     teamPartner: "Sarah Johnson"
   };
 
+  // Mock data for top partners - will be replaced with real data later
+  const topPartners = [
+    { name: "Sarah Johnson", gamesPlayed: 15 },
+    { name: "Alex Chen", gamesPlayed: 12 },
+    { name: "Maria Rodriguez", gamesPlayed: 8 }
+  ];
+
   const handleTournamentClick = () => {
     navigate(`/tournaments/${upcomingTournament.id}`);
   };
@@ -80,13 +87,20 @@ export const StatsGrid = ({ profileData }: StatsGridProps) => {
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Users className="h-4 w-4 text-purple-500" />
-            Social
+            Social ({stats.friends} friends)
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Friends</span>
-            <span className="font-semibold">{stats.friends}</span>
+        <CardContent className="space-y-4">
+          <div>
+            <h5 className="text-sm font-medium mb-3">Top Partners</h5>
+            <div className="space-y-2">
+              {topPartners.map((partner, index) => (
+                <div key={index} className="flex justify-between items-center text-sm">
+                  <span className="text-foreground">{partner.name}</span>
+                  <span className="text-muted-foreground">{partner.gamesPlayed} games</span>
+                </div>
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
