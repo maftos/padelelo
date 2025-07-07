@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Clock, MapPin, Users, Plus, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
+import { Clock, MapPin, Users, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -248,7 +247,7 @@ export default function PlayerMatching() {
               <p className="text-sm sm:text-base text-muted-foreground">Find players to complete your booked courts</p>
             </div>
             
-            {/* Action buttons - Stack on mobile, side by side on larger screens */}
+            {/* Action buttons - Only notifications button now */}
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button 
                 variant="outline" 
@@ -257,13 +256,6 @@ export default function PlayerMatching() {
               >
                 <Bell className="h-4 w-4 flex-shrink-0" />
                 <span className="truncate">{isMobile ? "Notifications" : "Subscribe to Notifications"}</span>
-              </Button>
-              <Button 
-                className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3"
-                onClick={() => setAddMatchWizardOpen(true)}
-              >
-                <Plus className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">Post Your Court</span>
               </Button>
             </div>
           </div>
@@ -404,16 +396,12 @@ export default function PlayerMatching() {
           ))}
         </div>
 
-        {/* Empty State */}
+        {/* Empty State - Updated without "Post Your Court" button */}
         {mockPlayerMatchingPosts.length === 0 && (
           <div className="text-center py-8 sm:py-12 px-4">
             <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
             <h3 className="text-base sm:text-lg font-semibold mb-2">No open games yet</h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Be the first to post your available court!</p>
-            <Button onClick={() => setAddMatchWizardOpen(true)} className="w-full sm:w-auto">
-              <Plus className="h-4 w-4 mr-2" />
-              Post Your Court
-            </Button>
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Check back later for available courts!</p>
           </div>
         )}
 
