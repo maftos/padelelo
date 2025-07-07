@@ -1,9 +1,8 @@
 
-import { Search, X, Info } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TeamSelect } from "./TeamSelect";
-import { Link } from "react-router-dom";
 import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface PlayerSelectionStepProps {
@@ -28,6 +27,15 @@ export const PlayerSelectionStep = ({
   const { profile } = useUserProfile();
   const playersLeftToSelect = 3 - (selectedPlayers.length - 1);
   const availablePlayers = playerOptions.filter(p => p.id !== profile?.id);
+  
+  // Dynamic button text based on selected players (excluding current user)
+  const selectedPlayersCount = selectedPlayers.length - 1; // Subtract 1 for current user
+  const getButtonText = () => {
+    if (selectedPlayersCount <= 2) {
+      return "Next (Open Match)";
+    }
+    return "Next";
+  };
 
   return (
     <>
@@ -59,17 +67,13 @@ export const PlayerSelectionStep = ({
         onPlayerSelect={onPlayerSelect}
       />
       
-      <div className="pt-6 border-t mt-6">
+      <div className="pt-4 mt-4">
         <Button 
-          variant="secondary"
-          size="sm"
-          asChild
-          className="flex items-center gap-2"
+          onClick={onNext}
+          disabled={selectedPlayers.length < 1 || isCalculating}
+          className="w-full"
         >
-          <Link to="/how-it-works">
-            <Info className="h-4 w-4" />
-            How does this work?
-          </Link>
+          {getButtonText()}
         </Button>
       </div>
     </>

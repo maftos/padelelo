@@ -28,7 +28,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   const maxPlayersSelected = selectedPlayers.length >= 4;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {players.map((player) => {
         const isSelected = selectedPlayers.includes(player.id);
         const isCurrentUser = player.id === currentUserProfile?.id;
@@ -39,7 +39,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
           <Card
             key={player.id}
             className={cn(
-              "p-4 transition-all cursor-pointer",
+              "p-3 transition-all cursor-pointer",
               isSelected
                 ? "ring-2 ring-primary bg-accent shadow-md"
                 : "hover:shadow-md hover:bg-accent/50",
@@ -52,15 +52,15 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
               }
             }}
           >
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-12 w-12">
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-10 w-10">
                 <AvatarImage src={profilePhoto || ""} alt={player.name} />
                 <AvatarFallback>
                   {player.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1">
-                <span className="font-medium">{player.name}</span>
+                <span className="font-medium text-sm">{player.name}</span>
               </div>
               {isSelected && (
                 <div className="w-2 h-2 bg-primary rounded-full" />
