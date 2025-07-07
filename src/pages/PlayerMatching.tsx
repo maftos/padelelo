@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Clock, MapPin, Users, Calendar, DollarSign, UserCheck, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -218,13 +219,13 @@ export default function PlayerMatching() {
   const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
   const [addMatchWizardOpen, setAddMatchWizardOpen] = useState(false);
   const [selectedGamePost, setSelectedGamePost] = useState<typeof mockPlayerMatchingPosts[0] | null>(null);
-  const [sortBy, setSortBy] = useState("today");
+  const [sortBy, setSortBy] = useState("for-you");
   const isMobile = useIsMobile();
 
   const sortOptions = [
+    { value: "for-you", label: "For You" },
     { value: "today", label: "Today" },
-    { value: "friends", label: "Friends" },
-    { value: "soonest", label: "Soonest" }
+    { value: "friends", label: "Friends" }
   ];
 
   const handleJoinGame = (postId: string) => {
@@ -264,7 +265,11 @@ export default function PlayerMatching() {
         {/* Sort Section - Mobile optimized */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
           {/* Sort options - Mobile friendly */}
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-muted-foreground min-w-0">
+              <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
+              <span className="text-sm font-medium">Sort by:</span>
+            </div>
             <div className="flex gap-1">
               {sortOptions.map((option) => (
                 <Button
