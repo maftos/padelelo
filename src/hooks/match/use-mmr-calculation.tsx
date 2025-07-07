@@ -24,8 +24,7 @@ export function useMMRCalculation(userId: string | undefined) {
         team1_player1_id: player1,
         team1_player2_id: team1Player2Id,
         team2_player1_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1),
-        team2_player2_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1 && p !== [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1)),
-        match_date: new Date(date).toISOString()
+        team2_player2_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1 && p !== [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1))
       });
 
       if (matchError) {
