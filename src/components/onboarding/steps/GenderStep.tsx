@@ -14,26 +14,33 @@ export const GenderStep = () => {
 
   return (
     <OnboardingLayout currentStep={1} totalSteps={6} showBack={false}>
-      <h1 className="text-2xl font-bold text-center pl-8 pr-8">Welcome to PadelELO!</h1>
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Welcome to PadelELO!</h1>
+        <p className="text-muted-foreground">Let's get your profile set up</p>
+      </div>
 
-      <div className="flex flex-col items-center space-y-4 w-full">
+      <div className="flex flex-col space-y-4 w-full">
         <Card
-          className="p-6 cursor-pointer transition-all hover:border-primary/50 w-full"
+          className="p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-lg hover:scale-[1.02] w-full bg-card/50 backdrop-blur-sm"
           onClick={() => handleSelect("MALE")}
         >
           <div className="flex items-center gap-4">
-            <User className="h-6 w-6 text-blue-500" />
-            <div className="font-medium">Male</div>
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-6 w-6 text-primary" />
+            </div>
+            <div className="font-semibold text-lg">Male</div>
           </div>
         </Card>
 
         <Card
-          className="p-6 cursor-pointer transition-all hover:border-primary/50 w-full"
+          className="p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-lg hover:scale-[1.02] w-full bg-card/50 backdrop-blur-sm"
           onClick={() => handleSelect("FEMALE")}
         >
           <div className="flex items-center gap-4">
-            <User className="h-6 w-6 text-pink-500" />
-            <div className="font-medium">Female</div>
+            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-6 w-6 text-primary" />
+            </div>
+            <div className="font-semibold text-lg">Female</div>
           </div>
         </Card>
       </div>

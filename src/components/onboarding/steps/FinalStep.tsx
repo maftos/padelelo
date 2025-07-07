@@ -65,20 +65,25 @@ export const FinalStep = () => {
 
   return (
     <OnboardingLayout currentStep={6} totalSteps={6}>
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl font-bold">You're all set!</h1>
-          <p className="text-muted-foreground">
-            Ready to start your PadelELO journey?
-          </p>
+      <div className="space-y-8">
+        <div className="text-center space-y-4">
+          <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+            <span className="text-2xl">🎉</span>
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-bold tracking-tight">You're all set!</h1>
+            <p className="text-muted-foreground text-lg">
+              Ready to start your PadelELO journey?
+            </p>
+          </div>
         </div>
 
         <Button
-          className="w-full"
+          className="w-full h-12 text-base font-semibold"
           onClick={handleComplete}
           disabled={isSubmitting}
         >
-          {isSubmitting ? "Setting up your profile..." : "Let's go!"}
+          {isSubmitting ? "Setting up your profile..." : "Let's go! 🚀"}
         </Button>
       </div>
     </OnboardingLayout>

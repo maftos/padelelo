@@ -32,23 +32,23 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <div className="container max-w-md mx-auto px-4 py-2">
-        <Progress value={progress} className="h-2" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col">
+      <div className="container max-w-md mx-auto px-4 py-6">
+        <Progress value={progress} className="h-3 bg-muted" />
       </div>
       <div className="flex-1 container max-w-md mx-auto px-4 py-8">
-        <div className="relative">
+        <div className="relative animate-fade-in">
           {showBack && (
             <Button
               variant="ghost"
               size="icon"
               onClick={handleBack}
-              className="absolute left-0 top-2"
+              className="absolute left-0 top-2 hover:bg-accent/50"
             >
               <ChevronLeft className="h-6 w-6" />
             </Button>
           )}
-          <div className="space-y-6">
+          <div className="space-y-8">
             {children}
           </div>
         </div>

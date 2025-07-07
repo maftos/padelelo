@@ -19,23 +19,27 @@ export const NameStep = () => {
 
   return (
     <OnboardingLayout currentStep={2} totalSteps={6}>
-      <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-center">What's your name?</h1>
+      <div className="space-y-8">
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">What's your name?</h1>
+          <p className="text-muted-foreground">This is how others will see you</p>
+        </div>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="display_name">Display Name</Label>
+        <div className="space-y-6">
+          <div className="space-y-3">
+            <Label htmlFor="display_name" className="text-base font-medium">Display Name</Label>
             <Input
               id="display_name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Enter your name"
+              className="h-12 text-base bg-card/50 backdrop-blur-sm border-muted"
             />
           </div>
         </div>
 
         <Button
-          className="w-full"
+          className="w-full h-12 text-base font-semibold"
           onClick={handleNext}
           disabled={!name.trim()}
         >
