@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Edit3, TrendingUp, TrendingDown, User, UserCheck } from "lucide-react";
+import { Edit3, User, UserCheck } from "lucide-react";
 import { countries } from "@/lib/countries";
 
 interface ProfileHeroCardProps {
@@ -74,22 +74,8 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
             <div>
               <div className="flex flex-col md:flex-row items-center md:items-baseline gap-2 md:gap-3">
                 <h1 className="text-3xl font-bold text-foreground">
-                  {displayName}
+                  {displayName} (#{ranking}) ({rankingChange > 0 ? '+' : ''}{rankingChange})
                 </h1>
-                <div className="flex items-center gap-2">
-                  <span className="text-lg font-semibold text-muted-foreground">#{ranking}</span>
-                  <Badge 
-                    variant="secondary" 
-                    className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1`}
-                  >
-                    {rankingChange < 0 ? (
-                      <TrendingDown className="h-3 w-3" />
-                    ) : (
-                      <TrendingUp className="h-3 w-3" />
-                    )}
-                    {rankingChange > 0 ? '+' : ''}{rankingChange}
-                  </Badge>
-                </div>
               </div>
             </div>
 

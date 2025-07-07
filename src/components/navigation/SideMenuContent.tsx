@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -13,8 +12,6 @@ import {
   LayoutDashboard,
   BarChart3,
   Users,
-  TrendingUp,
-  TrendingDown
 } from "lucide-react";
 
 interface SideMenuContentProps {
@@ -65,21 +62,7 @@ export const SideMenuContent = ({
           </Avatar>
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="font-medium truncate">{profile?.display_name || 'Player'}</span>
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <span className="text-sm text-muted-foreground">#{ranking}</span>
-                <Badge 
-                  variant="secondary" 
-                  className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1 py-0 h-5`}
-                >
-                  {rankingChange < 0 ? (
-                    <TrendingDown className="h-2 w-2" />
-                  ) : (
-                    <TrendingUp className="h-2 w-2" />
-                  )}
-                  {rankingChange > 0 ? '+' : ''}{rankingChange}
-                </Badge>
-              </div>
+              <span className="font-medium truncate">{profile?.display_name || 'Player'} (#{ranking}) ({rankingChange > 0 ? '+' : ''}{rankingChange})</span>
             </div>
             <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
           </div>
