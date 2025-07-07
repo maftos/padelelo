@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 
 interface GameAnnouncementData {
   gameTitle: string;
@@ -27,8 +27,7 @@ export const GameAnnouncementStep = ({ data, onDataChange }: GameAnnouncementSte
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
         <p className="text-sm text-blue-700">
-          <MessageSquare className="h-4 w-4 inline mr-2" />
-          This will create an open game announcement that other players can see and join.
+          This game will be publicly visible for 24h
         </p>
       </div>
 
