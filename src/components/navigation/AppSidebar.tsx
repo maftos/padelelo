@@ -40,10 +40,13 @@ export const AppSidebar = () => {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-foreground text-sm truncate">
-                {profile?.display_name || 'Player'} (#{ranking}) (<span className={rankingChange < 0 ? "text-red-600" : "text-green-600"}>{rankingChange > 0 ? '+' : ''}{rankingChange}</span>)
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-foreground text-sm">
+                {profile?.display_name || 'Player'} (#{ranking})
               </span>
+              <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+                {rankingChange > 0 ? '+' : ''}{rankingChange}
+              </Badge>
             </div>
             <span className="text-xs text-muted-foreground">
               {profile?.current_mmr || 3000} MMR
