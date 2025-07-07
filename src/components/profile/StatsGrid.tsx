@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Users, TrendingUp, TrendingDown } from "lucide-react";
+import { Activity, Users } from "lucide-react";
 
 interface StatsGridProps {
   profileData: {
@@ -15,12 +15,10 @@ export const StatsGrid = ({ profileData }: StatsGridProps) => {
   // Mock data for now - will be replaced with real data later
   const stats = {
     friends: 12,
-    ranking: 45, // Mock ranking data
-    rankingChange: -3, // Mock ranking change (negative means dropped)
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Activity Card */}
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader className="pb-3">
@@ -58,38 +56,6 @@ export const StatsGrid = ({ profileData }: StatsGridProps) => {
           <div className="flex justify-between items-center">
             <span className="text-sm text-muted-foreground">Friends</span>
             <span className="font-semibold">{stats.friends}</span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Ranking Card */}
-      <Card className="hover:shadow-md transition-shadow">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            {stats.rankingChange < 0 ? (
-              <TrendingDown className="h-4 w-4 text-red-500" />
-            ) : (
-              <TrendingUp className="h-4 w-4 text-green-500" />
-            )}
-            Ranking
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">Current Rank</span>
-            <span className="font-semibold">#{stats.ranking}</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-muted-foreground">This Month</span>
-            <Badge 
-              variant="secondary" 
-              className={stats.rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}
-            >
-              {stats.rankingChange > 0 ? '+' : ''}{stats.rankingChange}
-            </Badge>
-          </div>
-          <div className="text-xs text-muted-foreground">
-            MMR: {profileData.current_mmr || 0}
           </div>
         </CardContent>
       </Card>
