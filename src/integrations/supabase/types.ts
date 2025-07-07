@@ -1167,10 +1167,9 @@ export type Database = {
         Args: {
           user_a_id: string
           team1_player1_id: string
-          team1_player2_id: string
-          team2_player1_id: string
-          team2_player2_id: string
-          match_date: string
+          team1_player2_id?: string
+          team2_player1_id?: string
+          team2_player2_id?: string
         }
         Returns: string
       }

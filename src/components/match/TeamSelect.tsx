@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
@@ -27,7 +28,7 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
   const maxPlayersSelected = selectedPlayers.length >= 4;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="space-y-2">
       {players.map((player) => {
         const isSelected = selectedPlayers.includes(player.id);
         const isCurrentUser = player.id === currentUserProfile?.id;
@@ -38,10 +39,10 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
           <Card
             key={player.id}
             className={cn(
-              "p-4 transition-all",
+              "p-4 transition-all cursor-pointer",
               isSelected
                 ? "ring-2 ring-primary bg-accent shadow-md"
-                : "hover:shadow-md",
+                : "hover:shadow-md hover:bg-accent/50",
               isDisabled && !isSelected && "opacity-50 cursor-not-allowed",
               isCurrentUser && "cursor-default"
             )}
@@ -51,14 +52,19 @@ export const TeamSelect: React.FC<TeamSelectProps> = ({
               }
             }}
           >
-            <div className="flex flex-col items-center space-y-3">
-              <Avatar className="h-16 w-16">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-12 w-12">
                 <AvatarImage src={profilePhoto || ""} alt={player.name} />
                 <AvatarFallback>
                   {player.name.substring(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium text-center">{player.name}</span>
+              <div className="flex-1">
+                <span className="font-medium">{player.name}</span>
+              </div>
+              {isSelected && (
+                <div className="w-2 h-2 bg-primary rounded-full" />
+              )}
             </div>
           </Card>
         );

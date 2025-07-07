@@ -30,8 +30,8 @@ export const PlayerSelectionStep = ({
   const availablePlayers = playerOptions.filter(p => p.id !== profile?.id);
 
   return (
-    <div className="space-y-4">
-      <div className="relative max-w-sm">
+    <>
+      <div className="relative max-w-sm mb-4">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           type="text"
@@ -51,13 +51,15 @@ export const PlayerSelectionStep = ({
           </Button>
         )}
       </div>
+      
       <TeamSelect
         players={availablePlayers}
         selectedPlayers={selectedPlayers}
         currentUserProfile={profile}
         onPlayerSelect={onPlayerSelect}
       />
-      <div className="pt-6 border-t">
+      
+      <div className="pt-6 border-t mt-6">
         <Button 
           variant="secondary"
           size="sm"
@@ -70,6 +72,6 @@ export const PlayerSelectionStep = ({
           </Link>
         </Button>
       </div>
-    </div>
+    </>
   );
 };
