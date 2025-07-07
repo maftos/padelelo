@@ -38,10 +38,7 @@ export const MobileHeader = () => {
             <SheetContent side="left" className="p-0 w-80 bg-card">
               <SideMenuContent 
                 user={user}
-                profile={{
-                  ...profile,
-                  is_onboarded: profile?.is_onboarded
-                }}
+                profile={profile}
                 onSignOut={signOut}
                 onClose={() => {}}
               />
