@@ -1,4 +1,5 @@
 
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -122,11 +123,11 @@ export const ViewApplicantsDialog = ({
           {sectionApplicants.map((applicant) => (
             <div 
               key={applicant.id} 
-              className="flex items-center border rounded-lg overflow-hidden hover:bg-muted/50 transition-colors"
+              className="flex items-center border rounded-lg overflow-hidden transition-colors group"
             >
               {/* Left half - Profile click area */}
               <div 
-                className="flex items-center gap-3 p-3 flex-1 cursor-pointer"
+                className="flex items-center gap-3 p-3 flex-1 cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => handleProfileClick(applicant.id)}
               >
                 <Avatar className="w-10 h-10">
@@ -136,7 +137,9 @@ export const ViewApplicantsDialog = ({
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="font-medium">{applicant.display_name}</p>
+                  <p className="font-medium transition-all duration-200 group-hover:underline">
+                    {applicant.display_name}
+                  </p>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">
                       {applicant.current_mmr} MMR
@@ -147,13 +150,15 @@ export const ViewApplicantsDialog = ({
               
               {/* Right half - Selection toggle area */}
               <div 
-                className="p-3 cursor-pointer flex items-center justify-center min-w-[60px]"
+                className="p-3 cursor-pointer flex items-center justify-center min-w-[60px] hover:bg-accent/50 transition-colors"
                 onClick={() => handleApplicantToggle(applicant.id)}
               >
-                <Checkbox
-                  checked={selectedApplicants.includes(applicant.id)}
-                  disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
-                />
+                <div className="hover:scale-110 transition-transform duration-200">
+                  <Checkbox
+                    checked={selectedApplicants.includes(applicant.id)}
+                    disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
+                  />
+                </div>
               </div>
             </div>
           ))}
@@ -199,3 +204,4 @@ export const ViewApplicantsDialog = ({
     </Dialog>
   );
 };
+
