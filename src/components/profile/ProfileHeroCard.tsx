@@ -3,7 +3,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Edit3, TrendingUp, TrendingDown } from "lucide-react";
+import { Edit3, TrendingUp, TrendingDown, User, UserCheck } from "lucide-react";
+import { countries } from "@/lib/countries";
 
 interface ProfileHeroCardProps {
   profileData: {
@@ -21,6 +22,10 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
   const rankingChange = -3;
+  
+  // Mock data for new fields - will be replaced with real data later
+  const preferredSide = "Right";
+  const totalGames = 127;
 
   const getInitials = () => {
     return profileData.display_name
@@ -28,6 +33,23 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
       .map(n => n[0])
       .join('')
       .toUpperCase() || 'MT';
+  };
+
+  const getGenderIcon = () => {
+    if (profileData.gender?.toLowerCase() === 'male') {
+      return <User className="h-4 w-4 text-blue-500" />;
+    } else if (profileData.gender?.toLowerCase() === 'female') {
+      return <UserCheck className="h-4 w-4 text-pink-500" />;
+    }
+    return null;
+  };
+
+  const getNationalityFlag = () => {
+    if (profileData.nationality) {
+      const country = countries.find(c => c.code === profileData.nationality);
+      return country ? country.flag : '🏳️';
+    }
+    return '🏳️';
   };
 
   // Use sample data if display_name is empty
@@ -53,6 +75,31 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
               <h1 className="text-3xl font-bold text-foreground">
                 {displayName}
               </h1>
+            </div>
+
+            {/* Personal Info Row */}
+            <div className="flex items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground">
+              {profileData.gender && (
+                <div className="flex items-center gap-1">
+                  {getGenderIcon()}
+                  <span className="capitalize">{profileData.gender}</span>
+                </div>
+              )}
+              
+              {profileData.nationality && (
+                <div className="flex items-center gap-1">
+                  <span className="text-lg">{getNationalityFlag()}</span>
+                  <span>{profileData.nationality}</span>
+                </div>
+              )}
+              
+              <div className="flex items-center gap-1">
+                <span>Prefers: {preferredSide}</span>
+              </div>
+              
+              <div className="flex items-center gap-1">
+                <span>{totalGames} games</span>
+              </div>
             </div>
 
             {/* MMR and Ranking */}
