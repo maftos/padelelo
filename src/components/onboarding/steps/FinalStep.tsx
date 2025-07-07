@@ -21,7 +21,7 @@ export const FinalStep = () => {
       // Update user profile
       const { error: updateError } = await supabase.rpc('edit_user_profile', {
         user_a_id: user.id,
-        new_display_name: localStorage.getItem('onboarding_name'),
+        new_display_name: `${localStorage.getItem('onboarding_first_name')} ${localStorage.getItem('onboarding_last_name')}`,
         new_gender: localStorage.getItem('onboarding_gender'),
         new_date_of_birth: null,
         new_languages: [],
@@ -41,7 +41,8 @@ export const FinalStep = () => {
       if (completeError) throw completeError;
 
       // Clear onboarding data
-      localStorage.removeItem('onboarding_name');
+      localStorage.removeItem('onboarding_first_name');
+      localStorage.removeItem('onboarding_last_name');
       localStorage.removeItem('onboarding_gender');
       localStorage.removeItem('onboarding_nationality');
       localStorage.removeItem('onboarding_photo');

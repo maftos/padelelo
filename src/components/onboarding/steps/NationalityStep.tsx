@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
+import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { countries } from "@/lib/countries";
@@ -14,16 +15,19 @@ const countryData = countries.map(country => ({
 }));
 
 export const NationalityStep = () => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState("Mauritius"); // Preset to Mauritius
   const navigate = useNavigate();
 
   const handleValueChange = (newValue: string) => {
+    setValue(newValue);
     const country = countryData.find(country => country.name === newValue);
     if (country) {
-      setValue(newValue);
       localStorage.setItem("onboarding_nationality", country.code);
-      navigate("/onboarding/step-4");
     }
+  };
+
+  const handleNext = () => {
+    navigate("/onboarding/step-4");
   };
 
   return (
@@ -52,6 +56,13 @@ export const NationalityStep = () => {
             </SelectContent>
           </Select>
         </div>
+
+        <Button
+          className="w-full h-12 text-base font-semibold"
+          onClick={handleNext}
+        >
+          Next
+        </Button>
       </div>
     </OnboardingLayout>
   );

@@ -7,12 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const NameStep = () => {
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const navigate = useNavigate();
 
   const handleNext = () => {
-    if (name.trim()) {
-      localStorage.setItem("onboarding_name", name.trim());
+    if (firstName.trim() && lastName.trim()) {
+      localStorage.setItem("onboarding_first_name", firstName.trim());
+      localStorage.setItem("onboarding_last_name", lastName.trim());
       navigate("/onboarding/step-3");
     }
   };
@@ -27,12 +29,23 @@ export const NameStep = () => {
 
         <div className="space-y-6">
           <div className="space-y-3">
-            <Label htmlFor="display_name" className="text-base font-medium">Display Name</Label>
+            <Label htmlFor="first_name" className="text-base font-medium">First Name</Label>
             <Input
-              id="display_name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
+              id="first_name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Enter your first name"
+              className="h-12 text-base bg-card/50 backdrop-blur-sm border-muted"
+            />
+          </div>
+          
+          <div className="space-y-3">
+            <Label htmlFor="last_name" className="text-base font-medium">Last Name</Label>
+            <Input
+              id="last_name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Enter your last name"
               className="h-12 text-base bg-card/50 backdrop-blur-sm border-muted"
             />
           </div>
@@ -41,9 +54,9 @@ export const NameStep = () => {
         <Button
           className="w-full h-12 text-base font-semibold"
           onClick={handleNext}
-          disabled={!name.trim()}
+          disabled={!firstName.trim() || !lastName.trim()}
         >
-          Continue
+          Next
         </Button>
       </div>
     </OnboardingLayout>
