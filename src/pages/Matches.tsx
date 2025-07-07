@@ -29,6 +29,11 @@ interface MatchDetails {
   team2_player1_profile_photo: string;
   team2_player2_display_name: string;
   team2_player2_profile_photo: string;
+  completed_by?: string;
+  player1_id?: string;
+  player2_id?: string;
+  player3_id?: string;
+  player4_id?: string;
 }
 
 const Matches = () => {
@@ -50,6 +55,8 @@ const Matches = () => {
 
       const { data, error } = await supabase.rpc("get_my_completed_matches", {
         user_a_id: userId,
+        page_number: 1,
+        page_size: 10
       });
 
       if (error) {
@@ -61,31 +68,39 @@ const Matches = () => {
         throw error;
       }
 
-      return data.map((match: any) => ({
-        match_id: match.match_id,
-        old_mmr: match.old_mmr,
-        change_amount: match.change_amount,
-        change_type: match.change_type,
-        created_at: match.created_at,
-        partner_id: "",
-        new_mmr: match.new_mmr,
-        status: "COMPLETED",
-        team1_score: match.team1_score,
-        team2_score: match.team2_score,
-        team1_player1_display_name: match.player1_display_name,
-        team1_player1_profile_photo: match.player1_profile_photo,
-        team1_player2_display_name: match.player2_display_name,
-        team1_player2_profile_photo: match.player2_profile_photo,
-        team2_player1_display_name: match.player3_display_name,
-        team2_player1_profile_photo: match.player3_profile_photo,
-        team2_player2_display_name: match.player4_display_name,
-        team2_player2_profile_photo: match.player4_profile_photo,
-        completed_by: match.completed_by,
-        player1_id: match.player1_id,
-        player2_id: match.player2_id,
-        player3_id: match.player3_id,
-        player4_id: match.player4_id,
-      }));
+      // Handle the new JSON response format with pagination
+      const matchesData = (data as any)?.matches || [];
+      
+      return matchesData.map((match: any) => {
+        const team1 = match.team1 || {};
+        const team2 = match.team2 || {};
+        
+        return {
+          match_id: match.match_id,
+          old_mmr: match.old_mmr,
+          change_amount: match.change_amount,
+          change_type: match.change_type,
+          created_at: match.created_at,
+          partner_id: "",
+          new_mmr: match.new_mmr,
+          status: "COMPLETED",
+          team1_score: match.team1_score,
+          team2_score: match.team2_score,
+          team1_player1_display_name: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
+          team1_player1_profile_photo: team1.player1?.profile_photo || '',
+          team1_player2_display_name: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
+          team1_player2_profile_photo: team1.player2?.profile_photo || '',
+          team2_player1_display_name: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
+          team2_player1_profile_photo: team2.player1?.profile_photo || '',
+          team2_player2_display_name: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
+          team2_player2_profile_photo: team2.player2?.profile_photo || '',
+          completed_by: match.completed_by,
+          player1_id: team1.player1?.id,
+          player2_id: team1.player2?.id,
+          player3_id: team2.player1?.id,
+          player4_id: team2.player2?.id,
+        };
+      });
     },
     enabled: !!userId && !!session,
   });

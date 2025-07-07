@@ -107,7 +107,7 @@ export default function Dashboard() {
         user_a_id: user.id
       });
       if (error) throw error;
-      return (data as RecentMatch[]).slice(0, 3);
+      return ((data as any)?.matches || []).slice(0, 3);
     },
     enabled: !!user?.id
   });

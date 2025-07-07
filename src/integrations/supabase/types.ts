@@ -1417,30 +1417,8 @@ export type Database = {
         }[]
       }
       get_my_completed_matches: {
-        Args: { user_a_id: string }
-        Returns: {
-          change_amount: number
-          old_mmr: number
-          change_type: string
-          new_mmr: number
-          match_id: string
-          team1_score: number
-          team2_score: number
-          completed_by: string
-          created_at: string
-          player1_id: string
-          player1_display_name: string
-          player1_profile_photo: string
-          player2_id: string
-          player2_display_name: string
-          player2_profile_photo: string
-          player3_id: string
-          player3_display_name: string
-          player3_profile_photo: string
-          player4_id: string
-          player4_display_name: string
-          player4_profile_photo: string
-        }[]
+        Args: { user_a_id: string; page_number?: number; page_size?: number }
+        Returns: Json
       }
       get_my_friends: {
         Args: { p_user_a_id: string }
@@ -2841,13 +2819,7 @@ export type Database = {
       }
       view_friend_requests: {
         Args: { user_a_id_public: string }
-        Returns: {
-          friend_id: string
-          profile_photo: string
-          display_name: string
-          gender: string
-          current_mmr: number
-        }[]
+        Returns: Json
       }
       view_my_friends: {
         Args: { i_user_id: string }

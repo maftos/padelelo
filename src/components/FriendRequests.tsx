@@ -37,7 +37,7 @@ export const FriendRequests = () => {
       }
       
       console.log('Friend requests data:', data);
-      return data as FriendRequest[];
+      return data as unknown as FriendRequest[];
     },
     enabled: !!userId,
   });
