@@ -70,6 +70,12 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) => {
   const { openGames, isLoading } = useUserOpenGames();
 
+  // Mock applicants count - in real implementation this would come from the hook
+  const getApplicantsCount = (gameId: string) => {
+    // Mock data - replace with actual applicants count
+    return gameId === "open-1" ? 5 : 0;
+  };
+
   if (isLoading) {
     return (
       <div className="text-center py-8">
@@ -110,6 +116,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
   const mockPlayerMatchingPosts = openGames.map((game) => {
     const filledSpots = getFilledSpots(game);
     const remainingSpots = 4 - filledSpots;
+    const applicantsCount = getApplicantsCount(game.match_id);
     
     return {
       id: game.match_id,
@@ -118,7 +125,9 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
       distance: "0.5km",
       gameDate: new Date(game.match_date),
       spotsAvailable: remainingSpots,
+      applicantsCount,
       description: "Your open game waiting for more players to join",
+      publishedAt: new Date(game.created_at),
       existingPlayers: [
         game.team1_player1_id ? { id: "u1", name: "You", mmr: 3000, avatar: null, isHost: true } : null,
         game.team1_player2_id ? { id: "u2", name: null, mmr: 2900, avatar: null, isHost: false } : null,
@@ -146,7 +155,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                     {post.title}
                   </CardTitle>
                   <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
-                    {formatTimeAgo(post.createdAt)}
+                    Published {formatTimeAgo(post.publishedAt)}
                   </span>
                 </div>
                 
@@ -201,7 +210,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   className="flex items-center gap-2"
                 >
                   <Eye className="w-4 h-4" />
-                  View Applicants
+                  View Applicants ({post.applicantsCount})
                 </Button>
               </div>
               
@@ -228,7 +237,14 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   }
                   
                   return (
-                    <div key={player.id} className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px]">
+                    <div 
+                      key={player.id} 
+                      className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] cursor-pointer hover:bg-muted/70 transition-colors"
+                      onClick={() => {
+                        // Navigate to user profile - implementation needed
+                        console.log('Navigate to profile:', player.id);
+                      }}
+                    >
                       <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                         <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
                         <AvatarFallback className="text-xs">

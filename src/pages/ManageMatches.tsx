@@ -25,6 +25,12 @@ const ManageMatches = () => {
     setApplicantsDialogOpen(true);
   };
 
+  // Mock function to get spots available for a game
+  const getSpotsAvailable = (gameId: string) => {
+    // In real implementation, this would come from the game data
+    return 3; // Mock value
+  };
+
   return (
     <>
       <Navigation />
@@ -81,6 +87,7 @@ const ManageMatches = () => {
         open={applicantsDialogOpen}
         onOpenChange={setApplicantsDialogOpen}
         gameId={selectedGameId || ""}
+        spotsAvailable={selectedGameId ? getSpotsAvailable(selectedGameId) : 3}
       />
     </>
   );
