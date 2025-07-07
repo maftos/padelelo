@@ -31,7 +31,8 @@ export const ProfileContent = ({
       <div className="flex flex-col items-center gap-4">
         <ProfileAvatar
           profilePhoto={formData.profile_photo}
-          displayName={formData.display_name}
+          firstName={formData.first_name}
+          lastName={formData.last_name}
           isEditing={isEditing}
           uploading={uploading}
           onPhotoUpload={onPhotoUpload}

@@ -6,16 +6,14 @@ import { useToast } from "@/hooks/use-toast";
 import { UserProfile } from "./use-user-profile";
 
 interface ProfileFormState {
-  display_name: string;
+  first_name: string;
+  last_name: string;
   nationality: string;
   gender: string;
   profile_photo: string;
   current_mmr: number;
-  whatsapp_number: string;
   years_playing: string;
   favorite_position: string;
-  playing_style: string;
-  favorite_shot: string;
 }
 
 export const useProfileState = (userId: string | undefined) => {
@@ -23,16 +21,14 @@ export const useProfileState = (userId: string | undefined) => {
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormState>({
-    display_name: "",
+    first_name: "",
+    last_name: "",
     nationality: "",
     gender: "",
     profile_photo: "",
     current_mmr: 0,
-    whatsapp_number: "",
     years_playing: "",
     favorite_position: "",
-    playing_style: "",
-    favorite_shot: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery({
@@ -55,17 +51,20 @@ export const useProfileState = (userId: string | undefined) => {
         throw new Error('Invalid profile data structure');
       }
       
+      // Split display_name into first_name and last_name for editing
+      const nameParts = (profileInfo.display_name || "").split(" ");
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+      
       setFormData({
-        display_name: profileInfo.display_name || "",
+        first_name: firstName,
+        last_name: lastName,
         nationality: profileInfo.nationality || "",
         gender: profileInfo.gender || "",
         profile_photo: profileInfo.profile_photo || "",
         current_mmr: profileInfo.current_mmr || 0,
-        whatsapp_number: profileInfo.whatsapp_number || "",
         years_playing: "", // New field - will be empty initially
         favorite_position: "", // New field - will be empty initially
-        playing_style: "", // New field - will be empty initially
-        favorite_shot: "", // New field - will be empty initially
       });
       
       return profileInfo;
@@ -155,15 +154,18 @@ export const useProfileState = (userId: string | undefined) => {
         formData
       });
 
+      // Create display_name from first_name and last_name
+      const displayName = `${formData.first_name} ${formData.last_name}`.trim();
+
       const { error } = await supabase.rpc('edit_user_profile', {
         user_a_id: userId,
-        new_display_name: formData.display_name,
+        new_display_name: displayName,
         new_gender: formData.gender,
         new_date_of_birth: null,
         new_languages: [], // Empty array since we removed languages
         new_preferred_language: null,
         new_profile_photo: formData.profile_photo,
-        new_whatsapp_number: formData.whatsapp_number,
+        new_whatsapp_number: null, // Removed WhatsApp field
         new_nationality: formData.nationality,
         new_location: null // Set to null since we removed location
       });

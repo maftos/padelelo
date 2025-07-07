@@ -7,16 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { countries } from "@/lib/countries";
 
 interface ProfileFormData {
-  display_name: string;
+  first_name: string;
+  last_name: string;
   nationality: string;
   gender: string;
   current_mmr: string | number;
   profile_photo?: string;
   years_playing: string;
   favorite_position: string;
-  playing_style: string;
-  favorite_shot: string;
-  whatsapp_number: string;
 }
 
 interface ProfileFormProps {
@@ -41,19 +39,38 @@ export const ProfileForm: FC<ProfileFormProps> = ({
   return (
     <div className="space-y-8 max-w-3xl mx-auto bg-card rounded-lg p-6 shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Display Name */}
+        {/* First Name */}
         <div className="space-y-2">
-          <Label htmlFor="displayName">Display Name</Label>
+          <Label htmlFor="firstName">First Name</Label>
           {isEditing ? (
             <Input
-              id="displayName"
-              value={formData.display_name}
-              onChange={(e) => onFormChange("display_name", e.target.value)}
+              id="firstName"
+              value={formData.first_name}
+              onChange={(e) => onFormChange("first_name", e.target.value)}
             />
           ) : (
             <Input
-              id="displayName"
-              value={formData.display_name}
+              id="firstName"
+              value={formData.first_name}
+              readOnly
+              className="bg-muted"
+            />
+          )}
+        </div>
+
+        {/* Last Name */}
+        <div className="space-y-2">
+          <Label htmlFor="lastName">Last Name</Label>
+          {isEditing ? (
+            <Input
+              id="lastName"
+              value={formData.last_name}
+              onChange={(e) => onFormChange("last_name", e.target.value)}
+            />
+          ) : (
+            <Input
+              id="lastName"
+              value={formData.last_name}
               readOnly
               className="bg-muted"
             />
@@ -123,26 +140,6 @@ export const ProfileForm: FC<ProfileFormProps> = ({
           )}
         </div>
 
-        {/* WhatsApp Number */}
-        <div className="space-y-2">
-          <Label htmlFor="whatsapp">WhatsApp Number</Label>
-          {isEditing ? (
-            <Input
-              id="whatsapp"
-              value={formData.whatsapp_number}
-              onChange={(e) => onFormChange("whatsapp_number", e.target.value)}
-              placeholder="+230 xxxx xxxx"
-            />
-          ) : (
-            <Input
-              id="whatsapp"
-              value={formData.whatsapp_number}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
         {/* Years Playing Padel */}
         <div className="space-y-2">
           <Label htmlFor="yearsPlaying">Years Playing Padel</Label>
@@ -193,66 +190,6 @@ export const ProfileForm: FC<ProfileFormProps> = ({
             <Input
               id="favoritePosition"
               value={formData.favorite_position}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Playing Style */}
-        <div className="space-y-2">
-          <Label htmlFor="playingStyle">Playing Style</Label>
-          {isEditing ? (
-            <Select 
-              value={formData.playing_style} 
-              onValueChange={(value) => onFormChange("playing_style", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select style" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="aggressive">Aggressive</SelectItem>
-                <SelectItem value="defensive">Defensive</SelectItem>
-                <SelectItem value="balanced">Balanced</SelectItem>
-                <SelectItem value="power">Power Player</SelectItem>
-                <SelectItem value="tactical">Tactical</SelectItem>
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input
-              id="playingStyle"
-              value={formData.playing_style}
-              readOnly
-              className="bg-muted"
-            />
-          )}
-        </div>
-
-        {/* Favorite Shot */}
-        <div className="space-y-2">
-          <Label htmlFor="favoriteShot">Favorite Shot</Label>
-          {isEditing ? (
-            <Select 
-              value={formData.favorite_shot} 
-              onValueChange={(value) => onFormChange("favorite_shot", value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select shot" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="smash">Smash</SelectItem>
-                <SelectItem value="volley">Volley</SelectItem>
-                <SelectItem value="lob">Lob</SelectItem>
-                <SelectItem value="bandeja">Bandeja</SelectItem>
-                <SelectItem value="vibora">Víbora</SelectItem>
-                <SelectItem value="drop-shot">Drop Shot</SelectItem>
-                <SelectItem value="wall-shot">Wall Shot (Pared)</SelectItem>
-              </SelectContent>
-            </Select>
-          ) : (
-            <Input
-              id="favoriteShot"
-              value={formData.favorite_shot}
               readOnly
               className="bg-muted"
             />

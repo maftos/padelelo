@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileContent } from "@/components/profile/ProfileContent";
+import { UserActivity } from "@/components/profile/UserActivity";
 import { useProfileState } from "@/hooks/use-profile-state";
 
 const Profile = () => {
@@ -81,6 +82,11 @@ const Profile = () => {
               await refetch();
             }}
           />
+
+          {/* User Activity Section */}
+          <div className="mt-12">
+            <UserActivity userId={userId} />
+          </div>
         </div>
       </main>
     </div>
