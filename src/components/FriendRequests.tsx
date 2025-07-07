@@ -37,7 +37,8 @@ export const FriendRequests = () => {
       }
       
       console.log('Friend requests data:', data);
-      return data as unknown as FriendRequest[];
+      // Handle the new JSON response format
+      return ((data as any)?.friend_requests || []) as FriendRequest[];
     },
     enabled: !!userId,
   });
@@ -130,7 +131,7 @@ export const FriendRequests = () => {
               <Avatar>
                 <AvatarImage src={request.profile_photo || ''} alt={request.display_name} />
                 <AvatarFallback>
-                  {request.display_name.substring(0, 2).toUpperCase()}
+                  {request.display_name?.substring(0, 2).toUpperCase() || 'FR'}
                 </AvatarFallback>
               </Avatar>
               <div>

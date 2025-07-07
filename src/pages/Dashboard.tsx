@@ -104,10 +104,43 @@ export default function Dashboard() {
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase.rpc('get_my_completed_matches', {
-        user_a_id: user.id
+        user_a_id: user.id,
+        page_number: 1,
+        page_size: 3
       });
       if (error) throw error;
-      return ((data as any)?.matches || []).slice(0, 3);
+      
+      // Handle the new JSON response format with pagination and nested team structure
+      const matchesData = (data as any)?.matches || [];
+      
+      return matchesData.map((match: any) => {
+        const team1 = match.team1 || {};
+        const team2 = match.team2 || {};
+        
+        return {
+          match_id: match.match_id,
+          created_at: match.created_at,
+          change_type: match.change_type,
+          change_amount: match.change_amount,
+          new_mmr: match.new_mmr,
+          old_mmr: match.old_mmr,
+          team1_score: match.team1_score,
+          team2_score: match.team2_score,
+          completed_by: match.completed_by,
+          player1_id: team1.player1?.id,
+          player1_display_name: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
+          player1_profile_photo: team1.player1?.profile_photo || '',
+          player2_id: team1.player2?.id,
+          player2_display_name: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
+          player2_profile_photo: team1.player2?.profile_photo || '',
+          player3_id: team2.player1?.id,
+          player3_display_name: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
+          player3_profile_photo: team2.player1?.profile_photo || '',
+          player4_id: team2.player2?.id,
+          player4_display_name: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
+          player4_profile_photo: team2.player2?.profile_photo || '',
+        };
+      });
     },
     enabled: !!user?.id
   });

@@ -51,7 +51,7 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
   }
 
   const filteredFriends = friends?.filter(friend =>
-    friend.display_name.toLowerCase().includes(searchQuery.toLowerCase())
+    friend.display_name?.toLowerCase()?.includes(searchQuery.toLowerCase()) || false
   ) || [];
 
   return (
@@ -93,7 +93,7 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
               <Avatar>
                 <AvatarImage src={friend.profile_photo || ''} alt={friend.display_name} />
                 <AvatarFallback>
-                  {friend.display_name.substring(0, 2).toUpperCase()}
+                  {friend.display_name?.substring(0, 2).toUpperCase() || 'FR'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
