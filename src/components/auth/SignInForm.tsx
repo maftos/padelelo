@@ -19,9 +19,11 @@ export const SignInForm = () => {
   const [loading, setLoading] = useState(false);
   const [passwordlessLoading, setPasswordlessLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isVerificationStep, setIsVerificationStep] = useState(false);
+  const [verificationCode, setVerificationCode] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { validatePhoneNumber, validatePassword } = useFormValidation();
+  const { validatePhoneNumber, validatePassword, validateVerificationCode } = useFormValidation();
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = e.target.value.replace(/\D/g, '');
@@ -130,10 +132,15 @@ export const SignInForm = () => {
         return;
       }
 
+      // Store the phone number for verification
+      sessionStorage.setItem('loginPhone', fullPhoneNumber);
+
       toast({
         title: "WhatsApp Message Sent!",
         description: "Please check your WhatsApp for the verification code",
       });
+      
+      setIsVerificationStep(true);
 
     } catch (err: any) {
       console.error("Unexpected error:", err);
@@ -142,6 +149,132 @@ export const SignInForm = () => {
       setPasswordlessLoading(false);
     }
   };
+
+  const handleVerifyOtp = async () => {
+    const cleanCode = verificationCode.trim();
+    
+    if (!validateVerificationCode(cleanCode)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid 6-digit code",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPasswordlessLoading(true);
+    setError(null);
+    
+    try {
+      const storedPhone = sessionStorage.getItem('loginPhone');
+      if (!storedPhone) {
+        throw new Error("Phone number not found. Please try signing in again.");
+      }
+
+      const { error: verifyError } = await supabase.auth.verifyOtp({
+        phone: storedPhone,
+        token: cleanCode,
+        type: 'sms'
+      });
+
+      if (verifyError) {
+        console.error('Verification error:', verifyError);
+        
+        if (verifyError.message.toLowerCase().includes('expired')) {
+          toast({
+            title: "Code Expired",
+            description: "The verification code has expired. Please request a new one.",
+            variant: "destructive",
+          });
+          setIsVerificationStep(false);
+          return;
+        }
+        
+        throw verifyError;
+      }
+
+      // Clear stored data
+      sessionStorage.removeItem('loginPhone');
+
+      toast({
+        title: "Success!",
+        description: "You have been successfully signed in",
+      });
+
+      navigate('/');
+      
+    } catch (error: any) {
+      console.error('Verification process error:', error);
+      setError(error.message);
+      toast({
+        title: "Verification Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setPasswordlessLoading(false);
+    }
+  };
+
+  // If we're in verification step, show OTP input
+  if (isVerificationStep) {
+    return (
+      <div className="space-y-6">
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold tracking-tight">Verify your WhatsApp</h1>
+          <p className="text-muted-foreground">
+            Enter the 6-digit code sent to {countryCode}{phoneNumber}
+          </p>
+        </div>
+
+        <form onSubmit={(e) => { e.preventDefault(); handleVerifyOtp(); }} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="code">Verification Code</Label>
+            <Input
+              id="code"
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              pattern="\d{6}"
+              value={verificationCode}
+              onChange={(e) => setVerificationCode(e.target.value)}
+              placeholder="Enter 6-digit code"
+              className="text-center text-lg tracking-widest"
+              disabled={passwordlessLoading}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={passwordlessLoading || verificationCode.length !== 6}
+          >
+            {passwordlessLoading ? "Verifying..." : "Verify & Sign In"}
+          </Button>
+
+          <Button
+            type="button"
+            variant="ghost"
+            className="w-full"
+            onClick={() => {
+              setIsVerificationStep(false);
+              setVerificationCode("");
+              setError(null);
+            }}
+            disabled={passwordlessLoading}
+          >
+            Back to Phone Number
+          </Button>
+        </form>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
