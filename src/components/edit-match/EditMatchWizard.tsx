@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, ArrowRight, Users, Trash2 } from "lucide-react";
 import { PlayersStep } from "../create-match/PlayersStep";
 import { LocationDetailsStep } from "../create-match/LocationDetailsStep";
+import { GameAnnouncementStep } from "../create-match/GameAnnouncementStep";
 import { usePendingMatches } from "@/hooks/use-pending-matches";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { toast } from "sonner";
@@ -16,6 +17,8 @@ interface WizardData {
   matchDate: string;
   matchTime: string;
   feePerPlayer: string;
+  gameTitle: string;
+  gameDescription: string;
 }
 
 const EditMatchWizard = () => {
@@ -32,10 +35,13 @@ const EditMatchWizard = () => {
     location: "venue1",
     matchDate: "",
     matchTime: "",
-    feePerPlayer: ""
+    feePerPlayer: "",
+    gameTitle: "",
+    gameDescription: ""
   });
 
-  const totalSteps = 2;
+  const isOpenGame = wizardData.selectedPlayers.length < 4;
+  const totalSteps = isOpenGame ? 3 : 2;
 
   useEffect(() => {
     if (match) {
@@ -49,7 +55,9 @@ const EditMatchWizard = () => {
         location: "venue1",
         matchDate: match.match_date.split('T')[0],
         matchTime: match.match_date.split('T')[1].substring(0, 5),
-        feePerPlayer: ""
+        feePerPlayer: "",
+        gameTitle: "",
+        gameDescription: ""
       });
     }
   }, [match]);
@@ -71,7 +79,11 @@ const EditMatchWizard = () => {
   };
 
   const handleSaveChanges = () => {
-    toast.success("Match details updated successfully");
+    if (isOpenGame) {
+      toast.success("Open game updated successfully!");
+    } else {
+      toast.success("Match updated successfully!");
+    }
     navigate("/manage-matches");
   };
 
@@ -87,9 +99,15 @@ const EditMatchWizard = () => {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return wizardData.selectedPlayers.length >= 3;
+        return wizardData.selectedPlayers.length > 0;
       case 2:
-        return true;
+        // For incomplete matches (less than 4 players), require all fields
+        if (isOpenGame) {
+          return wizardData.location && wizardData.matchDate && wizardData.matchTime && wizardData.feePerPlayer;
+        }
+        return true; // For complete matches, details are optional
+      case 3:
+        return wizardData.gameTitle.trim().length > 0;
       default:
         return false;
     }
@@ -117,6 +135,16 @@ const EditMatchWizard = () => {
             onDataChange={(data) => updateWizardData(data)}
           />
         );
+      case 3:
+        return (
+          <GameAnnouncementStep
+            data={{
+              gameTitle: wizardData.gameTitle,
+              gameDescription: wizardData.gameDescription
+            }}
+            onDataChange={(data) => updateWizardData(data)}
+          />
+        );
       default:
         return null;
     }
@@ -128,6 +156,8 @@ const EditMatchWizard = () => {
         return "Edit Players";
       case 2:
         return "Edit Match Details";
+      case 3:
+        return "Edit Match Details";
       default:
         return "";
     }
@@ -135,12 +165,21 @@ const EditMatchWizard = () => {
 
   const getNextButtonContent = () => {
     if (currentStep === totalSteps) {
-      return (
-        <>
-          <Users className="h-4 w-4 mr-2" />
-          Save Changes
-        </>
-      );
+      if (isOpenGame) {
+        return (
+          <>
+            <Users className="h-4 w-4 mr-2" />
+            Update Open Game
+          </>
+        );
+      } else {
+        return (
+          <>
+            <Users className="h-4 w-4 mr-2" />
+            Save Changes
+          </>
+        );
+      }
     }
     return (
       <>
@@ -175,13 +214,24 @@ const EditMatchWizard = () => {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between">
         <div className="flex-1">
           <h1 className="text-2xl font-bold">Edit Match</h1>
           <p className="text-sm text-muted-foreground">
             Step {currentStep} of {totalSteps}: {getStepTitle()}
           </p>
         </div>
+        
+        {/* Delete Button - Top Right */}
+        <Button 
+          onClick={handleDeleteMatch}
+          variant="destructive" 
+          size="sm"
+          disabled={isDeletingMatch}
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          {isDeletingMatch ? 'Deleting...' : 'Delete'}
+        </Button>
       </div>
 
       {/* Progress Bar */}
@@ -211,27 +261,13 @@ const EditMatchWizard = () => {
               {currentStep === 1 ? "Back" : "Previous"}
             </Button>
 
-            <div className="flex gap-2">
-              <Button
-                onClick={handleButtonClick}
-                disabled={!canProceed()}
-                size="lg"
-              >
-                {getNextButtonContent()}
-              </Button>
-              
-              {currentStep === totalSteps && (
-                <Button 
-                  onClick={handleDeleteMatch}
-                  variant="destructive" 
-                  size="lg"
-                  disabled={isDeletingMatch}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  {isDeletingMatch ? 'Deleting...' : 'Delete'}
-                </Button>
-              )}
-            </div>
+            <Button
+              onClick={handleButtonClick}
+              disabled={!canProceed()}
+              size="lg"
+            >
+              {getNextButtonContent()}
+            </Button>
           </div>
         </CardContent>
       </Card>
