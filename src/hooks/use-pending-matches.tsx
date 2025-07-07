@@ -11,27 +11,40 @@ export interface PendingMatch {
   team1_player2_id: string;
   team2_player1_id: string;
   team2_player2_id: string;
-  created_at: string;
+  match_date: string;
 }
 
 export function usePendingMatches() {
   const { userId } = useUserProfile();
   const queryClient = useQueryClient();
 
+  // Using mock data for now - only 2 matches
+  const mockPendingMatches: PendingMatch[] = [
+    {
+      match_id: "1",
+      team1_player1_id: userId || "",
+      team1_player2_id: "player2",
+      team2_player1_id: "player3", 
+      team2_player2_id: "player4",
+      match_date: "2024-01-15T14:00:00Z"
+    },
+    {
+      match_id: "2", 
+      team1_player1_id: userId || "",
+      team1_player2_id: "player5",
+      team2_player1_id: "player6",
+      team2_player2_id: "player7", 
+      match_date: "2024-01-16T16:30:00Z"
+    }
+  ];
+
   const { data: pendingMatches = [], isLoading } = useQuery({
     queryKey: ['pending-matches', userId],
     queryFn: async () => {
       if (!userId) return [];
       
-      const { data, error } = await supabase
-        .from('matches')
-        .select('*')
-        .eq('status', 'PENDING')
-        .or(`team1_player1_id.eq.${userId},team1_player2_id.eq.${userId},team2_player1_id.eq.${userId},team2_player2_id.eq.${userId}`)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data as PendingMatch[];
+      // Return mock data for now
+      return mockPendingMatches;
     },
     enabled: !!userId,
   });

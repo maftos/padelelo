@@ -7,6 +7,7 @@ import { PendingMatchesList } from "./match/PendingMatchesList";
 import { useMatchForm } from "@/hooks/use-match-form";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 
 export const MatchForm = () => {
   const [selectedPendingMatchId, setSelectedPendingMatchId] = useState<string>();
@@ -60,7 +61,6 @@ export const MatchForm = () => {
   const handleSelectPendingMatch = (matchId: string) => {
     setSelectedPendingMatchId(matchId);
     // Load match data and proceed to score input
-    // This would need to be implemented to load the match details
     setPage(2); // Skip to score input for pending matches
   };
 
@@ -108,11 +108,18 @@ export const MatchForm = () => {
           selectedMatchId={selectedPendingMatchId}
         />
         
-        <div className="text-center">
-          <Button onClick={handleCreateNewMatch}>
-            Create New Match
-          </Button>
-        </div>
+        <Card 
+          className="cursor-pointer transition-all hover:shadow-md border-dashed border-2"
+          onClick={handleCreateNewMatch}
+        >
+          <div className="p-6 text-center">
+            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+              <Plus className="h-6 w-6 text-primary" />
+            </div>
+            <h3 className="font-semibold text-lg mb-2">Register New Match</h3>
+            <p className="text-muted-foreground">Create a new match with 4 players</p>
+          </div>
+        </Card>
 
         {selectedPendingMatchId && (
           <div className="text-center">
