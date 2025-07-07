@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,7 +12,9 @@ import {
   LogOut,
   LayoutDashboard,
   BarChart3,
-  Users
+  Users,
+  TrendingUp,
+  TrendingDown
 } from "lucide-react";
 
 interface SideMenuContentProps {
@@ -32,6 +35,10 @@ export const SideMenuContent = ({
   onClose,
   profile,
 }: SideMenuContentProps) => {
+  // Mock data for ranking - will be replaced with real data later
+  const ranking = 45;
+  const rankingChange = -3;
+
   if (!user) {
     return (
       <div className="mt-4 space-y-4">
@@ -56,8 +63,24 @@ export const SideMenuContent = ({
             <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
             <AvatarFallback>{profile?.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <span className="font-medium">{profile?.display_name || 'Player'}</span>
+          <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-medium truncate">{profile?.display_name || 'Player'}</span>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <span className="text-sm text-muted-foreground">#{ranking}</span>
+                <Badge 
+                  variant="secondary" 
+                  className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1 py-0 h-5`}
+                >
+                  {rankingChange < 0 ? (
+                    <TrendingDown className="h-2 w-2" />
+                  ) : (
+                    <TrendingUp className="h-2 w-2" />
+                  )}
+                  {rankingChange > 0 ? '+' : ''}{rankingChange}
+                </Badge>
+              </div>
+            </div>
             <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
           </div>
         </div>

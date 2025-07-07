@@ -8,7 +8,8 @@ import { PageContainer } from "@/components/layouts/PageContainer";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Trophy, Calendar, ChevronRight, Users, TrendingUp, Star, UserPlus } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Trophy, Calendar, ChevronRight, Users, TrendingUp, TrendingDown, Star, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SuggestedFriends } from "@/components/dashboard/SuggestedFriends";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -55,6 +56,10 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Mock data for ranking - will be replaced with real data later
+  const ranking = 45;
+  const rankingChange = -3;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -125,7 +130,23 @@ export default function Dashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-lg sm:text-xl truncate">{profileData?.display_name}</CardTitle>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                        <CardTitle className="text-lg sm:text-xl truncate">{profileData?.display_name}</CardTitle>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <span className="text-sm text-muted-foreground">#{ranking}</span>
+                          <Badge 
+                            variant="secondary" 
+                            className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1 py-0 h-4`}
+                          >
+                            {rankingChange < 0 ? (
+                              <TrendingDown className="h-2 w-2" />
+                            ) : (
+                              <TrendingUp className="h-2 w-2" />
+                            )}
+                            {rankingChange > 0 ? '+' : ''}{rankingChange}
+                          </Badge>
+                        </div>
+                      </div>
                       <CardDescription className="mt-1 text-xs sm:text-sm">View and edit your profile</CardDescription>
                       <div className="flex items-center gap-2 mt-2 bg-background/60 backdrop-blur rounded-lg px-2 sm:px-3 py-1 border w-fit">
                         <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 flex-shrink-0" />

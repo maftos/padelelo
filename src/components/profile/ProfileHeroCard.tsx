@@ -72,9 +72,25 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
           {/* Profile Info Section */}
           <div className="flex-1 text-center md:text-left space-y-4">
             <div>
-              <h1 className="text-3xl font-bold text-foreground">
-                {displayName}
-              </h1>
+              <div className="flex flex-col md:flex-row items-center md:items-baseline gap-2 md:gap-3">
+                <h1 className="text-3xl font-bold text-foreground">
+                  {displayName}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-semibold text-muted-foreground">#{ranking}</span>
+                  <Badge 
+                    variant="secondary" 
+                    className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1`}
+                  >
+                    {rankingChange < 0 ? (
+                      <TrendingDown className="h-3 w-3" />
+                    ) : (
+                      <TrendingUp className="h-3 w-3" />
+                    )}
+                    {rankingChange > 0 ? '+' : ''}{rankingChange}
+                  </Badge>
+                </div>
+              </div>
             </div>
 
             {/* Personal Info Row */}
@@ -102,30 +118,11 @@ export const ProfileHeroCard = ({ profileData, isEditing, onEdit }: ProfileHeroC
               </div>
             </div>
 
-            {/* MMR and Ranking */}
-            <div className="flex items-center justify-center md:justify-start gap-6">
-              <div className="text-center">
+            {/* MMR */}
+            <div className="flex items-center justify-center md:justify-start">
+              <div className="text-center md:text-left">
                 <div className="text-2xl font-bold text-foreground">{profileData.current_mmr || 0}</div>
                 <div className="text-sm text-muted-foreground">MMR</div>
-              </div>
-              
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground">#{ranking}</div>
-                <div className="text-sm text-muted-foreground">Ranking</div>
-              </div>
-              
-              <div className="text-center">
-                <Badge 
-                  variant="secondary" 
-                  className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1`}
-                >
-                  {rankingChange < 0 ? (
-                    <TrendingDown className="h-3 w-3" />
-                  ) : (
-                    <TrendingUp className="h-3 w-3" />
-                  )}
-                  {rankingChange > 0 ? '+' : ''}{rankingChange}
-                </Badge>
               </div>
             </div>
           </div>

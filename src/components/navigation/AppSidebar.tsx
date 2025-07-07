@@ -1,10 +1,11 @@
 
-import { Home, Trophy, MapPin, Calendar, BarChart3, Settings, Users } from "lucide-react";
+import { Home, Trophy, MapPin, Calendar, BarChart3, Settings, Users, TrendingUp, TrendingDown } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
 const navigationItems = [
@@ -21,6 +22,10 @@ export const AppSidebar = () => {
   const { profile } = useUserProfile();
   const location = useLocation();
 
+  // Mock data for ranking - will be replaced with real data later
+  const ranking = 45;
+  const rankingChange = -3;
+
   if (!user) return null;
 
   return (
@@ -34,10 +39,26 @@ export const AppSidebar = () => {
               {profile?.display_name?.[0]?.toUpperCase() || '?'}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <span className="font-semibold text-foreground text-sm">
-              {profile?.display_name || 'Player'}
-            </span>
+          <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-foreground text-sm truncate">
+                {profile?.display_name || 'Player'}
+              </span>
+              <div className="flex items-center gap-1 flex-shrink-0">
+                <span className="text-xs text-muted-foreground">#{ranking}</span>
+                <Badge 
+                  variant="secondary" 
+                  className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1 py-0 h-4`}
+                >
+                  {rankingChange < 0 ? (
+                    <TrendingDown className="h-2 w-2" />
+                  ) : (
+                    <TrendingUp className="h-2 w-2" />
+                  )}
+                  {rankingChange > 0 ? '+' : ''}{rankingChange}
+                </Badge>
+              </div>
+            </div>
             <span className="text-xs text-muted-foreground">
               {profile?.current_mmr || 3000} MMR
             </span>
