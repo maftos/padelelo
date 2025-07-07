@@ -5,8 +5,7 @@ import { usePendingMatches } from "@/hooks/use-pending-matches";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { Clock, Users, Edit, Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useState } from "react";
-import { EditMatchDialog } from "./EditMatchDialog";
+import { useNavigate } from "react-router-dom";
 
 interface PendingMatchesListProps {
   onSelectMatch: (matchId: string) => void;
@@ -16,7 +15,7 @@ interface PendingMatchesListProps {
 export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMatchesListProps) => {
   const { pendingMatches, isLoading } = usePendingMatches();
   const { getPlayerName } = usePlayerSelection();
-  const [editingMatchId, setEditingMatchId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -71,7 +70,7 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
 
   const handleEdit = (matchId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setEditingMatchId(matchId);
+    navigate(`/edit-match/${matchId}`);
   };
 
   if (isLoading) {
@@ -92,85 +91,75 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
   }
 
   return (
-    <>
-      <div className="space-y-3">
-        {pendingMatches.map((match) => {
-          const formattedDateTime = formatDateTime(match.match_date);
-          const playerIds = getPlayersList(match);
-          
-          return (
-            <Card
-              key={match.match_id}
-              className={`transition-all ${
-                selectedMatchId === match.match_id 
-                  ? "ring-2 ring-primary bg-primary/5" 
-                  : "hover:shadow-md"
-              }`}
-            >
-              <CardContent className="p-4">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Clock className="h-4 w-4 text-primary" />
-                        <span className="font-medium">{formattedDateTime}</span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm text-muted-foreground">Players:</span>
-                        <div className="flex items-center gap-2">
-                          {playerIds.map((playerId, index) => (
-                            <div key={playerId} className="flex items-center gap-1">
-                              <Avatar className="h-6 w-6">
-                                <AvatarImage src={getPlayerPhoto(playerId)} />
-                                <AvatarFallback className="text-xs">
-                                  {getInitials(getPlayerName(playerId))}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-sm">{getPlayerName(playerId)}</span>
-                              {index < playerIds.length - 1 && (
-                                <span className="text-muted-foreground mx-1">•</span>
-                              )}
-                            </div>
-                          ))}
-                        </div>
+    <div className="space-y-3">
+      {pendingMatches.map((match) => {
+        const formattedDateTime = formatDateTime(match.match_date);
+        const playerIds = getPlayersList(match);
+        
+        return (
+          <Card
+            key={match.match_id}
+            className={`transition-all ${
+              selectedMatchId === match.match_id 
+                ? "ring-2 ring-primary bg-primary/5" 
+                : "hover:shadow-md"
+            }`}
+          >
+            <CardContent className="p-4">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Clock className="h-4 w-4 text-primary" />
+                      <span className="font-medium">{formattedDateTime}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-muted-foreground">Players:</span>
+                      <div className="flex items-center gap-2">
+                        {playerIds.map((playerId, index) => (
+                          <div key={playerId} className="flex items-center gap-1">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={getPlayerPhoto(playerId)} />
+                              <AvatarFallback className="text-xs">
+                                {getInitials(getPlayerName(playerId))}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">{getPlayerName(playerId)}</span>
+                            {index < playerIds.length - 1 && (
+                              <span className="text-muted-foreground mx-1">•</span>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-
-                  {/* CTAs */}
-                  <div className="flex items-center gap-2 pt-2 border-t">
-                    <Button 
-                      onClick={(e) => handleAddResults(match.match_id, e)}
-                      className="flex-1"
-                      size="sm"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Results
-                    </Button>
-                    <Button 
-                      onClick={(e) => handleEdit(match.match_id, e)}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                  </div>
                 </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
 
-      {editingMatchId && (
-        <EditMatchDialog
-          matchId={editingMatchId}
-          match={pendingMatches.find(m => m.match_id === editingMatchId)!}
-          onClose={() => setEditingMatchId(null)}
-        />
-      )}
-    </>
+                {/* CTAs */}
+                <div className="flex items-center gap-2 pt-2 border-t">
+                  <Button 
+                    onClick={(e) => handleAddResults(match.match_id, e)}
+                    className="flex-1"
+                    size="sm"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Results
+                  </Button>
+                  <Button 
+                    onClick={(e) => handleEdit(match.match_id, e)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      })}
+    </div>
   );
 };
