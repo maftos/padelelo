@@ -174,22 +174,13 @@ export const MatchForm = () => {
               : "Enter match score"}
           </p>
           {page === 1 && showCreateMatch && (
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={handleBackToPendingMatches}
-                size="sm"
-              >
-                Back to Matches
-              </Button>
-              <Button
-                onClick={handleNext}
-                disabled={selectedPlayers.length !== 4 || isCalculating}
-                size="sm"
-              >
-                Next
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              onClick={handleBackToPendingMatches}
+              size="sm"
+            >
+              Back
+            </Button>
           )}
         </div>
       </div>

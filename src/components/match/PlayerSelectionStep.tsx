@@ -38,7 +38,7 @@ export const PlayerSelectionStep = ({
   };
 
   return (
-    <>
+    <div className="px-4">
       <div className="relative max-w-sm mb-4">
         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
@@ -76,6 +76,6 @@ export const PlayerSelectionStep = ({
           {getButtonText()}
         </Button>
       </div>
-    </>
+    </div>
   );
 };
