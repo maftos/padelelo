@@ -5,6 +5,7 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
 import { Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -100,30 +101,42 @@ export const PhotoStep = () => {
           </p>
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative">
-            <Avatar className="h-32 w-32">
-              <AvatarImage src={photoUrl} />
-              <AvatarFallback>
-                {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <label 
-              htmlFor="photo-upload" 
-              className="absolute bottom-0 right-0 p-2 bg-background rounded-full border cursor-pointer hover:bg-accent"
-            >
-              <Camera className="h-5 w-5" />
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                disabled={uploading}
-                className="hidden"
-                id="photo-upload"
-              />
-            </label>
-          </div>
-        </div>
+        <Card>
+          <CardContent className="p-6 space-y-6">
+            <div className="flex items-center gap-2 text-sm font-medium mb-4">
+              <Camera className="h-4 w-4" />
+              Profile Photo
+            </div>
+            
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={photoUrl} />
+                  <AvatarFallback className="text-lg">
+                    {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <label 
+                  htmlFor="photo-upload" 
+                  className="absolute bottom-0 right-0 p-2 bg-background rounded-full border cursor-pointer hover:bg-accent transition-colors"
+                >
+                  <Camera className="h-4 w-4" />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    disabled={uploading}
+                    className="hidden"
+                    id="photo-upload"
+                  />
+                </label>
+              </div>
+              {uploading && (
+                <p className="text-sm text-muted-foreground">Uploading...</p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <Button
           className="w-full h-12 text-base font-semibold"
