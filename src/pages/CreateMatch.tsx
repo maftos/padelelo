@@ -56,7 +56,7 @@ const CreateMatch = () => {
   };
 
   const filteredPlayers = playerOptions.filter(player => 
-    player.display_name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+    player.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
     player.id !== profile?.id
   );
 
@@ -170,10 +170,10 @@ const CreateMatch = () => {
                           <Avatar className="h-8 w-8">
                             <AvatarImage src={player.profile_photo || ""} />
                             <AvatarFallback className="text-xs">
-                              {getInitials(player.display_name)}
+                              {getInitials(player.name)}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-sm">{player.display_name}</span>
+                          <span className="text-sm">{player.name}</span>
                         </div>
                       ))}
                     </div>
