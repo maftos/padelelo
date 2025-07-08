@@ -1,8 +1,18 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, Users } from "lucide-react";
 import { MatchupsStep } from "./MatchupsStep";
+import { ResultsCart } from "./ResultsCart";
 import { useAddResults } from "@/hooks/match/use-add-results";
+
+interface QueuedResult {
+  id: string;
+  team1: [string, string];
+  team2: [string, string];
+  team1Score: number;
+  team2Score: number;
+}
 
 interface AddResultsWizardProps {
   matchId: string;
@@ -15,6 +25,7 @@ interface AddResultsWizardProps {
 }
 
 export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizardProps) => {
+  const [queuedResults, setQueuedResults] = useState<QueuedResult[]>([]);
   const {
     matchups,
     setMatchups,
@@ -22,7 +33,25 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
     isSubmitting
   } = useAddResults(matchId);
 
+  const handleAddResult = (result: QueuedResult) => {
+    setQueuedResults(prev => [...prev, result]);
+  };
+
+  const handleRemoveResult = (resultId: string) => {
+    setQueuedResults(prev => prev.filter(r => r.id !== resultId));
+  };
+
   const handleSubmit = async () => {
+    // Convert queued results to matchups format for the hook
+    const matchupsFromQueue = queuedResults.map(result => ({
+      id: result.id,
+      team1: result.team1,
+      team2: result.team2,
+      team1Score: result.team1Score,
+      team2Score: result.team2Score
+    }));
+    
+    setMatchups(matchupsFromQueue);
     const success = await submitResults();
     if (success) {
       onClose();
@@ -41,13 +70,12 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
         </div>
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-full bg-muted rounded-full h-2">
-        <div 
-          className="bg-primary h-2 rounded-full transition-all duration-300"
-          style={{ width: '100%' }}
-        />
-      </div>
+      {/* Results Cart */}
+      <ResultsCart
+        queuedResults={queuedResults}
+        players={players}
+        onRemoveResult={handleRemoveResult}
+      />
 
       {/* Step Content */}
       <Card>
@@ -56,6 +84,8 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
             players={players}
             matchups={matchups}
             onMatchupsChange={setMatchups}
+            queuedResults={queuedResults}
+            onAddResult={handleAddResult}
           />
         </CardContent>
       </Card>
@@ -74,7 +104,7 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
 
             <Button
               onClick={handleSubmit}
-              disabled={matchups.length === 0 || isSubmitting}
+              disabled={queuedResults.length === 0 || isSubmitting}
               size="lg"
             >
               <Users className="h-4 w-4 mr-2" />
