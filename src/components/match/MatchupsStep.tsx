@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Plus, X, Users } from "lucide-react";
+import { ScoreEntryModal } from "./ScoreEntryModal";
 
 interface Player {
   id: string;
@@ -13,6 +13,8 @@ interface Matchup {
   id: string;
   team1: [string, string];
   team2: [string, string];
+  team1Score?: number;
+  team2Score?: number;
 }
 
 interface MatchupsStepProps {
@@ -22,6 +24,8 @@ interface MatchupsStepProps {
 }
 
 export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsStepProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedMatchup, setSelectedMatchup] = useState<typeof possibleMatchups[0] | null>(null);
   const getPlayerName = (playerId: string) => {
     return players.find(p => p.id === playerId)?.name || "Unknown";
   };
@@ -61,30 +65,30 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsSt
 
   const possibleMatchups = generatePossibleMatchups();
 
-  const toggleMatchup = (matchup: typeof possibleMatchups[0]) => {
-    const isSelected = matchups.some(m => 
-      m.team1[0] === matchup.team1[0] && 
-      m.team1[1] === matchup.team1[1] && 
-      m.team2[0] === matchup.team2[0] && 
-      m.team2[1] === matchup.team2[1]
-    );
+  const handleMatchupClick = (matchup: typeof possibleMatchups[0]) => {
+    setSelectedMatchup(matchup);
+    setIsModalOpen(true);
+  };
 
-    if (isSelected) {
-      // Remove matchup
-      onMatchupsChange(matchups.filter(m => 
-        !(m.team1[0] === matchup.team1[0] && 
-          m.team1[1] === matchup.team1[1] && 
-          m.team2[0] === matchup.team2[0] && 
-          m.team2[1] === matchup.team2[1])
-      ));
-    } else {
-      // Add matchup
+  const handleScoreConfirm = (team1Score: number, team2Score: number) => {
+    if (selectedMatchup) {
       const newMatchup: Matchup = {
-        id: `${matchup.id}-${Date.now()}`,
-        team1: matchup.team1,
-        team2: matchup.team2
+        id: `${selectedMatchup.id}-${Date.now()}`,
+        team1: selectedMatchup.team1,
+        team2: selectedMatchup.team2,
+        team1Score,
+        team2Score
       };
-      onMatchupsChange([...matchups, newMatchup]);
+      
+      // Remove any existing matchup with same teams and add the new one with scores
+      const filteredMatchups = matchups.filter(m => 
+        !(m.team1[0] === selectedMatchup.team1[0] && 
+          m.team1[1] === selectedMatchup.team1[1] && 
+          m.team2[0] === selectedMatchup.team2[0] && 
+          m.team2[1] === selectedMatchup.team2[1])
+      );
+      
+      onMatchupsChange([...filteredMatchups, newMatchup]);
     }
   };
 
@@ -114,27 +118,64 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsSt
     );
   };
 
+  const getMatchupScores = (matchup: typeof possibleMatchups[0]) => {
+    return matchups.find(m => 
+      m.team1[0] === matchup.team1[0] && 
+      m.team1[1] === matchup.team1[1] && 
+      m.team2[0] === matchup.team2[0] && 
+      m.team2[1] === matchup.team2[1]
+    );
+  };
+
   return (
-    <div className="space-y-4 max-w-md mx-auto">
-      {possibleMatchups.map((matchup) => (
-        <Card 
-          key={matchup.id} 
-          className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-            isMatchupSelected(matchup) 
-              ? "border-primary bg-primary/5 shadow-md" 
-              : "border-dashed hover:bg-accent/50"
-          }`}
-          onClick={() => toggleMatchup(matchup)}
-        >
-          <CardContent className="p-6">
-            <div className="space-y-4 text-center">
-              <TeamDisplay team={matchup.team1} />
-              <div className="text-xl font-bold text-muted-foreground">VS</div>
-              <TeamDisplay team={matchup.team2} />
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <>
+      <div className="space-y-4 max-w-md mx-auto">
+        {possibleMatchups.map((matchup) => {
+          const savedMatchup = getMatchupScores(matchup);
+          return (
+            <Card 
+              key={matchup.id} 
+              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+                savedMatchup
+                  ? "border-primary bg-primary/5 shadow-md" 
+                  : "border-dashed hover:bg-accent/50"
+              }`}
+              onClick={() => handleMatchupClick(matchup)}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col items-center">
+                    <TeamDisplay team={matchup.team1} />
+                    {savedMatchup && (
+                      <div className="text-lg font-bold text-primary mt-2">
+                        {savedMatchup.team1Score}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-xl font-bold text-muted-foreground px-4">VS</div>
+                  <div className="flex flex-col items-center">
+                    <TeamDisplay team={matchup.team2} />
+                    {savedMatchup && (
+                      <div className="text-lg font-bold text-primary mt-2">
+                        {savedMatchup.team2Score}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      <ScoreEntryModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleScoreConfirm}
+        team1={selectedMatchup?.team1 || ["", ""]}
+        team2={selectedMatchup?.team2 || ["", ""]}
+        players={players}
+      />
+    </>
   );
 };

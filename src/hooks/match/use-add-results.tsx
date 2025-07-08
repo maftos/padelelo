@@ -6,6 +6,8 @@ interface Matchup {
   id: string;
   team1: [string, string];
   team2: [string, string];
+  team1Score?: number;
+  team2Score?: number;
 }
 
 interface SetScore {
@@ -32,10 +34,8 @@ export function useAddResults(matchId: string) {
     try {
       // For each matchup, create a match record and set scores
       for (const matchup of matchups) {
-        const setScores = allSetScores[matchup.id] || [];
-        
-        if (setScores.length === 0) {
-          toast.error(`No sets recorded for one of the matches`);
+        if (!matchup.team1Score && matchup.team1Score !== 0 || !matchup.team2Score && matchup.team2Score !== 0) {
+          toast.error(`Please enter scores for all matches`);
           setIsSubmitting(false);
           return false;
         }
@@ -58,31 +58,26 @@ export function useAddResults(matchId: string) {
 
         const createdMatchId = matchIdData;
 
-        // Add set scores
-        for (const setScore of setScores) {
-          const { error: setError } = await supabase
-            .from('match_sets')
-            .insert({
-              match_id: createdMatchId,
-              set_number: setScore.setNumber,
-              team1_score: setScore.team1Score,
-              team2_score: setScore.team2Score
-            });
+        // Add single set score (treating each match as one set)
+        const { error: setError } = await supabase
+          .from('match_sets')
+          .insert({
+            match_id: createdMatchId,
+            set_number: 1,
+            team1_score: matchup.team1Score!,
+            team2_score: matchup.team2Score!
+          });
 
-          if (setError) {
-            console.error('Error adding set score:', setError);
-            toast.error("Failed to save set scores");
-            setIsSubmitting(false);
-            return false;
-          }
+        if (setError) {
+          console.error('Error adding set score:', setError);
+          toast.error("Failed to save set scores");
+          setIsSubmitting(false);
+          return false;
         }
 
-        // Calculate overall match winner and complete the match
-        const team1SetWins = setScores.filter(set => set.team1Score > set.team2Score).length;
-        const team2SetWins = setScores.filter(set => set.team2Score > set.team1Score).length;
-        
-        const team1MatchScore = team1SetWins;
-        const team2MatchScore = team2SetWins;
+        // Use the scores directly as match scores
+        const team1MatchScore = matchup.team1Score!;
+        const team2MatchScore = matchup.team2Score!;
 
         // Calculate MMR change
         const { data: mmrData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
