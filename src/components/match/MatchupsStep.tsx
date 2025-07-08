@@ -92,17 +92,9 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsSt
   );
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
-        <p className="text-sm text-muted-foreground">
-          Select which matchups were played during your session
-        </p>
-      </div>
-
+    <div className="space-y-4">
       {/* Available Matchups */}
       <div className="space-y-3">
-        <h3 className="font-medium">Available Matchups</h3>
         {possibleMatchups.map((matchup) => (
           <Card key={matchup.id} className="border-dashed hover:bg-accent/50 transition-colors">
             <CardContent className="p-4">
@@ -115,44 +107,16 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsSt
                 <Button
                   onClick={() => addMatchup(matchup)}
                   size="sm"
-                  variant="outline"
+                  variant={matchups.some(m => m.team1[0] === matchup.team1[0] && m.team1[1] === matchup.team1[1] && m.team2[0] === matchup.team2[0] && m.team2[1] === matchup.team2[1]) ? "default" : "outline"}
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Add Match
+                  {matchups.some(m => m.team1[0] === matchup.team1[0] && m.team1[1] === matchup.team1[1] && m.team2[0] === matchup.team2[0] && m.team2[1] === matchup.team2[1]) ? "Added" : "Add Match"}
                 </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
-
-      {/* Selected Matchups */}
-      {matchups.length > 0 && (
-        <div className="space-y-3">
-          <h3 className="font-medium">Selected Matches ({matchups.length})</h3>
-          {matchups.map((matchup) => (
-            <Card key={matchup.id} className="border-primary/20 bg-primary/5">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <TeamDisplay team={matchup.team1} />
-                    <span className="text-lg font-bold text-muted-foreground">vs</span>
-                    <TeamDisplay team={matchup.team2} />
-                  </div>
-                  <Button
-                    onClick={() => removeMatchup(matchup.id)}
-                    size="sm"
-                    variant="ghost"
-                    className="text-destructive hover:text-destructive"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
 
       {matchups.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
