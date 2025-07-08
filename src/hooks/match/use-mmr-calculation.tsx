@@ -3,9 +3,19 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+interface MMRData {
+  team1_avg_mmr: number;
+  team2_avg_mmr: number;
+  team1_expected_win_rate: number;
+  team2_expected_win_rate: number;
+  team1_win_mmr_change_amount: number;
+  team2_win_mmr_change_amount: number;
+  selectedPartnerId: string;
+}
+
 export function useMMRCalculation(userId: string | undefined) {
   const [matchId, setMatchId] = useState<string | null>(null);
-  const [mmrData, setMmrData] = useState<any>(null);
+  const [mmrData, setMmrData] = useState<MMRData | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
   const calculateMMR = async (
@@ -19,27 +29,66 @@ export function useMMRCalculation(userId: string | undefined) {
     try {
       setIsCalculating(true);
       
-      const { data: matchData, error: matchError } = await supabase.rpc('create_match', {
-        user_a_id: userId,
-        team1_player1_id: player1,
-        team1_player2_id: team1Player2Id,
-        team2_player1_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1),
-        team2_player2_id: [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1 && p !== [player2, player3, player4].find(p => p !== team1Player2Id && p !== player1))
+      // Create a closed booking first
+      const { data: bookingData, error: bookingError } = await supabase.rpc('create_booking_closed', {
+        p_user_a_id: userId!,
+        p_user_ids: [player1, team1Player2Id, player2, player3, player4].filter(p => p !== team1Player2Id && p !== player1).slice(0, 2).concat([team1Player2Id]),
+        p_venue_id: '', // Will need to be provided or made optional
+        p_start_time: new Date(date).toISOString(),
+        p_fee: 0,
+        p_title: 'Match Preview',
+        p_description: 'MMR calculation preview'
       });
+
+      if (bookingError) {
+        console.error('Booking creation error:', bookingError);
+        throw bookingError;
+      }
+
+      // Create a match from the booking
+      const bookingId = bookingData?.booking_id;
+      if (!bookingId) {
+        throw new Error('No booking ID returned from create_booking_closed');
+      }
+
+      const { data: newMatch, error: matchError } = await supabase
+        .from('matches')
+        .insert({
+          booking_id: bookingId,
+          created_by: userId!,
+          status: 'PENDING'
+        })
+        .select()
+        .single();
 
       if (matchError) {
         console.error('Match creation error:', matchError);
         throw matchError;
       }
 
-      if (!matchData) {
-        throw new Error('No match ID returned from create_match');
+      const createdMatchId = newMatch.match_id;
+      setMatchId(createdMatchId);
+
+      // Insert match players
+      const otherPlayers = [player2, player3, player4].filter(p => p !== team1Player2Id && p !== player1);
+      const matchPlayers = [
+        { match_id: createdMatchId, player_id: player1, team_number: 1, position: 'left' },
+        { match_id: createdMatchId, player_id: team1Player2Id, team_number: 1, position: 'right' },
+        { match_id: createdMatchId, player_id: otherPlayers[0], team_number: 2, position: 'left' },
+        { match_id: createdMatchId, player_id: otherPlayers[1], team_number: 2, position: 'right' }
+      ];
+
+      const { error: playersError } = await supabase
+        .from('match_players')
+        .insert(matchPlayers);
+
+      if (playersError) {
+        console.error('Match players error:', playersError);
+        throw playersError;
       }
 
-      setMatchId(matchData);
-
       const { data: mmrCalcData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
-        match_id: matchData
+        match_id: createdMatchId
       });
 
       if (mmrError) {
@@ -47,11 +96,12 @@ export function useMMRCalculation(userId: string | undefined) {
         throw mmrError;
       }
 
-      if (!mmrCalcData || mmrCalcData.length === 0) {
+      if (!mmrCalcData || (Array.isArray(mmrCalcData) && mmrCalcData.length === 0)) {
         throw new Error('No MMR data returned from calculate_mmr_change');
       }
 
-      setMmrData({...mmrCalcData[0], selectedPartnerId: team1Player2Id});
+      const mmrResult = Array.isArray(mmrCalcData) ? mmrCalcData[0] : mmrCalcData;
+      setMmrData({...mmrResult, selectedPartnerId: team1Player2Id});
       return true;
     } catch (error) {
       console.error('Error preparing match:', error);

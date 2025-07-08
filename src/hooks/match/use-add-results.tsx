@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,7 +33,7 @@ export function useAddResults(matchId: string) {
     setIsSubmitting(true);
     
     try {
-      // For each matchup, create a match record and set scores
+      // For each matchup, create a booking and match record
       for (const matchup of matchups) {
         if (!matchup.team1Score && matchup.team1Score !== 0 || !matchup.team2Score && matchup.team2Score !== 0) {
           toast.error(`Please enter scores for all matches`);
@@ -40,14 +41,42 @@ export function useAddResults(matchId: string) {
           return false;
         }
 
-        // Create match record using the create_match function
-        const { data: matchIdData, error: matchError } = await supabase.rpc('create_match', {
-          user_a_id: matchup.team1[0], // Use first player as creator
-          team1_player1_id: matchup.team1[0],
-          team1_player2_id: matchup.team1[1],
-          team2_player1_id: matchup.team2[0],
-          team2_player2_id: matchup.team2[1]
+        // Create a closed booking for this specific match
+        const { data: bookingData, error: bookingError } = await supabase.rpc('create_booking_closed', {
+          p_user_a_id: matchup.team1[0], // Use first player as creator
+          p_user_ids: [matchup.team1[0], matchup.team1[1], matchup.team2[0], matchup.team2[1]],
+          p_venue_id: '', // We'll need to get this from context or make it optional
+          p_start_time: new Date().toISOString(), // Current time for now
+          p_fee: 0,
+          p_title: 'Match Result',
+          p_description: 'Match result entry'
         });
+
+        if (bookingError) {
+          console.error('Error creating booking:', bookingError);
+          toast.error("Failed to create booking for match");
+          setIsSubmitting(false);
+          return false;
+        }
+
+        // Get the booking_id from the response
+        const bookingId = bookingData?.booking_id;
+        if (!bookingId) {
+          toast.error("Failed to get booking ID");
+          setIsSubmitting(false);
+          return false;
+        }
+
+        // Create a match record linked to this booking
+        const { data: newMatch, error: matchError } = await supabase
+          .from('matches')
+          .insert({
+            booking_id: bookingId,
+            created_by: matchup.team1[0],
+            status: 'PENDING'
+          })
+          .select()
+          .single();
 
         if (matchError) {
           console.error('Error creating match:', matchError);
@@ -56,7 +85,26 @@ export function useAddResults(matchId: string) {
           return false;
         }
 
-        const createdMatchId = matchIdData;
+        const createdMatchId = newMatch.match_id;
+
+        // Insert match players
+        const matchPlayers = [
+          { match_id: createdMatchId, player_id: matchup.team1[0], team_number: 1, position: 'left' },
+          { match_id: createdMatchId, player_id: matchup.team1[1], team_number: 1, position: 'right' },
+          { match_id: createdMatchId, player_id: matchup.team2[0], team_number: 2, position: 'left' },
+          { match_id: createdMatchId, player_id: matchup.team2[1], team_number: 2, position: 'right' }
+        ];
+
+        const { error: playersError } = await supabase
+          .from('match_players')
+          .insert(matchPlayers);
+
+        if (playersError) {
+          console.error('Error adding match players:', playersError);
+          toast.error("Failed to add match players");
+          setIsSubmitting(false);
+          return false;
+        }
 
         // Add single set score (treating each match as one set)
         const { error: setError } = await supabase
@@ -75,10 +123,6 @@ export function useAddResults(matchId: string) {
           return false;
         }
 
-        // Use the scores directly as match scores
-        const team1MatchScore = matchup.team1Score!;
-        const team2MatchScore = matchup.team2Score!;
-
         // Calculate MMR change
         const { data: mmrData, error: mmrError } = await supabase.rpc('calculate_mmr_change', {
           match_id: createdMatchId
@@ -91,13 +135,22 @@ export function useAddResults(matchId: string) {
           return false;
         }
 
+        // Use the scores directly as match scores
+        const team1MatchScore = matchup.team1Score!;
+        const team2MatchScore = matchup.team2Score!;
+
+        // Get MMR change amounts from the first result
+        const mmrResult = Array.isArray(mmrData) ? mmrData[0] : mmrData;
+        const team1WinMmrChange = mmrResult?.team1_win_mmr_change_amount || 20;
+        const team2WinMmrChange = mmrResult?.team2_win_mmr_change_amount || 20;
+
         // Complete the match
         const { error: completeError } = await supabase.rpc('complete_match', {
           i_match_id: createdMatchId,
           new_team1_score: team1MatchScore,
           new_team2_score: team2MatchScore,
-          team1_win_mmr_change_amount: mmrData[0]?.team1_win_mmr_change_amount || 20,
-          team2_win_mmr_change_amount: mmrData[0]?.team2_win_mmr_change_amount || 20,
+          team1_win_mmr_change_amount: team1WinMmrChange,
+          team2_win_mmr_change_amount: team2WinMmrChange,
           user_a_id: matchup.team1[0]
         });
 
