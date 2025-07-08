@@ -111,7 +111,6 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
       id: game.booking_id,
       title: game.title || `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
       courtName: game.venue_name,
-      distance: "0.5km", // Mock distance - would need to be calculated
       gameDate,
       spotsAvailable: remainingSpots,
       applicantsCount,
@@ -130,10 +129,8 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
         ...Array(4 - game.player_count).fill(null)
       ],
       createdBy: game.created_by,
-      preferences: "All genders", // Mock preference
       price: "Rs 400", // Mock price
       startTime: format(gameDate, "HH:mm"),
-      endTime: format(new Date(gameDate.getTime() + 90 * 60 * 1000), "HH:mm"),
       createdAt
     };
   });
@@ -158,7 +155,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
                   <div className="flex items-center gap-1 min-w-0">
                     <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="truncate">{post.courtName} ({post.distance})</span>
+                    <span className="truncate">{post.courtName}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -166,21 +163,15 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   </div>
                 </div>
                 
-                {/* Time and Additional Info - Stack on mobile */}
+                {/* Time and Price - Stack on mobile */}
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span>{post.startTime} - {post.endTime}</span>
+                    <span>{post.startTime}</span>
                   </div>
-                  <div className="flex items-center gap-3 sm:gap-4">
-                    <div className="flex items-center gap-1">
-                      <UserCheck className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{post.preferences}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{post.price}</span>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                    <span>{post.price}</span>
                   </div>
                 </div>
               </div>
