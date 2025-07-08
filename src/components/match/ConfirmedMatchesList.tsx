@@ -102,7 +102,7 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
                               {getInitials(participant.first_name, participant.last_name)}
                             </AvatarFallback>
                           </Avatar>
-                          <span className="text-sm">{participant.first_name} {participant.last_name}</span>
+                          <span className="text-sm">{participant.first_name}</span>
                           {index < match.participants.length - 1 && (
                             <span className="text-muted-foreground mx-1">•</span>
                           )}
