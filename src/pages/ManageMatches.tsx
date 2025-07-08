@@ -8,16 +8,27 @@ import { PendingMatchesList } from "@/components/match/PendingMatchesList";
 import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsDialog } from "@/components/match/ViewApplicantsDialog";
 import { useState } from "react";
+import { AddResultsWizard } from "@/components/match/AddResultsWizard";
+import { usePendingMatches } from "@/hooks/use-pending-matches";
+import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
   const [selectedMatchId, setSelectedMatchId] = useState<string>();
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
+  const [showAddResults, setShowAddResults] = useState(false);
+  const { pendingMatches } = usePendingMatches();
+  const { getPlayerName } = usePlayerSelection();
 
   const handleSelectMatch = (matchId: string) => {
     setSelectedMatchId(matchId);
-    // Additional logic for handling match selection can go here
+    setShowAddResults(true);
+  };
+
+  const handleCloseAddResults = () => {
+    setShowAddResults(false);
+    setSelectedMatchId(undefined);
   };
 
   const handleViewApplicants = (gameId: string) => {
@@ -30,6 +41,39 @@ const ManageMatches = () => {
     // In real implementation, this would come from the game data
     return 3; // Mock value
   };
+
+  // Get match players for the selected match
+  const getMatchPlayers = () => {
+    if (!selectedMatchId) return [];
+    
+    const match = pendingMatches.find(m => m.match_id === selectedMatchId);
+    if (!match) return [];
+
+    return [
+      { id: match.team1_player1_id, name: getPlayerName(match.team1_player1_id) },
+      { id: match.team1_player2_id, name: getPlayerName(match.team1_player2_id) },
+      { id: match.team2_player1_id, name: getPlayerName(match.team2_player1_id) },
+      { id: match.team2_player2_id, name: getPlayerName(match.team2_player2_id) }
+    ];
+  };
+
+  // Show Add Results wizard if a match is selected
+  if (showAddResults && selectedMatchId) {
+    return (
+      <>
+        <Navigation />
+        <div className="w-full min-h-screen">
+          <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
+            <AddResultsWizard
+              matchId={selectedMatchId}
+              players={getMatchPlayers()}
+              onClose={handleCloseAddResults}
+            />
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
