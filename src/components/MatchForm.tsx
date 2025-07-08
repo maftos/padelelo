@@ -86,13 +86,15 @@ export const MatchForm = () => {
 
   // Helper function to get the correct team players based on selected partner
   const getTeamPlayers = () => {
+    if (!mmrData) return null;
+    
     const team1Players = {
       player1Id: player1,
-      player2Id: selectedPartner
+      player2Id: mmrData.selectedPartnerId
     };
 
     const remainingPlayers = [player2, player3, player4].filter(
-      p => p !== selectedPartner
+      p => p !== mmrData.selectedPartnerId
     );
 
     const team2Players = {
@@ -109,7 +111,7 @@ export const MatchForm = () => {
   };
 
   // Find selected partner from MMR data
-  const selectedPartner = mmrData?.find(data => data.player_id !== player1)?.player_id;
+  const selectedPartner = mmrData?.selectedPartnerId;
   const teamPlayers = selectedPartner ? getTeamPlayers() : null;
 
   // Show pending matches list initially

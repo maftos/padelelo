@@ -17,6 +17,17 @@ interface SetScore {
   team2Score: number;
 }
 
+interface BookingResponse {
+  booking_id: string;
+  venue_id: string;
+  start_time: string;
+  title: string;
+  description: string;
+  status: string;
+  creator: string;
+  players: string[];
+}
+
 export function useAddResults(matchId: string) {
   const [matchups, setMatchups] = useState<Matchup[]>([]);
   const [allSetScores, setAllSetScores] = useState<{ [matchupId: string]: SetScore[] }>({});
@@ -59,8 +70,9 @@ export function useAddResults(matchId: string) {
           return false;
         }
 
-        // Get the booking_id from the response
-        const bookingId = bookingData?.booking_id;
+        // Type assertion for the booking data
+        const typedBookingData = bookingData as BookingResponse;
+        const bookingId = typedBookingData?.booking_id;
         if (!bookingId) {
           toast.error("Failed to get booking ID");
           setIsSubmitting(false);

@@ -13,6 +13,17 @@ interface MMRData {
   selectedPartnerId: string;
 }
 
+interface BookingResponse {
+  booking_id: string;
+  venue_id: string;
+  start_time: string;
+  title: string;
+  description: string;
+  status: string;
+  creator: string;
+  players: string[];
+}
+
 export function useMMRCalculation(userId: string | undefined) {
   const [matchId, setMatchId] = useState<string | null>(null);
   const [mmrData, setMmrData] = useState<MMRData | null>(null);
@@ -45,8 +56,9 @@ export function useMMRCalculation(userId: string | undefined) {
         throw bookingError;
       }
 
-      // Create a match from the booking
-      const bookingId = bookingData?.booking_id;
+      // Type assertion for the booking data
+      const typedBookingData = bookingData as BookingResponse;
+      const bookingId = typedBookingData?.booking_id;
       if (!bookingId) {
         throw new Error('No booking ID returned from create_booking_closed');
       }
