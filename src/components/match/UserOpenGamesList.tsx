@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Eye, Clock, UserCheck, DollarSign } from "lucide-react";
+import { Calendar, MapPin, Clock, Eye, DollarSign } from "lucide-react";
 import { format } from "date-fns";
 import { useOpenGames } from "@/hooks/use-open-games";
 
@@ -92,7 +92,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
     return (
       <div className="text-center py-8">
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-          <Users className="w-8 h-8 text-primary/60" />
+          <Clock className="w-8 h-8 text-primary/60" />
         </div>
         <h3 className="text-lg font-semibold text-foreground mb-2">No Open Games</h3>
         <p className="text-muted-foreground">You don't have any open games waiting for players</p>
@@ -147,7 +147,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                     {post.title}
                   </CardTitle>
                   <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
-                    Published {formatTimeAgo(post.publishedAt)}
+                    {formatTimeAgo(post.publishedAt)}
                   </span>
                 </div>
                 
@@ -187,17 +187,8 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h4 className="font-medium text-sm">
-                  Current Players (avg: {calculateAverageMMR(post.existingPlayers)} MMR)
+                  Players
                 </h4>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => onViewApplicants?.(post.id)}
-                  className="flex items-center gap-2"
-                >
-                  <Eye className="w-4 h-4" />
-                  View Applicants ({post.applicantsCount})
-                </Button>
               </div>
               
               {/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
@@ -209,15 +200,25 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                     return (
                       <div 
                         key={index} 
-                        className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[50px] sm:min-h-[60px]"
+                        className="flex flex-col items-center justify-center gap-2 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[70px] sm:min-h-[80px] relative"
                       >
                         <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                           <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-primary text-xs sm:text-sm">Waiting for player</div>
-                          <div className="text-xs text-muted-foreground hidden sm:block">Open slot</div>
+                        <div className="text-center">
+                          <div className="font-medium text-primary text-xs sm:text-sm">Waiting</div>
                         </div>
+                        
+                        {/* View Applicants button integrated into the card */}
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => onViewApplicants?.(post.id)}
+                          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-1 hover:bg-primary/5 text-xs p-1"
+                        >
+                          <Eye className="w-3 h-3" />
+                          <span className="text-xs">View ({post.applicantsCount})</span>
+                        </Button>
                       </div>
                     );
                   }
@@ -225,7 +226,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   return (
                     <div 
                       key={player.id} 
-                      className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] cursor-pointer hover:bg-muted/70 transition-colors"
+                      className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] cursor-pointer hover:bg-muted/70 transition-colors"
                       onClick={() => {
                         // Navigate to user profile - implementation needed
                         console.log('Navigate to profile:', player.id);

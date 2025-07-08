@@ -2,7 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
-import { Clock, Users, Edit, Plus, MapPin } from "lucide-react";
+import { Clock, Users, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 
@@ -118,23 +118,21 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
                   </div>
                 </div>
 
-                {/* CTAs - Mobile optimized */}
-                <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
+                {/* CTAs - Side by side on mobile */}
+                <div className="flex gap-2 pt-2 border-t">
                   <Button 
                     onClick={(e) => handleAddResults(match.booking_id, e)}
                     className="flex-1 h-8 sm:h-9"
                     size="sm"
                   >
-                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
-                    <span className="text-xs sm:text-sm">Add Results</span>
+                    <span className="text-xs sm:text-sm">Add Scores</span>
                   </Button>
                   <Button 
                     onClick={(e) => handleEdit(match.booking_id, e)}
                     variant="outline"
-                    className="flex-1 sm:flex-none h-8 sm:h-9"
+                    className="flex-1 h-8 sm:h-9"
                     size="sm"
                   >
-                    <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
                     <span className="text-xs sm:text-sm">Edit</span>
                   </Button>
                 </div>
