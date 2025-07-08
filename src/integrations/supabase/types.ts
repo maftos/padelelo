@@ -770,6 +770,18 @@ export type Database = {
         }
         Returns: Json
       }
+      create_booking_closed: {
+        Args: {
+          p_user_a_id: string
+          p_user_ids: Json
+          p_venue_id: string
+          p_start_time: string
+          p_fee?: number
+          p_title?: string
+          p_description?: string
+        }
+        Returns: Json
+      }
       create_booking_open: {
         Args: {
           p_user_a_id: string
@@ -781,16 +793,6 @@ export type Database = {
           p_description?: string
         }
         Returns: Json
-      }
-      create_match: {
-        Args: {
-          user_a_id: string
-          team1_player1_id: string
-          team1_player2_id?: string
-          team2_player1_id?: string
-          team2_player2_id?: string
-        }
-        Returns: string
       }
       create_tournament: {
         Args: {

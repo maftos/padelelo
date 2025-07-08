@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -52,19 +53,21 @@ export function useBookingSubmission() {
         toast.success("Open game published successfully!");
         return true;
       } else {
-        // Use create_match for complete bookings (closed games)
-        const [player1, player2, player3, player4] = wizardData.selectedPlayers;
+        // Use create_booking_closed for complete bookings (closed games)
+        const startDateTime = new Date(`${wizardData.matchDate}T${wizardData.matchTime}`);
         
-        const { data, error } = await supabase.rpc('create_match', {
-          user_a_id: profile.id,
-          team1_player1_id: player1,
-          team1_player2_id: player2 || null,
-          team2_player1_id: player3 || null,
-          team2_player2_id: player4 || null
+        const { data, error } = await supabase.rpc('create_booking_closed', {
+          p_user_a_id: profile.id,
+          p_user_ids: wizardData.selectedPlayers,
+          p_venue_id: wizardData.venueId,
+          p_start_time: startDateTime.toISOString(),
+          p_fee: parseFloat(wizardData.feePerPlayer) || 0,
+          p_title: wizardData.gameTitle,
+          p_description: wizardData.gameDescription || null
         });
 
         if (error) {
-          console.error('Error creating match:', error);
+          console.error('Error creating closed booking:', error);
           toast.error("Failed to create booking");
           return false;
         }
