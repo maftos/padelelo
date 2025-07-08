@@ -62,10 +62,11 @@ export type Database = {
           court_id: number | null
           created_at: string | null
           created_by: string | null
+          description: string | null
           end_time: string | null
-          notes: string | null
           start_time: string
           status: string | null
+          title: string | null
           updated_at: string | null
           venue_id: string | null
         }
@@ -74,10 +75,11 @@ export type Database = {
           court_id?: number | null
           created_at?: string | null
           created_by?: string | null
+          description?: string | null
           end_time?: string | null
-          notes?: string | null
           start_time: string
           status?: string | null
+          title?: string | null
           updated_at?: string | null
           venue_id?: string | null
         }
@@ -86,10 +88,11 @@ export type Database = {
           court_id?: number | null
           created_at?: string | null
           created_by?: string | null
+          description?: string | null
           end_time?: string | null
-          notes?: string | null
           start_time?: string
           status?: string | null
+          title?: string | null
           updated_at?: string | null
           venue_id?: string | null
         }
@@ -848,6 +851,14 @@ export type Database = {
       }
       get_all_venues: {
         Args: Record<PropertyKey, never>
+        Returns: Json
+      }
+      get_bookings_closed: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
+      get_bookings_open: {
+        Args: { p_user_id: string }
         Returns: Json
       }
       get_feature_updates: {
