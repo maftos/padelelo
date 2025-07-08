@@ -1,9 +1,8 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Clock, Eye, DollarSign } from "lucide-react";
+import { Calendar, MapPin, Clock, DollarSign } from "lucide-react";
 import { format } from "date-fns";
 import { useOpenGames } from "@/hooks/use-open-games";
 
@@ -198,26 +197,25 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   
                   if (player === null) {
                     return (
-                      <div 
-                        key={index} 
-                        className="flex flex-col items-center justify-center gap-2 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[70px] sm:min-h-[80px] relative"
-                      >
-                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                          <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
-                        </Avatar>
-                        <div className="text-center">
-                          <div className="font-medium text-primary text-xs sm:text-sm">Waiting</div>
+                      <div key={index} className="relative">
+                        <div className="flex flex-col items-center justify-center gap-2 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[70px] sm:min-h-[80px]">
+                          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                            <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                          </Avatar>
+                          <div className="text-center">
+                            <div className="font-medium text-primary text-xs sm:text-sm">Waiting</div>
+                          </div>
                         </div>
                         
-                        {/* View Applicants button integrated into the card */}
+                        {/* View Applicants button overlay - similar to Join Game design */}
                         <Button 
-                          variant="ghost" 
+                          variant="default" 
                           size="sm"
                           onClick={() => onViewApplicants?.(post.id)}
-                          className="absolute inset-0 w-full h-full flex flex-col items-center justify-center gap-1 hover:bg-primary/5 text-xs p-1"
+                          className="absolute inset-0 w-full h-full bg-primary/90 hover:bg-primary text-white flex flex-col items-center justify-center gap-1 text-xs font-medium transition-all duration-200"
                         >
-                          <Eye className="w-3 h-3" />
-                          <span className="text-xs">View ({post.applicantsCount})</span>
+                          <span className="font-semibold">{post.applicantsCount} Applicants</span>
+                          <span className="text-xs opacity-90">Tap to choose</span>
                         </Button>
                       </div>
                     );
