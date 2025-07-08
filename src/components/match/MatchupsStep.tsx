@@ -61,21 +61,35 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsSt
 
   const possibleMatchups = generatePossibleMatchups();
 
-  const addMatchup = (matchup: typeof possibleMatchups[0]) => {
-    const newMatchup: Matchup = {
-      id: `${matchup.id}-${Date.now()}`,
-      team1: matchup.team1,
-      team2: matchup.team2
-    };
-    onMatchupsChange([...matchups, newMatchup]);
-  };
+  const toggleMatchup = (matchup: typeof possibleMatchups[0]) => {
+    const isSelected = matchups.some(m => 
+      m.team1[0] === matchup.team1[0] && 
+      m.team1[1] === matchup.team1[1] && 
+      m.team2[0] === matchup.team2[0] && 
+      m.team2[1] === matchup.team2[1]
+    );
 
-  const removeMatchup = (matchupId: string) => {
-    onMatchupsChange(matchups.filter(m => m.id !== matchupId));
+    if (isSelected) {
+      // Remove matchup
+      onMatchupsChange(matchups.filter(m => 
+        !(m.team1[0] === matchup.team1[0] && 
+          m.team1[1] === matchup.team1[1] && 
+          m.team2[0] === matchup.team2[0] && 
+          m.team2[1] === matchup.team2[1])
+      ));
+    } else {
+      // Add matchup
+      const newMatchup: Matchup = {
+        id: `${matchup.id}-${Date.now()}`,
+        team1: matchup.team1,
+        team2: matchup.team2
+      };
+      onMatchupsChange([...matchups, newMatchup]);
+    }
   };
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center justify-center gap-2">
       {team.map((playerId, index) => (
         <div key={playerId} className="flex items-center gap-1">
           <Avatar className="h-6 w-6">
@@ -84,46 +98,43 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange }: MatchupsSt
               {getInitials(getPlayerName(playerId))}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium">{getPlayerName(playerId)}</span>
+          <span className="text-sm font-medium">{getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}</span>
           {index === 0 && <span className="text-muted-foreground">&</span>}
         </div>
       ))}
     </div>
   );
 
-  return (
-    <div className="space-y-4">
-      {/* Available Matchups */}
-      <div className="space-y-3">
-        {possibleMatchups.map((matchup) => (
-          <Card key={matchup.id} className="border-dashed hover:bg-accent/50 transition-colors">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <TeamDisplay team={matchup.team1} />
-                  <span className="text-lg font-bold text-muted-foreground">vs</span>
-                  <TeamDisplay team={matchup.team2} />
-                </div>
-                <Button
-                  onClick={() => addMatchup(matchup)}
-                  size="sm"
-                  variant={matchups.some(m => m.team1[0] === matchup.team1[0] && m.team1[1] === matchup.team1[1] && m.team2[0] === matchup.team2[0] && m.team2[1] === matchup.team2[1]) ? "default" : "outline"}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  {matchups.some(m => m.team1[0] === matchup.team1[0] && m.team1[1] === matchup.team1[1] && m.team2[0] === matchup.team2[0] && m.team2[1] === matchup.team2[1]) ? "Added" : "Add Match"}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+  const isMatchupSelected = (matchup: typeof possibleMatchups[0]) => {
+    return matchups.some(m => 
+      m.team1[0] === matchup.team1[0] && 
+      m.team1[1] === matchup.team1[1] && 
+      m.team2[0] === matchup.team2[0] && 
+      m.team2[1] === matchup.team2[1]
+    );
+  };
 
-      {matchups.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>No matches selected yet</p>
-          <p className="text-sm">Add at least one match to continue</p>
-        </div>
-      )}
+  return (
+    <div className="space-y-4 max-w-md mx-auto">
+      {possibleMatchups.map((matchup) => (
+        <Card 
+          key={matchup.id} 
+          className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
+            isMatchupSelected(matchup) 
+              ? "border-primary bg-primary/5 shadow-md" 
+              : "border-dashed hover:bg-accent/50"
+          }`}
+          onClick={() => toggleMatchup(matchup)}
+        >
+          <CardContent className="p-6">
+            <div className="space-y-4 text-center">
+              <TeamDisplay team={matchup.team1} />
+              <div className="text-xl font-bold text-muted-foreground">VS</div>
+              <TeamDisplay team={matchup.team2} />
+            </div>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };
