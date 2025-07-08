@@ -207,16 +207,14 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                           </div>
                         </div>
                         
-                        {/* View Applicants button overlay - similar to Join Game design */}
-                        <Button 
-                          variant="default" 
-                          size="sm"
+                        {/* View Applicants button overlay - matching Join Game design exactly */}
+                        <div 
                           onClick={() => onViewApplicants?.(post.id)}
-                          className="absolute inset-0 w-full h-full bg-primary/90 hover:bg-primary text-white flex flex-col items-center justify-center gap-1 text-xs font-medium transition-all duration-200"
+                          className="absolute inset-0 cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg flex flex-col items-center justify-center gap-1 transition-all duration-200 border-2 border-dashed border-blue-500"
                         >
-                          <span className="font-semibold">{post.applicantsCount} Applicants</span>
-                          <span className="text-xs opacity-90">Tap to choose</span>
-                        </Button>
+                          <span className="text-sm font-medium">View Applicants</span>
+                          <span className="text-xs opacity-80">Tap to choose</span>
+                        </div>
                       </div>
                     );
                   }
