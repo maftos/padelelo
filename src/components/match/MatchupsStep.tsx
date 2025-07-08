@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { NumberSelector } from "./NumberSelector";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 interface Player {
   id: string;
@@ -80,22 +78,25 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange, queuedResult
   const possibleMatchups = generatePossibleMatchups();
 
   const handleMatchupClick = (matchup: typeof possibleMatchups[0]) => {
-    // Check if this matchup is already queued
-    if (isMatchupAlreadyQueued(matchup)) return; // Don't allow editing if already queued
-    
     setScoringMatchup(matchup.id);
     setActiveTeam("team1");
     setTeam1Score(null);
     setTeam2Score(null);
   };
 
-  const handleNumberSelect = (number: number) => {
-    if (activeTeam === "team1") {
-      setTeam1Score(number);
-      setActiveTeam("team2");
-    } else if (activeTeam === "team2") {
-      setTeam2Score(number);
-      setActiveTeam(null); // Stop here, don't auto-save
+  const handleScoreInput = (value: string, team: "team1" | "team2") => {
+    const numValue = parseInt(value) || 0;
+    if (team === "team1") {
+      setTeam1Score(numValue);
+      if (activeTeam === "team1") {
+        setActiveTeam("team2");
+      }
+    } else if (team === "team2") {
+      setTeam2Score(numValue);
+      if (activeTeam === "team2" && team1Score !== null) {
+        // Auto-save when second score is entered
+        handleAddResult();
+      }
     }
   };
 
@@ -112,7 +113,7 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange, queuedResult
       
       onAddResult(result);
       
-      // Reset scoring state
+      // Reset scoring state so user can add another score to same matchup
       setScoringMatchup(null);
       setActiveTeam(null);
       setTeam1Score(null);
@@ -120,21 +121,8 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange, queuedResult
     }
   };
 
-  const handleCancelScoring = () => {
-    setScoringMatchup(null);
-    setActiveTeam(null);
-    setTeam1Score(null);
-    setTeam2Score(null);
-  };
 
-  const isMatchupAlreadyQueued = (matchup: typeof possibleMatchups[0]) => {
-    return queuedResults.some(result => 
-      result.team1[0] === matchup.team1[0] && 
-      result.team1[1] === matchup.team1[1] && 
-      result.team2[0] === matchup.team2[0] && 
-      result.team2[1] === matchup.team2[1]
-    );
-  };
+  // Remove this function since we allow multiple scores for same matchup
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
     <div className="flex items-center justify-center gap-2">
@@ -174,7 +162,6 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange, queuedResult
   return (
     <div className="space-y-4 max-w-md mx-auto">
       {possibleMatchups.map((matchup) => {
-        const isQueued = isMatchupAlreadyQueued(matchup);
         const isScoring = scoringMatchup === matchup.id;
         const isHidden = scoringMatchup && scoringMatchup !== matchup.id;
         
@@ -184,39 +171,31 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange, queuedResult
           <Card 
             key={matchup.id} 
             className={`transition-all duration-300 ${
-              isQueued
-                ? "border-primary bg-primary/5 shadow-md cursor-default" 
-                : isScoring
+              isScoring
                 ? "border-primary bg-primary/5 shadow-lg cursor-default"
                 : "border-dashed hover:bg-accent/50 cursor-pointer hover:shadow-md"
             }`}
-            onClick={() => !isScoring && !isQueued && handleMatchupClick(matchup)}
+            onClick={() => !isScoring && handleMatchupClick(matchup)}
           >
             <CardContent className={`transition-all duration-300 ${isScoring ? "p-8" : "p-6"}`}>
               <div className="flex items-center justify-between">
                 <div className="flex flex-col items-center">
                   <TeamDisplay team={matchup.team1} />
-                   {isQueued && (
-                     <div className="text-lg font-bold text-primary mt-2">
-                       {queuedResults.find(r => 
-                         r.team1[0] === matchup.team1[0] && 
-                         r.team1[1] === matchup.team1[1] && 
-                         r.team2[0] === matchup.team2[0] && 
-                         r.team2[1] === matchup.team2[1]
-                       )?.team1Score}
-                     </div>
-                   )}
                    {isScoring && (
                      <div className="mt-4">
                        <Input
+                         type="number"
+                         inputMode="numeric"
+                         pattern="[0-9]*"
                          value={team1Score !== null ? team1Score.toString() : ""}
-                         readOnly
+                         onChange={(e) => handleScoreInput(e.target.value, "team1")}
                          placeholder="0"
                          className={`w-16 text-center text-lg font-bold transition-all duration-200 ${
                            activeTeam === "team1" 
                              ? "ring-2 ring-primary bg-primary/10" 
                              : "bg-muted"
                          }`}
+                         onFocus={() => setActiveTeam("team1")}
                        />
                      </div>
                    )}
@@ -224,51 +203,28 @@ export const MatchupsStep = ({ players, matchups, onMatchupsChange, queuedResult
                  
                  <div className="text-xl font-bold text-muted-foreground px-4">VS</div>
                  
-                 <div className="flex flex-col items-center">
-                   <TeamDisplay team={matchup.team2} />
-                   {isQueued && (
-                     <div className="text-lg font-bold text-primary mt-2">
-                       {queuedResults.find(r => 
-                         r.team1[0] === matchup.team1[0] && 
-                         r.team1[1] === matchup.team1[1] && 
-                         r.team2[0] === matchup.team2[0] && 
-                         r.team2[1] === matchup.team2[1]
-                       )?.team2Score}
+                  <div className="flex flex-col items-center">
+                    <TeamDisplay team={matchup.team2} />
+                   {isScoring && (
+                     <div className="mt-4">
+                       <Input
+                         type="number"
+                         inputMode="numeric"
+                         pattern="[0-9]*"
+                         value={team2Score !== null ? team2Score.toString() : ""}
+                         onChange={(e) => handleScoreInput(e.target.value, "team2")}
+                         placeholder="0"
+                         className={`w-16 text-center text-lg font-bold transition-all duration-200 ${
+                           activeTeam === "team2" 
+                             ? "ring-2 ring-primary bg-primary/10" 
+                             : "bg-muted"
+                         }`}
+                         onFocus={() => setActiveTeam("team2")}
+                       />
                      </div>
                    )}
-                  {isScoring && (
-                    <div className="mt-4">
-                      <Input
-                        value={team2Score !== null ? team2Score.toString() : ""}
-                        readOnly
-                        placeholder="0"
-                        className={`w-16 text-center text-lg font-bold transition-all duration-200 ${
-                          activeTeam === "team2" 
-                            ? "ring-2 ring-primary bg-primary/10" 
-                            : "bg-muted"
-                        }`}
-                      />
-                    </div>
-                  )}
-                </div>
+                 </div>
               </div>
-              
-              {isScoring && activeTeam && (
-                <div className="mt-6 flex justify-center">
-                  <NumberSelector onSelect={handleNumberSelect} />
-                </div>
-              )}
-              
-              {isScoring && !activeTeam && team1Score !== null && team2Score !== null && (
-                <div className="mt-6 flex justify-center gap-3">
-                  <Button variant="outline" onClick={handleCancelScoring}>
-                    Cancel
-                  </Button>
-                  <Button onClick={handleAddResult}>
-                    Add Result
-                  </Button>
-                </div>
-              )}
             </CardContent>
           </Card>
         );
