@@ -79,56 +79,63 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
                 : "hover:shadow-md"
             }`}
           >
-            <CardContent className="p-4">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Clock className="h-4 w-4 text-primary" />
-                      <span className="font-medium">{formattedDateTime}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2 mb-3">
-                      <MapPin className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{match.venue_name}</span>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      {match.participants.map((participant, index) => (
-                        <div key={participant.player_id} className="flex items-center gap-1">
-                          <Avatar className="h-6 w-6">
-                            <AvatarImage src={participant.profile_photo} />
-                            <AvatarFallback className="text-xs">
-                              {getInitials(participant.first_name, participant.last_name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm">{participant.first_name}</span>
-                          {index < match.participants.length - 1 && (
-                            <span className="text-muted-foreground mx-1">•</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+            <CardContent className="p-3 sm:p-4">
+              <div className="space-y-3">
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="font-medium text-sm sm:text-base leading-tight">{formattedDateTime}</span>
+                  </div>
+                  
+                  <div className="flex items-start gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm text-muted-foreground leading-tight">{match.venue_name}</span>
+                  </div>
+                </div>
+                
+                {/* Players - Mobile optimized */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                    <Users className="h-3 w-3" />
+                    <span>Players</span>
+                  </div>
+                  
+                  <div className="flex flex-wrap items-center gap-2">
+                    {match.participants.map((participant, index) => (
+                      <div key={participant.player_id} className="flex items-center gap-1.5">
+                        <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
+                          <AvatarImage src={participant.profile_photo} />
+                          <AvatarFallback className="text-xs">
+                            {getInitials(participant.first_name, participant.last_name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-xs sm:text-sm font-medium">{participant.first_name}</span>
+                        {index < match.participants.length - 1 && (
+                          <span className="text-muted-foreground text-xs mx-0.5">•</span>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* CTAs */}
-                <div className="flex items-center gap-2 pt-2 border-t">
+                {/* CTAs - Mobile optimized */}
+                <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
                   <Button 
                     onClick={(e) => handleAddResults(match.booking_id, e)}
-                    className="flex-1"
+                    className="flex-1 h-8 sm:h-9"
                     size="sm"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Results
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                    <span className="text-xs sm:text-sm">Add Results</span>
                   </Button>
                   <Button 
                     onClick={(e) => handleEdit(match.booking_id, e)}
                     variant="outline"
+                    className="flex-1 sm:flex-none h-8 sm:h-9"
                     size="sm"
                   >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                    <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2" />
+                    <span className="text-xs sm:text-sm">Edit</span>
                   </Button>
                 </div>
               </div>

@@ -72,22 +72,22 @@ const ManageMatches = () => {
   return (
     <>
       <Navigation />
-      <div className="w-full min-h-screen">
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
+      <div className="w-full min-h-screen bg-background">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-full sm:max-w-4xl">
           {/* Header - Mobile optimized */}
-          <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-              <div className="min-w-0 flex-1 w-full">
-                <h1 className="text-xl sm:text-2xl font-bold text-foreground">My Matches</h1>
-                <p className="text-sm sm:text-base text-muted-foreground">Manage your confirmed matches and open games</p>
-              </div>
-              
-              {/* Action buttons - Stack on mobile, side by side on larger screens */}
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto shrink-0">
+          <div className="mb-6">
+            <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground">My Matches</h1>
+                  <p className="text-sm text-muted-foreground mt-1">Manage your confirmed matches and open games</p>
+                </div>
+                
+                {/* Create Match Button */}
                 <Link to="/create-match" className="w-full sm:w-auto">
-                  <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full px-3">
-                    <Plus className="h-4 w-4 flex-shrink-0" />
-                    <span className="truncate">Create Match</span>
+                  <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full sm:w-auto px-4">
+                    <Plus className="h-4 w-4" />
+                    <span>Create Match</span>
                   </Button>
                 </Link>
               </div>
@@ -95,11 +95,11 @@ const ManageMatches = () => {
           </div>
 
           {/* Main Content */}
-          <div className="space-y-6 sm:space-y-8 w-full">
+          <div className="space-y-8">
             {/* Confirmed Matches Section */}
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">Confirmed Matches</h2>
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Confirmed Matches</h2>
                 <p className="text-sm text-muted-foreground">Complete your scheduled matches</p>
               </div>
               <ConfirmedMatchesList 
@@ -109,9 +109,9 @@ const ManageMatches = () => {
             </div>
 
             {/* Open Games Section */}
-            <div className="space-y-3 sm:space-y-4">
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">My Open Games</h2>
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">My Open Games</h2>
                 <p className="text-sm text-muted-foreground">Games you created that are waiting for more players</p>
               </div>
               <UserOpenGamesList onViewApplicants={handleViewApplicants} />
