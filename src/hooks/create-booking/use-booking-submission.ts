@@ -1,0 +1,88 @@
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { toast } from "sonner";
+
+interface WizardData {
+  selectedPlayers: string[];
+  venueId: string;
+  location: string;
+  matchDate: string;
+  matchTime: string;
+  feePerPlayer: string;
+  gameTitle: string;
+  gameDescription: string;
+}
+
+export function useBookingSubmission() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { profile } = useUserProfile();
+
+  const submitBooking = async (wizardData: WizardData) => {
+    if (!profile?.id) {
+      toast.error("You must be logged in to create a booking");
+      return false;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const isOpenGame = wizardData.selectedPlayers.length < 4;
+      
+      if (isOpenGame) {
+        // Use create_booking_open for incomplete bookings
+        const startDateTime = new Date(`${wizardData.matchDate}T${wizardData.matchTime}`);
+        
+        const { data, error } = await supabase.rpc('create_booking_open', {
+          p_user_a_id: profile.id,
+          p_user_ids: wizardData.selectedPlayers,
+          p_venue_id: wizardData.venueId,
+          p_start_time: startDateTime.toISOString(),
+          p_fee: parseFloat(wizardData.feePerPlayer) || 0,
+          p_title: wizardData.gameTitle,
+          p_description: wizardData.gameDescription || null
+        });
+
+        if (error) {
+          console.error('Error creating open booking:', error);
+          toast.error("Failed to create open booking");
+          return false;
+        }
+
+        toast.success("Open game published successfully!");
+        return true;
+      } else {
+        // Use create_match for complete bookings (closed games)
+        const [player1, player2, player3, player4] = wizardData.selectedPlayers;
+        
+        const { data, error } = await supabase.rpc('create_match', {
+          user_a_id: profile.id,
+          team1_player1_id: player1,
+          team1_player2_id: player2 || null,
+          team2_player1_id: player3 || null,
+          team2_player2_id: player4 || null
+        });
+
+        if (error) {
+          console.error('Error creating match:', error);
+          toast.error("Failed to create booking");
+          return false;
+        }
+
+        toast.success("Booking created successfully!");
+        return true;
+      }
+    } catch (error) {
+      console.error('Error submitting booking:', error);
+      toast.error("An unexpected error occurred");
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return {
+    submitBooking,
+    isSubmitting
+  };
+}

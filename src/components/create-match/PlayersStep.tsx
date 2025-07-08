@@ -76,7 +76,7 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
       />
 
       {/* Selected Players */}
-      <div className="grid gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {selectedPlayers.map((playerId) => (
           <div key={playerId} className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
             <div className="flex items-center gap-3">

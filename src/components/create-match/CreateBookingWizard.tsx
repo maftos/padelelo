@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -8,9 +7,11 @@ import { PlayersStep } from "./PlayersStep";
 import { LocationDetailsStep } from "./LocationDetailsStep";
 import { GameAnnouncementStep } from "./GameAnnouncementStep";
 import { toast } from "sonner";
+import { useBookingSubmission } from "@/hooks/create-booking/use-booking-submission";
 
 interface WizardData {
   selectedPlayers: string[];
+  venueId: string;
   location: string;
   matchDate: string;
   matchTime: string;
@@ -19,11 +20,13 @@ interface WizardData {
   gameDescription: string;
 }
 
-const CreateMatchWizard = () => {
+const CreateBookingWizard = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const { submitBooking, isSubmitting } = useBookingSubmission();
   const [wizardData, setWizardData] = useState<WizardData>({
     selectedPlayers: [],
+    venueId: "",
     location: "",
     matchDate: "",
     matchTime: "",
@@ -51,13 +54,11 @@ const CreateMatchWizard = () => {
     }
   };
 
-  const handleFinish = () => {
-    if (isOpenGame) {
-      toast.success("Open game published successfully!");
-    } else {
-      toast.success("Match created successfully!");
+  const handleFinish = async () => {
+    const success = await submitBooking(wizardData);
+    if (success) {
+      navigate("/manage-matches");
     }
-    navigate("/manage-matches");
   };
 
   const canProceed = () => {
@@ -67,7 +68,7 @@ const CreateMatchWizard = () => {
       case 2:
         // For incomplete matches (less than 4 players), require all fields
         if (isOpenGame) {
-          return wizardData.location && wizardData.matchDate && wizardData.matchTime && wizardData.feePerPlayer;
+          return wizardData.venueId && wizardData.matchDate && wizardData.matchTime && wizardData.feePerPlayer;
         }
         return true; // For complete matches, details are optional
       case 3:
@@ -90,6 +91,7 @@ const CreateMatchWizard = () => {
         return (
           <LocationDetailsStep
             data={{
+              venueId: wizardData.venueId,
               location: wizardData.location,
               matchDate: wizardData.matchDate,
               matchTime: wizardData.matchTime,
@@ -119,9 +121,9 @@ const CreateMatchWizard = () => {
       case 1:
         return "Select Players";
       case 2:
-        return "Match Details";
+        return "Booking Details";
       case 3:
-        return "Match Details";
+        return "Game Details";
       default:
         return "";
     }
@@ -140,7 +142,7 @@ const CreateMatchWizard = () => {
         return (
           <>
             <Users className="h-4 w-4 mr-2" />
-            Create Match
+            Create Booking
           </>
         );
       }
@@ -166,7 +168,7 @@ const CreateMatchWizard = () => {
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Create New Match</h1>
+          <h1 className="text-2xl font-bold">Create New Booking</h1>
           <p className="text-sm text-muted-foreground">
             Step {currentStep} of {totalSteps}: {getStepTitle()}
           </p>
@@ -202,10 +204,10 @@ const CreateMatchWizard = () => {
 
             <Button
               onClick={handleButtonClick}
-              disabled={!canProceed()}
+              disabled={!canProceed() || isSubmitting}
               size="lg"
             >
-              {getNextButtonContent()}
+              {isSubmitting ? "Creating..." : getNextButtonContent()}
             </Button>
           </div>
         </CardContent>
@@ -214,4 +216,4 @@ const CreateMatchWizard = () => {
   );
 };
 
-export default CreateMatchWizard;
+export default CreateBookingWizard;

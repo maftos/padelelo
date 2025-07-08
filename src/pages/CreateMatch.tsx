@@ -1,14 +1,14 @@
 
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
-import CreateMatchWizard from "@/components/create-match/CreateMatchWizard";
+import CreateBookingWizard from "@/components/create-match/CreateBookingWizard";
 
 const CreateMatch = () => {
   return (
     <>
       <Navigation />
       <PageContainer>
-        <CreateMatchWizard />
+        <CreateBookingWizard />
       </PageContainer>
     </>
   );

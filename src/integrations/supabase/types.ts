@@ -686,6 +686,7 @@ export type Database = {
           admins: string[] | null
           courts: Json | null
           email_address: string | null
+          location: unknown | null
           name: string
           opening_hours: Json | null
           phone_number: string | null
@@ -697,6 +698,7 @@ export type Database = {
           admins?: string[] | null
           courts?: Json | null
           email_address?: string | null
+          location?: unknown | null
           name: string
           opening_hours?: Json | null
           phone_number?: string | null
@@ -708,6 +710,7 @@ export type Database = {
           admins?: string[] | null
           courts?: Json | null
           email_address?: string | null
+          location?: unknown | null
           name?: string
           opening_hours?: Json | null
           phone_number?: string | null

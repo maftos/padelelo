@@ -126,6 +126,7 @@ const EditMatchWizard = () => {
         return (
           <LocationDetailsStep
             data={{
+              venueId: "",
               location: wizardData.location,
               matchDate: wizardData.matchDate,
               matchTime: wizardData.matchTime,

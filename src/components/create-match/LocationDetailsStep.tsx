@@ -5,8 +5,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, DollarSign } from "lucide-react";
 import { DateTimePickers } from "./DateTimePickers";
 import { StepHeader } from "./StepHeader";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LocationDetailsData {
+  venueId: string;
   location: string;
   matchDate: string;
   matchTime: string;
@@ -20,13 +23,18 @@ interface LocationDetailsStepProps {
 }
 
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
-  // Mock venues data - in a real app this would come from the venues table
-  const venues = [
-    { venue_id: "venue1", name: "Padel Club Mauritius" },
-    { venue_id: "venue2", name: "Sports Complex Grand Bay" },
-    { venue_id: "venue3", name: "Elite Padel Center" },
-    { venue_id: "venue4", name: "Coastal Sports Club" }
-  ];
+  // Fetch venues from database
+  const { data: venues = [], isLoading: isLoadingVenues } = useQuery({
+    queryKey: ['venues'],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('get_venues');
+      if (error) {
+        console.error('Error fetching venues:', error);
+        throw error;
+      }
+      return data as Array<{ venue_id: string; name: string }>;
+    }
+  });
 
   const requiresDetails = !hasAllPlayers;
 
@@ -44,9 +52,25 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
           <MapPin className="h-4 w-4" />
           Location {requiresDetails && <span className="text-destructive">*</span>}
         </div>
-        <Select value={data.location} onValueChange={(value) => onDataChange({ location: value })}>
+        <Select 
+          value={data.venueId} 
+          onValueChange={(value) => {
+            const selectedVenue = venues.find(v => v.venue_id === value);
+            onDataChange({ 
+              venueId: value, 
+              location: selectedVenue?.name || "" 
+            });
+          }}
+          disabled={isLoadingVenues}
+        >
           <SelectTrigger>
-            <SelectValue placeholder={requiresDetails ? "Choose a venue" : "Choose a venue (optional)"} />
+            <SelectValue placeholder={
+              isLoadingVenues 
+                ? "Loading venues..." 
+                : requiresDetails 
+                  ? "Choose a venue" 
+                  : "Choose a venue (optional)"
+            } />
           </SelectTrigger>
           <SelectContent>
             {venues.map((venue) => (
