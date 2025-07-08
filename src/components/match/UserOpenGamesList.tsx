@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Eye, Clock, UserCheck, DollarSign } from "lucide-react";
-import { formatDate } from "@/lib/date";
 import { format } from "date-fns";
-import { useUserOpenGames } from "@/hooks/use-user-open-games";
+import { useOpenGames } from "@/hooks/use-open-games";
 
 interface UserOpenGamesListProps {
   onViewApplicants?: (gameId: string) => void;
@@ -68,12 +67,12 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 };
 
 export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) => {
-  const { openGames, isLoading } = useUserOpenGames();
+  const { openGames, isLoading } = useOpenGames();
 
   // Mock applicants count - in real implementation this would come from the hook
   const getApplicantsCount = (gameId: string) => {
     // Mock data - replace with actual applicants count
-    return gameId === "open-1" ? 5 : 0;
+    return 5;
   };
 
   if (isLoading) {
@@ -101,51 +100,47 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
     );
   }
 
-  // Count filled spots for each game
-  const getFilledSpots = (game: any) => {
-    const spots = [
-      game.team1_player1_id,
-      game.team1_player2_id,
-      game.team2_player1_id,
-      game.team2_player2_id
-    ];
-    return spots.filter(Boolean).length;
-  };
-
-  // Convert to format expected by the card template
-  const mockPlayerMatchingPosts = openGames.map((game) => {
-    const filledSpots = getFilledSpots(game);
-    const remainingSpots = 4 - filledSpots;
-    const applicantsCount = getApplicantsCount(game.match_id);
+  // Convert real data to format expected by the card template
+  const formattedOpenGames = openGames.map((game) => {
+    const remainingSpots = 4 - game.player_count;
+    const applicantsCount = getApplicantsCount(game.booking_id);
+    const gameDate = new Date(game.start_time);
+    const createdAt = new Date(game.created_at);
     
     return {
-      id: game.match_id,
-      title: `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
-      courtName: "Padel Club Mauritius",
-      distance: "0.5km",
-      gameDate: new Date(game.match_date),
+      id: game.booking_id,
+      title: game.title || `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
+      courtName: game.venue_name,
+      distance: "0.5km", // Mock distance - would need to be calculated
+      gameDate,
       spotsAvailable: remainingSpots,
       applicantsCount,
-      description: "Your open game waiting for more players to join",
-      publishedAt: new Date(Date.now() - 46 * 60 * 1000), // 46 minutes ago
+      description: game.description || "Your open game waiting for more players to join",
+      publishedAt: createdAt,
       existingPlayers: [
-        game.team1_player1_id ? { id: "u1", name: "You", mmr: 3000, avatar: null, isHost: true } : null,
-        game.team1_player2_id ? { id: "u2", name: null, mmr: 2900, avatar: null, isHost: false } : null,
-        game.team2_player1_id ? { id: "u3", name: null, mmr: 3100, avatar: null, isHost: false } : null,
-        game.team2_player2_id ? { id: "u4", name: null, mmr: 2800, avatar: null, isHost: false } : null,
+        // Mock player data based on participant count
+        ...Array(game.player_count).fill(null).map((_, index) => ({
+          id: `player${index + 1}`,
+          name: index === 0 && game.is_creator ? "You" : game.participants[index]?.first_name || "Player",
+          mmr: 3000, // Mock MMR
+          avatar: game.participants[index]?.profile_photo || null,
+          isHost: index === 0 && game.is_creator
+        })),
+        // Fill remaining slots with null
+        ...Array(4 - game.player_count).fill(null)
       ],
-      createdBy: "u1",
-      preferences: "All genders",
-      price: "Rs 400",
-      startTime: format(new Date(game.match_date), "HH:mm"),
-      endTime: format(new Date(new Date(game.match_date).getTime() + 90 * 60 * 1000), "HH:mm"),
-      createdAt: new Date(game.created_at)
+      createdBy: game.created_by,
+      preferences: "All genders", // Mock preference
+      price: "Rs 400", // Mock price
+      startTime: format(gameDate, "HH:mm"),
+      endTime: format(new Date(gameDate.getTime() + 90 * 60 * 1000), "HH:mm"),
+      createdAt
     };
   });
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      {mockPlayerMatchingPosts.map((post) => (
+      {formattedOpenGames.map((post) => (
         <Card key={post.id} className="hover:shadow-md transition-shadow w-full">
           <CardHeader className="pb-3 sm:pb-4 px-3 sm:px-6">
             <div className="flex justify-between items-start gap-2 sm:gap-4">
@@ -155,7 +150,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                     {post.title}
                   </CardTitle>
                   <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
-                    Published 46m ago
+                    Published {formatTimeAgo(post.publishedAt)}
                   </span>
                 </div>
                 
