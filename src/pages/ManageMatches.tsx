@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { PendingMatchesList } from "@/components/match/PendingMatchesList";
-import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
+import { ConfirmedMatchesList } from "@/components/match/ConfirmedMatchesList";
+import { OpenGamesList } from "@/components/match/OpenGamesList";
 import { ViewApplicantsDialog } from "@/components/match/ViewApplicantsDialog";
 import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
-import { usePendingMatches } from "@/hooks/use-pending-matches";
-import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
@@ -18,8 +16,6 @@ const ManageMatches = () => {
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
   const [showAddResults, setShowAddResults] = useState(false);
-  const { pendingMatches } = usePendingMatches();
-  const { getPlayerName } = usePlayerSelection();
 
   const handleSelectMatch = (matchId: string) => {
     setSelectedMatchId(matchId);
@@ -42,21 +38,6 @@ const ManageMatches = () => {
     return 3; // Mock value
   };
 
-  // Get match players for the selected match
-  const getMatchPlayers = () => {
-    if (!selectedMatchId) return [];
-    
-    const match = pendingMatches.find(m => m.match_id === selectedMatchId);
-    if (!match) return [];
-
-    return [
-      { id: match.team1_player1_id, name: getPlayerName(match.team1_player1_id) },
-      { id: match.team1_player2_id, name: getPlayerName(match.team1_player2_id) },
-      { id: match.team2_player1_id, name: getPlayerName(match.team2_player1_id) },
-      { id: match.team2_player2_id, name: getPlayerName(match.team2_player2_id) }
-    ];
-  };
-
   // Show Add Results wizard if a match is selected
   if (showAddResults && selectedMatchId) {
     return (
@@ -66,7 +47,7 @@ const ManageMatches = () => {
           <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
             <AddResultsWizard
               matchId={selectedMatchId}
-              players={getMatchPlayers()}
+              players={[]} // This will need to be updated based on the booking data structure
               onClose={handleCloseAddResults}
             />
           </div>
@@ -108,7 +89,7 @@ const ManageMatches = () => {
                 <h2 className="text-lg font-semibold text-foreground">Confirmed Matches</h2>
                 <p className="text-sm text-muted-foreground">Complete your scheduled matches</p>
               </div>
-              <PendingMatchesList 
+              <ConfirmedMatchesList 
                 onSelectMatch={handleSelectMatch}
                 selectedMatchId={selectedMatchId}
               />
@@ -120,7 +101,7 @@ const ManageMatches = () => {
                 <h2 className="text-lg font-semibold text-foreground">My Open Games</h2>
                 <p className="text-sm text-muted-foreground">Games you created that are waiting for more players</p>
               </div>
-              <UserOpenGamesList onViewApplicants={handleViewApplicants} />
+              <OpenGamesList onViewApplicants={handleViewApplicants} />
             </div>
           </div>
         </div>
