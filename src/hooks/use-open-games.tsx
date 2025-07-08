@@ -41,7 +41,7 @@ export function useOpenGames() {
         throw error;
       }
 
-      return (data as unknown) as OpenGame[];
+      return (data || []) as OpenGame[];
     },
     enabled: !!userId,
   });

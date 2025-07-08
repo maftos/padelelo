@@ -41,7 +41,7 @@ export function useConfirmedMatches() {
         throw error;
       }
 
-      return (data as unknown) as ConfirmedMatch[];
+      return (data || []) as ConfirmedMatch[];
     },
     enabled: !!userId,
   });
