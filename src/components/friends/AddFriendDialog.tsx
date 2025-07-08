@@ -39,10 +39,14 @@ export const AddFriendDialog = ({ userId, onFriendAdded }: AddFriendDialogProps)
         return;
       }
 
-      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-        user_a_id_public: userId,
-        user_b_id_public: userData.id
-      });
+      // Create a friendship record directly since there's no send_friend_request function
+      const { error } = await supabase
+        .from('friendships')
+        .insert({
+          user_id: userId,
+          friend_id: userData.id,
+          status: 'INVITED'
+        });
 
       if (error) {
         if (error.message.includes("best friends")) {

@@ -54,7 +54,7 @@ export const FriendRequests = () => {
       
       const { data, error } = await supabase.rpc('respond_friend_request', {
         user_a_id: userId,
-        user_b_id: friendId,
+        friendship_id: parseInt(friendId), // Assuming friendId is the friendship ID
         accept: accept
       });
 

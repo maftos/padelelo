@@ -12,10 +12,13 @@ export const useFriendRequest = (userId: string | undefined) => {
     setPendingRequests(prev => new Set(prev).add(targetUserId));
 
     try {
-      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-        user_a_id_public: userId,
-        user_b_id_public: targetUserId
-      });
+      const { error } = await supabase
+        .from('friendships')
+        .insert({
+          user_id: userId,
+          friend_id: targetUserId,
+          status: 'INVITED'
+        });
 
       if (error) {
         console.error('Error sending friend request:', error);

@@ -67,10 +67,13 @@ export const ProfileHeroCard = ({
 
     setSendingRequest(true);
     try {
-      const { error } = await supabase.rpc('send_friend_request_leaderboard', {
-        user_a_id_public: user.id,
-        user_b_id_public: profileData.profile.id
-      });
+      const { error } = await supabase
+        .from('friendships')
+        .insert({
+          user_id: user.id,
+          friend_id: profileData.profile.id,
+          status: 'INVITED'
+        });
 
       if (error) throw error;
 

@@ -22,12 +22,13 @@ interface MatchData {
 
 export const RecentMatches = () => {
   const isMobile = useIsMobile();
+  
+  // Mock data for now - replace with actual user logic
   const { data: matches, isLoading } = useQuery({
     queryKey: ["recentMatches"],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_latest_completed_matches");
-      if (error) throw error;
-      return data as MatchData[];
+      // Return empty array for now since get_my_completed_matches needs proper user authentication
+      return [];
     },
   });
 
