@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { PendingMatchesList } from "@/components/match/PendingMatchesList";
+import { ConfirmedMatchesList } from "@/components/match/ConfirmedMatchesList";
 import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsDialog } from "@/components/match/ViewApplicantsDialog";
 import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
-import { usePendingMatches } from "@/hooks/use-pending-matches";
-import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
@@ -18,8 +16,6 @@ const ManageMatches = () => {
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
   const [showAddResults, setShowAddResults] = useState(false);
-  const { pendingMatches } = usePendingMatches();
-  const { getPlayerName } = usePlayerSelection();
 
   const handleSelectMatch = (matchId: string) => {
     setSelectedMatchId(matchId);
@@ -42,18 +38,16 @@ const ManageMatches = () => {
     return 3; // Mock value
   };
 
-  // Get match players for the selected match
+  // Mock function to get match players - this will be updated when integrating with real data
   const getMatchPlayers = () => {
     if (!selectedMatchId) return [];
     
-    const match = pendingMatches.find(m => m.match_id === selectedMatchId);
-    if (!match) return [];
-
+    // Mock data for now - will be replaced with real data later
     return [
-      { id: match.team1_player1_id, name: getPlayerName(match.team1_player1_id) },
-      { id: match.team1_player2_id, name: getPlayerName(match.team1_player2_id) },
-      { id: match.team2_player1_id, name: getPlayerName(match.team2_player1_id) },
-      { id: match.team2_player2_id, name: getPlayerName(match.team2_player2_id) }
+      { id: "player1", name: "John Doe" },
+      { id: "player2", name: "Jane Smith" },
+      { id: "player3", name: "Mike Johnson" },
+      { id: "player4", name: "Sarah Wilson" }
     ];
   };
 
@@ -108,7 +102,7 @@ const ManageMatches = () => {
                 <h2 className="text-lg font-semibold text-foreground">Confirmed Matches</h2>
                 <p className="text-sm text-muted-foreground">Complete your scheduled matches</p>
               </div>
-              <PendingMatchesList 
+              <ConfirmedMatchesList 
                 onSelectMatch={handleSelectMatch}
                 selectedMatchId={selectedMatchId}
               />
