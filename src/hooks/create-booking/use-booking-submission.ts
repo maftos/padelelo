@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 interface WizardData {
@@ -18,6 +19,7 @@ interface WizardData {
 export function useBookingSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { profile } = useUserProfile();
+  const navigate = useNavigate();
 
   const submitBooking = async (wizardData: WizardData) => {
     if (!profile?.id) {
@@ -51,6 +53,7 @@ export function useBookingSubmission() {
         }
 
         toast.success("Open game published successfully!");
+        navigate("/manage-matches");
         return true;
       } else {
         // Use create_booking_closed for complete bookings (closed games)
@@ -73,6 +76,7 @@ export function useBookingSubmission() {
         }
 
         toast.success("Booking created successfully!");
+        navigate("/manage-matches");
         return true;
       }
     } catch (error) {

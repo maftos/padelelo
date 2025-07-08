@@ -71,7 +71,7 @@ export function useAddResults(matchId: string) {
         }
 
         // Type assertion for the booking data
-        const typedBookingData = bookingData as BookingResponse;
+        const typedBookingData = bookingData as unknown as BookingResponse;
         const bookingId = typedBookingData?.booking_id;
         if (!bookingId) {
           toast.error("Failed to get booking ID");

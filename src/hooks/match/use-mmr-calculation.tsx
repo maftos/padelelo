@@ -57,7 +57,7 @@ export function useMMRCalculation(userId: string | undefined) {
       }
 
       // Type assertion for the booking data
-      const typedBookingData = bookingData as BookingResponse;
+      const typedBookingData = bookingData as unknown as BookingResponse;
       const bookingId = typedBookingData?.booking_id;
       if (!bookingId) {
         throw new Error('No booking ID returned from create_booking_closed');
