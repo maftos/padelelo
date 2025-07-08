@@ -23,6 +23,11 @@ interface Match {
   player2_id?: string;
   player3_id?: string;
   player4_id?: string;
+  sets?: Array<{
+    set_number: number;
+    team1_score: number;
+    team2_score: number;
+  }>;
 }
 
 interface MatchesListProps {

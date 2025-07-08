@@ -34,6 +34,11 @@ interface MatchDetails {
   player2_id?: string;
   player3_id?: string;
   player4_id?: string;
+  sets?: Array<{
+    set_number: number;
+    team1_score: number;
+    team2_score: number;
+  }>;
 }
 
 const Matches = () => {
@@ -74,6 +79,11 @@ const Matches = () => {
       return matchesData.map((match: any) => {
         const team1 = match.team1 || {};
         const team2 = match.team2 || {};
+        const sets = match.sets || [];
+        
+        // Calculate total scores from sets
+        const team1_score = match.team1_sets_won || 0;
+        const team2_score = match.team2_sets_won || 0;
         
         return {
           match_id: match.match_id,
@@ -84,8 +94,8 @@ const Matches = () => {
           partner_id: "",
           new_mmr: match.new_mmr,
           status: "COMPLETED",
-          team1_score: match.team1_score,
-          team2_score: match.team2_score,
+          team1_score,
+          team2_score,
           team1_player1_display_name: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
           team1_player1_profile_photo: team1.player1?.profile_photo || '',
           team1_player2_display_name: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
@@ -99,6 +109,7 @@ const Matches = () => {
           player2_id: team1.player2?.id,
           player3_id: team2.player1?.id,
           player4_id: team2.player2?.id,
+          sets,
         };
       });
     },

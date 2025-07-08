@@ -24,6 +24,11 @@ interface MatchHistoryCardProps {
   player2_id?: string;
   player3_id?: string;
   player4_id?: string;
+  sets?: Array<{
+    set_number: number;
+    team1_score: number;
+    team2_score: number;
+  }>;
 }
 
 export const MatchHistoryCard = ({
@@ -47,6 +52,7 @@ export const MatchHistoryCard = ({
   player2_id,
   player3_id,
   player4_id,
+  sets,
 }: MatchHistoryCardProps) => {
   console.log('Match completer ID:', completed_by);
   console.log('Player IDs:', { player1_id, player2_id, player3_id, player4_id });
@@ -111,10 +117,25 @@ export const MatchHistoryCard = ({
         </div>
 
         {/* Center - Score */}
-        <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-background border border-border shadow-sm">
-          <span className="text-xl font-bold text-foreground">{team1_score}</span>
-          <span className="text-lg text-muted-foreground">-</span>
-          <span className="text-xl font-bold text-foreground">{team2_score}</span>
+        <div className="flex flex-col items-center gap-2">
+          {/* Overall Sets Score */}
+          <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-background border border-border shadow-sm">
+            <span className="text-xl font-bold text-foreground">{team1_score}</span>
+            <span className="text-lg text-muted-foreground">-</span>
+            <span className="text-xl font-bold text-foreground">{team2_score}</span>
+          </div>
+          
+          {/* Individual Set Scores */}
+          {sets && sets.length > 0 && (
+            <div className="flex flex-col gap-1">
+              {sets.map((set) => (
+                <div key={set.set_number} className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="font-medium">Set {set.set_number}:</span>
+                  <span>{set.team1_score}-{set.team2_score}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right side - Team 2 */}
