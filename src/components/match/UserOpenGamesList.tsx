@@ -197,23 +197,17 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   
                   if (player === null) {
                     return (
-                      <div key={index} className="relative">
-                        <div className="flex flex-col items-center justify-center gap-2 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[70px] sm:min-h-[80px]">
-                          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                            <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
-                          </Avatar>
-                          <div className="text-center">
-                            <div className="font-medium text-primary text-xs sm:text-sm">Waiting</div>
-                          </div>
-                        </div>
-                        
-                        {/* View Applicants button overlay - matching Join Game design exactly */}
-                        <div 
-                          onClick={() => onViewApplicants?.(post.id)}
-                          className="absolute inset-0 cursor-pointer bg-gradient-to-br from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg flex flex-col items-center justify-center gap-1 transition-all duration-200 border-2 border-dashed border-blue-500"
-                        >
-                          <span className="text-sm font-medium">View Applicants</span>
-                          <span className="text-xs opacity-80">Tap to choose</span>
+                      <div 
+                        key={index} 
+                        className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[50px] sm:min-h-[60px] touch-manipulation"
+                        onClick={() => onViewApplicants?.(post.id)}
+                      >
+                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-primary text-xs sm:text-sm">{post.applicantsCount} Applicants</div>
+                          <div className="text-xs text-muted-foreground hidden sm:block">Tap to choose</div>
                         </div>
                       </div>
                     );
