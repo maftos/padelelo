@@ -935,6 +935,10 @@ export type Database = {
         Args: { user_a_id_public: string }
         Returns: Json
       }
+      view_open_bookings: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
       view_profile: {
         Args: { user_a_id: string; user_b_id: string }
         Returns: Json
