@@ -1,4 +1,3 @@
-
 import { format } from "date-fns";
 import { PublicOpenGame } from "@/hooks/use-public-open-games";
 
@@ -72,13 +71,13 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
   // Create existingPlayers array with actual participants and null slots
   const existingPlayers = Array(4).fill(null);
   
-  // Fill in actual participants
+  // Fill in actual participants with proper MMR and full names
   game.participants.forEach((participant, index) => {
     if (index < 4) {
       existingPlayers[index] = {
         id: participant.player_id,
-        name: participant.first_name,
-        current_mmr: participant.current_mmr || 3000, // Changed from mmr to current_mmr
+        name: `${participant.first_name} ${participant.last_name || ''}`.trim(),
+        current_mmr: participant.current_mmr || 3000,
         avatar: participant.profile_photo,
       };
     }

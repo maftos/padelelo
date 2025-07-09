@@ -125,22 +125,22 @@ export default function PlayerMatching() {
                       </span>
                     </div>
                     
-                    {/* Location and Date/Time - Stack on mobile */}
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
-                      <div className="flex items-center gap-1 min-w-0">
-                        <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span className="truncate">{post.courtName}</span>
-                      </div>
+                    {/* First row: Start Time and Fee */}
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm mb-2">
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm">{formatGameDateTime(post.gameDate)}</span>
+                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span className="text-xs sm:text-sm bg-primary/10 text-primary px-2 py-1 rounded-md font-medium">{formatGameDateTime(post.gameDate)}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-muted-foreground">
+                        <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                        <span>{post.price}</span>
                       </div>
                     </div>
                     
-                    {/* Price only */}
+                    {/* Second row: Location */}
                     <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
-                      <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span>{post.price}</span>
+                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span className="truncate">{post.courtName}</span>
                     </div>
                   </div>
                 </div>
@@ -194,7 +194,7 @@ export default function PlayerMatching() {
                             <div className="font-medium truncate">
                               {player.name || 'Player'}
                             </div>
-                            <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
+                            <div className="text-xs text-muted-foreground">{player.current_mmr} MMR</div>
                           </div>
                         </div>
                       );
