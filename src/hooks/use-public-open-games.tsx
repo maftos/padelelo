@@ -27,15 +27,30 @@ export interface PublicOpenGame {
   }>;
 }
 
-export const usePublicOpenGames = () => {
+export const usePublicOpenGames = (sortBy: string = 'created_at_desc') => {
   const { user } = useAuth();
 
+  // Map sort options to database function parameters
+  const getSortParameter = (sortOption: string) => {
+    switch (sortOption) {
+      case 'newest':
+        return 'created_at_desc';
+      case 'soonest':
+        return 'start_time_asc';
+      default:
+        return 'created_at_desc';
+    }
+  };
+
   const { data: publicOpenGames = [], isLoading, error } = useQuery({
-    queryKey: ['public-open-games'],
+    queryKey: ['public-open-games', sortBy],
     queryFn: async () => {
+      const sortParameter = getSortParameter(sortBy);
+      
       const { data, error } = await supabase
         .rpc('view_open_bookings', {
-          p_user_id: user?.id || '00000000-0000-0000-0000-000000000000'
+          p_user_id: user?.id || '00000000-0000-0000-0000-000000000000',
+          p_sort_by: sortParameter
         });
 
       if (error) throw error;

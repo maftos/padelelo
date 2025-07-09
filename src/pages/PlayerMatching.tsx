@@ -17,16 +17,15 @@ export default function PlayerMatching() {
   const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
   const [addMatchWizardOpen, setAddMatchWizardOpen] = useState(false);
   const [selectedGamePost, setSelectedGamePost] = useState<any>(null);
-  const [sortBy, setSortBy] = useState("for-you");
+  const [sortBy, setSortBy] = useState("newest");
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
-  const { publicOpenGames, isLoading, error } = usePublicOpenGames();
+  const { publicOpenGames, isLoading, error } = usePublicOpenGames(sortBy);
 
   const sortOptions = [
-    { value: "for-you", label: "For You" },
-    { value: "today", label: "Today" },
-    { value: "friends", label: "Friends" }
+    { value: "newest", label: "Newest" },
+    { value: "soonest", label: "Soonest" }
   ];
 
   const handleJoinGame = (postId: string) => {

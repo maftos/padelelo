@@ -936,7 +936,7 @@ export type Database = {
         Returns: Json
       }
       view_open_bookings: {
-        Args: { p_user_id: string }
+        Args: { p_user_id: string; p_sort_by?: string }
         Returns: Json
       }
       view_profile: {
