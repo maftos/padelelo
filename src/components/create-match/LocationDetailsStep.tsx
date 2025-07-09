@@ -22,50 +22,21 @@ interface LocationDetailsStepProps {
   onDataChange: (data: Partial<LocationDetailsData>) => void;
 }
 
-interface Venue {
-  venue_id: string;
-  name: string;
-  region?: string;
-}
-
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
   // Fetch venues from database
-  const { data: venuesResponse = [], isLoading: isLoadingVenues } = useQuery({
+  const { data: venues = [], isLoading: isLoadingVenues } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_all_venues');
+      const { data, error } = await supabase.rpc('get_venues');
       if (error) {
         console.error('Error fetching venues:', error);
         throw error;
       }
-      return data;
+      return data as Array<{ venue_id: string; name: string }>;
     }
   });
 
-  // Convert the JSON response to Venue array with proper type checking
-  const venues: Venue[] = Array.isArray(venuesResponse) ? 
-    venuesResponse.map((venue: any) => ({
-      venue_id: venue?.venue_id || '',
-      name: venue?.name || '',
-      region: venue?.region || 'Other'
-    })).filter((venue: Venue) => venue.venue_id && venue.name) : [];
-
-  console.log('Venues loaded:', venues); // Debug log to check if venues are loaded
-
   const requiresDetails = !hasAllPlayers;
-
-  // Group venues by region
-  const venuesByRegion = venues.reduce((acc, venue) => {
-    const region = venue.region || 'Other';
-    if (!acc[region]) {
-      acc[region] = [];
-    }
-    acc[region].push(venue);
-    return acc;
-  }, {} as Record<string, Venue[]>);
-
-  const regionOrder = ['North', 'South', 'East', 'West', 'Central', 'Other'];
-  const sortedRegions = regionOrder.filter(region => venuesByRegion[region]?.length > 0);
 
   return (
     <div className="space-y-6">
@@ -96,32 +67,17 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
             <SelectValue placeholder={
               isLoadingVenues 
                 ? "Loading venues..." 
-                : venues.length === 0
-                  ? "No venues available"
-                  : requiresDetails 
-                    ? "Choose a venue" 
-                    : "Choose a venue (optional)"
+                : requiresDetails 
+                  ? "Choose a venue" 
+                  : "Choose a venue (optional)"
             } />
           </SelectTrigger>
           <SelectContent>
-            {sortedRegions.length > 0 ? (
-              sortedRegions.map((region) => (
-                <div key={region}>
-                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                    {region}
-                  </div>
-                  {venuesByRegion[region].map((venue) => (
-                    <SelectItem key={venue.venue_id} value={venue.venue_id}>
-                      {venue.name}
-                    </SelectItem>
-                  ))}
-                </div>
-              ))
-            ) : (
-              <SelectItem value="no-venues" disabled>
-                No venues available
+            {venues.map((venue) => (
+              <SelectItem key={venue.venue_id} value={venue.venue_id}>
+                {venue.name}
               </SelectItem>
-            )}
+            ))}
           </SelectContent>
         </Select>
       </div>
