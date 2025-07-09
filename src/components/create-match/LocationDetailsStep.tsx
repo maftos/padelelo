@@ -30,7 +30,7 @@ interface Venue {
 
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
   // Fetch venues from database
-  const { data: venues = [], isLoading: isLoadingVenues } = useQuery({
+  const { data: venuesResponse = [], isLoading: isLoadingVenues } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_venues');
@@ -38,9 +38,18 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
         console.error('Error fetching venues:', error);
         throw error;
       }
-      return data as Venue[];
+      return data;
     }
   });
+
+  // Convert the JSON response to Venue array with proper type checking
+  const venues: Venue[] = Array.isArray(venuesResponse) ? 
+    venuesResponse.filter((venue): venue is Venue => 
+      venue !== null && 
+      typeof venue === 'object' && 
+      'venue_id' in venue && 
+      'name' in venue
+    ) : [];
 
   const requiresDetails = !hasAllPlayers;
 
