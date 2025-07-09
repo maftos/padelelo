@@ -44,12 +44,13 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
   // Convert the JSON response to Venue array with proper type checking
   const venues: Venue[] = Array.isArray(venuesResponse) ? 
-    (venuesResponse as any[]).filter((venue: any): venue is Venue => 
-      venue !== null && 
-      typeof venue === 'object' && 
-      'venue_id' in venue && 
-      'name' in venue
-    ) : [];
+    venuesResponse.map((venue: any) => ({
+      venue_id: venue?.venue_id || '',
+      name: venue?.name || '',
+      region: venue?.region || 'Other'
+    })).filter((venue: Venue) => venue.venue_id && venue.name) : [];
+
+  console.log('Venues loaded:', venues); // Debug log to check if venues are loaded
 
   const requiresDetails = !hasAllPlayers;
 
@@ -95,24 +96,32 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
             <SelectValue placeholder={
               isLoadingVenues 
                 ? "Loading venues..." 
-                : requiresDetails 
-                  ? "Choose a venue" 
-                  : "Choose a venue (optional)"
+                : venues.length === 0
+                  ? "No venues available"
+                  : requiresDetails 
+                    ? "Choose a venue" 
+                    : "Choose a venue (optional)"
             } />
           </SelectTrigger>
           <SelectContent>
-            {sortedRegions.map((region) => (
-              <div key={region}>
-                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {region}
+            {sortedRegions.length > 0 ? (
+              sortedRegions.map((region) => (
+                <div key={region}>
+                  <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    {region}
+                  </div>
+                  {venuesByRegion[region].map((venue) => (
+                    <SelectItem key={venue.venue_id} value={venue.venue_id}>
+                      {venue.name}
+                    </SelectItem>
+                  ))}
                 </div>
-                {venuesByRegion[region].map((venue) => (
-                  <SelectItem key={venue.venue_id} value={venue.venue_id}>
-                    {venue.name}
-                  </SelectItem>
-                ))}
-              </div>
-            ))}
+              ))
+            ) : (
+              <SelectItem value="no-venues" disabled>
+                No venues available
+              </SelectItem>
+            )}
           </SelectContent>
         </Select>
       </div>
