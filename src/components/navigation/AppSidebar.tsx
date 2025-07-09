@@ -1,4 +1,3 @@
-
 import { Home, Trophy, MapPin, Calendar, BarChart3, Settings, Users } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +10,7 @@ import { Separator } from "@/components/ui/separator";
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
   { title: "My Matches", url: "/manage-matches", icon: Calendar },
-  { title: "Open Games", url: "/open-games", icon: Users },
+  { title: "Open Bookings", url: "/open-bookings", icon: Users },
   { title: "Tournaments", url: "/tournaments", icon: Trophy },
   { title: "Leaderboard", url: "/leaderboard", icon: BarChart3 },
   { title: "Padel Courts", url: "/padel-courts", icon: MapPin },

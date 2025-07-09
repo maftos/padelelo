@@ -9,7 +9,7 @@ import { JoinGameModal } from "@/components/JoinGameModal";
 import { AddOpenMatchWizard } from "@/components/AddOpenMatchWizard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePublicOpenGames } from "@/hooks/use-public-open-games";
-import { transformPublicOpenGameToUIFormat, formatGameDate, formatTimeAgo, calculateAverageMMR } from "@/utils/gameDataTransform";
+import { transformPublicOpenGameToUIFormat, formatGameDateTime, formatTimeAgo, calculateAverageMMR } from "@/utils/gameDataTransform";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function PlayerMatching() {
@@ -53,7 +53,7 @@ export default function PlayerMatching() {
               <div className="w-3 h-3 rounded-full bg-primary/30 animate-pulse delay-100"></div>
               <div className="w-3 h-3 rounded-full bg-primary/30 animate-pulse delay-200"></div>
             </div>
-            <p className="text-muted-foreground mt-4">Loading open games...</p>
+            <p className="text-muted-foreground mt-4">Loading open bookings...</p>
           </div>
         </div>
       </div>
@@ -67,8 +67,8 @@ export default function PlayerMatching() {
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Open Games</h1>
-              <p className="text-sm sm:text-base text-muted-foreground">Find players to complete your booked courts</p>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Open Bookings</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">Join players who have booked a court already</p>
             </div>
             
             {/* Action buttons - Only notifications button now */}
@@ -125,7 +125,7 @@ export default function PlayerMatching() {
                       </span>
                     </div>
                     
-                    {/* Location and Date - Stack on mobile */}
+                    {/* Location and Date/Time - Stack on mobile */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
                       <div className="flex items-center gap-1 min-w-0">
                         <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -133,20 +133,14 @@ export default function PlayerMatching() {
                       </div>
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm">{formatGameDate(post.gameDate)}</span>
+                        <span className="text-xs sm:text-sm">{formatGameDateTime(post.gameDate)}</span>
                       </div>
                     </div>
                     
-                    {/* Time and Price - Stack on mobile */}
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span>{post.startTime}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span>{post.price}</span>
-                      </div>
+                    {/* Price only */}
+                    <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                      <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                      <span>{post.price}</span>
                     </div>
                   </div>
                 </div>
@@ -216,7 +210,7 @@ export default function PlayerMatching() {
         {transformedGames.length === 0 && !isLoading && (
           <div className="text-center py-8 sm:py-12 px-4">
             <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">No open games yet</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-2">No open bookings yet</h3>
             <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Check back later for available courts!</p>
           </div>
         )}
@@ -225,7 +219,7 @@ export default function PlayerMatching() {
         {error && (
           <div className="text-center py-8 sm:py-12 px-4">
             <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">Unable to load games</h3>
+            <h3 className="text-base sm:text-lg font-semibold mb-2">Unable to load bookings</h3>
             <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Please try again later</p>
           </div>
         )}

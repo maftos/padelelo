@@ -19,6 +19,14 @@ export const formatGameDate = (date: Date) => {
   }
 };
 
+export const formatGameDateTime = (date: Date) => {
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const dayName = dayNames[date.getDay()];
+  const time = format(date, "HH:mm");
+  
+  return `${dayName} ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
+};
+
 export const getOrdinalSuffix = (day: number) => {
   if (day > 3 && day < 21) return 'th';
   switch (day % 10) {
@@ -50,7 +58,7 @@ export const formatTimeAgo = (date: Date) => {
 };
 
 export const calculateAverageMMR = (players: Array<{ current_mmr: number } | null>) => {
-  const validPlayers = players.filter(player => player !== null) as Array<{ current_mmr: number }>;
+  const validPlayers = players.filter(player => player !== null && player.current_mmr !== undefined) as Array<{ current_mmr: number }>;
   if (validPlayers.length === 0) return 0;
   const total = validPlayers.reduce((sum, player) => sum + player.current_mmr, 0);
   return Math.round(total / validPlayers.length);
@@ -70,9 +78,8 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
       existingPlayers[index] = {
         id: participant.player_id,
         name: participant.first_name,
-        mmr: participant.current_mmr || 3000, // Default MMR if not available
+        current_mmr: participant.current_mmr || 3000, // Changed from mmr to current_mmr
         avatar: participant.profile_photo,
-        isHost: false // Removed as per requirements
       };
     }
   });
@@ -84,11 +91,11 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
   
   return {
     id: game.booking_id,
-    title: game.title || `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
+    title: game.title || `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open booking`,
     courtName: game.venue_name,
     gameDate,
     spotsAvailable: remainingSpots,
-    description: game.description || "Join this open game and play with other players",
+    description: game.description || "Join this open booking and play with other players",
     publishedAt: createdAt,
     existingPlayers,
     createdBy: game.created_by,
