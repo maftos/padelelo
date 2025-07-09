@@ -22,21 +22,40 @@ interface LocationDetailsStepProps {
   onDataChange: (data: Partial<LocationDetailsData>) => void;
 }
 
+interface Venue {
+  venue_id: string;
+  name: string;
+  region?: string;
+}
+
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
   // Fetch venues from database
   const { data: venues = [], isLoading: isLoadingVenues } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_venues');
+      const { data, error } = await supabase.rpc('get_all_venues');
       if (error) {
         console.error('Error fetching venues:', error);
         throw error;
       }
-      return data as Array<{ venue_id: string; name: string }>;
+      return data as Venue[];
     }
   });
 
   const requiresDetails = !hasAllPlayers;
+
+  // Group venues by region
+  const venuesByRegion = venues.reduce((acc, venue) => {
+    const region = venue.region || 'Other';
+    if (!acc[region]) {
+      acc[region] = [];
+    }
+    acc[region].push(venue);
+    return acc;
+  }, {} as Record<string, Venue[]>);
+
+  const regionOrder = ['North', 'South', 'East', 'West', 'Central', 'Other'];
+  const sortedRegions = regionOrder.filter(region => venuesByRegion[region]?.length > 0);
 
   return (
     <div className="space-y-6">
@@ -73,10 +92,17 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
             } />
           </SelectTrigger>
           <SelectContent>
-            {venues.map((venue) => (
-              <SelectItem key={venue.venue_id} value={venue.venue_id}>
-                {venue.name}
-              </SelectItem>
+            {sortedRegions.map((region) => (
+              <div key={region}>
+                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  {region}
+                </div>
+                {venuesByRegion[region].map((venue) => (
+                  <SelectItem key={venue.venue_id} value={venue.venue_id}>
+                    {venue.name}
+                  </SelectItem>
+                ))}
+              </div>
             ))}
           </SelectContent>
         </Select>

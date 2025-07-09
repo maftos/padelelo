@@ -22,6 +22,7 @@ export interface PadelClub {
   description: string;
   amenities: string[];
   priceRange: string;
+  region?: string;
 }
 
 const PadelCourts = () => {
@@ -53,10 +54,24 @@ const PadelCourts = () => {
     openingHours: Array.isArray(venue.opening_hours) && venue.opening_hours.length > 0 ? 
       venue.opening_hours.map((h: any) => `${h.day}: ${h.hours}`).join(', ') : 
       'Contact for hours',
-    description: `Professional padel facility offering high-quality courts and equipment in Mauritius. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
+    description: `Professional padel facility offering high-quality courts and equipment in ${venue.region || 'Mauritius'}. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
     amenities: ['Equipment Rental', 'Professional Coaching', 'Parking Available', 'Changing Rooms'],
-    priceRange: 'Contact for pricing'
+    priceRange: 'Contact for pricing',
+    region: venue.region
   })) : [];
+
+  // Group clubs by region
+  const clubsByRegion = clubs.reduce((acc, club) => {
+    const region = club.region || 'Other';
+    if (!acc[region]) {
+      acc[region] = [];
+    }
+    acc[region].push(club);
+    return acc;
+  }, {} as Record<string, PadelClub[]>);
+
+  const regionOrder = ['North', 'South', 'East', 'West', 'Central', 'Other'];
+  const sortedRegions = regionOrder.filter(region => clubsByRegion[region]?.length > 0);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -159,131 +174,139 @@ const PadelCourts = () => {
             </Card>
           </div>
 
-          {/* Complete Venue Directory */}
+          {/* Complete Venue Directory by Region */}
           <div className="space-y-6">
             <div>
               <h2 className="text-2xl font-semibold mb-2">Complete Directory of Padel Courts</h2>
               <p className="text-muted-foreground">
-                Browse all available padel courts in Mauritius with detailed information about facilities, 
+                Browse all available padel courts in Mauritius, organized by region, with detailed information about facilities, 
                 contact details, and booking options.
               </p>
             </div>
 
-            <div className="grid gap-6">
-              {clubs.map((club) => (
-                <Card key={club.id} className="overflow-hidden">
-                  <CardHeader>
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                      <div className="space-y-2">
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                          {club.name}
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{club.rating}</span>
+            {sortedRegions.map((region) => (
+              <div key={region} className="space-y-4">
+                <h3 className="text-xl font-semibold text-primary border-b border-border pb-2">
+                  {region} Region
+                </h3>
+                
+                <div className="grid gap-6">
+                  {clubsByRegion[region].map((club) => (
+                    <Card key={club.id} className="overflow-hidden">
+                      <CardHeader>
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                          <div className="space-y-2">
+                            <CardTitle className="flex items-center gap-2 text-xl">
+                              {club.name}
+                              <div className="flex items-center gap-1">
+                                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                <span className="text-sm font-medium">{club.rating}</span>
+                              </div>
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              Professional padel facility in {region}, Mauritius
+                            </CardDescription>
                           </div>
-                        </CardTitle>
-                        <CardDescription className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          Professional padel facility in Mauritius
-                        </CardDescription>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
-                        <Users className="h-4 w-4" />
-                        {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''} available
-                      </div>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-6">
-                    <p className="text-muted-foreground leading-relaxed">
-                      {club.description}
-                    </p>
+                          <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
+                            <Users className="h-4 w-4" />
+                            {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''} available
+                          </div>
+                        </div>
+                      </CardHeader>
+                      
+                      <CardContent className="space-y-6">
+                        <p className="text-muted-foreground leading-relaxed">
+                          {club.description}
+                        </p>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Contact Information */}
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Contact Information</h3>
-                        
-                        {club.phone && (
-                          <div className="flex items-center gap-3">
-                            <Phone className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="font-medium">Phone</p>
-                              <a href={`tel:${club.phone}`} className="text-primary hover:underline">
-                                {club.phone}
-                              </a>
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {/* Contact Information */}
+                          <div className="space-y-4">
+                            <h4 className="font-semibold text-lg">Contact Information</h4>
+                            
+                            {club.phone && (
+                              <div className="flex items-center gap-3">
+                                <Phone className="h-4 w-4 text-primary" />
+                                <div>
+                                  <p className="font-medium">Phone</p>
+                                  <a href={`tel:${club.phone}`} className="text-primary hover:underline">
+                                    {club.phone}
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+
+                            {club.email && (
+                              <div className="flex items-center gap-3">
+                                <Mail className="h-4 w-4 text-primary" />
+                                <div>
+                                  <p className="font-medium">Email</p>
+                                  <a href={`mailto:${club.email}`} className="text-primary hover:underline">
+                                    {club.email}
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+
+                            {club.website && (
+                              <div className="flex items-center gap-3">
+                                <Globe className="h-4 w-4 text-primary" />
+                                <div>
+                                  <p className="font-medium">Website</p>
+                                  <a href={club.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                    Visit Website
+                                  </a>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="flex items-start gap-3">
+                              <Clock className="h-4 w-4 text-primary mt-1" />
+                              <div>
+                                <p className="font-medium">Opening Hours</p>
+                                <p className="text-sm text-muted-foreground">{club.openingHours}</p>
+                              </div>
                             </div>
                           </div>
-                        )}
 
-                        {club.email && (
-                          <div className="flex items-center gap-3">
-                            <Mail className="h-4 w-4 text-primary" />
+                          {/* Facilities & Pricing */}
+                          <div className="space-y-4">
+                            <h4 className="font-semibold text-lg">Facilities & Services</h4>
+                            
                             <div>
-                              <p className="font-medium">Email</p>
-                              <a href={`mailto:${club.email}`} className="text-primary hover:underline">
-                                {club.email}
-                              </a>
+                              <p className="font-medium mb-2">Available Amenities</p>
+                              <div className="flex flex-wrap gap-2">
+                                {club.amenities.map((amenity, index) => (
+                                  <span 
+                                    key={index}
+                                    className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full"
+                                  >
+                                    {amenity}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div>
+                              <p className="font-medium">Pricing</p>
+                              <p className="text-muted-foreground">{club.priceRange}</p>
+                            </div>
+
+                            <div>
+                              <p className="font-medium">Court Booking</p>
+                              <p className="text-sm text-muted-foreground">
+                                Contact the facility directly to book your padel court and check availability.
+                              </p>
                             </div>
                           </div>
-                        )}
-
-                        {club.website && (
-                          <div className="flex items-center gap-3">
-                            <Globe className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="font-medium">Website</p>
-                              <a href={club.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                Visit Website
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex items-start gap-3">
-                          <Clock className="h-4 w-4 text-primary mt-1" />
-                          <div>
-                            <p className="font-medium">Opening Hours</p>
-                            <p className="text-sm text-muted-foreground">{club.openingHours}</p>
-                          </div>
                         </div>
-                      </div>
-
-                      {/* Facilities & Pricing */}
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Facilities & Services</h3>
-                        
-                        <div>
-                          <p className="font-medium mb-2">Available Amenities</p>
-                          <div className="flex flex-wrap gap-2">
-                            {club.amenities.map((amenity, index) => (
-                              <span 
-                                key={index}
-                                className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full"
-                              >
-                                {amenity}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="font-medium">Pricing</p>
-                          <p className="text-muted-foreground">{club.priceRange}</p>
-                        </div>
-
-                        <div>
-                          <p className="font-medium">Court Booking</p>
-                          <p className="text-sm text-muted-foreground">
-                            Contact the facility directly to book your padel court and check availability.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Additional SEO Content */}

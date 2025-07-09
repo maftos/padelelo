@@ -694,6 +694,7 @@ export type Database = {
           opening_hours: Json | null
           phone_number: string | null
           photo_gallery: Json | null
+          region: string | null
           venue_id: string
           website_url: string | null
         }
@@ -706,6 +707,7 @@ export type Database = {
           opening_hours?: Json | null
           phone_number?: string | null
           photo_gallery?: Json | null
+          region?: string | null
           venue_id?: string
           website_url?: string | null
         }
@@ -718,6 +720,7 @@ export type Database = {
           opening_hours?: Json | null
           phone_number?: string | null
           photo_gallery?: Json | null
+          region?: string | null
           venue_id?: string
           website_url?: string | null
         }
