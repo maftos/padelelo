@@ -6,7 +6,7 @@ import { PadelClub } from '@/pages/PadelCourts';
 
 interface PadelMapProps {
   clubs: PadelClub[];
-  onClubSelect: (club: PadelClub) => void;
+  onClubSelect?: (club: PadelClub) => void;
 }
 
 // Mapbox public token
@@ -80,17 +80,34 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
-      // Add click event only
-      markerElement.addEventListener('click', () => {
-        onClubSelect(club);
-        
-        // Fly to location
-        map.current?.flyTo({
-          center: club.coordinates,
-          zoom: 13,
-          duration: 1000
+      // Add popup with club info
+      const popup = new mapboxgl.Popup({
+        offset: 25,
+        closeButton: false,
+        closeOnClick: true
+      }).setHTML(`
+        <div class="p-2">
+          <h3 class="font-semibold text-sm">${club.name}</h3>
+          <p class="text-xs text-gray-600">${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}</p>
+          ${club.phone ? `<p class="text-xs">${club.phone}</p>` : ''}
+        </div>
+      `);
+
+      marker.setPopup(popup);
+
+      // Add click event if callback is provided
+      if (onClubSelect) {
+        markerElement.addEventListener('click', () => {
+          onClubSelect(club);
+          
+          // Fly to location
+          map.current?.flyTo({
+            center: club.coordinates,
+            zoom: 13,
+            duration: 1000
+          });
         });
-      });
+      }
 
       markers.current.push(marker);
     });
@@ -101,7 +118,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     if (map.current) {
       addMarkers();
     }
-  }, [clubs]);
+  }, [clubs, onClubSelect]);
 
   return (
     <div className="relative w-full h-full">
