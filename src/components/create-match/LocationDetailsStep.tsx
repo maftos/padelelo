@@ -44,7 +44,7 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
   // Convert the JSON response to Venue array with proper type checking
   const venues: Venue[] = Array.isArray(venuesResponse) ? 
-    venuesResponse.filter((venue): venue is Venue => 
+    venuesResponse.filter((venue: any): venue is Venue => 
       venue !== null && 
       typeof venue === 'object' && 
       'venue_id' in venue && 
