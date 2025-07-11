@@ -59,23 +59,20 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
     return acc;
   }, {} as Record<string, { team1: [string, string]; team2: [string, string]; results: QueuedResult[] }>);
 
-  // Get the unified order numbers for each result
+  // Get the unified order numbers for each result based on when the score was actually entered
   const getUnifiedOrderNumbers = (groupKey: string) => {
     const group = groupedResults[groupKey];
     const orderNumbers: number[] = [];
     
     group.results.forEach(result => {
-      // Find the corresponding selectedMatchup to get the unified order
-      const matchingMatchup = selectedMatchups.find(matchup => 
-        result.team1[0] === matchup.team1[0] && 
-        result.team1[1] === matchup.team1[1] &&
-        result.team2[0] === matchup.team2[0] && 
-        result.team2[1] === matchup.team2[1] &&
-        result.id.includes(`-${matchup.order}-`)
-      );
-      
-      if (matchingMatchup) {
-        orderNumbers.push(matchingMatchup.order);
+      // Extract the order number from the result ID (format: matchup-X-order-Y-match-Z)
+      const parts = result.id.split('-');
+      const orderIndex = parts.findIndex(part => part === 'order');
+      if (orderIndex !== -1 && orderIndex + 1 < parts.length) {
+        const orderNumber = parseInt(parts[orderIndex + 1]);
+        if (!isNaN(orderNumber)) {
+          orderNumbers.push(orderNumber);
+        }
       }
     });
     
@@ -118,7 +115,7 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
             <CardContent className="p-6">
               <div className="flex items-center justify-between gap-6">
                 {/* Team players - arranged vertically with horizontal teams */}
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-2">
                   {/* Team 1 players - horizontal layout */}
                   <div className="flex items-center gap-4 h-10">
                     <PlayerDisplay playerId={group.team1[0]} />
@@ -136,18 +133,18 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
                 </div>
                 
                 {/* Scores - displayed vertically with unified order numbers, left-aligned */}
-                <div className="flex gap-4">
+                <div className="flex gap-3">
                   {group.results.map((result, index) => (
-                    <div key={index} className="flex flex-col items-start gap-2">
-                      {/* Unified order number */}
-                      <div className="text-xs text-muted-foreground font-medium h-4">
-                        {unifiedOrderNumbers[index]}
+                    <div key={index} className="flex flex-col items-start gap-1">
+                      {/* Unified order number - smaller and less prominent */}
+                      <div className="text-xs text-muted-foreground/70 font-normal h-3 flex items-center">
+                        {unifiedOrderNumbers[index] || ''}
                       </div>
-                      <div className="text-xl font-bold text-green-700 h-7 flex items-center">
+                      <div className="text-lg font-bold text-green-700 h-6 flex items-center">
                         {result.team1Score}
                       </div>
-                      <div className="h-px w-8 bg-border" />
-                      <div className="text-xl font-bold text-green-700 h-7 flex items-center">
+                      <div className="h-px w-6 bg-border" />
+                      <div className="text-lg font-bold text-green-700 h-6 flex items-center">
                         {result.team2Score}
                       </div>
                     </div>
