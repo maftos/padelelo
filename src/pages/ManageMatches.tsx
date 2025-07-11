@@ -45,7 +45,21 @@ const ManageMatches = () => {
     if (!selectedMatchId) return null;
     
     const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
-    return selectedMatch || null;
+    if (!selectedMatch) return null;
+    
+    // Transform the ConfirmedMatch to BookingData format by adding current_mmr
+    return {
+      booking_id: selectedMatch.booking_id,
+      venue_id: selectedMatch.venue_id,
+      start_time: selectedMatch.start_time,
+      title: selectedMatch.title,
+      description: selectedMatch.description,
+      status: selectedMatch.status,
+      participants: selectedMatch.participants.map(participant => ({
+        ...participant,
+        current_mmr: participant.current_mmr || 3000 // Default MMR if missing
+      }))
+    };
   };
 
   // Get match players from the actual match data

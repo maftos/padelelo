@@ -93,7 +93,7 @@ export function useAddResults(bookingData: BookingData) {
       console.log('Scores submitted successfully:', data);
       
       // Cast the response to our expected type
-      const response = data as AddBookingScoresResponse;
+      const response = data as unknown as AddBookingScoresResponse;
       
       if (response && response.success) {
         toast.success(`Successfully saved ${matches.length} match${matches.length > 1 ? 'es' : ''}!`);

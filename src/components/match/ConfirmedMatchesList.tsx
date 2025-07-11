@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,13 +7,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CalendarRange, MapPin, Users } from "lucide-react";
 import { format, parseISO } from 'date-fns';
-import { AddResultsWizard } from "./AddResultsWizard";
 
-const ConfirmedMatchesList = () => {
+interface ConfirmedMatchesListProps {
+  onSelectMatch: (matchId: string) => void;
+  selectedMatchId?: string;
+}
+
+const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: ConfirmedMatchesListProps) => {
   const [confirmedMatches, setConfirmedMatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
 
   useEffect(() => {
     const fetchConfirmedMatches = async () => {
@@ -58,25 +62,7 @@ const ConfirmedMatchesList = () => {
   }, []);
 
   const handleAddResults = (booking: any) => {
-    // Transform booking data to the format expected by AddResultsWizard
-    const bookingData = {
-      booking_id: booking.booking_id,
-      venue_id: booking.venue_id,
-      start_time: booking.start_time,
-      title: booking.title,
-      description: booking.description,
-      status: booking.status,
-      participants: booking.participants || []
-    };
-    
-    // Transform participants to players format
-    const players = (booking.participants || []).map((p: any) => ({
-      id: p.player_id,
-      name: `${p.first_name} ${p.last_name}`.trim() || 'Unknown',
-      photo: p.profile_photo
-    }));
-
-    setSelectedBooking({ bookingData, players });
+    onSelectMatch(booking.booking_id);
   };
 
   const getInitials = (name: string) => {
@@ -162,14 +148,6 @@ const ConfirmedMatchesList = () => {
         <div className="rounded-md border border-border p-4 text-sm text-muted-foreground">
           No confirmed matches found.
         </div>
-      )}
-      
-      {selectedBooking && (
-        <AddResultsWizard
-          bookingData={selectedBooking.bookingData}
-          players={selectedBooking.players}
-          onClose={() => setSelectedBooking(null)}
-        />
       )}
     </div>
   );
