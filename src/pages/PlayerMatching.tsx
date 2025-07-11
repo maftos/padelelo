@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNotificationModal";
-import { JoinGameDrawer } from "@/components/JoinGameDrawer";
+import { JoinGameResponsive } from "@/components/JoinGameResponsive";
 import { AddOpenMatchWizard } from "@/components/AddOpenMatchWizard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePublicOpenGames } from "@/hooks/use-public-open-games";
@@ -13,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function PlayerMatching() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
-  const [joinGameDrawerOpen, setJoinGameDrawerOpen] = useState(false);
+  const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
   const [addMatchWizardOpen, setAddMatchWizardOpen] = useState(false);
   const [selectedGamePost, setSelectedGamePost] = useState<any>(null);
   const [sortBy, setSortBy] = useState("newest");
@@ -28,11 +28,11 @@ export default function PlayerMatching() {
   ];
 
   const handleJoinGame = (postId: string) => {
-    console.log("Opening join drawer for game:", postId);
+    console.log("Opening join modal for game:", postId);
     const gamePost = transformedGames.find(post => post.id === postId);
     if (gamePost) {
       setSelectedGamePost(gamePost);
-      setJoinGameDrawerOpen(true);
+      setJoinGameModalOpen(true);
     }
   };
 
@@ -228,9 +228,9 @@ export default function PlayerMatching() {
           onOpenChange={setNotificationModalOpen}
         />
 
-        <JoinGameDrawer
-          open={joinGameDrawerOpen}
-          onOpenChange={setJoinGameDrawerOpen}
+        <JoinGameResponsive
+          open={joinGameModalOpen}
+          onOpenChange={setJoinGameModalOpen}
           gamePost={selectedGamePost}
         />
 
