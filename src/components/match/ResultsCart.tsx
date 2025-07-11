@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,16 +40,16 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
   };
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col gap-2">
       {team.map((playerId) => (
         <div key={playerId} className="flex items-center gap-2">
-          <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+          <Avatar className="h-8 w-8">
             <AvatarImage src={getPlayerPhoto(playerId)} />
-            <AvatarFallback className="text-xs sm:text-sm">
+            <AvatarFallback className="text-xs">
               {getInitials(getPlayerName(playerId))}
             </AvatarFallback>
           </Avatar>
-          <span className="text-xs sm:text-sm font-medium">
+          <span className="text-sm font-medium">
             {getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}
           </span>
         </div>
@@ -57,9 +58,9 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
   );
 
   const handleScoreChange = (resultId: string, team: 'team1' | 'team2', value: string) => {
-    // Prevent non-numeric input, negative numbers, and numbers > 99
+    // Prevent non-numeric input, negative numbers, and numbers > 9
     const numValue = parseInt(value) || 0;
-    if (numValue < 0 || numValue > 99) return;
+    if (numValue < 0 || numValue > 9) return;
     
     // This would need to be implemented to update the scores in the parent component
     // For now, we'll keep it as display only since the user didn't ask for edit functionality
@@ -74,7 +75,7 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
   }
 
   return (
-    <div className="space-y-4 max-w-lg mx-auto px-4">
+    <div className="space-y-4 max-w-2xl mx-auto px-4">
       <div className="text-center text-sm text-muted-foreground mb-4">
         {queuedResults.length} match{queuedResults.length > 1 ? 'es' : ''} ready to save
       </div>
@@ -90,51 +91,57 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
             <X className="h-3 w-3" />
           </Button>
           
-          <CardContent className="p-6 sm:p-8">
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 items-center">
-              {/* Team 1 */}
-              <div className="flex flex-col items-center space-y-4">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between gap-4 mb-4">
+              {/* Team 1 players */}
+              <div className="flex-1">
                 <TeamDisplay team={result.team1} />
-                <div className="w-full max-w-16">
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={result.team1Score}
-                    onChange={(e) => handleScoreChange(result.id, 'team1', e.target.value)}
-                    className="w-full text-center text-xl sm:text-2xl font-bold h-12 sm:h-14 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
-                    min="0"
-                    max="99"
-                    readOnly
-                  />
-                </div>
               </div>
               
-              {/* VS Divider with Scores */}
-              <div className="flex flex-col items-center justify-center">
-                <div className="text-lg sm:text-xl font-bold text-muted-foreground mb-4">VS</div>
-                <div className="text-sm text-muted-foreground">
-                  Match {index + 1}
-                </div>
+              {/* Team 1 score */}
+              <div>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={result.team1Score}
+                  onChange={(e) => handleScoreChange(result.id, 'team1', e.target.value)}
+                  className="w-12 text-center text-xl font-bold h-12"
+                  min="0"
+                  max="9"
+                  readOnly
+                />
               </div>
               
-              {/* Team 2 */}
-              <div className="flex flex-col items-center space-y-4">
+              {/* VS */}
+              <div className="text-lg font-bold text-muted-foreground px-2">
+                VS
+              </div>
+              
+              {/* Team 2 score */}
+              <div>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={result.team2Score}
+                  onChange={(e) => handleScoreChange(result.id, 'team2', e.target.value)}
+                  className="w-12 text-center text-xl font-bold h-12"
+                  min="0"
+                  max="9"
+                  readOnly
+                />
+              </div>
+              
+              {/* Team 2 players */}
+              <div className="flex-1 flex justify-end">
                 <TeamDisplay team={result.team2} />
-                <div className="w-full max-w-16">
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={result.team2Score}
-                    onChange={(e) => handleScoreChange(result.id, 'team2', e.target.value)}
-                    className="w-full text-center text-xl sm:text-2xl font-bold h-12 sm:h-14 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [-moz-appearance:textfield]"
-                    min="0"
-                    max="99"
-                    readOnly
-                  />
-                </div>
               </div>
+            </div>
+            
+            {/* Match number */}
+            <div className="text-center text-sm text-muted-foreground">
+              Match {index + 1}
             </div>
           </CardContent>
         </Card>
