@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -111,7 +112,7 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
         
         return (
           <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
-            <CardContent className="p-6 relative">
+            <CardContent className="p-6">
               <div className="flex items-center justify-between gap-6">
                 {/* Team players - arranged vertically with horizontal teams */}
                 <div className="flex flex-col gap-2">
@@ -120,6 +121,9 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
                     <PlayerDisplay playerId={group.team1[0]} />
                     <PlayerDisplay playerId={group.team1[1]} />
                   </div>
+                  
+                  {/* Divider */}
+                  <div className="h-px bg-border" />
                   
                   {/* Team 2 players - horizontal layout */}
                   <div className="flex items-center gap-4 h-10">
@@ -139,6 +143,7 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
                       <div className="text-lg font-bold text-green-700 h-6 flex items-center">
                         {result.team1Score}
                       </div>
+                      <div className="h-px w-6 bg-border" />
                       <div className="text-lg font-bold text-green-700 h-6 flex items-center">
                         {result.team2Score}
                       </div>
@@ -146,9 +151,6 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
                   ))}
                 </div>
               </div>
-              
-              {/* Extended horizontal divider that spans the full width */}
-              <div className="absolute left-6 right-6 top-1/2 transform -translate-y-1/2 h-px bg-border" />
             </CardContent>
           </Card>
         );
