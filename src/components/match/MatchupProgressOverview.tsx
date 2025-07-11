@@ -1,8 +1,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Check } from "lucide-react";
 
 interface Player {
   id: string;
@@ -69,16 +67,19 @@ export const MatchupProgressOverview = ({
     return "pending";
   };
 
-  const TeamPhotos = ({ team }: { team: [string, string] }) => (
-    <div className="flex flex-col gap-1">
-      {team.map((playerId) => (
-        <Avatar key={playerId} className="h-4 w-4">
-          <AvatarImage src={getPlayerPhoto(playerId)} />
-          <AvatarFallback className="text-[8px]">
-            {getInitials(getPlayerName(playerId))}
-          </AvatarFallback>
-        </Avatar>
-      ))}
+  const PlayerAvatar = ({ playerId }: { playerId: string }) => (
+    <Avatar className="h-4 w-4">
+      <AvatarImage src={getPlayerPhoto(playerId)} />
+      <AvatarFallback className="text-[8px]">
+        {getInitials(getPlayerName(playerId))}
+      </AvatarFallback>
+    </Avatar>
+  );
+
+  const TeamRow = ({ team }: { team: [string, string] }) => (
+    <div className="flex items-center gap-1">
+      <PlayerAvatar playerId={team[0]} />
+      <PlayerAvatar playerId={team[1]} />
     </div>
   );
 
@@ -98,7 +99,7 @@ export const MatchupProgressOverview = ({
             <Card
               key={`${matchup.id}-${matchup.order}`}
               className={`
-                min-w-[120px] cursor-pointer transition-all duration-200 relative
+                min-w-[100px] cursor-pointer transition-all duration-200
                 ${status === "current" 
                   ? "ring-2 ring-primary bg-primary/5" 
                   : status === "completed" 
@@ -109,30 +110,24 @@ export const MatchupProgressOverview = ({
               onClick={() => onMatchupClick?.(index)}
             >
               <CardContent className="p-3">
-                <div className="flex items-center justify-between mb-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {matchup.order}
-                  </Badge>
-                  {status === "completed" && (
-                    <div className="h-4 w-4 bg-green-500 rounded-full flex items-center justify-center">
-                      <Check className="h-2.5 w-2.5 text-white" />
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <TeamRow team={matchup.team1} />
+                    <div className="w-px h-4 bg-border mx-2" />
+                    <TeamRow team={matchup.team2} />
+                  </div>
+                  
+                  {result && (
+                    <div className="text-center">
+                      <div className="text-xs font-medium text-green-700">
+                        {result.team1Score}
+                      </div>
+                      <div className="text-xs font-medium text-green-700">
+                        {result.team2Score}
+                      </div>
                     </div>
                   )}
                 </div>
-                
-                <div className="flex items-center justify-between gap-2">
-                  <TeamPhotos team={matchup.team1} />
-                  <div className="text-xs text-muted-foreground">VS</div>
-                  <TeamPhotos team={matchup.team2} />
-                </div>
-                
-                {result && (
-                  <div className="mt-2 text-center">
-                    <div className="text-xs font-medium text-green-700">
-                      {result.team1Score} - {result.team2Score}
-                    </div>
-                  </div>
-                )}
               </CardContent>
             </Card>
           );
