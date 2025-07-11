@@ -18,19 +18,11 @@ interface SelectedMatchup {
   order: number;
 }
 
-interface QueuedResult {
-  id: string;
-  team1: [string, string];
-  team2: [string, string];
-  team1Score: number;
-  team2Score: number;
-}
-
 interface ScoreEntryStepProps {
   players: Player[];
   selectedMatchups: SelectedMatchup[];
   currentIndex?: number;
-  onAddResult: (result: QueuedResult) => void;
+  onAddResult: (team1Score: number, team2Score: number) => void;
   onIndexChange?: (index: number) => void;
 }
 
@@ -82,17 +74,17 @@ export const ScoreEntryStep = ({
   if (!currentMatchup) return null;
 
   const handleTeam1ScoreChange = (value: string) => {
-    // Prevent non-numeric input, negative numbers, and numbers > 9
+    // Prevent non-numeric input, negative numbers, and numbers > 99
     const numValue = parseInt(value) || 0;
-    if (value === "" || (numValue >= 0 && numValue <= 9)) {
+    if (value === "" || (numValue >= 0 && numValue <= 99)) {
       setTeam1Score(value);
     }
   };
 
   const handleTeam2ScoreChange = (value: string) => {
-    // Prevent non-numeric input, negative numbers, and numbers > 9
+    // Prevent non-numeric input, negative numbers, and numbers > 99
     const numValue = parseInt(value) || 0;
-    if (value === "" || (numValue >= 0 && numValue <= 9)) {
+    if (value === "" || (numValue >= 0 && numValue <= 99)) {
       setTeam2Score(value);
     }
   };
@@ -121,15 +113,8 @@ export const ScoreEntryStep = ({
 
     setIsSubmitting(true);
     
-    const result: QueuedResult = {
-      id: `${currentMatchup.id}-${currentMatchup.order}-${Date.now()}`,
-      team1: currentMatchup.team1,
-      team2: currentMatchup.team2,
-      team1Score: score1,
-      team2Score: score2
-    };
-    
-    onAddResult(result);
+    // Call the parent handler with the scores
+    onAddResult(score1, score2);
     
     // Small delay to show the submission state
     setTimeout(() => {
@@ -188,7 +173,7 @@ export const ScoreEntryStep = ({
                 placeholder="0"
                 className="w-12 text-center text-xl font-bold h-12"
                 min="0"
-                max="9"
+                max="99"
               />
             </div>
             
@@ -210,7 +195,7 @@ export const ScoreEntryStep = ({
                 placeholder="0"
                 className="w-12 text-center text-xl font-bold h-12"
                 min="0"
-                max="9"
+                max="99"
               />
             </div>
             

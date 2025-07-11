@@ -776,6 +776,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_booking_scores: {
+        Args: { p_user_id: string; p_booking_id: string; p_scores: Json }
+        Returns: Json
+      }
       apply_to_tournament: {
         Args: {
           p_tournament_id: string

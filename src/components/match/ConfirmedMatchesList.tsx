@@ -1,146 +1,178 @@
-
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
-import { Clock, Users, MapPin } from "lucide-react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CalendarRange, MapPin, Users } from "lucide-react";
+import { format, parseISO } from 'date-fns';
+import { AddResultsWizard } from "./AddResultsWizard";
 
-interface ConfirmedMatchesListProps {
-  onSelectMatch: (matchId: string) => void;
-  selectedMatchId?: string;
-}
+const ConfirmedMatchesList = () => {
+  const [confirmedMatches, setConfirmedMatches] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<any>(null);
 
-export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: ConfirmedMatchesListProps) => {
-  const { confirmedMatches, isLoading } = useConfirmedMatches();
-  const navigate = useNavigate();
+  useEffect(() => {
+    const fetchConfirmedMatches = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from('bookings')
+          .select(`
+            booking_id,
+            venue_id,
+            start_time,
+            title,
+            description,
+            status,
+            participants (
+              player_id,
+              first_name,
+              last_name,
+              profile_photo,
+              current_mmr
+            )
+          `)
+          .eq('status', 'CONFIRMED');
 
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
+        if (error) {
+          console.error("Error fetching confirmed matches:", error);
+          setError(error.message);
+          toast.error("Failed to load confirmed matches: " + error.message);
+        } else {
+          setConfirmedMatches(data || []);
+        }
+      } catch (err: any) {
+        console.error("Unexpected error fetching confirmed matches:", err);
+        setError(err.message);
+        toast.error("Failed to load confirmed matches: " + err.message);
+      } finally {
+        setLoading(false);
+      }
     };
-    const formattedDate = date.toLocaleDateString('en-GB', options);
-    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    fetchConfirmedMatches();
+  }, []);
+
+  const handleAddResults = (booking: any) => {
+    // Transform booking data to the format expected by AddResultsWizard
+    const bookingData = {
+      booking_id: booking.booking_id,
+      venue_id: booking.venue_id,
+      start_time: booking.start_time,
+      title: booking.title,
+      description: booking.description,
+      status: booking.status,
+      participants: booking.participants || []
+    };
     
-    // Add ordinal suffix to day
-    const day = date.getDate();
-    const suffix = day % 10 === 1 && day !== 11 ? 'st' : 
-                   day % 10 === 2 && day !== 12 ? 'nd' : 
-                   day % 10 === 3 && day !== 13 ? 'rd' : 'th';
-    
-    return formattedDate.replace(`${day}`, `${day}${suffix}`) + ` @ ${time}`;
+    // Transform participants to players format
+    const players = (booking.participants || []).map((p: any) => ({
+      id: p.player_id,
+      name: `${p.first_name} ${p.last_name}`.trim() || 'Unknown',
+      photo: p.profile_photo
+    }));
+
+    setSelectedBooking({ bookingData, players });
   };
 
-  const getInitials = (firstName: string, lastName: string) => {
-    return `${firstName[0] || ''}${lastName[0] || ''}`.toUpperCase();
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
-  const handleAddResults = (bookingId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    onSelectMatch(bookingId);
-  };
+  const MatchItem = ({ match }: { match: any }) => (
+    <li key={match.booking_id} className="border rounded-md p-4 bg-white shadow-sm">
+      <div className="grid gap-1">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-lg">{match.title}</h3>
+          <Badge variant="secondary">{match.status}</Badge>
+        </div>
 
-  const handleEdit = (bookingId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/edit-match/${bookingId}`);
-  };
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <CalendarRange className="h-4 w-4" />
+          {format(parseISO(match.start_time), 'PPP')}
+        </div>
 
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        <div className="animate-pulse text-muted-foreground">Loading matches...</div>
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <MapPin className="h-4 w-4" />
+          {match.venue_id || 'Location TBD'}
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Users className="h-4 w-4" />
+          {match.participants?.length || 0} Players
+        </div>
+
+        <div className="mt-4 flex justify-end">
+          <button
+            onClick={() => handleAddResults(match)}
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
+            Add Results
+          </button>
+        </div>
       </div>
-    );
-  }
+    </li>
+  );
 
-  if (confirmedMatches.length === 0) {
-    return (
-      <div className="text-center py-8">
-        <div className="text-muted-foreground">No confirmed matches</div>
-        <p className="text-sm text-muted-foreground mt-1">Create a match to get started</p>
+  const MatchItemSkeleton = () => (
+    <li className="border rounded-md p-4 bg-white shadow-sm">
+      <div className="grid gap-2">
+        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-6 w-1/2" />
+        <Skeleton className="h-6 w-1/3" />
+        <div className="mt-4 flex justify-end">
+          <Skeleton className="h-10 w-24" />
+        </div>
       </div>
-    );
-  }
+    </li>
+  );
 
   return (
-    <div className="space-y-3">
-      {confirmedMatches.map((match) => {
-        const formattedDateTime = formatDateTime(match.start_time);
-        
-        return (
-          <Card
-            key={match.booking_id}
-            className={`transition-all ${
-              selectedMatchId === match.booking_id 
-                ? "ring-2 ring-primary bg-primary/5" 
-                : "hover:shadow-md"
-            }`}
-          >
-            <CardContent className="p-3 sm:p-4">
-              <div className="space-y-3">
-                <div className="space-y-2">
-                  <div className="flex items-start gap-2">
-                    <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="font-medium text-sm sm:text-base leading-tight">{formattedDateTime}</span>
-                  </div>
-                  
-                  <div className="flex items-start gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm text-muted-foreground leading-tight">{match.venue_name}</span>
-                  </div>
-                </div>
-                
-                {/* Players - Mobile optimized */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Users className="h-3 w-3" />
-                    <span>Players</span>
-                  </div>
-                  
-                  <div className="flex flex-wrap items-center gap-2">
-                    {match.participants.map((participant, index) => (
-                      <div key={participant.player_id} className="flex items-center gap-1.5">
-                        <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                          <AvatarImage src={participant.profile_photo} />
-                          <AvatarFallback className="text-xs">
-                            {getInitials(participant.first_name, participant.last_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="text-xs sm:text-sm font-medium">{participant.first_name}</span>
-                        {index < match.participants.length - 1 && (
-                          <span className="text-muted-foreground text-xs mx-0.5">•</span>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold">Confirmed Matches</h2>
+        <p className="text-muted-foreground">
+          Here are the matches that have been confirmed and are awaiting results.
+        </p>
+      </div>
 
-                {/* CTAs - Side by side on mobile */}
-                <div className="flex gap-2 pt-2 border-t">
-                  <Button 
-                    onClick={(e) => handleAddResults(match.booking_id, e)}
-                    className="flex-1 h-8 sm:h-9"
-                    size="sm"
-                  >
-                    <span className="text-xs sm:text-sm">Add Scores</span>
-                  </Button>
-                  <Button 
-                    onClick={(e) => handleEdit(match.booking_id, e)}
-                    variant="outline"
-                    className="flex-1 h-8 sm:h-9"
-                    size="sm"
-                  >
-                    <span className="text-xs sm:text-sm">Edit</span>
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {error && (
+        <div className="rounded-md border border-destructive p-4 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
+      {loading ? (
+        <ul className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <MatchItemSkeleton key={i} />
+          ))}
+        </ul>
+      ) : confirmedMatches.length > 0 ? (
+        <ul className="space-y-4">
+          {confirmedMatches.map(match => (
+            <MatchItem key={match.booking_id} match={match} />
+          ))}
+        </ul>
+      ) : (
+        <div className="rounded-md border border-border p-4 text-sm text-muted-foreground">
+          No confirmed matches found.
+        </div>
+      )}
+      
+      {selectedBooking && (
+        <AddResultsWizard
+          bookingData={selectedBooking.bookingData}
+          players={selectedBooking.players}
+          onClose={() => setSelectedBooking(null)}
+        />
+      )}
     </div>
   );
 };
+
+export default ConfirmedMatchesList;
