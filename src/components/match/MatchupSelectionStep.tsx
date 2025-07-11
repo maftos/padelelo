@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ interface SelectedMatchup {
   team1: [string, string];
   team2: [string, string];
   order: number;
+  matchNumber: number;
 }
 
 interface MatchupSelectionStepProps {
@@ -23,7 +25,12 @@ interface MatchupSelectionStepProps {
 
 export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelect }: MatchupSelectionStepProps) => {
   const getPlayerName = (playerId: string) => {
-    return players.find(p => p.id === playerId)?.name || "Unknown";
+    const player = players.find(p => p.id === playerId);
+    if (!player) return "Unknown";
+    
+    // Extract only the first name
+    const firstName = player.name.split(' ')[0];
+    return firstName === "Me" ? "You" : firstName;
   };
 
   const getPlayerPhoto = (playerId: string) => {
@@ -58,8 +65,11 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
 
   const possibleMatchups = generatePossibleMatchups();
 
-  const getMatchupSelectionCount = (matchupId: string) => {
-    return selectedMatchups.filter(m => m.id === matchupId).length;
+  // Get the match numbers for this specific matchup
+  const getMatchupNumbers = (matchupId: string) => {
+    return selectedMatchups
+      .filter(m => m.id === matchupId)
+      .map(m => m.matchNumber);
   };
 
   const handleMatchupClick = (matchup: typeof possibleMatchups[0]) => {
@@ -80,7 +90,7 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
               {getInitials(getPlayerName(playerId))}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium">{getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}</span>
+          <span className="text-sm font-medium">{getPlayerName(playerId)}</span>
           {index === 0 && <span className="text-muted-foreground">&</span>}
         </div>
       ))}
@@ -90,7 +100,7 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
   return (
     <div className="space-y-4 max-w-md mx-auto">
       {possibleMatchups.map((matchup) => {
-        const selectionCount = getMatchupSelectionCount(matchup.id);
+        const matchNumbers = getMatchupNumbers(matchup.id);
         
         return (
           <Card 
@@ -98,12 +108,17 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
             className="border-dashed hover:bg-accent/50 cursor-pointer hover:shadow-md transition-all duration-300 relative"
             onClick={() => handleMatchupClick(matchup)}
           >
-            {selectionCount > 0 && (
-              <Badge 
-                className="absolute -top-2 -right-2 z-10 bg-primary text-primary-foreground min-w-6 h-6 flex items-center justify-center rounded-full"
-              >
-                {selectionCount}
-              </Badge>
+            {matchNumbers.length > 0 && (
+              <div className="absolute -top-2 -right-2 z-10 flex flex-wrap gap-1">
+                {matchNumbers.map((matchNumber, index) => (
+                  <Badge 
+                    key={index}
+                    className="bg-primary text-primary-foreground min-w-6 h-6 flex items-center justify-center rounded-full"
+                  >
+                    {matchNumber}
+                  </Badge>
+                ))}
+              </div>
             )}
             <CardContent className="p-6">
               <div className="flex items-center justify-between">

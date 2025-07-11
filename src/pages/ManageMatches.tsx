@@ -1,4 +1,3 @@
-
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -9,6 +8,7 @@ import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsResponsive";
 import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
+import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
@@ -16,6 +16,7 @@ const ManageMatches = () => {
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
   const [showAddResults, setShowAddResults] = useState(false);
+  const { confirmedMatches } = useConfirmedMatches();
 
   const handleSelectMatch = (matchId: string) => {
     setSelectedMatchId(matchId);
@@ -38,17 +39,20 @@ const ManageMatches = () => {
     return 3; // Mock value
   };
 
-  // Mock function to get match players - this will be updated when integrating with real data
+  // Get match players from the actual match data
   const getMatchPlayers = () => {
     if (!selectedMatchId) return [];
     
-    // Mock data for now - will be replaced with real data later
-    return [
-      { id: "player1", name: "John Doe" },
-      { id: "player2", name: "Jane Smith" },
-      { id: "player3", name: "Mike Johnson" },
-      { id: "player4", name: "Sarah Wilson" }
-    ];
+    // Find the selected match from confirmed matches
+    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
+    if (!selectedMatch) return [];
+    
+    // Convert participants to the expected format with first names only
+    return selectedMatch.participants.map(participant => ({
+      id: participant.player_id,
+      name: participant.first_name, // Use only first name
+      photo: participant.profile_photo
+    }));
   };
 
   // Show Add Results wizard if a match is selected

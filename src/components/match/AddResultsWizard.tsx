@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,7 @@ interface SelectedMatchup {
   team1: [string, string];
   team2: [string, string];
   order: number;
+  matchNumber: number; // New field to track which match number this is
 }
 
 interface AddResultsWizardProps {
@@ -44,8 +46,12 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
   } = useAddResults(matchId);
 
   const handleMatchupSelect = (matchup: { id: string; team1: [string, string]; team2: [string, string] }) => {
+    // Count how many times this specific matchup has been selected
+    const existingCount = selectedMatchups.filter(m => m.id === matchup.id).length;
+    const matchNumber = existingCount + 1;
+    
     const order = selectedMatchups.length + 1;
-    setSelectedMatchups(prev => [...prev, { ...matchup, order }]);
+    setSelectedMatchups(prev => [...prev, { ...matchup, order, matchNumber }]);
   };
 
   const handleAddResult = (result: QueuedResult) => {
