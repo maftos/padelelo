@@ -38,6 +38,11 @@ interface BookingData {
   }>;
 }
 
+interface AddBookingScoresResponse {
+  success: boolean;
+  message?: string;
+}
+
 export function useAddResults(bookingData: BookingData) {
   const [matchups, setMatchups] = useState<Matchup[]>([]);
   const [queuedResults, setQueuedResults] = useState<QueuedResult[]>([]);
@@ -72,7 +77,7 @@ export function useAddResults(bookingData: BookingData) {
       const { data, error } = await supabase.rpc('add_booking_scores', {
         p_user_id: bookingData.participants[0]?.player_id, // Use first participant as submitter
         p_booking_id: bookingData.booking_id,
-        p_scores: payload
+        p_scores: payload as any // Cast to any to satisfy Json type requirement
       });
 
       if (error) {
@@ -84,12 +89,15 @@ export function useAddResults(bookingData: BookingData) {
 
       console.log('Scores submitted successfully:', data);
       
-      if (data.success) {
+      // Type assertion for the response data
+      const response = data as unknown as AddBookingScoresResponse;
+      
+      if (response && response.success) {
         toast.success(`Successfully saved ${matches.length} match${matches.length > 1 ? 'es' : ''}!`);
         setIsSubmitting(false);
         return true;
       } else {
-        toast.error(data.message || "Failed to save results");
+        toast.error(response?.message || "Failed to save results");
         setIsSubmitting(false);
         return false;
       }
