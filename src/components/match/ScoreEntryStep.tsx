@@ -147,13 +147,13 @@ export const ScoreEntryStep = ({
     <div className="flex flex-col gap-2">
       {team.map((playerId) => (
         <div key={playerId} className="flex items-center gap-2">
-          <Avatar className="h-8 w-8 flex-shrink-0">
+          <Avatar className="h-8 w-8">
             <AvatarImage src={getPlayerPhoto(playerId)} />
             <AvatarFallback className="text-xs">
               {getInitials(getPlayerName(playerId))}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium truncate">
+          <span className="text-sm font-medium">
             {getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}
           </span>
         </div>
@@ -168,75 +168,65 @@ export const ScoreEntryStep = ({
       </div>
       
       <Card className="border-primary bg-primary/5 shadow-lg">
-        <CardContent className="p-4 sm:p-6">
-          {/* Mobile-optimized layout */}
-          <div className="space-y-6">
-            {/* Team 1 */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <TeamDisplay team={currentMatchup.team1} />
-                </div>
-                <div className="flex-shrink-0">
-                  <Input
-                    ref={team1InputRef}
-                    type="number"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={team1Score}
-                    onChange={(e) => handleTeam1ScoreChange(e.target.value)}
-                    onKeyDown={handleTeam1KeyDown}
-                    placeholder="0"
-                    className="w-16 h-16 text-center text-2xl font-bold border-2"
-                    min="0"
-                    max="9"
-                  />
-                </div>
-              </div>
+        <CardContent className="p-6 sm:p-8">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            {/* Team 1 players */}
+            <div className="flex-1">
+              <TeamDisplay team={currentMatchup.team1} />
             </div>
-
-            {/* Divider */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground font-semibold">VS</span>
-              </div>
+            
+            {/* Team 1 score */}
+            <div>
+              <Input
+                ref={team1InputRef}
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={team1Score}
+                onChange={(e) => handleTeam1ScoreChange(e.target.value)}
+                onKeyDown={handleTeam1KeyDown}
+                placeholder="0"
+                className="w-12 text-center text-xl font-bold h-12"
+                min="0"
+                max="9"
+              />
             </div>
-
-            {/* Team 2 */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <TeamDisplay team={currentMatchup.team2} />
-                </div>
-                <div className="flex-shrink-0">
-                  <Input
-                    ref={team2InputRef}
-                    type="number"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    value={team2Score}
-                    onChange={(e) => handleTeam2ScoreChange(e.target.value)}
-                    onKeyDown={handleTeam2KeyDown}
-                    placeholder="0"
-                    className="w-16 h-16 text-center text-2xl font-bold border-2"
-                    min="0"
-                    max="9"
-                  />
-                </div>
-              </div>
+            
+            {/* VS */}
+            <div className="text-lg font-bold text-muted-foreground px-2">
+              VS
+            </div>
+            
+            {/* Team 2 score */}
+            <div>
+              <Input
+                ref={team2InputRef}
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={team2Score}
+                onChange={(e) => handleTeam2ScoreChange(e.target.value)}
+                onKeyDown={handleTeam2KeyDown}
+                placeholder="0"
+                className="w-12 text-center text-xl font-bold h-12"
+                min="0"
+                max="9"
+              />
+            </div>
+            
+            {/* Team 2 players */}
+            <div className="flex-1 flex justify-end">
+              <TeamDisplay team={currentMatchup.team2} />
             </div>
           </div>
-
+          
           {/* Save button */}
-          <div className="mt-8 flex justify-center">
+          <div className="flex justify-center">
             <Button
               onClick={handleSubmit}
               disabled={!canSubmit}
               className={`
-                w-full max-w-xs h-12 text-base font-semibold transition-all duration-200
+                w-full max-w-xs h-10 sm:h-12 text-sm sm:text-base font-semibold transition-all duration-200
                 ${canSubmit 
                   ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
                   : "bg-muted text-muted-foreground cursor-not-allowed"
@@ -252,7 +242,7 @@ export const ScoreEntryStep = ({
       {/* Instructions */}
       <div className="text-center text-xs sm:text-sm text-muted-foreground space-y-1">
         <p>Enter scores and press Enter to move to next field</p>
-        <p>Or tap Save to confirm this match result</p>
+        <p>Or click Save to confirm this match result</p>
       </div>
     </div>
   );
