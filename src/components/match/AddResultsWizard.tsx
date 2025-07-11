@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -132,13 +133,13 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
         </div>
       </div>
 
-      {/* Progress Overview - Show in scoring and preview steps */}
-      {(currentStep === "scoring" || currentStep === "preview") && (
+      {/* Progress Overview - Show only in scoring step, not in preview */}
+      {currentStep === "scoring" && (
         <MatchupProgressOverview
           players={players}
           selectedMatchups={selectedMatchups}
           queuedResults={queuedResults}
-          currentIndex={currentStep === "scoring" ? currentMatchupIndex : undefined}
+          currentIndex={currentMatchupIndex}
           onMatchupClick={handleJumpToMatchup}
         />
       )}
@@ -168,6 +169,7 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
             <ResultsCart
               queuedResults={queuedResults}
               players={players}
+              selectedMatchups={selectedMatchups}
               onRemoveResult={handleRemoveResult}
             />
           )}
