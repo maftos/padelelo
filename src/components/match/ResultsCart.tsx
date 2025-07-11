@@ -59,22 +59,25 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
     return acc;
   }, {} as Record<string, { team1: [string, string]; team2: [string, string]; results: QueuedResult[] }>);
 
-  // Get the unified order numbers for each result based on when the score was actually entered
+  // Get the unified order numbers for each result based on selectedMatchups order
   const getUnifiedOrderNumbers = (groupKey: string) => {
     const group = groupedResults[groupKey];
     const orderNumbers: number[] = [];
     
-    group.results.forEach(result => {
-      // Extract the order number from the result ID (format: matchup-X-order-Y-match-Z)
-      const parts = result.id.split('-');
-      const orderIndex = parts.findIndex(part => part === 'order');
-      if (orderIndex !== -1 && orderIndex + 1 < parts.length) {
-        const orderNumber = parseInt(parts[orderIndex + 1]);
-        if (!isNaN(orderNumber)) {
-          orderNumbers.push(orderNumber);
-        }
-      }
-    });
+    // Find matching selectedMatchups for this group and get their order numbers
+    const matchingMatchups = selectedMatchups.filter(matchup => 
+      matchup.team1[0] === group.team1[0] && 
+      matchup.team1[1] === group.team1[1] && 
+      matchup.team2[0] === group.team2[0] && 
+      matchup.team2[1] === group.team2[1]
+    );
+    
+    // Sort by order and map to order numbers
+    matchingMatchups
+      .sort((a, b) => a.order - b.order)
+      .forEach(matchup => {
+        orderNumbers.push(matchup.order);
+      });
     
     return orderNumbers;
   };
@@ -113,38 +116,43 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
         return (
           <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
             <CardContent className="p-6">
-              <div className="flex items-center justify-between gap-6 relative">
-                {/* Team players - arranged vertically with horizontal teams */}
-                <div className="flex flex-col gap-2 flex-1">
-                  {/* Team 1 players - horizontal layout */}
-                  <div className="flex items-center gap-4 h-10">
+              <div className="grid grid-cols-[1fr,auto] gap-6 items-center">
+                {/* Team players section */}
+                <div className="space-y-2">
+                  {/* Team 1 players */}
+                  <div className="flex items-center gap-4 h-10 border-b border-border pb-2">
                     <PlayerDisplay playerId={group.team1[0]} />
                     <PlayerDisplay playerId={group.team1[1]} />
                   </div>
                   
-                  {/* Team 2 players - horizontal layout */}
-                  <div className="flex items-center gap-4 h-10">
+                  {/* Team 2 players */}
+                  <div className="flex items-center gap-4 h-10 pt-2">
                     <PlayerDisplay playerId={group.team2[0]} />
                     <PlayerDisplay playerId={group.team2[1]} />
                   </div>
                 </div>
                 
-                {/* Extended horizontal divider that separates teams and scores */}
-                <div className="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-px bg-border" />
-                
-                {/* Scores - displayed vertically with unified order numbers */}
-                <div className="flex gap-3 relative z-10 bg-card pl-4">
+                {/* Scores section */}
+                <div className="flex gap-4">
                   {group.results.map((result, index) => (
-                    <div key={index} className="flex flex-col items-center gap-1">
-                      {/* Unified order number - smaller and less prominent */}
-                      <div className="text-[10px] text-muted-foreground/60 font-light h-3 flex items-center">
+                    <div key={index} className="flex flex-col items-center">
+                      {/* Unified order number */}
+                      <div className="text-[10px] text-muted-foreground/60 font-light mb-1 h-3 flex items-center">
                         {unifiedOrderNumbers[index] || ''}
                       </div>
-                      <div className="text-lg font-bold text-green-700 h-6 flex items-center">
-                        {result.team1Score}
+                      
+                      {/* Team 1 Score */}
+                      <div className="flex items-center justify-center h-10 border-b border-border pb-2 mb-2">
+                        <span className="text-lg font-bold text-green-700">
+                          {result.team1Score}
+                        </span>
                       </div>
-                      <div className="text-lg font-bold text-green-700 h-6 flex items-center">
-                        {result.team2Score}
+                      
+                      {/* Team 2 Score */}
+                      <div className="flex items-center justify-center h-10 pt-2">
+                        <span className="text-lg font-bold text-green-700">
+                          {result.team2Score}
+                        </span>
                       </div>
                     </div>
                   ))}
