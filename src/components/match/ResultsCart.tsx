@@ -2,9 +2,6 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { X } from "lucide-react";
 
 interface Player {
   id: string;
@@ -39,6 +36,20 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
+  // Group results by matchup teams
+  const groupedResults = queuedResults.reduce((acc, result) => {
+    const key = `${result.team1[0]}-${result.team1[1]}-${result.team2[0]}-${result.team2[1]}`;
+    if (!acc[key]) {
+      acc[key] = {
+        team1: result.team1,
+        team2: result.team2,
+        results: []
+      };
+    }
+    acc[key].results.push(result);
+    return acc;
+  }, {} as Record<string, { team1: [string, string]; team2: [string, string]; results: QueuedResult[] }>);
+
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
     <div className="flex flex-col gap-2">
       {team.map((playerId) => (
@@ -57,15 +68,6 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
     </div>
   );
 
-  const handleScoreChange = (resultId: string, team: 'team1' | 'team2', value: string) => {
-    // Prevent non-numeric input, negative numbers, and numbers > 9
-    const numValue = parseInt(value) || 0;
-    if (numValue < 0 || numValue > 9) return;
-    
-    // This would need to be implemented to update the scores in the parent component
-    // For now, we'll keep it as display only since the user didn't ask for edit functionality
-  };
-
   if (queuedResults.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -77,71 +79,45 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
   return (
     <div className="space-y-4 max-w-2xl mx-auto px-4">
       <div className="text-center text-sm text-muted-foreground mb-4">
-        {queuedResults.length} match{queuedResults.length > 1 ? 'es' : ''} ready to save
+        {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
       </div>
       
-      {queuedResults.map((result, index) => (
-        <Card key={result.id} className="border-primary bg-primary/5 shadow-lg relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="absolute top-2 right-2 h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
-            onClick={() => onRemoveResult(result.id)}
-          >
-            <X className="h-3 w-3" />
-          </Button>
-          
+      {Object.entries(groupedResults).map(([key, group], index) => (
+        <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
           <CardContent className="p-6">
             <div className="flex items-center justify-between gap-4 mb-4">
               {/* Team 1 players */}
               <div className="flex-1">
-                <TeamDisplay team={result.team1} />
+                <TeamDisplay team={group.team1} />
               </div>
               
-              {/* Team 1 score */}
-              <div>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={result.team1Score}
-                  onChange={(e) => handleScoreChange(result.id, 'team1', e.target.value)}
-                  className="w-12 text-center text-xl font-bold h-12"
-                  min="0"
-                  max="9"
-                  readOnly
-                />
-              </div>
-              
-              {/* VS */}
-              <div className="text-lg font-bold text-muted-foreground px-2">
-                VS
-              </div>
-              
-              {/* Team 2 score */}
-              <div>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={result.team2Score}
-                  onChange={(e) => handleScoreChange(result.id, 'team2', e.target.value)}
-                  className="w-12 text-center text-xl font-bold h-12"
-                  min="0"
-                  max="9"
-                  readOnly
-                />
+              {/* All set scores for this matchup */}
+              <div className="flex gap-2">
+                {group.results.map((result, setIndex) => (
+                  <div key={setIndex} className="flex flex-col items-center gap-2">
+                    <div className="text-xs text-muted-foreground">Set {setIndex + 1}</div>
+                    <div className="text-xl font-bold text-green-700">
+                      {result.team1Score}
+                    </div>
+                    <div className="text-lg font-bold text-muted-foreground px-2">
+                      VS
+                    </div>
+                    <div className="text-xl font-bold text-green-700">
+                      {result.team2Score}
+                    </div>
+                  </div>
+                ))}
               </div>
               
               {/* Team 2 players */}
               <div className="flex-1 flex justify-end">
-                <TeamDisplay team={result.team2} />
+                <TeamDisplay team={group.team2} />
               </div>
             </div>
             
             {/* Match number */}
             <div className="text-center text-sm text-muted-foreground">
-              Match {index + 1}
+              Matchup {index + 1}
             </div>
           </CardContent>
         </Card>
