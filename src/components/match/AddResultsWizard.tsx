@@ -46,11 +46,13 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
   } = useAddResults(matchId);
 
   const handleMatchupSelect = (matchup: { id: string; team1: [string, string]; team2: [string, string] }) => {
-    // Count how many times this specific matchup has been selected
+    // Use unified counter - the order is based on total number of matches selected
+    const order = selectedMatchups.length + 1;
+    
+    // Count how many times this specific matchup has been selected for the matchNumber
     const existingCount = selectedMatchups.filter(m => m.id === matchup.id).length;
     const matchNumber = existingCount + 1;
     
-    const order = selectedMatchups.length + 1;
     setSelectedMatchups(prev => [...prev, { ...matchup, order, matchNumber }]);
   };
 

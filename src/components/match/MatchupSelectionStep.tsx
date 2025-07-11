@@ -65,11 +65,11 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
 
   const possibleMatchups = generatePossibleMatchups();
 
-  // Get the match numbers for this specific matchup
+  // Get the unified match numbers for this specific matchup
   const getMatchupNumbers = (matchupId: string) => {
     return selectedMatchups
       .filter(m => m.id === matchupId)
-      .map(m => m.matchNumber);
+      .map(m => m.order);
   };
 
   const handleMatchupClick = (matchup: typeof possibleMatchups[0]) => {
@@ -81,9 +81,9 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
   };
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex items-center justify-center gap-2">
-      {team.map((playerId, index) => (
-        <div key={playerId} className="flex items-center gap-1">
+    <div className="flex flex-col items-center gap-2">
+      {team.map((playerId) => (
+        <div key={playerId} className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
             <AvatarImage src={getPlayerPhoto(playerId)} />
             <AvatarFallback className="text-xs">
@@ -91,7 +91,6 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
             </AvatarFallback>
           </Avatar>
           <span className="text-sm font-medium">{getPlayerName(playerId)}</span>
-          {index === 0 && <span className="text-muted-foreground">&</span>}
         </div>
       ))}
     </div>
