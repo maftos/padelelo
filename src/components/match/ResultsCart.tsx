@@ -83,14 +83,14 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
   };
 
   const PlayerDisplay = ({ playerId }: { playerId: string }) => (
-    <div className="flex items-center gap-2">
-      <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+    <div className="flex items-center gap-3">
+      <Avatar className="h-8 w-8">
         <AvatarImage src={getPlayerPhoto(playerId)} />
         <AvatarFallback className="text-xs">
           {getInitials(getPlayerName(playerId))}
         </AvatarFallback>
       </Avatar>
-      <span className="text-xs sm:text-sm font-medium truncate">
+      <span className="text-sm font-medium">
         {getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}
       </span>
     </div>
@@ -105,8 +105,8 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
   }
 
   return (
-    <div className="space-y-4 px-2 sm:px-4">
-      <div className="text-center text-xs sm:text-sm text-muted-foreground mb-4">
+    <div className="space-y-4 max-w-2xl mx-auto px-4">
+      <div className="text-center text-sm text-muted-foreground mb-4">
         {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
       </div>
       
@@ -115,61 +115,47 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
         
         return (
           <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
-            <CardContent className="p-3 sm:p-6">
-              <div className="space-y-3">
-                {/* Teams Section */}
+            <CardContent className="p-6">
+              <div className="grid grid-cols-[1fr,auto] gap-6 items-center">
+                {/* Team players section */}
                 <div className="space-y-2">
-                  {/* Team 1 */}
-                  <div className="flex items-center justify-between min-h-[40px] sm:min-h-[48px] border-b border-border pb-2">
-                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-                      <PlayerDisplay playerId={group.team1[0]} />
-                      <span className="text-xs text-muted-foreground hidden sm:inline">&</span>
-                      <PlayerDisplay playerId={group.team1[1]} />
-                    </div>
+                  {/* Team 1 players */}
+                  <div className="flex items-center gap-4 h-10 border-b border-border pb-2">
+                    <PlayerDisplay playerId={group.team1[0]} />
+                    <PlayerDisplay playerId={group.team1[1]} />
                   </div>
                   
-                  {/* Team 2 */}
-                  <div className="flex items-center justify-between min-h-[40px] sm:min-h-[48px] pt-2">
-                    <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
-                      <PlayerDisplay playerId={group.team2[0]} />
-                      <span className="text-xs text-muted-foreground hidden sm:inline">&</span>
-                      <PlayerDisplay playerId={group.team2[1]} />
-                    </div>
+                  {/* Team 2 players */}
+                  <div className="flex items-center gap-4 h-10 pt-2">
+                    <PlayerDisplay playerId={group.team2[0]} />
+                    <PlayerDisplay playerId={group.team2[1]} />
                   </div>
                 </div>
-
-                {/* Scores Section */}
-                <div className="border-t border-border pt-3">
-                  <div className="flex justify-center gap-3 sm:gap-6">
-                    {group.results.map((result, index) => (
-                      <div key={index} className="flex flex-col items-center min-w-[60px] sm:min-w-[80px]">
-                        {/* Unified order number */}
-                        <div className="text-[10px] sm:text-xs text-muted-foreground/60 font-light mb-2 h-4 flex items-center">
-                          {unifiedOrderNumbers[index] ? `Set ${unifiedOrderNumbers[index]}` : ''}
-                        </div>
-                        
-                        {/* Scores */}
-                        <div className="space-y-2 text-center">
-                          {/* Team 1 Score */}
-                          <div className="flex items-center justify-center h-8 sm:h-10">
-                            <span className="text-lg sm:text-xl font-bold text-green-700">
-                              {result.team1Score}
-                            </span>
-                          </div>
-                          
-                          {/* VS Divider */}
-                          <div className="border-b border-border/50 w-full"></div>
-                          
-                          {/* Team 2 Score */}
-                          <div className="flex items-center justify-center h-8 sm:h-10">
-                            <span className="text-lg sm:text-xl font-bold text-green-700">
-                              {result.team2Score}
-                            </span>
-                          </div>
-                        </div>
+                
+                {/* Scores section */}
+                <div className="flex gap-4">
+                  {group.results.map((result, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      {/* Unified order number */}
+                      <div className="text-[10px] text-muted-foreground/60 font-light mb-1 h-3 flex items-center">
+                        {unifiedOrderNumbers[index] || ''}
                       </div>
-                    ))}
-                  </div>
+                      
+                      {/* Team 1 Score */}
+                      <div className="flex items-center justify-center h-10 border-b border-border pb-2 mb-2">
+                        <span className="text-lg font-bold text-green-700">
+                          {result.team1Score}
+                        </span>
+                      </div>
+                      
+                      {/* Team 2 Score */}
+                      <div className="flex items-center justify-center h-10 pt-2">
+                        <span className="text-lg font-bold text-green-700">
+                          {result.team2Score}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </CardContent>
