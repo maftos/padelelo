@@ -1,10 +1,9 @@
-
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import ConfirmedMatchesList from "@/components/match/ConfirmedMatchesList";
+import { ConfirmedMatchesList } from "@/components/match/ConfirmedMatchesList";
 import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsResponsive";
 import { useState } from "react";
@@ -40,35 +39,16 @@ const ManageMatches = () => {
     return 3; // Mock value
   };
 
-  // Get the selected booking data from confirmed matches
-  const getSelectedBooking = () => {
-    if (!selectedMatchId) return null;
-    
-    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
-    if (!selectedMatch) return null;
-    
-    // Transform the ConfirmedMatch to BookingData format by adding current_mmr
-    return {
-      booking_id: selectedMatch.booking_id,
-      venue_id: selectedMatch.venue_id,
-      start_time: selectedMatch.start_time,
-      title: selectedMatch.title,
-      description: selectedMatch.description,
-      status: selectedMatch.status,
-      participants: selectedMatch.participants.map(participant => ({
-        ...participant,
-        current_mmr: 3000 // Default MMR since the ConfirmedMatch doesn't include current_mmr
-      }))
-    };
-  };
-
   // Get match players from the actual match data
   const getMatchPlayers = () => {
-    const selectedBooking = getSelectedBooking();
-    if (!selectedBooking) return [];
+    if (!selectedMatchId) return [];
+    
+    // Find the selected match from confirmed matches
+    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
+    if (!selectedMatch) return [];
     
     // Convert participants to the expected format with first names only
-    return selectedBooking.participants.map(participant => ({
+    return selectedMatch.participants.map(participant => ({
       id: participant.player_id,
       name: participant.first_name, // Use only first name
       photo: participant.profile_photo
@@ -77,22 +57,13 @@ const ManageMatches = () => {
 
   // Show Add Results wizard if a match is selected
   if (showAddResults && selectedMatchId) {
-    const selectedBooking = getSelectedBooking();
-    
-    if (!selectedBooking) {
-      // If booking not found, close the wizard
-      setShowAddResults(false);
-      setSelectedMatchId(undefined);
-      return null;
-    }
-
     return (
       <>
         <Navigation />
         <div className="w-full min-h-screen">
           <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
             <AddResultsWizard
-              bookingData={selectedBooking}
+              matchId={selectedMatchId}
               players={getMatchPlayers()}
               onClose={handleCloseAddResults}
             />
