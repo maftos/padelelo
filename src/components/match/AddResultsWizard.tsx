@@ -115,7 +115,9 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
       setQueuedResults([]);
       setCurrentMatchupIndex(0);
     } else if (currentStep === "preview") {
-      setCurrentStep("scoring");
+      setCurrentStep("selection");
+      setQueuedResults([]);
+      setCurrentMatchupIndex(0);
     }
   };
 

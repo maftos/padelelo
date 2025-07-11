@@ -1,3 +1,4 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -124,16 +125,15 @@ export const MatchupProgressOverview = ({
             <Card
               key={key}
               className={`
-                cursor-pointer transition-all duration-200 relative
+                transition-all duration-200 relative
                 min-w-fit
                 ${status === "current" 
                   ? "ring-2 ring-primary bg-primary/5" 
                   : status === "completed" 
                     ? "border-green-500 border-2" 
-                    : "hover:bg-accent/50"
+                    : ""
                 }
               `}
-              onClick={() => onMatchupClick?.(indices[0])}
             >
               <CardContent className="p-3">
                 <div className="flex items-center gap-2">

@@ -113,17 +113,14 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
         return (
           <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
             <CardContent className="p-6">
-              <div className="flex items-center justify-between gap-6">
+              <div className="flex items-center justify-between gap-6 relative">
                 {/* Team players - arranged vertically with horizontal teams */}
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 flex-1">
                   {/* Team 1 players - horizontal layout */}
                   <div className="flex items-center gap-4 h-10">
                     <PlayerDisplay playerId={group.team1[0]} />
                     <PlayerDisplay playerId={group.team1[1]} />
                   </div>
-                  
-                  {/* Divider */}
-                  <div className="h-px bg-border" />
                   
                   {/* Team 2 players - horizontal layout */}
                   <div className="flex items-center gap-4 h-10">
@@ -132,18 +129,20 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
                   </div>
                 </div>
                 
-                {/* Scores - displayed vertically with unified order numbers, left-aligned */}
-                <div className="flex gap-3">
+                {/* Extended horizontal divider that separates teams and scores */}
+                <div className="absolute left-0 right-0 top-1/2 transform -translate-y-1/2 h-px bg-border" />
+                
+                {/* Scores - displayed vertically with unified order numbers */}
+                <div className="flex gap-3 relative z-10 bg-card pl-4">
                   {group.results.map((result, index) => (
-                    <div key={index} className="flex flex-col items-start gap-1">
+                    <div key={index} className="flex flex-col items-center gap-1">
                       {/* Unified order number - smaller and less prominent */}
-                      <div className="text-xs text-muted-foreground/70 font-normal h-3 flex items-center">
+                      <div className="text-[10px] text-muted-foreground/60 font-light h-3 flex items-center">
                         {unifiedOrderNumbers[index] || ''}
                       </div>
                       <div className="text-lg font-bold text-green-700 h-6 flex items-center">
                         {result.team1Score}
                       </div>
-                      <div className="h-px w-6 bg-border" />
                       <div className="text-lg font-bold text-green-700 h-6 flex items-center">
                         {result.team2Score}
                       </div>
