@@ -1,4 +1,3 @@
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -126,7 +125,7 @@ export const MatchupProgressOverview = ({
               key={key}
               className={`
                 cursor-pointer transition-all duration-200 relative
-                ${playCount === 1 ? "min-w-[140px]" : playCount === 2 ? "min-w-[180px]" : "min-w-[220px]"}
+                min-w-fit
                 ${status === "current" 
                   ? "ring-2 ring-primary bg-primary/5" 
                   : status === "completed" 
@@ -137,7 +136,7 @@ export const MatchupProgressOverview = ({
               onClick={() => onMatchupClick?.(indices[0])}
             >
               <CardContent className="p-3">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
                   {/* Player photos in 2x2 grid */}
                   <div className="flex flex-col gap-1">
                     {/* Team 1 players (top row) */}
@@ -158,7 +157,7 @@ export const MatchupProgressOverview = ({
                   
                   {/* Scores aligned with teams - display horizontally */}
                   {results.length > 0 && (
-                    <div className="flex gap-2">
+                    <div className="flex gap-1">
                       {results.map((result, setIndex) => (
                         <div key={setIndex} className="flex flex-col justify-center gap-3">
                           <div className="text-xs font-medium text-green-700">
@@ -169,13 +168,6 @@ export const MatchupProgressOverview = ({
                           </div>
                         </div>
                       ))}
-                    </div>
-                  )}
-                  
-                  {/* Play count indicator for multiple sets */}
-                  {playCount > 1 && (
-                    <div className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {playCount}
                     </div>
                   )}
                 </div>
