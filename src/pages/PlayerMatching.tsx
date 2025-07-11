@@ -1,11 +1,10 @@
-
 import { useState } from "react";
 import { Clock, MapPin, Users, Calendar, DollarSign, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNotificationModal";
-import { JoinGameModal } from "@/components/JoinGameModal";
+import { JoinGameDrawer } from "@/components/JoinGameDrawer";
 import { AddOpenMatchWizard } from "@/components/AddOpenMatchWizard";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usePublicOpenGames } from "@/hooks/use-public-open-games";
@@ -14,7 +13,7 @@ import { useAuth } from "@/contexts/AuthContext";
 
 export default function PlayerMatching() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
-  const [joinGameModalOpen, setJoinGameModalOpen] = useState(false);
+  const [joinGameDrawerOpen, setJoinGameDrawerOpen] = useState(false);
   const [addMatchWizardOpen, setAddMatchWizardOpen] = useState(false);
   const [selectedGamePost, setSelectedGamePost] = useState<any>(null);
   const [sortBy, setSortBy] = useState("newest");
@@ -29,11 +28,11 @@ export default function PlayerMatching() {
   ];
 
   const handleJoinGame = (postId: string) => {
-    console.log("Opening join modal for game:", postId);
+    console.log("Opening join drawer for game:", postId);
     const gamePost = transformedGames.find(post => post.id === postId);
     if (gamePost) {
       setSelectedGamePost(gamePost);
-      setJoinGameModalOpen(true);
+      setJoinGameDrawerOpen(true);
     }
   };
 
@@ -229,9 +228,9 @@ export default function PlayerMatching() {
           onOpenChange={setNotificationModalOpen}
         />
 
-        <JoinGameModal
-          open={joinGameModalOpen}
-          onOpenChange={setJoinGameModalOpen}
+        <JoinGameDrawer
+          open={joinGameDrawerOpen}
+          onOpenChange={setJoinGameDrawerOpen}
           gamePost={selectedGamePost}
         />
 

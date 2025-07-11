@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      booking_applications: {
+        Row: {
+          booking_id: string
+          created_at: string | null
+          id: number
+          message: string | null
+          player_id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string | null
+          id?: never
+          message?: string | null
+          player_id: string
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string | null
+          id?: never
+          message?: string | null
+          player_id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_applications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["booking_id"]
+          },
+          {
+            foreignKeyName: "booking_applications_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       booking_players: {
         Row: {
           booking_id: string
@@ -694,6 +739,7 @@ export type Database = {
           opening_hours: Json | null
           phone_number: string | null
           photo_gallery: Json | null
+          region: string | null
           venue_id: string
           website_url: string | null
         }
@@ -706,6 +752,7 @@ export type Database = {
           opening_hours?: Json | null
           phone_number?: string | null
           photo_gallery?: Json | null
+          region?: string | null
           venue_id?: string
           website_url?: string | null
         }
@@ -718,6 +765,7 @@ export type Database = {
           opening_hours?: Json | null
           phone_number?: string | null
           photo_gallery?: Json | null
+          region?: string | null
           venue_id?: string
           website_url?: string | null
         }
