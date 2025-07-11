@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -115,7 +114,10 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
       setQueuedResults([]);
       setCurrentMatchupIndex(0);
     } else if (currentStep === "preview") {
-      setCurrentStep("scoring");
+      // Go back to selection step instead of scoring step
+      setCurrentStep("selection");
+      setQueuedResults([]);
+      setCurrentMatchupIndex(0);
     }
   };
 
