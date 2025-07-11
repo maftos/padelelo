@@ -57,7 +57,7 @@ const ManageMatches = () => {
       status: selectedMatch.status,
       participants: selectedMatch.participants.map(participant => ({
         ...participant,
-        current_mmr: participant.current_mmr || 3000 // Default MMR if missing
+        current_mmr: 3000 // Default MMR since the ConfirmedMatch doesn't include current_mmr
       }))
     };
   };
