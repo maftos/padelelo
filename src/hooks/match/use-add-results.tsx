@@ -38,6 +38,13 @@ interface BookingData {
   }>;
 }
 
+// Response type for the add_booking_scores function
+interface AddBookingScoresResponse {
+  success: boolean;
+  message?: string;
+  matches_processed?: number;
+}
+
 export function useAddResults(bookingData: BookingData) {
   const [matchups, setMatchups] = useState<Matchup[]>([]);
   const [queuedResults, setQueuedResults] = useState<QueuedResult[]>([]);
@@ -62,9 +69,10 @@ export function useAddResults(bookingData: BookingData) {
         sets: result.sets
       }));
 
+      // Cast to the correct type for the RPC call
       const payload = {
         matches: matches
-      };
+      } as any; // Cast to any to satisfy Json type requirement
 
       console.log('Submitting payload to add_booking_scores:', payload);
 
@@ -84,12 +92,15 @@ export function useAddResults(bookingData: BookingData) {
 
       console.log('Scores submitted successfully:', data);
       
-      if (data.success) {
+      // Cast the response to our expected type
+      const response = data as AddBookingScoresResponse;
+      
+      if (response && response.success) {
         toast.success(`Successfully saved ${matches.length} match${matches.length > 1 ? 'es' : ''}!`);
         setIsSubmitting(false);
         return true;
       } else {
-        toast.error(data.message || "Failed to save results");
+        toast.error(response?.message || "Failed to save results");
         setIsSubmitting(false);
         return false;
       }

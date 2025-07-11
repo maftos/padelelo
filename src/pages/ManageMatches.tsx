@@ -1,9 +1,10 @@
+
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { ConfirmedMatchesList } from "@/components/match/ConfirmedMatchesList";
+import ConfirmedMatchesList from "@/components/match/ConfirmedMatchesList";
 import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsResponsive";
 import { useState } from "react";
@@ -39,16 +40,21 @@ const ManageMatches = () => {
     return 3; // Mock value
   };
 
+  // Get the selected booking data from confirmed matches
+  const getSelectedBooking = () => {
+    if (!selectedMatchId) return null;
+    
+    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
+    return selectedMatch || null;
+  };
+
   // Get match players from the actual match data
   const getMatchPlayers = () => {
-    if (!selectedMatchId) return [];
-    
-    // Find the selected match from confirmed matches
-    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
-    if (!selectedMatch) return [];
+    const selectedBooking = getSelectedBooking();
+    if (!selectedBooking) return [];
     
     // Convert participants to the expected format with first names only
-    return selectedMatch.participants.map(participant => ({
+    return selectedBooking.participants.map(participant => ({
       id: participant.player_id,
       name: participant.first_name, // Use only first name
       photo: participant.profile_photo
@@ -57,13 +63,22 @@ const ManageMatches = () => {
 
   // Show Add Results wizard if a match is selected
   if (showAddResults && selectedMatchId) {
+    const selectedBooking = getSelectedBooking();
+    
+    if (!selectedBooking) {
+      // If booking not found, close the wizard
+      setShowAddResults(false);
+      setSelectedMatchId(undefined);
+      return null;
+    }
+
     return (
       <>
         <Navigation />
         <div className="w-full min-h-screen">
           <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
             <AddResultsWizard
-              matchId={selectedMatchId}
+              bookingData={selectedBooking}
               players={getMatchPlayers()}
               onClose={handleCloseAddResults}
             />
