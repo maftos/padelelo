@@ -63,32 +63,39 @@ export const MatchupProgressOverview = ({
     }
     acc[key].indices.push(index);
     
-    // Find all results for this matchup
-    const result = queuedResults.find(result => 
-      result.team1[0] === matchup.team1[0] && 
-      result.team1[1] === matchup.team1[1] &&
-      result.team2[0] === matchup.team2[0] && 
-      result.team2[1] === matchup.team2[1]
-    );
-    if (result) {
-      acc[key].results.push(result);
-    }
-    
     return acc;
   }, {} as Record<string, { matchup: SelectedMatchup; indices: number[]; results: QueuedResult[] }>);
 
+  // Get results for each grouped matchup by finding results that match the selected matchups
+  Object.keys(groupedMatchups).forEach(key => {
+    const group = groupedMatchups[key];
+    // Find results for each index in this group
+    group.results = group.indices.map(index => {
+      const matchup = selectedMatchups[index];
+      // Find a result that matches this specific matchup instance
+      return queuedResults.find(result => 
+        result.team1[0] === matchup.team1[0] && 
+        result.team1[1] === matchup.team1[1] &&
+        result.team2[0] === matchup.team2[0] && 
+        result.team2[1] === matchup.team2[1] &&
+        result.id.includes(`-${matchup.order}-`) // Match by order to get the specific set
+      );
+    }).filter(Boolean) as QueuedResult[];
+  });
+
   const getMatchupStatus = (indices: number[]) => {
-    const hasResults = indices.some(index => {
+    const hasAllResults = indices.every(index => {
       const matchup = selectedMatchups[index];
       return queuedResults.some(result => 
         result.team1[0] === matchup.team1[0] && 
         result.team1[1] === matchup.team1[1] &&
         result.team2[0] === matchup.team2[0] && 
-        result.team2[1] === matchup.team2[1]
+        result.team2[1] === matchup.team2[1] &&
+        result.id.includes(`-${matchup.order}-`)
       );
     });
     
-    if (hasResults) return "completed";
+    if (hasAllResults) return "completed";
     if (indices.includes(currentIndex || -1)) return "current";
     return "pending";
   };
@@ -118,8 +125,8 @@ export const MatchupProgressOverview = ({
             <Card
               key={key}
               className={`
-                cursor-pointer transition-all duration-200
-                ${playCount === 1 ? "min-w-[140px]" : playCount === 2 ? "min-w-[160px]" : "min-w-[180px]"}
+                cursor-pointer transition-all duration-200 relative
+                ${playCount === 1 ? "min-w-[140px]" : playCount === 2 ? "min-w-[180px]" : "min-w-[220px]"}
                 ${status === "current" 
                   ? "ring-2 ring-primary bg-primary/5" 
                   : status === "completed" 
@@ -149,12 +156,11 @@ export const MatchupProgressOverview = ({
                     </div>
                   </div>
                   
-                  {/* Scores aligned with teams */}
+                  {/* Scores aligned with teams - display horizontally */}
                   {results.length > 0 && (
-                    <div className="flex flex-col justify-center gap-3">
-                      {/* Multiple sets display */}
-                      {results.slice(0, playCount).map((result, setIndex) => (
-                        <div key={setIndex} className="flex flex-col items-center gap-1">
+                    <div className="flex gap-2">
+                      {results.map((result, setIndex) => (
+                        <div key={setIndex} className="flex flex-col justify-center gap-3">
                           <div className="text-xs font-medium text-green-700">
                             {result.team1Score}
                           </div>
