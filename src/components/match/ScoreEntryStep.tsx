@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -95,8 +96,8 @@ export const ScoreEntryStep = ({
   };
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex items-center justify-center gap-2">
-      {team.map((playerId, index) => (
+    <div className="flex flex-col items-center gap-2">
+      {team.map((playerId) => (
         <div key={playerId} className="flex items-center gap-1">
           <Avatar className="h-6 w-6">
             <AvatarImage src={getPlayerPhoto(playerId)} />
@@ -105,7 +106,6 @@ export const ScoreEntryStep = ({
             </AvatarFallback>
           </Avatar>
           <span className="text-sm font-medium">{getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}</span>
-          {index === 0 && <span className="text-muted-foreground">&</span>}
         </div>
       ))}
     </div>

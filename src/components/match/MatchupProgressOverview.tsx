@@ -76,13 +76,6 @@ export const MatchupProgressOverview = ({
     </Avatar>
   );
 
-  const TeamRow = ({ team }: { team: [string, string] }) => (
-    <div className="flex items-center gap-1">
-      <PlayerAvatar playerId={team[0]} />
-      <PlayerAvatar playerId={team[1]} />
-    </div>
-  );
-
   if (selectedMatchups.length === 0) {
     return null;
   }
@@ -99,7 +92,7 @@ export const MatchupProgressOverview = ({
             <Card
               key={`${matchup.id}-${matchup.order}`}
               className={`
-                min-w-[100px] cursor-pointer transition-all duration-200
+                min-w-[120px] cursor-pointer transition-all duration-200
                 ${status === "current" 
                   ? "ring-2 ring-primary bg-primary/5" 
                   : status === "completed" 
@@ -110,15 +103,28 @@ export const MatchupProgressOverview = ({
               onClick={() => onMatchupClick?.(index)}
             >
               <CardContent className="p-3">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <TeamRow team={matchup.team1} />
-                    <div className="w-px h-4 bg-border mx-2" />
-                    <TeamRow team={matchup.team2} />
+                <div className="flex items-start gap-3">
+                  {/* Player photos in 2x2 grid */}
+                  <div className="flex flex-col gap-1">
+                    {/* Team 1 players (top row) */}
+                    <div className="flex items-center gap-1">
+                      <PlayerAvatar playerId={matchup.team1[0]} />
+                      <PlayerAvatar playerId={matchup.team1[1]} />
+                    </div>
+                    
+                    {/* Horizontal divider */}
+                    <div className="h-px bg-border my-1" />
+                    
+                    {/* Team 2 players (bottom row) */}
+                    <div className="flex items-center gap-1">
+                      <PlayerAvatar playerId={matchup.team2[0]} />
+                      <PlayerAvatar playerId={matchup.team2[1]} />
+                    </div>
                   </div>
                   
+                  {/* Scores on the right */}
                   {result && (
-                    <div className="text-center">
+                    <div className="flex flex-col items-center justify-center ml-auto">
                       <div className="text-xs font-medium text-green-700">
                         {result.team1Score}
                       </div>
