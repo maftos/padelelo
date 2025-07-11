@@ -9,17 +9,12 @@ import { ResultsCart } from "./ResultsCart";
 import { MatchupProgressOverview } from "./MatchupProgressOverview";
 import { useAddResults } from "@/hooks/match/use-add-results";
 
-interface SetScore {
-  order: number;
-  team1_score: number;
-  team2_score: number;
-}
-
 interface QueuedResult {
   id: string;
   team1: [string, string];
   team2: [string, string];
-  sets: SetScore[];
+  team1Score: number;
+  team2Score: number;
 }
 
 interface SelectedMatchup {
@@ -27,27 +22,11 @@ interface SelectedMatchup {
   team1: [string, string];
   team2: [string, string];
   order: number;
-  matchNumber: number;
-}
-
-interface BookingData {
-  booking_id: string;
-  venue_id: string;
-  start_time: string;
-  title: string;
-  description: string;
-  status: string;
-  participants: Array<{
-    player_id: string;
-    first_name: string;
-    last_name: string;
-    profile_photo: string;
-    current_mmr: number;
-  }>;
+  matchNumber: number; // New field to track which match number this is
 }
 
 interface AddResultsWizardProps {
-  bookingData: BookingData;
+  matchId: string;
   players: {
     id: string;
     name: string;
@@ -56,73 +35,31 @@ interface AddResultsWizardProps {
   onClose: () => void;
 }
 
-export const AddResultsWizard = ({ bookingData, players, onClose }: AddResultsWizardProps) => {
+export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizardProps) => {
   const [currentStep, setCurrentStep] = useState<"selection" | "scoring" | "preview">("selection");
   const [selectedMatchups, setSelectedMatchups] = useState<SelectedMatchup[]>([]);
-  const [globalSetOrder, setGlobalSetOrder] = useState(1); // Track global set order across all matchups
+  const [queuedResults, setQueuedResults] = useState<QueuedResult[]>([]);
   const {
-    queuedResults,
-    addResult,
-    removeResult,
+    matchups,
+    setMatchups,
     submitResults,
     isSubmitting
-  } = useAddResults(bookingData);
+  } = useAddResults(matchId);
   const [currentMatchupIndex, setCurrentMatchupIndex] = useState(0);
 
   const handleMatchupSelect = (matchup: { id: string; team1: [string, string]; team2: [string, string] }) => {
+    // Use unified counter - the order is based on total number of matches selected
     const order = selectedMatchups.length + 1;
+    
+    // Count how many times this specific matchup has been selected for the matchNumber
     const existingCount = selectedMatchups.filter(m => m.id === matchup.id).length;
     const matchNumber = existingCount + 1;
     
     setSelectedMatchups(prev => [...prev, { ...matchup, order, matchNumber }]);
   };
 
-  const handleAddResult = (team1Score: number, team2Score: number) => {
-    const currentMatchup = selectedMatchups[currentMatchupIndex];
-    if (!currentMatchup) return;
-
-    // Create a set score with global order
-    const setScore: SetScore = {
-      order: globalSetOrder,
-      team1_score: team1Score,
-      team2_score: team2Score
-    };
-
-    // Check if we already have a result for this matchup
-    const existingResultIndex = queuedResults.findIndex(r => 
-      r.team1[0] === currentMatchup.team1[0] && 
-      r.team1[1] === currentMatchup.team1[1] && 
-      r.team2[0] === currentMatchup.team2[0] && 
-      r.team2[1] === currentMatchup.team2[1]
-    );
-
-    if (existingResultIndex >= 0) {
-      // Add set to existing result
-      const updatedResult = {
-        ...queuedResults[existingResultIndex],
-        sets: [...queuedResults[existingResultIndex].sets, setScore]
-      };
-      
-      const newResults = [...queuedResults];
-      newResults[existingResultIndex] = updatedResult;
-      
-      // Update the queued results manually since we're modifying existing
-      removeResult(queuedResults[existingResultIndex].id);
-      addResult(updatedResult);
-    } else {
-      // Create new result
-      const newResult: QueuedResult = {
-        id: `${currentMatchup.id}-${currentMatchup.order}-${Date.now()}`,
-        team1: currentMatchup.team1,
-        team2: currentMatchup.team2,
-        sets: [setScore]
-      };
-      
-      addResult(newResult);
-    }
-
-    // Increment global set order
-    setGlobalSetOrder(prev => prev + 1);
+  const handleAddResult = (result: QueuedResult) => {
+    setQueuedResults(prev => [...prev, result]);
     
     // Check if all scores are entered
     if (queuedResults.length + 1 >= selectedMatchups.length) {
@@ -136,6 +73,10 @@ export const AddResultsWizard = ({ bookingData, players, onClose }: AddResultsWi
     }
   };
 
+  const handleRemoveResult = (resultId: string) => {
+    setQueuedResults(prev => prev.filter(r => r.id !== resultId));
+  };
+
   const handleJumpToMatchup = (index: number) => {
     if (currentStep === "scoring" || currentStep === "preview") {
       setCurrentMatchupIndex(index);
@@ -146,6 +87,16 @@ export const AddResultsWizard = ({ bookingData, players, onClose }: AddResultsWi
   };
 
   const handleSubmit = async () => {
+    // Convert queued results to matchups format for the hook
+    const matchupsFromQueue = queuedResults.map(result => ({
+      id: result.id,
+      team1: result.team1,
+      team2: result.team2,
+      team1Score: result.team1Score,
+      team2Score: result.team2Score
+    }));
+    
+    setMatchups(matchupsFromQueue);
     const success = await submitResults();
     if (success) {
       onClose();
@@ -161,15 +112,12 @@ export const AddResultsWizard = ({ bookingData, players, onClose }: AddResultsWi
   const goToPreviousStep = () => {
     if (currentStep === "scoring") {
       setCurrentStep("selection");
-      // Clear results when going back
-      queuedResults.forEach(result => removeResult(result.id));
+      setQueuedResults([]);
       setCurrentMatchupIndex(0);
-      setGlobalSetOrder(1);
     } else if (currentStep === "preview") {
       setCurrentStep("selection");
-      queuedResults.forEach(result => removeResult(result.id));
+      setQueuedResults([]);
       setCurrentMatchupIndex(0);
-      setGlobalSetOrder(1);
     }
   };
 
@@ -192,13 +140,7 @@ export const AddResultsWizard = ({ bookingData, players, onClose }: AddResultsWi
         <MatchupProgressOverview
           players={players}
           selectedMatchups={selectedMatchups}
-          queuedResults={queuedResults.map(r => ({
-            id: r.id,
-            team1: r.team1,
-            team2: r.team2,
-            team1Score: r.sets[r.sets.length - 1]?.team1_score || 0,
-            team2Score: r.sets[r.sets.length - 1]?.team2_score || 0
-          }))}
+          queuedResults={queuedResults}
           currentIndex={currentMatchupIndex}
           onMatchupClick={handleJumpToMatchup}
         />
@@ -227,16 +169,10 @@ export const AddResultsWizard = ({ bookingData, players, onClose }: AddResultsWi
           
           {currentStep === "preview" && (
             <ResultsCart
-              queuedResults={queuedResults.map(r => ({
-                id: r.id,
-                team1: r.team1,
-                team2: r.team2,
-                team1Score: r.sets[r.sets.length - 1]?.team1_score || 0,
-                team2Score: r.sets[r.sets.length - 1]?.team2_score || 0
-              }))}
+              queuedResults={queuedResults}
               players={players}
               selectedMatchups={selectedMatchups}
-              onRemoveResult={removeResult}
+              onRemoveResult={handleRemoveResult}
             />
           )}
         </CardContent>

@@ -1,10 +1,9 @@
-
 import { Navigation } from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
-import ConfirmedMatchesList from "@/components/match/ConfirmedMatchesList";
+import { ConfirmedMatchesList } from "@/components/match/ConfirmedMatchesList";
 import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsResponsive";
 import { useState } from "react";
@@ -40,30 +39,6 @@ const ManageMatches = () => {
     return 3; // Mock value
   };
 
-  // Get selected booking data
-  const getSelectedBooking = () => {
-    if (!selectedMatchId) return null;
-    
-    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
-    if (!selectedMatch) return null;
-    
-    return {
-      booking_id: selectedMatch.booking_id,
-      venue_id: selectedMatch.venue_id,
-      start_time: selectedMatch.start_time,
-      title: selectedMatch.title,
-      description: selectedMatch.description,
-      status: selectedMatch.status,
-      participants: selectedMatch.participants.map(p => ({
-        player_id: p.player_id,
-        first_name: p.first_name,
-        last_name: p.last_name,
-        profile_photo: p.profile_photo,
-        current_mmr: 3000 // Default MMR value
-      }))
-    };
-  };
-
   // Get match players from the actual match data
   const getMatchPlayers = () => {
     if (!selectedMatchId) return [];
@@ -82,27 +57,13 @@ const ManageMatches = () => {
 
   // Show Add Results wizard if a match is selected
   if (showAddResults && selectedMatchId) {
-    const bookingData = getSelectedBooking();
-    if (!bookingData) {
-      return (
-        <>
-          <Navigation />
-          <div className="w-full min-h-screen">
-            <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
-              <p>Booking data not found</p>
-            </div>
-          </div>
-        </>
-      );
-    }
-
     return (
       <>
         <Navigation />
         <div className="w-full min-h-screen">
           <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
             <AddResultsWizard
-              bookingData={bookingData}
+              matchId={selectedMatchId}
               players={getMatchPlayers()}
               onClose={handleCloseAddResults}
             />
