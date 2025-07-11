@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ConfirmedMatchesList } from "@/components/match/ConfirmedMatchesList";
 import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
-import { ViewApplicantsDialog } from "@/components/match/ViewApplicantsDialog";
+import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsResponsive";
 import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
 
@@ -120,8 +120,8 @@ const ManageMatches = () => {
         </div>
       </div>
 
-      {/* View Applicants Dialog */}
-      <ViewApplicantsDialog
+      {/* View Applicants Responsive Modal/Drawer */}
+      <ViewApplicantsResponsive
         open={applicantsDialogOpen}
         onOpenChange={setApplicantsDialogOpen}
         gameId={selectedGameId || ""}
