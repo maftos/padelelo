@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -28,14 +28,28 @@ interface QueuedResult {
 interface ScoreEntryStepProps {
   players: Player[];
   selectedMatchups: SelectedMatchup[];
+  currentIndex?: number;
   onAddResult: (result: QueuedResult) => void;
+  onIndexChange?: (index: number) => void;
 }
 
-export const ScoreEntryStep = ({ players, selectedMatchups, onAddResult }: ScoreEntryStepProps) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export const ScoreEntryStep = ({ 
+  players, 
+  selectedMatchups, 
+  currentIndex = 0,
+  onAddResult,
+  onIndexChange 
+}: ScoreEntryStepProps) => {
   const [team1Score, setTeam1Score] = useState<number | null>(null);
   const [team2Score, setTeam2Score] = useState<number | null>(null);
   const [activeTeam, setActiveTeam] = useState<"team1" | "team2" | null>("team1");
+
+  // Reset scores when currentIndex changes
+  React.useEffect(() => {
+    setTeam1Score(null);
+    setTeam2Score(null);
+    setActiveTeam("team1");
+  }, [currentIndex]);
 
   const getPlayerName = (playerId: string) => {
     return players.find(p => p.id === playerId)?.name || "Unknown";
@@ -72,12 +86,9 @@ export const ScoreEntryStep = ({ players, selectedMatchups, onAddResult }: Score
         
         onAddResult(result);
         
-        // Move to next matchup or reset
-        if (currentIndex < selectedMatchups.length - 1) {
-          setCurrentIndex(currentIndex + 1);
-          setTeam1Score(null);
-          setTeam2Score(null);
-          setActiveTeam("team1");
+        // Move to next matchup if available and auto-progression is enabled
+        if (currentIndex < selectedMatchups.length - 1 && onIndexChange) {
+          onIndexChange(currentIndex + 1);
         }
       }
     }

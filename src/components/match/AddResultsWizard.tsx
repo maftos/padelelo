@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,6 +5,7 @@ import { ArrowLeft, ArrowRight, Users } from "lucide-react";
 import { MatchupSelectionStep } from "./MatchupSelectionStep";
 import { ScoreEntryStep } from "./ScoreEntryStep";
 import { ResultsCart } from "./ResultsCart";
+import { MatchupProgressOverview } from "./MatchupProgressOverview";
 import { useAddResults } from "@/hooks/match/use-add-results";
 
 interface QueuedResult {
@@ -44,6 +44,7 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
     submitResults,
     isSubmitting
   } = useAddResults(matchId);
+  const [currentMatchupIndex, setCurrentMatchupIndex] = useState(0);
 
   const handleMatchupSelect = (matchup: { id: string; team1: [string, string]; team2: [string, string] }) => {
     // Use unified counter - the order is based on total number of matches selected
@@ -62,11 +63,26 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
     // Check if all scores are entered
     if (queuedResults.length + 1 >= selectedMatchups.length) {
       setCurrentStep("preview");
+    } else {
+      // Move to next incomplete matchup
+      const nextIndex = currentMatchupIndex + 1;
+      if (nextIndex < selectedMatchups.length) {
+        setCurrentMatchupIndex(nextIndex);
+      }
     }
   };
 
   const handleRemoveResult = (resultId: string) => {
     setQueuedResults(prev => prev.filter(r => r.id !== resultId));
+  };
+
+  const handleJumpToMatchup = (index: number) => {
+    if (currentStep === "scoring" || currentStep === "preview") {
+      setCurrentMatchupIndex(index);
+      if (currentStep === "preview") {
+        setCurrentStep("scoring");
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -96,6 +112,7 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
     if (currentStep === "scoring") {
       setCurrentStep("selection");
       setQueuedResults([]);
+      setCurrentMatchupIndex(0);
     } else if (currentStep === "preview") {
       setCurrentStep("scoring");
     }
@@ -115,6 +132,17 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
         </div>
       </div>
 
+      {/* Progress Overview - Show in scoring and preview steps */}
+      {(currentStep === "scoring" || currentStep === "preview") && (
+        <MatchupProgressOverview
+          players={players}
+          selectedMatchups={selectedMatchups}
+          queuedResults={queuedResults}
+          currentIndex={currentStep === "scoring" ? currentMatchupIndex : undefined}
+          onMatchupClick={handleJumpToMatchup}
+        />
+      )}
+
       {/* Step Content */}
       <Card>
         <CardContent className="p-6">
@@ -130,7 +158,9 @@ export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizard
             <ScoreEntryStep
               players={players}
               selectedMatchups={selectedMatchups}
+              currentIndex={currentMatchupIndex}
               onAddResult={handleAddResult}
+              onIndexChange={setCurrentMatchupIndex}
             />
           )}
           
