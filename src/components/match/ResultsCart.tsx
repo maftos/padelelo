@@ -81,11 +81,11 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
       {Object.entries(groupedResults).map(([key, group]) => (
         <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
           <CardContent className="p-6">
-            <div className="flex items-center justify-between gap-6">
-              {/* Team players - stacked vertically */}
+            <div className="flex items-start justify-between gap-6">
+              {/* Team players - arranged vertically with horizontal teams */}
               <div className="flex flex-col gap-4">
-                {/* Team 1 players */}
-                <div className="space-y-2">
+                {/* Team 1 players - horizontal layout */}
+                <div className="flex items-center gap-4">
                   <PlayerDisplay playerId={group.team1[0]} />
                   <PlayerDisplay playerId={group.team1[1]} />
                 </div>
@@ -93,17 +93,21 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
                 {/* Divider */}
                 <div className="h-px bg-border" />
                 
-                {/* Team 2 players */}
-                <div className="space-y-2">
+                {/* Team 2 players - horizontal layout */}
+                <div className="flex items-center gap-4">
                   <PlayerDisplay playerId={group.team2[0]} />
                   <PlayerDisplay playerId={group.team2[1]} />
                 </div>
               </div>
               
-              {/* Scores - displayed vertically */}
+              {/* Scores - displayed vertically with set numbers, left-aligned */}
               <div className="flex gap-4">
                 {group.results.map((result, setIndex) => (
-                  <div key={setIndex} className="flex flex-col items-center gap-3">
+                  <div key={setIndex} className="flex flex-col items-start gap-3">
+                    {/* Set number */}
+                    <div className="text-xs text-muted-foreground font-medium">
+                      {setIndex + 1}
+                    </div>
                     <div className="text-xl font-bold text-green-700">
                       {result.team1Score}
                     </div>
