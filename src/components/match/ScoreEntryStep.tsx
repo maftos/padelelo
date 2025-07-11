@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -41,16 +41,30 @@ export const ScoreEntryStep = ({
   onAddResult,
   onIndexChange 
 }: ScoreEntryStepProps) => {
-  const [team1Score, setTeam1Score] = useState<number | null>(null);
-  const [team2Score, setTeam2Score] = useState<number | null>(null);
-  const [activeTeam, setActiveTeam] = useState<"team1" | "team2" | null>("team1");
+  const [team1Score, setTeam1Score] = useState<string>("");
+  const [team2Score, setTeam2Score] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const team1InputRef = useRef<HTMLInputElement>(null);
+  const team2InputRef = useRef<HTMLInputElement>(null);
 
   // Reset scores when currentIndex changes
-  React.useEffect(() => {
-    setTeam1Score(null);
-    setTeam2Score(null);
-    setActiveTeam("team1");
+  useEffect(() => {
+    setTeam1Score("");
+    setTeam2Score("");
+    setIsSubmitting(false);
+    // Focus first input after a short delay to ensure proper rendering
+    setTimeout(() => {
+      team1InputRef.current?.focus();
+    }, 100);
   }, [currentIndex]);
+
+  // Focus first input on initial load
+  useEffect(() => {
+    setTimeout(() => {
+      team1InputRef.current?.focus();
+    }, 100);
+  }, []);
 
   const getPlayerName = (playerId: string) => {
     return players.find(p => p.id === playerId)?.name || "Unknown";
@@ -67,103 +81,153 @@ export const ScoreEntryStep = ({
   const currentMatchup = selectedMatchups[currentIndex];
   if (!currentMatchup) return null;
 
-  const handleScoreInput = (value: string, team: "team1" | "team2") => {
-    const numValue = parseInt(value) || 0;
-    if (team === "team1") {
-      setTeam1Score(numValue);
-      setActiveTeam("team2");
-    } else if (team === "team2") {
-      setTeam2Score(numValue);
-      
-      // Auto-save when second score is entered
-      if (team1Score !== null) {
-        const result: QueuedResult = {
-          id: `${currentMatchup.id}-${currentMatchup.order}-${Date.now()}`,
-          team1: currentMatchup.team1,
-          team2: currentMatchup.team2,
-          team1Score: team1Score,
-          team2Score: numValue
-        };
-        
-        onAddResult(result);
-        
-        // Move to next matchup if available and auto-progression is enabled
-        if (currentIndex < selectedMatchups.length - 1 && onIndexChange) {
-          onIndexChange(currentIndex + 1);
-        }
-      }
+  const handleTeam1ScoreChange = (value: string) => {
+    setTeam1Score(value);
+  };
+
+  const handleTeam2ScoreChange = (value: string) => {
+    setTeam2Score(value);
+  };
+
+  const handleTeam1KeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && team1Score.trim()) {
+      e.preventDefault();
+      team2InputRef.current?.focus();
     }
   };
 
+  const handleTeam2KeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && team2Score.trim()) {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = async () => {
+    const score1 = parseInt(team1Score) || 0;
+    const score2 = parseInt(team2Score) || 0;
+    
+    if (team1Score.trim() === "" || team2Score.trim() === "") {
+      return; // Don't submit if either score is empty
+    }
+
+    setIsSubmitting(true);
+    
+    const result: QueuedResult = {
+      id: `${currentMatchup.id}-${currentMatchup.order}-${Date.now()}`,
+      team1: currentMatchup.team1,
+      team2: currentMatchup.team2,
+      team1Score: score1,
+      team2Score: score2
+    };
+    
+    onAddResult(result);
+    
+    // Small delay to show the submission state
+    setTimeout(() => {
+      // Move to next matchup if available
+      if (currentIndex < selectedMatchups.length - 1 && onIndexChange) {
+        onIndexChange(currentIndex + 1);
+      }
+      setIsSubmitting(false);
+    }, 300);
+  };
+
+  const canSubmit = team1Score.trim() !== "" && team2Score.trim() !== "" && !isSubmitting;
+
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-3">
       {team.map((playerId) => (
-        <div key={playerId} className="flex items-center gap-1">
-          <Avatar className="h-6 w-6">
+        <div key={playerId} className="flex flex-col items-center gap-1">
+          <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
             <AvatarImage src={getPlayerPhoto(playerId)} />
-            <AvatarFallback className="text-xs">
+            <AvatarFallback className="text-xs sm:text-sm">
               {getInitials(getPlayerName(playerId))}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium">{getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}</span>
+          <span className="text-xs sm:text-sm font-medium text-center leading-tight">
+            {getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}
+          </span>
         </div>
       ))}
     </div>
   );
 
   return (
-    <div className="space-y-4 max-w-md mx-auto">
-      <div className="text-center text-sm text-muted-foreground mb-4">
+    <div className="space-y-6 max-w-lg mx-auto px-4">
+      <div className="text-center text-sm text-muted-foreground">
         Match {currentIndex + 1} of {selectedMatchups.length}
       </div>
       
       <Card className="border-primary bg-primary/5 shadow-lg">
-        <CardContent className="p-8">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col items-center">
+        <CardContent className="p-6 sm:p-8">
+          <div className="grid grid-cols-3 gap-4 sm:gap-6 items-center">
+            {/* Team 1 */}
+            <div className="flex flex-col items-center space-y-4">
               <TeamDisplay team={currentMatchup.team1} />
-              <div className="mt-4">
+              <div className="w-full">
                 <Input
+                  ref={team1InputRef}
                   type="number"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  value={team1Score !== null ? team1Score.toString() : ""}
-                  onChange={(e) => handleScoreInput(e.target.value, "team1")}
+                  value={team1Score}
+                  onChange={(e) => handleTeam1ScoreChange(e.target.value)}
+                  onKeyDown={handleTeam1KeyDown}
                   placeholder="0"
-                  className={`w-16 text-center text-lg font-bold transition-all duration-200 ${
-                    activeTeam === "team1" 
-                      ? "ring-2 ring-primary bg-primary/10" 
-                      : "bg-muted"
-                  }`}
-                  onFocus={() => setActiveTeam("team1")}
+                  className="w-full text-center text-xl sm:text-2xl font-bold h-12 sm:h-14 transition-all duration-200 focus:ring-2 focus:ring-primary focus:bg-primary/10"
+                  min="0"
+                  max="99"
                 />
               </div>
             </div>
             
-            <div className="text-xl font-bold text-muted-foreground px-4">VS</div>
+            {/* VS Divider */}
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-lg sm:text-xl font-bold text-muted-foreground mb-4">VS</div>
+              <Button
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                className={`
+                  w-full h-10 sm:h-12 text-sm sm:text-base font-semibold transition-all duration-200
+                  ${canSubmit 
+                    ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                  }
+                `}
+              >
+                {isSubmitting ? "Saving..." : "Save"}
+              </Button>
+            </div>
             
-            <div className="flex flex-col items-center">
+            {/* Team 2 */}
+            <div className="flex flex-col items-center space-y-4">
               <TeamDisplay team={currentMatchup.team2} />
-              <div className="mt-4">
+              <div className="w-full">
                 <Input
+                  ref={team2InputRef}
                   type="number"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  value={team2Score !== null ? team2Score.toString() : ""}
-                  onChange={(e) => handleScoreInput(e.target.value, "team2")}
+                  value={team2Score}
+                  onChange={(e) => handleTeam2ScoreChange(e.target.value)}
+                  onKeyDown={handleTeam2KeyDown}
                   placeholder="0"
-                  className={`w-16 text-center text-lg font-bold transition-all duration-200 ${
-                    activeTeam === "team2" 
-                      ? "ring-2 ring-primary bg-primary/10" 
-                      : "bg-muted"
-                  }`}
-                  onFocus={() => setActiveTeam("team2")}
+                  className="w-full text-center text-xl sm:text-2xl font-bold h-12 sm:h-14 transition-all duration-200 focus:ring-2 focus:ring-primary focus:bg-primary/10"
+                  min="0"
+                  max="99"
                 />
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
+      
+      {/* Instructions */}
+      <div className="text-center text-xs sm:text-sm text-muted-foreground space-y-1">
+        <p>Enter scores and press Enter to move to next field</p>
+        <p>Or click Save to confirm this match result</p>
+      </div>
     </div>
   );
 };
