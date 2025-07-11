@@ -50,21 +50,17 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
     return acc;
   }, {} as Record<string, { team1: [string, string]; team2: [string, string]; results: QueuedResult[] }>);
 
-  const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex flex-col gap-2">
-      {team.map((playerId) => (
-        <div key={playerId} className="flex items-center gap-2">
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={getPlayerPhoto(playerId)} />
-            <AvatarFallback className="text-xs">
-              {getInitials(getPlayerName(playerId))}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-sm font-medium">
-            {getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}
-          </span>
-        </div>
-      ))}
+  const PlayerDisplay = ({ playerId }: { playerId: string }) => (
+    <div className="flex items-center gap-3">
+      <Avatar className="h-8 w-8">
+        <AvatarImage src={getPlayerPhoto(playerId)} />
+        <AvatarFallback className="text-xs">
+          {getInitials(getPlayerName(playerId))}
+        </AvatarFallback>
+      </Avatar>
+      <span className="text-sm font-medium">
+        {getPlayerName(playerId) === "Me" ? "You" : getPlayerName(playerId)}
+      </span>
     </div>
   );
 
@@ -82,42 +78,42 @@ export const ResultsCart = ({ queuedResults, players, onRemoveResult }: ResultsC
         {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
       </div>
       
-      {Object.entries(groupedResults).map(([key, group], index) => (
+      {Object.entries(groupedResults).map(([key, group]) => (
         <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
           <CardContent className="p-6">
-            <div className="flex items-center justify-between gap-4 mb-4">
-              {/* Team 1 players */}
-              <div className="flex-1">
-                <TeamDisplay team={group.team1} />
+            <div className="flex items-center justify-between gap-6">
+              {/* Team players - stacked vertically */}
+              <div className="flex flex-col gap-4">
+                {/* Team 1 players */}
+                <div className="space-y-2">
+                  <PlayerDisplay playerId={group.team1[0]} />
+                  <PlayerDisplay playerId={group.team1[1]} />
+                </div>
+                
+                {/* Divider */}
+                <div className="h-px bg-border" />
+                
+                {/* Team 2 players */}
+                <div className="space-y-2">
+                  <PlayerDisplay playerId={group.team2[0]} />
+                  <PlayerDisplay playerId={group.team2[1]} />
+                </div>
               </div>
               
-              {/* All set scores for this matchup */}
-              <div className="flex gap-2">
+              {/* Scores - displayed vertically */}
+              <div className="flex gap-4">
                 {group.results.map((result, setIndex) => (
-                  <div key={setIndex} className="flex flex-col items-center gap-2">
-                    <div className="text-xs text-muted-foreground">Set {setIndex + 1}</div>
+                  <div key={setIndex} className="flex flex-col items-center gap-3">
                     <div className="text-xl font-bold text-green-700">
                       {result.team1Score}
                     </div>
-                    <div className="text-lg font-bold text-muted-foreground px-2">
-                      VS
-                    </div>
+                    <div className="h-px w-8 bg-border" />
                     <div className="text-xl font-bold text-green-700">
                       {result.team2Score}
                     </div>
                   </div>
                 ))}
               </div>
-              
-              {/* Team 2 players */}
-              <div className="flex-1 flex justify-end">
-                <TeamDisplay team={group.team2} />
-              </div>
-            </div>
-            
-            {/* Match number */}
-            <div className="text-center text-sm text-muted-foreground">
-              Matchup {index + 1}
             </div>
           </CardContent>
         </Card>
