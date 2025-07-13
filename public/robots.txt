@@ -1,21 +1,75 @@
 
+# Robots.txt for PadelELO - Mauritius Padel Rankings & Match Tracking
+
 User-agent: *
 Allow: /
+Allow: /leaderboard
+Allow: /tournaments
+Allow: /padel-courts
+Allow: /signup
+Allow: /login
+Allow: /how-it-works
+Allow: /matchmaking-math
+Allow: /roadmap
 
-# Sitemap
-Sitemap: https://padelelo.com/sitemap.xml
-
-# Private routes that shouldn't be indexed
-Disallow: /profile
+# Block private/authenticated pages
 Disallow: /dashboard
-Disallow: /register-match
+Disallow: /profile/*
 Disallow: /matches
-Disallow: /manage-matches
-Disallow: /create-match
-Disallow: /edit-match
-Disallow: /create-tournament
-Disallow: /edit-tournament
 Disallow: /friends
-Disallow: /verify
-Disallow: /onboarding
+Disallow: /create-match
+Disallow: /manage-matches
 Disallow: /player-matching
+Disallow: /onboarding
+Disallow: /tournament/create-tournament
+Disallow: /tournaments/*/edit
+Disallow: /edit-match/*
+
+# Block admin/internal pages
+Disallow: /admin
+Disallow: /api/
+Disallow: /_admin
+Disallow: /supabase/
+
+# Allow common crawl paths
+Allow: /robots.txt
+Allow: /sitemap.xml
+Allow: /favicon.ico
+Allow: /og-image.png
+
+# Sitemap location
+Sitemap: https://padelelo.lovable.app/sitemap.xml
+
+# Crawl delay (be respectful)
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /tournaments/*
+Allow: /padel-courts
+Allow: /leaderboard
+
+# Block AI scrapers while allowing legitimate crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
