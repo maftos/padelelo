@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Navigation } from "@/components/Navigation";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Button } from "@/components/ui/button";
@@ -21,59 +21,14 @@ interface Venue {
   region: string;
 }
 
-// Sample venue data with real coordinates for Mauritius venues
-const SAMPLE_VENUES: Venue[] = [
-  {
-    venue_id: "sample-1",
-    name: "Padel Club Mauritius",
-    location: "Port Louis, Mauritius",
-    phone_number: "+230 5123 4567",
-    opening_hours: "Monday-Sunday: 6:00 AM - 10:00 PM",
-    website: "https://padelclub.mu",
-    coordinates: [57.5017, -20.1619], // Port Louis
-    region: "Port Louis"
-  },
-  {
-    venue_id: "sample-2",
-    name: "Bagatelle Padel Centre",
-    location: "Bagatelle, Mauritius",
-    phone_number: "+230 5234 5678",
-    opening_hours: "Monday-Sunday: 7:00 AM - 9:00 PM",
-    website: "https://bagatelle-padel.mu",
-    coordinates: [57.4933, -20.2167], // Bagatelle
-    region: "Moka"
-  },
-  {
-    venue_id: "sample-3",
-    name: "Grand Baie Padel Club",
-    location: "Grand Baie, Mauritius",
-    phone_number: "+230 5345 6789",
-    opening_hours: "Monday-Sunday: 6:30 AM - 9:30 PM",
-    website: "https://grandbaie-padel.mu",
-    coordinates: [57.5833, -20.0167], // Grand Baie
-    region: "Rivière du Rempart"
-  },
-  {
-    venue_id: "sample-4",
-    name: "Flic en Flac Padel Arena",
-    location: "Flic en Flac, Mauritius",
-    phone_number: "+230 5456 7890",
-    opening_hours: "Monday-Sunday: 7:00 AM - 8:00 PM",
-    website: "https://flicenflac-padel.mu",
-    coordinates: [57.3667, -20.2833], // Flic en Flac
-    region: "Black River"
-  }
-];
-
 const PadelCourts = () => {
   const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
 
-  const { data: dbVenues, isLoading, error } = useQuery({
-    queryKey: ['padel-courts'],
+  const { data: venuesData, isLoading, error } = useQuery({
+    queryKey: ['all-venues'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('venues')
-        .select('*');
+        .rpc('get_all_venues');
 
       if (error) {
         console.error("Error fetching venues:", error);
@@ -85,9 +40,13 @@ const PadelCourts = () => {
     staleTime: 1000 * 60 * 60, // 1 hour
   });
 
-  // Use sample data if no database venues or combine with database venues
-  const venues: Venue[] = React.useMemo(() => {
-    const dbVenuesMapped = dbVenues?.map(venue => ({
+  // Transform the venues data from the database function
+  const venues: Venue[] = useMemo(() => {
+    if (!venuesData || !Array.isArray(venuesData)) {
+      return [];
+    }
+
+    return venuesData.map(venue => ({
       venue_id: venue.venue_id,
       name: venue.name,
       location: venue.region || 'Mauritius',
@@ -96,24 +55,10 @@ const PadelCourts = () => {
         (Array.isArray(venue.opening_hours) ? venue.opening_hours.join(', ') : String(venue.opening_hours)) 
         : 'Contact for hours',
       website: venue.website_url || '',
-      coordinates: [57.5522, -20.3484] as [number, number], // Default coordinates for now
+      coordinates: venue.coordinates || [57.5522, -20.3484], // Default to Mauritius center if no coordinates
       region: venue.region || 'Mauritius'
-    })) || [];
-
-    // Combine database venues with sample venues, prioritizing database venues
-    const allVenues = [...dbVenuesMapped, ...SAMPLE_VENUES];
-    
-    // Remove duplicates based on name
-    const uniqueVenues = allVenues.reduce((acc, venue) => {
-      const existingVenue = acc.find(v => v.name.toLowerCase() === venue.name.toLowerCase());
-      if (!existingVenue) {
-        acc.push(venue);
-      }
-      return acc;
-    }, [] as Venue[]);
-
-    return uniqueVenues;
-  }, [dbVenues]);
+    }));
+  }, [venuesData]);
 
   const structuredData = [
     getOrganizationSchema(),
@@ -186,13 +131,13 @@ const PadelCourts = () => {
           </div>
         )}
 
-        {viewMode === 'map' && venues && (
+        {viewMode === 'map' && venues && venues.length > 0 && (
           <div className="h-[500px] md:h-[600px] rounded-lg overflow-hidden shadow-lg">
             <PadelMap venues={venues} />
           </div>
         )}
 
-        {viewMode === 'list' && venues && (
+        {viewMode === 'list' && venues && venues.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {venues.map((venue) => (
               <Card key={venue.venue_id} className="hover:shadow-lg transition-shadow">

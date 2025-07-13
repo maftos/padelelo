@@ -932,10 +932,6 @@ export type Database = {
         Args: { p_user_a_id: string }
         Returns: Json
       }
-      get_venues: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
       ignore_suggested_friend: {
         Args: { user_a_id_public: string; friend_id: string }
         Returns: Json
