@@ -16,8 +16,6 @@ import { TournamentInviteDialog } from "./TournamentInviteDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 import { BracketTypeDisplay } from "@/components/tournament/BracketTypeDisplay";
-import { SEOHead } from "@/components/seo/SEOHead";
-import { getTournamentSchema } from "@/utils/structuredData";
 
 interface Tournament {
   tournament_id: string;
@@ -97,17 +95,6 @@ export default function TournamentDetail() {
       return data as Tournament;
     }
   });
-
-  const structuredData = tournament ? [
-    getTournamentSchema({
-      name: tournament.name,
-      description: tournament.description,
-      startDate: tournament.start_date,
-      endDate: tournament.end_date,
-      venue: tournament.venue_name,
-      maxParticipants: tournament.max_participants
-    })
-  ] : [];
 
   const formatTournamentDate = (startDate: string, endDate: string | null) => {
     try {
@@ -194,11 +181,6 @@ export default function TournamentDetail() {
   if (isLoading) {
     return (
       <>
-        <SEOHead
-          title="Loading Tournament - PadelELO"
-          description="Loading tournament details..."
-          canonicalUrl={`/tournaments/${tournamentId}`}
-        />
         <Navigation />
         <PageContainer>
           <div className="flex justify-center items-center min-h-[60vh]">
@@ -212,11 +194,6 @@ export default function TournamentDetail() {
   if (error || !tournament) {
     return (
       <>
-        <SEOHead
-          title="Tournament Not Found - PadelELO"
-          description="The requested tournament could not be found."
-          canonicalUrl={`/tournaments/${tournamentId}`}
-        />
         <Navigation />
         <PageContainer>
           <div className="text-center text-destructive">
@@ -229,14 +206,6 @@ export default function TournamentDetail() {
 
   return (
     <>
-      <SEOHead
-        title={`${tournament.name} - Padel Tournament | PadelELO`}
-        description={`${tournament.description.substring(0, 150)}... Join this exciting padel tournament in Mauritius. Registration and details available.`}
-        canonicalUrl={`/tournaments/${tournament.tournament_id}`}
-        ogImage={tournament.main_photo}
-        structuredData={structuredData}
-        keywords={`${tournament.name}, padel tournament, mauritius, ${tournament.venue_name}, tournament registration`}
-      />
       <Navigation />
       <PageContainer className="pb-24 md:pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
