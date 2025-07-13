@@ -46,7 +46,7 @@ const PadelCourts = () => {
       return [];
     }
 
-    return venuesData.map(venue => ({
+    return venuesData.map((venue: any) => ({
       venue_id: venue.venue_id,
       name: venue.name,
       location: venue.region || 'Mauritius',
