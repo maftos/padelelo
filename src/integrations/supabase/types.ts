@@ -309,19 +309,19 @@ export type Database = {
         Row: {
           match_id: string
           player_id: string
-          position: string
+          position: string | null
           team_number: number
         }
         Insert: {
           match_id: string
           player_id: string
-          position: string
+          position?: string | null
           team_number: number
         }
         Update: {
           match_id?: string
           player_id?: string
-          position?: string
+          position?: string | null
           team_number?: number
         }
         Relationships: [
@@ -776,6 +776,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_booking_scores: {
+        Args: { p_user_id: string; p_booking_id: string; p_scores: Json }
+        Returns: Json
+      }
       apply_to_tournament: {
         Args: {
           p_tournament_id: string

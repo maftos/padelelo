@@ -7,8 +7,15 @@ Sitemap: https://padelelo.com/sitemap.xml
 
 # Private routes that shouldn't be indexed
 Disallow: /profile
+Disallow: /dashboard
 Disallow: /register-match
 Disallow: /matches
+Disallow: /manage-matches
+Disallow: /create-match
+Disallow: /edit-match
+Disallow: /create-tournament
+Disallow: /edit-tournament
 Disallow: /friends
 Disallow: /verify
-
+Disallow: /onboarding
+Disallow: /player-matching

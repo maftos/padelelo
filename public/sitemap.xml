@@ -18,6 +18,16 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://padelelo.com/tournaments</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://padelelo.com/padel-courts</loc>
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://padelelo.com/how-it-works</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
@@ -43,4 +53,3 @@
     <changefreq>monthly</changefreq>
   </url>
 </urlset>
-
