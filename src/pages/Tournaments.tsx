@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,8 @@ import { toast } from "@/hooks/use-toast";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SEOHead } from "@/components/seo/SEOHead";
+import { getOrganizationSchema } from "@/utils/structuredData";
 
 interface TournamentAdmin {
   user_id: string;
@@ -146,9 +147,37 @@ export default function Tournaments() {
     toggleInterestMutation.mutate({ tournamentId, newStatus });
   };
 
+  const structuredData = [
+    getOrganizationSchema(),
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Padel Tournaments in Mauritius",
+      "description": "Upcoming and ongoing padel tournaments in Mauritius",
+      "numberOfItems": tournaments?.length || 0,
+      "itemListElement": tournaments?.map((tournament, index) => ({
+        "@type": "SportsEvent",
+        "position": index + 1,
+        "name": tournament.name,
+        "description": tournament.description,
+        "startDate": tournament.start_date,
+        "endDate": tournament.end_date,
+        "location": {
+          "@type": "Place",
+          "name": "Mauritius"
+        }
+      })) || []
+    }
+  ];
+
   if (isLoading) {
     return (
       <>
+        <SEOHead
+          title="Tournaments - PadelELO"
+          description="Loading padel tournaments in Mauritius..."
+          canonicalUrl="/tournaments"
+        />
         <Navigation />
         <PageContainer>
           <div className="flex justify-center items-center min-h-[60vh]">
@@ -162,6 +191,11 @@ export default function Tournaments() {
   if (error) {
     return (
       <>
+        <SEOHead
+          title="Tournaments - PadelELO"
+          description="Error loading tournaments. Please try again later."
+          canonicalUrl="/tournaments"
+        />
         <Navigation />
         <PageContainer>
           <div className="text-center text-destructive">
@@ -174,6 +208,13 @@ export default function Tournaments() {
 
   return (
     <>
+      <SEOHead
+        title="Padel Tournaments in Mauritius - PadelELO"
+        description="Discover and join exciting padel tournaments across Mauritius. From beginners to advanced players, find tournaments that match your skill level and compete with the best."
+        canonicalUrl="/tournaments"
+        structuredData={structuredData}
+        keywords="padel tournaments mauritius, padel competitions, tournament registration, padel events mauritius"
+      />
       <Navigation />
       <div className="w-full min-h-screen">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
