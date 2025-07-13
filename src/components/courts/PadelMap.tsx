@@ -2,17 +2,27 @@
 import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { PadelClub } from '@/pages/PadelCourts';
+
+interface Venue {
+  venue_id: string;
+  name: string;
+  location: string;
+  phone_number: string;
+  opening_hours: string;
+  website: string;
+  coordinates: [number, number];
+  region: string;
+}
 
 interface PadelMapProps {
-  clubs: PadelClub[];
-  onClubSelect?: (club: PadelClub) => void;
+  venues: Venue[];
+  onVenueSelect?: (venue: Venue) => void;
 }
 
 // Mapbox public token
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFmbWFhZm1hYWFmIiwiYSI6ImNtY29wN3V2ZTBjOHMybXIyYTF6MzlqYm4ifQ.8ijZH3a-tm0juZeb_PW7ig';
 
-export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
+export const PadelMap = ({ venues, onVenueSelect }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
@@ -56,7 +66,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     markers.current = [];
 
     // Add new markers
-    clubs.forEach((club) => {
+    venues.forEach((venue) => {
       // Create simple marker element
       const markerElement = document.createElement('div');
       markerElement.className = 'custom-marker';
@@ -77,32 +87,32 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
 
       // Create marker
       const marker = new mapboxgl.Marker(markerElement)
-        .setLngLat(club.coordinates)
+        .setLngLat(venue.coordinates)
         .addTo(map.current!);
 
-      // Add popup with club info
+      // Add popup with venue info
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: false,
         closeOnClick: true
       }).setHTML(`
         <div class="p-2">
-          <h3 class="font-semibold text-sm">${club.name}</h3>
-          <p class="text-xs text-gray-600">${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}</p>
-          ${club.phone ? `<p class="text-xs">${club.phone}</p>` : ''}
+          <h3 class="font-semibold text-sm">${venue.name}</h3>
+          <p class="text-xs text-gray-600">${venue.location}</p>
+          ${venue.phone_number ? `<p class="text-xs">${venue.phone_number}</p>` : ''}
         </div>
       `);
 
       marker.setPopup(popup);
 
       // Add click event if callback is provided
-      if (onClubSelect) {
+      if (onVenueSelect) {
         markerElement.addEventListener('click', () => {
-          onClubSelect(club);
+          onVenueSelect(venue);
           
           // Fly to location
           map.current?.flyTo({
-            center: club.coordinates,
+            center: venue.coordinates,
             zoom: 13,
             duration: 1000
           });
@@ -113,12 +123,12 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     });
   };
 
-  // Re-add markers when clubs change
+  // Re-add markers when venues change
   useEffect(() => {
     if (map.current) {
       addMarkers();
     }
-  }, [clubs, onClubSelect]);
+  }, [venues, onVenueSelect]);
 
   return (
     <div className="relative w-full h-full">

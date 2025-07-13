@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { PadelMap } from "@/components/courts/PadelMap";
@@ -35,7 +36,19 @@ const PadelCourts = () => {
         throw error;
       }
 
-      return data as Venue[];
+      // Transform the data to match our Venue interface
+      return data.map(venue => ({
+        venue_id: venue.venue_id,
+        name: venue.name,
+        location: venue.region || 'Mauritius',
+        phone_number: venue.phone_number || '',
+        opening_hours: venue.opening_hours ? 
+          (Array.isArray(venue.opening_hours) ? venue.opening_hours.join(', ') : String(venue.opening_hours)) 
+          : 'Contact for hours',
+        website: venue.website_url || '',
+        coordinates: [57.5522, -20.3484] as [number, number], // Default to Mauritius center
+        region: venue.region || 'Mauritius'
+      })) as Venue[];
     },
     staleTime: 1000 * 60 * 60, // 1 hour
   });
@@ -113,10 +126,12 @@ const PadelCourts = () => {
                     <MapPin className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">{venue.location}</p>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">{venue.phone_number}</p>
-                  </div>
+                  {venue.phone_number && (
+                    <div className="flex items-center space-x-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <p className="text-sm text-muted-foreground">{venue.phone_number}</p>
+                    </div>
+                  )}
                   <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">{venue.opening_hours}</p>
