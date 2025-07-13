@@ -18,7 +18,7 @@ export const Navigation = () => {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card">
       <div className="container flex h-14 items-center justify-between">
-        <Link to="/home" className="flex items-center space-x-2">
+        <Link to="/" className="flex items-center space-x-2">
           <img 
             src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" 
             alt="PadelELO Logo" 

@@ -2,6 +2,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import Home from "./Home";
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -39,8 +40,8 @@ const Index = () => {
     return <Navigate to="/dashboard" replace />;
   }
   
-  console.log("No user, redirecting to home");
-  return <Navigate to="/home" replace />;
+  console.log("No user, showing home page");
+  return <Home />;
 };
 
 export default Index;
