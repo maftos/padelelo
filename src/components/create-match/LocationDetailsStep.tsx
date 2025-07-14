@@ -27,7 +27,7 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
   const { data: venues = [], isLoading: isLoadingVenues } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_venues');
+      const { data, error } = await supabase.rpc('get_all_venues');
       if (error) {
         console.error('Error fetching venues:', error);
         throw error;

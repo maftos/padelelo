@@ -30,7 +30,7 @@ export default function CreateTournament() {
 
   useEffect(() => {
     const fetchVenues = async () => {
-      const { data, error } = await supabase.rpc('get_venues');
+      const { data, error } = await supabase.rpc('get_all_venues');
       if (error) {
         toast.error("Failed to load venues");
         return;

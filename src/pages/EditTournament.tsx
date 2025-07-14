@@ -63,7 +63,7 @@ export default function EditTournament() {
             p_tournament_id: tournamentId,
             p_user_a_id: user.id
           }),
-          supabase.rpc('get_venues')
+          supabase.rpc('get_all_venues')
         ]);
 
         if (tournamentResponse.error) {
