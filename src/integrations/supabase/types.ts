@@ -347,6 +347,7 @@ export type Database = {
           match_id: string | null
           set_id: string
           set_number: number
+          status: string | null
           team1_score: number
           team2_score: number
           updated_at: string | null
@@ -356,6 +357,7 @@ export type Database = {
           match_id?: string | null
           set_id?: string
           set_number: number
+          status?: string | null
           team1_score: number
           team2_score: number
           updated_at?: string | null
@@ -365,6 +367,7 @@ export type Database = {
           match_id?: string | null
           set_id?: string
           set_number?: number
+          status?: string | null
           team1_score?: number
           team2_score?: number
           updated_at?: string | null
@@ -930,10 +933,6 @@ export type Database = {
       }
       get_my_friends: {
         Args: { p_user_a_id: string }
-        Returns: Json
-      }
-      get_venues: {
-        Args: Record<PropertyKey, never>
         Returns: Json
       }
       ignore_suggested_friend: {

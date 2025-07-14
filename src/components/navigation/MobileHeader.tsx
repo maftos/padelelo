@@ -1,5 +1,5 @@
 
-import { Menu, Search, Bell } from "lucide-react";
+import { Menu } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,12 +19,28 @@ export const MobileHeader = () => {
   return (
     <header className="lg:hidden sticky top-0 z-50 w-full bg-card border-b border-border">
       <div className="flex items-center justify-between px-4 h-14">
-        {/* Left: Logo and Menu */}
-        <div className="flex items-center gap-3">
+        {/* Left: Logo */}
+        <Link to="/" className="flex items-center space-x-2">
+          <img 
+            src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" 
+            alt="PadelELO Logo" 
+            className="h-8 w-8" 
+          />
+          <span className="font-bold text-primary text-lg">PadelELO</span>
+        </Link>
+
+        {/* Right: Combined Menu + Profile */}
+        {user && (
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+              <div className="relative cursor-pointer flex items-center gap-2 p-1 rounded-lg hover:bg-accent transition-colors">
                 <Menu className="h-5 w-5" />
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
+                    {profile?.display_name?.[0]?.toUpperCase() || '?'}
+                  </AvatarFallback>
+                </Avatar>
                 {hasFriendRequests && (
                   <Badge 
                     variant="destructive" 
@@ -33,9 +49,9 @@ export const MobileHeader = () => {
                     {friendRequestCount}
                   </Badge>
                 )}
-              </Button>
+              </div>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 w-80 bg-card">
+            <SheetContent side="right" className="p-0 w-full bg-card">
               <SideMenuContent 
                 user={user}
                 profile={profile}
@@ -44,32 +60,7 @@ export const MobileHeader = () => {
               />
             </SheetContent>
           </Sheet>
-          
-          <Link to="/" className="flex items-center space-x-2">
-            <img 
-              src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" 
-              alt="PadelELO Logo" 
-              className="h-8 w-8" 
-            />
-            <span className="font-bold text-primary text-lg">PadelELO</span>
-          </Link>
-        </div>
-
-        {/* Right: Search and Profile */}
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon">
-            <Search className="h-5 w-5" />
-          </Button>
-          
-          {user && (
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
-                {profile?.display_name?.[0]?.toUpperCase() || '?'}
-              </AvatarFallback>
-            </Avatar>
-          )}
-        </div>
+        )}
       </div>
     </header>
   );
