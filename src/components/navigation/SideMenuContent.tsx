@@ -53,49 +53,23 @@ export const SideMenuContent = ({
   }
 
   return (
-    <div className="flex flex-col h-full pt-8">
+    <div className="flex flex-col h-full pt-8 text-right">
       {/* User Profile Section */}
       <div className="space-y-4 px-2">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 justify-end">
+          <div className="flex flex-col flex-1 min-w-0 text-right">
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+                {rankingChange > 0 ? '+' : ''}{rankingChange}
+              </Badge>
+              <span className="font-medium">{profile?.display_name || 'Player'} (#{ranking})</span>
+            </div>
+            <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
+          </div>
           <Avatar className="h-12 w-12">
             <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
             <AvatarFallback>{profile?.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium">{profile?.display_name || 'Player'} (#{ranking})</span>
-              <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
-                {rankingChange > 0 ? '+' : ''}{rankingChange}
-              </Badge>
-            </div>
-            <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
-          </div>
-        </div>
-        <SheetClose asChild>
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
-          </Link>
-        </SheetClose>
-      </div>
-
-      <Separator className="my-4" />
-
-      {/* Primary Actions Section */}
-      <div className="space-y-2 px-2">
-        <div className="flex flex-col gap-2">
-          <SheetClose asChild>
-            <Link
-              to="/manage-matches"
-              className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              <ClipboardEdit className="h-4 w-4" />
-              My Matches
-            </Link>
-          </SheetClose>
         </div>
       </div>
 
@@ -105,38 +79,56 @@ export const SideMenuContent = ({
       <div className="space-y-1 px-2">
         <SheetClose asChild>
           <Link
-            to="/open-bookings"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            to="/dashboard"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors justify-end"
           >
+            <span>Dashboard</span>
+            <LayoutDashboard className="h-4 w-4" />
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            to="/manage-matches"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors justify-end"
+          >
+            <span>My Matches</span>
+            <ClipboardEdit className="h-4 w-4" />
+          </Link>
+        </SheetClose>
+        <SheetClose asChild>
+          <Link
+            to="/open-bookings"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors justify-end"
+          >
+            <span>Open Bookings</span>
             <Users className="h-4 w-4" />
-            Open Bookings
           </Link>
         </SheetClose>
         <SheetClose asChild>
           <Link
             to="/tournaments"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors justify-end"
           >
+            <span>Tournaments</span>
             <Trophy className="h-4 w-4" />
-            Tournaments
           </Link>
         </SheetClose>
         <SheetClose asChild>
           <Link
             to="/leaderboard"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors justify-end"
           >
+            <span>Leaderboard</span>
             <BarChart3 className="h-4 w-4" />
-            Leaderboard
           </Link>
         </SheetClose>
         <SheetClose asChild>
           <Link
             to="/padel-courts"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors justify-end"
           >
+            <span>Padel Courts</span>
             <MapPin className="h-4 w-4" />
-            Padel Courts
           </Link>
         </SheetClose>
       </div>
@@ -149,10 +141,10 @@ export const SideMenuContent = ({
             onSignOut();
             onClose();
           }}
-          className="flex items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
+          className="flex items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors justify-end w-full"
         >
+          <span>Sign Out</span>
           <LogOut className="h-4 w-4" />
-          Sign Out
         </button>
       </div>
     </div>
