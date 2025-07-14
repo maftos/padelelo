@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   BarChart3,
   Users,
+  X,
 } from "lucide-react";
 
 interface SideMenuContentProps {
@@ -53,9 +54,19 @@ export const SideMenuContent = ({
   }
 
   return (
-    <div className="flex flex-col h-full pt-8">
+    <div className="flex flex-col h-full">
+      {/* Header with Close Button */}
+      <div className="flex items-center justify-between p-4 border-b border-border">
+        <h2 className="text-lg font-semibold">Menu</h2>
+        <SheetClose asChild>
+          <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+            <X className="h-5 w-5" />
+          </button>
+        </SheetClose>
+      </div>
+
       {/* User Profile Section */}
-      <div className="space-y-4 px-2">
+      <div className="space-y-4 p-4 border-b border-border">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12">
             <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
@@ -71,89 +82,87 @@ export const SideMenuContent = ({
             <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
           </div>
         </div>
-        <SheetClose asChild>
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            <LayoutDashboard className="h-4 w-4" />
-            Dashboard
-          </Link>
-        </SheetClose>
       </div>
 
-      <Separator className="my-4" />
-
-      {/* Primary Actions Section */}
-      <div className="space-y-2 px-2">
-        <div className="flex flex-col gap-2">
+      {/* Navigation Menu */}
+      <div className="flex-1 px-4 py-2">
+        <nav className="space-y-1">
+          <SheetClose asChild>
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+              <span className="font-medium">Dashboard</span>
+            </Link>
+          </SheetClose>
+          
           <SheetClose asChild>
             <Link
               to="/manage-matches"
-              className="w-fit flex items-center gap-2 text-sm p-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-3 p-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors min-h-[44px]"
             >
-              <ClipboardEdit className="h-4 w-4" />
-              My Matches
+              <ClipboardEdit className="h-5 w-5" />
+              <span className="font-medium">My Matches</span>
             </Link>
           </SheetClose>
-        </div>
+
+          <SheetClose asChild>
+            <Link
+              to="/open-bookings"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
+            >
+              <Users className="h-5 w-5" />
+              <span className="font-medium">Open Bookings</span>
+            </Link>
+          </SheetClose>
+
+          <SheetClose asChild>
+            <Link
+              to="/tournaments"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
+            >
+              <Trophy className="h-5 w-5" />
+              <span className="font-medium">Tournaments</span>
+            </Link>
+          </SheetClose>
+
+          <SheetClose asChild>
+            <Link
+              to="/leaderboard"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
+            >
+              <BarChart3 className="h-5 w-5" />
+              <span className="font-medium">Leaderboard</span>
+            </Link>
+          </SheetClose>
+
+          <SheetClose asChild>
+            <Link
+              to="/padel-courts"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
+            >
+              <MapPin className="h-5 w-5" />
+              <span className="font-medium">Padel Courts</span>
+            </Link>
+          </SheetClose>
+        </nav>
       </div>
 
-      <Separator className="my-4" />
-
-      {/* Main Navigation Section */}
-      <div className="space-y-1 px-2">
+      {/* Sign Out Section */}
+      <div className="p-4 border-t border-border mt-auto">
         <SheetClose asChild>
-          <Link
-            to="/open-bookings"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
+          <button 
+            onClick={() => {
+              onSignOut();
+              onClose();
+            }}
+            className="w-full flex items-center gap-3 p-3 rounded-lg text-destructive hover:bg-destructive/10 transition-colors min-h-[44px]"
           >
-            <Users className="h-4 w-4" />
-            Open Bookings
-          </Link>
+            <LogOut className="h-5 w-5" />
+            <span className="font-medium">Sign Out</span>
+          </button>
         </SheetClose>
-        <SheetClose asChild>
-          <Link
-            to="/tournaments"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            <Trophy className="h-4 w-4" />
-            Tournaments
-          </Link>
-        </SheetClose>
-        <SheetClose asChild>
-          <Link
-            to="/leaderboard"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            <BarChart3 className="h-4 w-4" />
-            Leaderboard
-          </Link>
-        </SheetClose>
-        <SheetClose asChild>
-          <Link
-            to="/padel-courts"
-            className="flex items-center gap-2 text-sm p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            <MapPin className="h-4 w-4" />
-            Padel Courts
-          </Link>
-        </SheetClose>
-      </div>
-
-      <Separator className="my-4" />
-
-      <div className="px-2">
-        <button 
-          onClick={() => {
-            onSignOut();
-            onClose();
-          }}
-          className="flex items-center gap-2 text-sm p-2 rounded-md text-destructive hover:bg-destructive hover:text-destructive-foreground transition-colors"
-        >
-          <LogOut className="h-4 w-4" />
-          Sign Out
-        </button>
       </div>
     </div>
   );

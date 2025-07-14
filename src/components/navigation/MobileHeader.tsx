@@ -51,7 +51,7 @@ export const MobileHeader = () => {
                 )}
               </div>
             </SheetTrigger>
-            <SheetContent side="right" className="p-0 w-full bg-card">
+            <SheetContent side="right" className="p-0 w-80 bg-card">
               <SideMenuContent 
                 user={user}
                 profile={profile}
