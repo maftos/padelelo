@@ -9,7 +9,7 @@ export const HeroSection = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+          src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png"
           alt="Padel players in action"
           className="w-full h-full object-cover"
         />
@@ -31,13 +31,11 @@ export const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button asChild size="lg" className="text-base px-8 py-3">
               <Link to="/signup">
-                <Play className="w-5 h-5 mr-2" />
                 Start Playing
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="text-base px-8 py-3 border-foreground/30 text-foreground hover:bg-foreground/10">
               <Link to="/leaderboard">
-                <TrendingUp className="w-5 h-5 mr-2" />
                 View Rankings
               </Link>
             </Button>

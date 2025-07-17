@@ -52,7 +52,6 @@ export const CommunitySection = () => {
             
             <Button asChild size="lg" className="text-base px-8">
               <Link to="/friends">
-                <Users className="w-5 h-5 mr-2" />
                 Join Community
               </Link>
             </Button>
@@ -69,7 +68,7 @@ export const CommunitySection = () => {
             </div>
             
             {/* Floating Cards */}
-            <Card className="absolute -bottom-4 -left-4 p-4 bg-card border-border shadow-lg">
+            <Card className="absolute bottom-4 left-4 sm:-bottom-4 sm:-left-4 p-4 bg-card border-border shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                   <Users className="w-5 h-5 text-primary" />
@@ -81,7 +80,7 @@ export const CommunitySection = () => {
               </div>
             </Card>
             
-            <Card className="absolute -top-4 -right-4 p-4 bg-card border-border shadow-lg">
+            <Card className="absolute top-4 right-4 sm:-top-4 sm:-right-4 p-4 bg-card border-border shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
                   <Calendar className="w-5 h-5 text-primary" />

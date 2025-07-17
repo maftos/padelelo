@@ -19,7 +19,7 @@ export const ELOSection = () => {
             </div>
             
             {/* ELO Progress Card */}
-            <Card className="absolute -bottom-6 -right-6 p-6 bg-card border-border shadow-xl max-w-xs">
+            <Card className="absolute bottom-6 right-6 sm:-bottom-6 sm:-right-6 p-6 bg-card border-border shadow-xl max-w-xs">
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
