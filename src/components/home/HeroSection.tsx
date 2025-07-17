@@ -9,8 +9,8 @@ export const HeroSection = () => {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png"
-          alt="Padel players in action"
+          src="/lovable-uploads/ace216a4-b3e4-429e-8b4a-cf1184626be1.png"
+          alt="Padel courts at sports facility"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-background/60" />

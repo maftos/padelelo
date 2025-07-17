@@ -1,7 +1,7 @@
 
 import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/home/HeroSection";
-import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { ProductShowcaseSection } from "@/components/home/ProductShowcaseSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
 import { ELOSection } from "@/components/home/ELOSection";
 import { FAQSection } from "@/components/home/FAQSection";
@@ -13,7 +13,7 @@ const Home = () => {
       <Navigation />
       <main className="space-y-0">
         <HeroSection />
-        <FeaturesSection />
+        <ProductShowcaseSection />
         <CommunitySection />
         <ELOSection />
         <FAQSection />
