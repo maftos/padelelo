@@ -30,25 +30,25 @@ const faqs = [
 
 export const FAQSection = () => {
   return (
-    <section className="py-16 sm:py-24 bg-secondary/20">
+    <section className="py-12 sm:py-16 md:py-24 bg-secondary/20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+        <div className="text-center mb-8 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg text-foreground/70">
+          <p className="text-base sm:text-lg text-foreground/70">
             Everything you need to know about PadelELO
           </p>
         </div>
         
-        <div className="bg-card border border-border rounded-2xl p-6 sm:p-8">
-          <Accordion type="single" collapsible className="w-full space-y-4">
+        <div className="bg-card border border-border rounded-2xl p-4 sm:p-6 md:p-8">
+          <Accordion type="single" collapsible className="w-full space-y-2 sm:space-y-4">
             {faqs.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`} className="border-border">
-                <AccordionTrigger className="text-left text-lg font-semibold text-foreground hover:text-primary transition-colors">
+                <AccordionTrigger className="text-left text-base sm:text-lg font-semibold text-foreground hover:text-primary transition-colors px-2 sm:px-0">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="text-foreground/70 pt-2">
+                <AccordionContent className="text-foreground/70 pt-2 px-2 sm:px-0 text-sm sm:text-base">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

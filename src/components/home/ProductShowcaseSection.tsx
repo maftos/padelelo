@@ -12,33 +12,33 @@ import avatarMike from "@/assets/avatar-mike.jpg";
 
 export const ProductShowcaseSection = () => {
   return (
-    <section className="py-16 bg-muted/30">
+    <section className="py-12 sm:py-16 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+        <div className="max-w-4xl mx-auto text-center mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
             Everything you need to excel
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-base sm:text-lg text-muted-foreground px-4">
             Our platform provides all the tools you need to improve your game and connect with the community
           </p>
         </div>
 
-        <div className="space-y-20">
+        <div className="space-y-16 sm:space-y-20">
           {/* Open Matches Showcase */}
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
+            <div className="order-2 lg:order-1 px-4 sm:px-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
                 Find Open Matches
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base">
                 Join existing bookings or create your own. Connect with players of similar skill levels 
                 and enjoy competitive matches at premium courts across Mauritius.
               </p>
-              <Button asChild className="text-base px-8 py-3">
+              <Button asChild className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
                 <Link to="/player-matching">Browse Open Matches</Link>
               </Button>
             </div>
-            <div className="relative">
+            <div className="relative order-1 lg:order-2 px-4 sm:px-0">
               <Card className="shadow-lg bg-background border hover:shadow-md transition-shadow">
                 <CardHeader className="pb-3 px-6">
                   <div className="flex justify-between items-start gap-4">
@@ -138,20 +138,20 @@ export const ProductShowcaseSection = () => {
           </div>
 
           {/* Leaderboard Showcase */}
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div className="lg:order-2">
-              <h3 className="text-2xl font-bold text-foreground mb-4">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
+            <div className="lg:order-2 px-4 sm:px-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
                 Track Your Progress
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base">
                 Climb the leaderboard and see how you stack up against other players. 
                 Our ELO system ensures fair matchmaking and accurate skill assessment.
               </p>
-              <Button asChild variant="outline" className="text-base px-8 py-3">
+              <Button asChild variant="outline" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
                 <Link to="/leaderboard">View Leaderboard</Link>
               </Button>
             </div>
-            <div className="lg:order-1 relative">
+            <div className="lg:order-1 relative px-4 sm:px-0">
               <Card className="shadow-lg bg-background border">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -198,20 +198,20 @@ export const ProductShowcaseSection = () => {
           </div>
 
           {/* Tournament Showcase */}
-          <div className="grid lg:grid-cols-2 gap-8 items-center">
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-4">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
+            <div className="order-2 lg:order-1 px-4 sm:px-0">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
                 Join Local Tournaments
               </h3>
-              <p className="text-muted-foreground mb-6">
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base">
                 Compete in organized tournaments and test your skills against the best players. 
                 Win prizes, gain recognition, and climb to the top of competitive play.
               </p>
-              <Button asChild variant="outline" className="text-base px-8 py-3">
+              <Button asChild variant="outline" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
                 <Link to="/tournaments">View Tournaments</Link>
               </Button>
             </div>
-            <div className="relative">
+            <div className="relative order-1 lg:order-2 px-4 sm:px-0">
               <Card className="shadow-lg bg-background border overflow-hidden">
                 <div className="relative h-32 w-full">
                   <img
