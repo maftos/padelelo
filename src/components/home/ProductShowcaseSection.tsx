@@ -4,6 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Trophy, TrendingUp, Clock, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
+import avatarJohn from "@/assets/avatar-john.jpg";
+import avatarMaria from "@/assets/avatar-maria.jpg";
+import avatarAlex from "@/assets/avatar-alex.jpg";
+import avatarSarah from "@/assets/avatar-sarah.jpg";
+import avatarMike from "@/assets/avatar-mike.jpg";
 
 export const ProductShowcaseSection = () => {
   return (
@@ -29,7 +34,7 @@ export const ProductShowcaseSection = () => {
                 Join existing bookings or create your own. Connect with players of similar skill levels 
                 and enjoy competitive matches at premium courts across Mauritius.
               </p>
-              <Button asChild>
+              <Button asChild className="text-base px-8 py-3">
                 <Link to="/player-matching">Browse Open Matches</Link>
               </Button>
             </div>
@@ -70,7 +75,7 @@ export const ProductShowcaseSection = () => {
                 
                 <CardContent className="pt-0 px-6">
                   <CardDescription className="mb-4 text-sm leading-relaxed">
-                    Looking for 2 more players for a fun match. All skill levels welcome!
+                    Looking for 1 more player for a fun match. All skill levels welcome!
                   </CardDescription>
                   
                   {/* Current Players - Mobile optimized grid */}
@@ -85,31 +90,34 @@ export const ProductShowcaseSection = () => {
                     <div className="grid grid-cols-2 gap-3">
                       <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 min-h-[60px]">
                         <Avatar className="h-8 w-8 flex-shrink-0">
+                          <AvatarImage src={avatarJohn} alt="John S" />
                           <AvatarFallback className="text-xs">JS</AvatarFallback>
                         </Avatar>
                         <div className="text-sm flex-1 min-w-0">
-                          <div className="font-medium truncate">John Smith</div>
+                          <div className="font-medium truncate">John S</div>
                           <div className="text-xs text-muted-foreground">2,920 MMR</div>
                         </div>
                       </div>
                       
                       <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 min-h-[60px]">
                         <Avatar className="h-8 w-8 flex-shrink-0">
+                          <AvatarImage src={avatarMaria} alt="Maria J" />
                           <AvatarFallback className="text-xs">MJ</AvatarFallback>
                         </Avatar>
                         <div className="text-sm flex-1 min-w-0">
-                          <div className="font-medium truncate">Maria Johnson</div>
+                          <div className="font-medium truncate">Maria J</div>
                           <div className="text-xs text-muted-foreground">2,780 MMR</div>
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 bg-muted/30 rounded-lg p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[60px] touch-manipulation">
+                      <div className="flex items-center gap-3 bg-muted/50 rounded-lg p-3 min-h-[60px]">
                         <Avatar className="h-8 w-8 flex-shrink-0">
-                          <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                          <AvatarImage src={avatarAlex} alt="Alex C" />
+                          <AvatarFallback className="text-xs">AC</AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-primary text-sm">Join Game</div>
-                          <div className="text-xs text-muted-foreground">Tap to join</div>
+                        <div className="text-sm flex-1 min-w-0">
+                          <div className="font-medium truncate">Alex C</div>
+                          <div className="text-xs text-muted-foreground">2,850 MMR</div>
                         </div>
                       </div>
                       
@@ -139,7 +147,7 @@ export const ProductShowcaseSection = () => {
                 Climb the leaderboard and see how you stack up against other players. 
                 Our ELO system ensures fair matchmaking and accurate skill assessment.
               </p>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="text-base px-8 py-3">
                 <Link to="/leaderboard">View Leaderboard</Link>
               </Button>
             </div>
@@ -154,11 +162,11 @@ export const ProductShowcaseSection = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {[
-                      { rank: 1, name: "Alex Chen", mmr: 3420, badge: "🥇" },
-                      { rank: 2, name: "Sarah Williams", mmr: 3380, badge: "🥈" },
-                      { rank: 3, name: "Mike Johnson", mmr: 3350, badge: "🥉" },
-                      { rank: 4, name: "Emma Davis", mmr: 3290, badge: "" },
-                      { rank: 5, name: "You", mmr: 2850, badge: "", highlight: true }
+                      { rank: 1, name: "Alex C", mmr: 3420, badge: "🥇", avatar: avatarAlex },
+                      { rank: 2, name: "Sarah W", mmr: 3380, badge: "🥈", avatar: avatarSarah },
+                      { rank: 3, name: "You", mmr: 2850, badge: "🥉", highlight: true },
+                      { rank: 4, name: "Mike J", mmr: 2820, badge: "", avatar: avatarMike },
+                      { rank: 5, name: "Maria J", mmr: 2780, badge: "", avatar: avatarMaria }
                     ].map((player) => (
                       <div
                         key={player.rank}
@@ -170,6 +178,7 @@ export const ProductShowcaseSection = () => {
                           {player.badge || `#${player.rank}`}
                         </div>
                         <Avatar className="h-8 w-8">
+                          {player.avatar && <AvatarImage src={player.avatar} alt={player.name} />}
                           <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
@@ -198,7 +207,7 @@ export const ProductShowcaseSection = () => {
                 Compete in organized tournaments and test your skills against the best players. 
                 Win prizes, gain recognition, and climb to the top of competitive play.
               </p>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline" className="text-base px-8 py-3">
                 <Link to="/tournaments">View Tournaments</Link>
               </Button>
             </div>

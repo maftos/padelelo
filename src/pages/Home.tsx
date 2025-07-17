@@ -6,6 +6,7 @@ import { CommunitySection } from "@/components/home/CommunitySection";
 import { ELOSection } from "@/components/home/ELOSection";
 import { FAQSection } from "@/components/home/FAQSection";
 import { CTASection } from "@/components/home/CTASection";
+import { Footer } from "@/components/home/Footer";
 
 const Home = () => {
   return (
@@ -19,6 +20,7 @@ const Home = () => {
         <FAQSection />
         <CTASection />
       </main>
+      <Footer />
     </div>
   );
 };
