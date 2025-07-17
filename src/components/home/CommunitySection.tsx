@@ -2,8 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { Users, MessageCircle, Calendar } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const CommunitySection = () => {
+  const { user } = useAuth();
+  
   return (
     <section className="py-12 sm:py-16 md:py-24 bg-secondary/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,7 +54,7 @@ export const CommunitySection = () => {
             </div>
             
             <Button asChild size="lg" className="text-base px-6 sm:px-8 w-full sm:w-auto">
-              <Link to="/friends">
+              <Link to={user ? "/manage-matches" : "/signup"}>
                 Join Community
               </Link>
             </Button>

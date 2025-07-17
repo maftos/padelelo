@@ -2,8 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Play, Users, TrendingUp } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const HeroSection = () => {
+  const { user } = useAuth();
+  
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image */}
@@ -30,7 +33,7 @@ export const HeroSection = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
             <Button asChild size="lg" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
-              <Link to="/signup">
+              <Link to={user ? "/manage-matches" : "/signup"}>
                 Start Playing
               </Link>
             </Button>

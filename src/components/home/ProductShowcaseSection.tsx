@@ -35,7 +35,7 @@ export const ProductShowcaseSection = () => {
                 and enjoy competitive matches at premium courts across Mauritius.
               </p>
               <Button asChild className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
-                <Link to="/player-matching">Browse Open Matches</Link>
+                <Link to="/open-matches">Browse Open Matches</Link>
               </Button>
             </div>
             <div className="relative px-4 sm:px-0">

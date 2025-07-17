@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Play, Users } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const CTASection = () => {
+  const { user } = useAuth();
+  
   return (
     <section className="py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-muted/30">
       <div className="max-w-2xl mx-auto text-center">
@@ -15,7 +18,7 @@ export const CTASection = () => {
         </p>
         
         <Button asChild size="lg" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto max-w-xs mx-auto">
-          <Link to="/signup">
+          <Link to={user ? "/manage-matches" : "/signup"}>
             Sign Up Now
           </Link>
         </Button>
