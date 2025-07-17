@@ -1,33 +1,65 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Play, Users, TrendingUp } from "lucide-react";
 
 export const HeroSection = () => {
   return (
-    <div className="relative h-[500px] rounded-xl overflow-hidden mb-12 shadow-2xl">
-      <img
-        src="https://skocnzoyobnoyyegfzdt.supabase.co/storage/v1/object/public/ui-assets/home_banner.jpg"
-        alt="Padel Court"
-        className="w-full h-full object-cover brightness-50"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/95 to-transparent flex items-center">
-        <div className="p-8 max-w-2xl">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
-            Elevate Your <span className="text-primary">Padel Game</span>
+    <section className="relative min-h-screen flex items-center overflow-hidden">
+      {/* Background Image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
+          alt="Padel players in action"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-background/60" />
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+            Elevate Your{" "}
+            <span className="text-primary">Padel Game</span>
           </h1>
-          <p className="text-lg md:text-xl text-foreground/80 mb-8">
+          <p className="text-lg sm:text-xl text-foreground/80 mb-8 max-w-2xl mx-auto">
             Join Mauritius's premier padel community. Track your progress, connect with players, and compete at your level.
           </p>
-          <div className="flex flex-wrap gap-4">
-            <Button asChild size="lg" className="bg-primary hover:bg-primary/90">
-              <Link to="/signup">Start Playing</Link>
+          
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button asChild size="lg" className="text-base px-8 py-3">
+              <Link to="/signup">
+                <Play className="w-5 h-5 mr-2" />
+                Start Playing
+              </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-foreground/20 text-foreground hover:bg-foreground/10">
-              <Link to="/leaderboard">View Rankings</Link>
+            <Button asChild size="lg" variant="outline" className="text-base px-8 py-3 border-foreground/30 text-foreground hover:bg-foreground/10">
+              <Link to="/leaderboard">
+                <TrendingUp className="w-5 h-5 mr-2" />
+                View Rankings
+              </Link>
             </Button>
+          </div>
+          
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-8 max-w-md mx-auto">
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-primary">500+</div>
+              <div className="text-sm text-foreground/70">Active Players</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-primary">2,000+</div>
+              <div className="text-sm text-foreground/70">Matches Played</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-bold text-primary">15+</div>
+              <div className="text-sm text-foreground/70">Courts</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };

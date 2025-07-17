@@ -1,22 +1,24 @@
 
 import { Navigation } from "@/components/Navigation";
 import { HeroSection } from "@/components/home/HeroSection";
-import { FeaturesGrid } from "@/components/home/FeaturesGrid";
-import { QASection } from "@/components/home/QASection";
-import { MatchmakingSection } from "@/components/home/MatchmakingSection";
-import { Footer } from "@/components/home/Footer";
+import { FeaturesSection } from "@/components/home/FeaturesSection";
+import { CommunitySection } from "@/components/home/CommunitySection";
+import { ELOSection } from "@/components/home/ELOSection";
+import { FAQSection } from "@/components/home/FAQSection";
+import { CTASection } from "@/components/home/CTASection";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
-      <main className="container py-8 px-4 space-y-8 animate-fade-in">
+      <main className="space-y-0">
         <HeroSection />
-        <FeaturesGrid />
-        <MatchmakingSection />
-        <QASection />
+        <FeaturesSection />
+        <CommunitySection />
+        <ELOSection />
+        <FAQSection />
+        <CTASection />
       </main>
-      <Footer />
     </div>
   );
 };
