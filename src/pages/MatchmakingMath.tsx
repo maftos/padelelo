@@ -264,13 +264,27 @@ const MatchmakingMath = () => {
               <div className="space-y-6">
                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
                   <h4 className="font-semibold mb-3 text-foreground">Step 1: Calculate Expected Win Rate</h4>
-                  <div className="space-y-2 text-sm">
-                    <p className="text-foreground/80">Rating difference: 1615 - 1700 = <strong>-85 points</strong> (Team A is lower rated)</p>
-                    <p className="text-foreground/80">Team A expected win rate:</p>
-                    <div className="ml-4 font-mono text-foreground bg-background/50 p-2 rounded">
-                      E = 1 / (1 + 10<sup>(-85)/1500</sup>) = 1 / (1 + 10<sup>-0.057</sup>) = 1 / (1 + 0.88) = <strong>0.467 (46.7%)</strong>
+                  <p className="text-sm text-foreground/80 mb-4">Rating difference: 1615 - 1700 = <strong>-85 points</strong> (Team A is lower rated)</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">Team A Expected Win Rate:</p>
+                      <div className="text-sm text-foreground/80 font-mono bg-background/50 p-2 rounded">
+                        E = 1 / (1 + 10<sup>(-85)/1500</sup>)<br/>
+                        = 1 / (1 + 10<sup>-0.057</sup>)<br/>
+                        = 1 / (1 + 0.88)<br/>
+                        = <strong className="text-blue-600">0.467 (46.7%)</strong>
+                      </div>
                     </div>
-                    <p className="text-foreground/80 mt-2">Team B expected win rate: <strong>0.533 (53.3%)</strong></p>
+                    <div>
+                      <p className="text-sm font-medium text-foreground mb-2">Team B Expected Win Rate:</p>
+                      <div className="text-sm text-foreground/80 font-mono bg-background/50 p-2 rounded">
+                        E = 1 / (1 + 10<sup>(85)/1500</sup>)<br/>
+                        = 1 / (1 + 10<sup>0.057</sup>)<br/>
+                        = 1 / (1 + 1.14)<br/>
+                        = <strong className="text-red-600">0.533 (53.3%)</strong>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
