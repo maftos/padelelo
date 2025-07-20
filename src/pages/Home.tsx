@@ -9,8 +9,6 @@ import { FAQSection } from "@/components/home/FAQSection";
 import { CTASection } from "@/components/home/CTASection";
 import { Footer } from "@/components/home/Footer";
 import { LocalBusinessSchema } from "@/components/seo/LocalBusinessSchema";
-import { NewsSection } from "@/components/content/NewsSection";
-import { CommunityTestimonials } from "@/components/content/CommunityTestimonials";
 
 const Home = () => {
   const structuredData = {
@@ -70,9 +68,7 @@ const Home = () => {
         <HeroSection />
         <ProductShowcaseSection />
         <CommunitySection />
-        <NewsSection showFeatured={true} maxItems={2} title="Latest Community Updates" />
         <ELOSection />
-        <CommunityTestimonials maxItems={4} />
         <FAQSection />
         <CTASection />
       </main>

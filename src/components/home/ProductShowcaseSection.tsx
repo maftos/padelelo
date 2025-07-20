@@ -199,7 +199,7 @@ export const ProductShowcaseSection = () => {
 
           {/* Tournament Showcase */}
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
-            <div className="lg:order-2 px-4 sm:px-0">
+            <div className="px-4 sm:px-0">
               <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
                 Join Local Tournaments
               </h3>
@@ -211,7 +211,7 @@ export const ProductShowcaseSection = () => {
                 <Link to="/tournaments">View Tournaments</Link>
               </Button>
             </div>
-            <div className="lg:order-1 relative px-4 sm:px-0">
+            <div className="relative px-4 sm:px-0">
               <Card className="shadow-lg bg-background border overflow-hidden">
                 <div className="relative h-32 w-full">
                   <img
