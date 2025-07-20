@@ -162,11 +162,11 @@ export const ProductShowcaseSection = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {[
-                      { rank: 75, name: "Alex C", mmr: 2920, change: +3, avatar: avatarAlex },
-                      { rank: 76, name: "Sarah W", mmr: 2880, change: -2, avatar: avatarSarah },
-                      { rank: 77, name: "You", mmr: 2850, change: +5, highlight: true },
-                      { rank: 78, name: "Mike J", mmr: 2820, change: -1, avatar: avatarMike },
-                      { rank: 79, name: "Maria J", mmr: 2780, change: +2, avatar: avatarMaria }
+                      { rank: 75, name: "Alex C", mmr: 2920, change: +3, avatar: avatarAlex, flag: "🇫🇷" },
+                      { rank: 76, name: "Sarah W", mmr: 2880, change: -2, avatar: avatarSarah, flag: "🇿🇦" },
+                      { rank: 77, name: "You", mmr: 2850, change: +5, highlight: true, flag: "🇲🇺" },
+                      { rank: 78, name: "Mike J", mmr: 2820, change: -1, avatar: avatarMike, flag: "🇬🇧" },
+                      { rank: 79, name: "Maria J", mmr: 2780, change: +2, avatar: avatarMaria, flag: "🇪🇸" }
                     ].map((player) => (
                       <div
                         key={player.rank}
@@ -182,7 +182,10 @@ export const ProductShowcaseSection = () => {
                           <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                          <div className="font-medium">{player.name}</div>
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{player.name}</span>
+                            <span className="text-sm">{player.flag}</span>
+                          </div>
                           <div className="text-sm text-muted-foreground">{player.mmr} MMR</div>
                         </div>
                         <div className="flex items-center gap-1">
