@@ -1,5 +1,9 @@
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
+import { PageContainer } from "@/components/layouts/PageContainer";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Calculator, TrendingUp, Target, BarChart3 } from "lucide-react";
 
 const MatchmakingMath = () => {
   const structuredData = {
@@ -11,7 +15,7 @@ const MatchmakingMath = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Helmet>
         <title>Matchmaking Algorithm & MMR System - PadelELO</title>
         <meta 
@@ -40,79 +44,202 @@ const MatchmakingMath = () => {
         <link rel="canonical" href="https://padel-elo.com/matchmaking-math" />
       </Helmet>
       <Navigation />
-      <main className="container py-8 px-4 max-w-4xl mx-auto">
-        <div className="space-y-8">
-          <h1 className="text-3xl font-bold text-primary">Matchmaking Algorithm</h1>
-          
-          <div className="space-y-6">
-            <section className="p-6 rounded-lg bg-accent">
-              <h2 className="text-xl font-semibold mb-4">ELO Rating System</h2>
-              <p className="text-muted-foreground mb-6">
-                Our matchmaking system is based on the ELO rating system, originally developed for chess. 
-                The system calculates expected win rates and adjusts ratings after each match based on the outcome 
-                and the relative skill difference between teams.
-              </p>
-              <div className="bg-muted p-6 rounded-md overflow-x-auto">
-                <div className="text-center space-y-4">
-                  <p className="text-lg font-medium">Expected Win Rate Formula:</p>
-                  <div className="inline-block text-xl">
-                    <div className="border-b border-foreground pb-2">
-                      <span>E</span>
-                      <sub>team1</sub>
-                      <span> = </span>
-                      <span>1</span>
-                    </div>
-                    <div className="pt-2">
-                      <span>1 + 10</span>
-                      <sup>(R<sub>team2</sub> - R<sub>team1</sub>)/1500</sup>
-                    </div>
-                  </div>
-                </div>
+      <PageContainer>
+        <div className="max-w-6xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Calculator className="h-6 w-6 text-primary" />
               </div>
-            </section>
-
-            <section className="p-6 rounded-lg bg-accent">
-              <h2 className="text-xl font-semibold mb-4">MMR Adjustment</h2>
-              <p className="text-muted-foreground mb-6">
-                After each match, ratings are adjusted using:
-              </p>
-              <div className="bg-muted p-6 rounded-md overflow-x-auto">
-                <div className="text-center space-y-4">
-                  <p className="text-lg font-medium">New Rating Formula:</p>
-                  <div className="text-xl">
-                    <span>New Rating = Old Rating + K × (Actual - Expected)</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-4">
-                    Where K is the adjustment factor (50) and Actual is 1 for a win, 0 for a loss
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section className="p-6 rounded-lg bg-accent">
-              <h2 className="text-xl font-semibold mb-4">Example Calculation</h2>
-              <div className="space-y-4">
-                <p className="text-muted-foreground">
-                  In an even matchup where both teams have the same average MMR:
-                </p>
-                <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-                  <li>Expected win rate would be 50% (0.5) for both teams</li>
-                  <li>When a team wins, their Actual score is 1 (while the losing team gets 0)</li>
-                  <li>MMR Change = 50 × (1 - 0.5) = 25 points</li>
-                  <li>Winners gain 25 MMR points</li>
-                  <li>Losers lose 25 MMR points</li>
-                </ul>
-                <p className="text-muted-foreground mt-4">
-                  The MMR change will be smaller when a higher-rated team wins against a lower-rated team 
-                  (as this was expected) and larger when a lower-rated team wins against a higher-rated team 
-                  (as this was unexpected).
-                </p>
-              </div>
-            </section>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              Matchmaking Algorithm
+            </h1>
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              Understanding the mathematical foundations behind PadelELO's rating system and how your MMR is calculated.
+            </p>
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            {/* ELO System Overview */}
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-2xl">ELO Rating System</CardTitle>
+                </div>
+                <p className="text-foreground/70">
+                  Our matchmaking system is based on the ELO rating system, originally developed for chess by Arpad Elo. 
+                  The system calculates expected win rates and adjusts ratings after each match based on the outcome 
+                  and the relative skill difference between teams.
+                </p>
+              </CardHeader>
+            </Card>
+
+            {/* Expected Win Rate Formula */}
+            <Card className="group hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Expected Win Rate</CardTitle>
+                </div>
+                <p className="text-sm text-foreground/70">
+                  Calculates the probability of a team winning based on rating difference
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                  <div className="text-center space-y-4">
+                    <p className="text-sm font-medium text-foreground/80 mb-4">Expected Win Rate Formula:</p>
+                    
+                    {/* Mathematical Formula */}
+                    <div className="font-mono text-lg">
+                      <div className="flex items-center justify-center space-x-2">
+                        <span className="text-primary font-semibold">E</span>
+                        <span className="text-sm text-foreground/60 -mb-2">team1</span>
+                        <span className="text-foreground/80">=</span>
+                        
+                        {/* Fraction */}
+                        <div className="inline-flex flex-col items-center">
+                          <div className="text-primary font-semibold border-b border-foreground/40 pb-1 px-4">
+                            1
+                          </div>
+                          <div className="text-foreground/80 pt-1 text-base">
+                            1 + 10<sup className="text-sm text-foreground/60">
+                              (R<sub className="text-xs">team2</sub> - R<sub className="text-xs">team1</sub>)/1500
+                            </sup>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-foreground/60 space-y-1 mt-4">
+                      <p><strong>Where:</strong></p>
+                      <p>• R<sub>team1</sub>, R<sub>team2</sub> = Average team ratings</p>
+                      <p>• 1500 = Rating scale factor</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* MMR Adjustment Formula */}
+            <Card className="group hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <BarChart3 className="h-5 w-5 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Rating Adjustment</CardTitle>
+                </div>
+                <p className="text-sm text-foreground/70">
+                  How ratings change after each match result
+                </p>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-6">
+                  <div className="text-center space-y-4">
+                    <p className="text-sm font-medium text-foreground/80 mb-4">New Rating Formula:</p>
+                    
+                    <div className="font-mono text-lg">
+                      <div className="flex items-center justify-center flex-wrap gap-2">
+                        <span className="text-primary font-semibold">R<sub className="text-sm">new</sub></span>
+                        <span className="text-foreground/80">=</span>
+                        <span className="text-foreground/80">R<sub className="text-sm">old</sub></span>
+                        <span className="text-foreground/80">+</span>
+                        <span className="text-primary font-semibold">K</span>
+                        <span className="text-foreground/80">×</span>
+                        <span className="text-foreground/80">(S - E)</span>
+                      </div>
+                    </div>
+
+                    <div className="text-xs text-foreground/60 space-y-1 mt-4">
+                      <p><strong>Where:</strong></p>
+                      <p>• K = 50 (adjustment factor)</p>
+                      <p>• S = Actual score (1 for win, 0 for loss)</p>
+                      <p>• E = Expected win rate</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Example Calculation */}
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Calculator className="h-5 w-5 text-primary" />
+                </div>
+                Example Calculation
+              </CardTitle>
+              <p className="text-foreground/70">
+                Let's walk through a practical example of how MMR changes are calculated
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+                    <h4 className="font-semibold mb-2 text-foreground">Scenario: Even Match</h4>
+                    <div className="space-y-2 text-sm text-foreground/80">
+                      <p>• Team A average MMR: 1500</p>
+                      <p>• Team B average MMR: 1500</p>
+                      <p>• Rating difference: 0</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
+                    <h4 className="font-semibold mb-2 text-foreground">Expected Win Rate</h4>
+                    <div className="text-sm text-foreground/80">
+                      <p>E = 1 / (1 + 10<sup>0/1500</sup>) = 1 / (1 + 1) = <strong>0.5 (50%)</strong></p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <h4 className="font-semibold mb-2 text-foreground">If Team A Wins</h4>
+                    <div className="space-y-1 text-sm text-foreground/80">
+                      <p>MMR Change = 50 × (1 - 0.5) = <strong>+25 points</strong></p>
+                      <p>Team A: 1500 → 1525</p>
+                      <p>Team B: 1500 → 1475</p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <h4 className="font-semibold mb-2 text-foreground">Key Insights</h4>
+                    <div className="space-y-1 text-sm text-foreground/80">
+                      <p>• Upsets yield larger point swings</p>
+                      <p>• Expected wins yield smaller changes</p>
+                      <p>• System maintains zero-sum balance</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                <h4 className="font-semibold mb-2 text-foreground flex items-center gap-2">
+                  <Badge variant="secondary" className="text-xs">Pro Tip</Badge>
+                  Upset Victories
+                </h4>
+                <p className="text-sm text-foreground/80">
+                  When a lower-rated team (e.g., 1300 MMR) defeats a higher-rated team (e.g., 1700 MMR), 
+                  the expected win rate might be only 0.09 (9%). The MMR change would be: 50 × (1 - 0.09) = 
+                  <strong>+45 points</strong> for the underdogs, creating dramatic ranking shifts that reward skill over rating.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </main>
-    </div>
+      </PageContainer>
+    </>
   );
 };
 
