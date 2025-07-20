@@ -4,6 +4,7 @@ import { PageContainer } from "@/components/layouts/PageContainer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, TrendingUp, Target, BarChart3 } from "lucide-react";
+import { Footer } from "@/components/home/Footer";
 
 const MatchmakingMath = () => {
   const structuredData = {
@@ -388,6 +389,7 @@ const MatchmakingMath = () => {
 
         </div>
       </PageContainer>
+      <Footer />
     </>
   );
 };
