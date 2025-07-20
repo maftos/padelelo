@@ -4,7 +4,6 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Trophy, TrendingUp, TrendingDown, Clock, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
 import avatarJohn from "@/assets/avatar-john.jpg";
 import avatarMaria from "@/assets/avatar-maria.jpg";
 import avatarAlex from "@/assets/avatar-alex.jpg";
@@ -12,92 +11,6 @@ import avatarSarah from "@/assets/avatar-sarah.jpg";
 import avatarMike from "@/assets/avatar-mike.jpg";
 
 export const ProductShowcaseSection = () => {
-  const [leaderboard, setLeaderboard] = useState([
-    { rank: 75, name: "Alex C", mmr: 2920, change: +3, avatar: avatarAlex, flag: "🇫🇷", id: "alex" },
-    { rank: 76, name: "Sarah W", mmr: 2880, change: -2, avatar: avatarSarah, flag: "🇿🇦", id: "sarah" },
-    { rank: 77, name: "Mike J", mmr: 2820, change: -1, avatar: avatarMike, flag: "🇬🇧", id: "mike" },
-    { rank: 78, name: "Maria J", mmr: 2780, change: +2, avatar: avatarMaria, flag: "🇪🇸", id: "maria" },
-    { rank: 79, name: "You", mmr: 2750, change: +5, highlight: true, flag: "🇲🇺", id: "user" }
-  ]);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  useEffect(() => {
-    const animationSequence = [
-      // User climbs from 79 → 78 (swaps with Maria)
-      { userRank: 78, delay: 2000 },
-      // User climbs from 78 → 77 (swaps with Mike) 
-      { userRank: 77, delay: 2500 },
-      // User climbs from 77 → 76 (swaps with Sarah)
-      { userRank: 76, delay: 2500 },
-      // User falls from 76 → 77 (Sarah takes back 76)
-      { userRank: 77, delay: 2500 },
-      // User falls from 77 → 78 (Mike takes back 77)
-      { userRank: 78, delay: 2500 },
-      // User recovers from 78 → 77 (swaps with Mike again)
-      { userRank: 77, delay: 2500 },
-    ];
-
-    let timeoutIds: NodeJS.Timeout[] = [];
-    let currentDelay = 1500; // Initial delay
-
-    animationSequence.forEach((step) => {
-      const timeoutId = setTimeout(() => {
-        setIsAnimating(true);
-        
-        setLeaderboard(currentBoard => {
-          const newBoard = [...currentBoard];
-          const userIndex = newBoard.findIndex(p => p.id === "user");
-          const targetIndex = newBoard.findIndex(p => p.rank === step.userRank);
-          
-          if (userIndex !== -1 && targetIndex !== -1) {
-            // Swap the user with the target player
-            const userPlayer = { ...newBoard[userIndex] };
-            const targetPlayer = { ...newBoard[targetIndex] };
-            
-            // Update ranks
-            const tempRank = userPlayer.rank;
-            userPlayer.rank = targetPlayer.rank;
-            targetPlayer.rank = tempRank;
-            
-            // Update MMR slightly for realism
-            if (userPlayer.rank < targetPlayer.rank) {
-              userPlayer.mmr += 10;
-              targetPlayer.mmr -= 5;
-            } else {
-              userPlayer.mmr -= 5;
-              targetPlayer.mmr += 5;
-            }
-            
-            newBoard[userIndex] = userPlayer;
-            newBoard[targetIndex] = targetPlayer;
-          }
-          
-          return newBoard.sort((a, b) => a.rank - b.rank);
-        });
-        
-        setTimeout(() => setIsAnimating(false), 500);
-      }, currentDelay);
-      
-      timeoutIds.push(timeoutId);
-      currentDelay += step.delay;
-    });
-
-    // Reset animation after sequence
-    const resetTimeout = setTimeout(() => {
-      setLeaderboard([
-        { rank: 75, name: "Alex C", mmr: 2920, change: +3, avatar: avatarAlex, flag: "🇫🇷", id: "alex" },
-        { rank: 76, name: "Sarah W", mmr: 2880, change: -2, avatar: avatarSarah, flag: "🇿🇦", id: "sarah" },
-        { rank: 77, name: "Mike J", mmr: 2820, change: -1, avatar: avatarMike, flag: "🇬🇧", id: "mike" },
-        { rank: 78, name: "Maria J", mmr: 2780, change: +2, avatar: avatarMaria, flag: "🇪🇸", id: "maria" },
-        { rank: 79, name: "You", mmr: 2750, change: +5, highlight: true, flag: "🇲🇺", id: "user" }
-      ]);
-    }, currentDelay + 1000);
-    timeoutIds.push(resetTimeout);
-
-    return () => {
-      timeoutIds.forEach(clearTimeout);
-    };
-  }, []);
   return (
     <section className="py-12 sm:py-16 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -246,62 +159,51 @@ export const ProductShowcaseSection = () => {
                     Current Rankings
                   </CardTitle>
                 </CardHeader>
-                 <CardContent>
-                   <div className="space-y-3 relative">
-                     {leaderboard.map((player, index) => {
-                       const isUser = player.id === "user";
-                       return (
-                         <div
-                           key={player.id}
-                           className={`flex items-center gap-3 p-3 rounded-lg transition-all duration-700 ease-in-out ${
-                             isUser && isAnimating ? 'shadow-lg shadow-primary/20 ring-2 ring-primary/30' : ''
-                           } ${
-                             player.highlight ? 'bg-primary/10 border border-primary/30' : 'bg-muted/50'
-                           } ${
-                             isUser && isAnimating ? 'transform scale-105' : ''
-                           }`}
-                           style={{
-                             transform: isUser && isAnimating 
-                               ? 'translateY(-8px) scale(1.02)' 
-                               : 'translateY(0px) scale(1)',
-                             transition: 'all 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
-                           }}
-                         >
-                           <div className="w-8 text-center font-medium text-sm">
-                             #{player.rank}
-                           </div>
-                           <Avatar className="h-8 w-8">
-                             {player.avatar && <AvatarImage src={player.avatar} alt={player.name} />}
-                             <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
-                           </Avatar>
-                           <div className="flex-1">
-                             <div className="flex items-center gap-2">
-                               <span className="font-medium">{player.name}</span>
-                               <span className="text-sm">{player.flag}</span>
-                             </div>
-                             <div className="text-sm text-muted-foreground">{player.mmr} MMR</div>
-                           </div>
-                           <div className="flex items-center gap-1">
-                             {player.change > 0 ? (
-                               <TrendingUp className={`h-3 w-3 text-green-500 ${
-                                 isUser && isAnimating ? 'animate-pulse' : ''
-                               }`} />
-                             ) : (
-                               <TrendingDown className="h-3 w-3 text-red-500" />
-                             )}
-                             <span className={`text-xs font-medium ${
-                               player.change > 0 ? 'text-green-500' : 'text-red-500'
-                             } ${
-                               isUser && isAnimating ? 'animate-pulse' : ''
-                             }`}>
-                               {player.change > 0 ? '+' : ''}{player.change}
-                             </span>
-                           </div>
-                         </div>
-                       );
-                     })}
-                   </div>
-                 </CardContent>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { rank: 75, name: "Alex C", mmr: 2920, change: +3, avatar: avatarAlex, flag: "🇫🇷" },
+                      { rank: 76, name: "Sarah W", mmr: 2880, change: -2, avatar: avatarSarah, flag: "🇿🇦" },
+                      { rank: 77, name: "You", mmr: 2850, change: +5, highlight: true, flag: "🇲🇺" },
+                      { rank: 78, name: "Mike J", mmr: 2820, change: -1, avatar: avatarMike, flag: "🇬🇧" },
+                      { rank: 79, name: "Maria J", mmr: 2780, change: +2, avatar: avatarMaria, flag: "🇪🇸" }
+                    ].map((player) => (
+                      <div
+                        key={player.rank}
+                        className={`flex items-center gap-3 p-3 rounded-lg ${
+                          player.highlight ? 'bg-primary/10 border border-primary/30' : 'bg-muted/50'
+                        }`}
+                      >
+                        <div className="w-8 text-center font-medium text-sm">
+                          #{player.rank}
+                        </div>
+                        <Avatar className="h-8 w-8">
+                          {player.avatar && <AvatarImage src={player.avatar} alt={player.name} />}
+                          <AvatarFallback>{player.name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{player.name}</span>
+                            <span className="text-sm">{player.flag}</span>
+                          </div>
+                          <div className="text-sm text-muted-foreground">{player.mmr} MMR</div>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {player.change > 0 ? (
+                            <TrendingUp className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3 text-red-500" />
+                          )}
+                          <span className={`text-xs font-medium ${
+                            player.change > 0 ? 'text-green-500' : 'text-red-500'
+                          }`}>
+                            {player.change > 0 ? '+' : ''}{player.change}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
               </Card>
             </div>
           </div>
