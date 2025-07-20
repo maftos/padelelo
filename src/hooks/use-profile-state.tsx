@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -53,48 +53,70 @@ export const useProfileState = (profileUserId: string | undefined) => {
     favorite_position: "",
   });
 
-  const { data: profileData, isLoading, refetch } = useQuery({
+  const { data: profileData, isLoading, refetch } = useQuery<ViewProfileResponse | null>({
     queryKey: ["profile", profileUserId],
-    queryFn: async () => {
-      if (!profileUserId || !user?.id) return null;
+    queryFn: async (): Promise<ViewProfileResponse | null> => {
+      if (!profileUserId) return null;
       
-      const { data, error } = await supabase.rpc('view_profile', {
-        user_a_id: user.id,
-        user_b_id: profileUserId
-      });
-      
-      if (error) throw error;
-      if (!data) return null;
-      
-      // The view_profile function returns { profile: {...}, friendship: {...} }
-      const response = data as unknown as ViewProfileResponse;
-      const profileInfo = response.profile;
-      const friendshipInfo = response.friendship;
-      
-      // Validate the required fields
-      if (!profileInfo.id) {
-        throw new Error('Invalid profile data structure');
+      // If user is authenticated, use view_profile function for friendship data
+      if (user?.id) {
+        const { data, error } = await supabase.rpc('view_profile', {
+          user_a_id: user.id,
+          user_b_id: profileUserId
+        });
+        
+        if (error) throw error;
+        if (!data) return null;
+        
+        return data as unknown as ViewProfileResponse;
+      } else {
+        // If user is not authenticated, fetch public profile data directly
+        const { data, error } = await supabase
+          .from('users')
+          .select('id, first_name, last_name, created_at, gender, location, profile_photo, current_mmr, nationality')
+          .eq('id', profileUserId)
+          .single();
+        
+        if (error) throw error;
+        if (!data) return null;
+        
+        // Return in the same format as view_profile
+        return {
+          profile: {
+            ...data,
+            created_at: data.created_at || new Date().toISOString()
+          },
+          friendship: {
+            exists: false,
+            status: null,
+            created_at: null,
+            friendship_id: null
+          }
+        } as ViewProfileResponse;
       }
-      
-      setFormData({
-        first_name: profileInfo.first_name || "",
-        last_name: profileInfo.last_name || "",
-        nationality: profileInfo.nationality || "",
-        gender: profileInfo.gender || "",
-        profile_photo: profileInfo.profile_photo || "",
-        current_mmr: profileInfo.current_mmr || 0,
-        years_playing: "", // New field - will be empty initially
-        favorite_position: "", // New field - will be empty initially
-      });
-      
-      return { profile: profileInfo, friendship: friendshipInfo };
     },
-    enabled: !!profileUserId && !!user?.id,
+    enabled: !!profileUserId,
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
   });
+
+  // Update form data when profile data changes
+  useEffect(() => {
+    if (profileData?.profile) {
+      setFormData({
+        first_name: profileData.profile.first_name || "",
+        last_name: profileData.profile.last_name || "",
+        nationality: profileData.profile.nationality || "",
+        gender: profileData.profile.gender || "",
+        profile_photo: profileData.profile.profile_photo || "",
+        current_mmr: profileData.profile.current_mmr || 0,
+        years_playing: "",
+        favorite_position: "",
+      });
+    }
+  }, [profileData]);
 
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({

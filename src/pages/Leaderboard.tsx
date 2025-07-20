@@ -3,6 +3,7 @@ import * as React from "react";
 import { Navigation } from "@/components/Navigation";
 import { RecentMatches } from "@/components/RecentMatches";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useAuth } from "@/contexts/AuthContext";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
 import { LeaderboardTable } from "@/components/leaderboard/LeaderboardTable";
 import { useLeaderboardFilters } from "@/hooks/use-leaderboard-filters";
@@ -11,6 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 
 const Leaderboard = () => {
+  const { user } = useAuth();
   const { userId } = useUserProfile();
   const { filters, handleGenderChange, handleFriendsOnlyChange } = useLeaderboardFilters();
   const { data: leaderboardData, isLoading } = useLeaderboardData();

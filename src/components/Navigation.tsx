@@ -12,8 +12,13 @@ export const Navigation = () => {
 
   const handleSignInClick = () => navigate('/login');
 
-  // Only show this navigation on public pages
-  if (user) return null;
+  // Show navigation on public pages when user is not authenticated
+  // OR when user is on specific public pages that should show navigation
+  const currentPath = window.location.pathname;
+  const publicPagesWithNav = ['/leaderboard', '/tournaments', '/open-bookings', '/profile'];
+  const showOnPublicPage = publicPagesWithNav.some(path => currentPath.startsWith(path));
+  
+  if (user && !showOnPublicPage) return null;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card">
