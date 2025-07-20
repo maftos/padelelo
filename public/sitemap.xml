@@ -43,6 +43,16 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://padelelo.com/open-bookings</loc>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>
+  <url>
+    <loc>https://padelelo.com/news</loc>
+    <priority>0.7</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://padelelo.com/login</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>
