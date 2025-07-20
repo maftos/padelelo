@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Users, Trophy, TrendingUp, Clock, DollarSign } from "lucide-react";
+import { Calendar, MapPin, Users, Trophy, TrendingUp, TrendingDown, Clock, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
 import avatarJohn from "@/assets/avatar-john.jpg";
 import avatarMaria from "@/assets/avatar-maria.jpg";
@@ -162,11 +162,11 @@ export const ProductShowcaseSection = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {[
-                      { rank: 1, name: "Alex C", mmr: 3420, badge: "🥇", avatar: avatarAlex },
-                      { rank: 2, name: "Sarah W", mmr: 3380, badge: "🥈", avatar: avatarSarah },
-                      { rank: 3, name: "You", mmr: 2850, badge: "🥉", highlight: true },
-                      { rank: 4, name: "Mike J", mmr: 2820, badge: "", avatar: avatarMike },
-                      { rank: 5, name: "Maria J", mmr: 2780, badge: "", avatar: avatarMaria }
+                      { rank: 75, name: "Alex C", mmr: 2920, change: +3, avatar: avatarAlex },
+                      { rank: 76, name: "Sarah W", mmr: 2880, change: -2, avatar: avatarSarah },
+                      { rank: 77, name: "You", mmr: 2850, change: +5, highlight: true },
+                      { rank: 78, name: "Mike J", mmr: 2820, change: -1, avatar: avatarMike },
+                      { rank: 79, name: "Maria J", mmr: 2780, change: +2, avatar: avatarMaria }
                     ].map((player) => (
                       <div
                         key={player.rank}
@@ -174,8 +174,8 @@ export const ProductShowcaseSection = () => {
                           player.highlight ? 'bg-primary/10 border border-primary/30' : 'bg-muted/50'
                         }`}
                       >
-                        <div className="w-8 text-center font-medium">
-                          {player.badge || `#${player.rank}`}
+                        <div className="w-8 text-center font-medium text-sm">
+                          #{player.rank}
                         </div>
                         <Avatar className="h-8 w-8">
                           {player.avatar && <AvatarImage src={player.avatar} alt={player.name} />}
@@ -185,9 +185,17 @@ export const ProductShowcaseSection = () => {
                           <div className="font-medium">{player.name}</div>
                           <div className="text-sm text-muted-foreground">{player.mmr} MMR</div>
                         </div>
-                        <div className={`text-sm font-medium ${player.highlight ? 'text-primary' : ''}`}>
-                          {player.highlight && <TrendingUp className="h-4 w-4 inline mr-1" />}
-                          Rank {player.rank}
+                        <div className="flex items-center gap-1">
+                          {player.change > 0 ? (
+                            <TrendingUp className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <TrendingDown className="h-3 w-3 text-red-500" />
+                          )}
+                          <span className={`text-xs font-medium ${
+                            player.change > 0 ? 'text-green-500' : 'text-red-500'
+                          }`}>
+                            {player.change > 0 ? '+' : ''}{player.change}
+                          </span>
                         </div>
                       </div>
                     ))}
