@@ -121,7 +121,7 @@ const MatchmakingMath = () => {
                     <div className="text-xs text-foreground/60 space-y-1 mt-4">
                       <p><strong>Where:</strong></p>
                       <p>• R<sub>team1</sub>, R<sub>team2</sub> = Average team ratings</p>
-                      <p>• 1500 = Rating scale factor</p>
+                      <p>• <strong>1500 = Rating scale factor</strong> - Controls how much rating differences affect win probability. Higher values make upsets more likely.</p>
                     </div>
                   </div>
                 </div>
@@ -160,7 +160,7 @@ const MatchmakingMath = () => {
 
                     <div className="text-xs text-foreground/60 space-y-1 mt-4">
                       <p><strong>Where:</strong></p>
-                      <p>• K = 50 (adjustment factor)</p>
+                      <p>• <strong>K = 50 (adjustment factor)</strong> - Controls how much ratings change per match. Higher values mean faster ranking adjustments.</p>
                       <p>• S = Actual score (1 for win, 0 for loss)</p>
                       <p>• E = Expected win rate</p>
                     </div>
@@ -265,10 +265,10 @@ const MatchmakingMath = () => {
                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
                   <h4 className="font-semibold mb-3 text-foreground">Step 1: Calculate Expected Win Rate</h4>
                   <div className="space-y-2 text-sm">
-                    <p className="text-foreground/80">Rating difference: 1700 - 1615 = <strong>85 points</strong></p>
+                    <p className="text-foreground/80">Rating difference: 1615 - 1700 = <strong>-85 points</strong> (Team A is lower rated)</p>
                     <p className="text-foreground/80">Team A expected win rate:</p>
                     <div className="ml-4 font-mono text-foreground bg-background/50 p-2 rounded">
-                      E = 1 / (1 + 10<sup>85/1500</sup>) = 1 / (1 + 10<sup>0.057</sup>) = 1 / (1 + 1.14) = <strong>0.467 (46.7%)</strong>
+                      E = 1 / (1 + 10<sup>(-85)/1500</sup>) = 1 / (1 + 10<sup>-0.057</sup>) = 1 / (1 + 0.88) = <strong>0.467 (46.7%)</strong>
                     </div>
                     <p className="text-foreground/80 mt-2">Team B expected win rate: <strong>0.533 (53.3%)</strong></p>
                   </div>
@@ -364,7 +364,7 @@ const MatchmakingMath = () => {
                   Why This Was an Upset
                 </h4>
                 <p className="text-sm text-foreground/80">
-                  Team A (lower average MMR) defeating Team B (higher average MMR) was considered an upset with only 46.7% probability. 
+                  Team A (lower average MMR) defeating Team B (higher average MMR) was considered an upset with only a 46.7% probability. 
                   This resulted in a significant <strong>+27 point gain</strong> for the winners and equivalent loss for the losers. 
                   The 6-2 score margin doesn't affect MMR calculations - only the win/loss outcome matters in the current system.
                 </p>
@@ -372,56 +372,6 @@ const MatchmakingMath = () => {
             </CardContent>
           </Card>
 
-          {/* Simple Example */}
-          <Card className="mb-8">
-            <CardHeader>
-              <CardTitle className="text-xl">Quick Reference: Even Match</CardTitle>
-              <p className="text-foreground/70 text-sm">
-                For comparison, here's what happens in an evenly matched game
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                    <h4 className="font-semibold mb-2 text-foreground">Scenario: Even Match</h4>
-                    <div className="space-y-2 text-sm text-foreground/80">
-                      <p>• Team A average MMR: 1500</p>
-                      <p>• Team B average MMR: 1500</p>
-                      <p>• Rating difference: 0</p>
-                    </div>
-                  </div>
-                  
-                  <div className="p-4 rounded-lg bg-secondary/10 border border-secondary/20">
-                    <h4 className="font-semibold mb-2 text-foreground">Expected Win Rate</h4>
-                    <div className="text-sm text-foreground/80">
-                      <p>E = 1 / (1 + 10<sup>0/1500</sup>) = 1 / (1 + 1) = <strong>0.5 (50%)</strong></p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
-                    <h4 className="font-semibold mb-2 text-foreground">If Team A Wins</h4>
-                    <div className="space-y-1 text-sm text-foreground/80">
-                      <p>MMR Change = 50 × (1 - 0.5) = <strong>±25 points</strong></p>
-                      <p>Team A: 1500 → 1525</p>
-                      <p>Team B: 1500 → 1475</p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                    <h4 className="font-semibold mb-2 text-foreground">Balanced System</h4>
-                    <div className="space-y-1 text-sm text-foreground/80">
-                      <p>• Equal skill = moderate point changes</p>
-                      <p>• Predictable outcomes = smaller swings</p>
-                      <p>• Zero-sum: total points remain constant</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </PageContainer>
     </>
