@@ -14,14 +14,44 @@ import avatarMike from "@/assets/avatar-mike.jpg";
 export const ProductShowcaseSection = () => {
   const [userPosition, setUserPosition] = useState(79); // Start from position 79
   const [isAnimating, setIsAnimating] = useState(false);
+  const [animationPhase, setAnimationPhase] = useState(0);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsAnimating(true);
-      setUserPosition(77); // Move to position 77
-    }, 1000);
+    const animationSequence = [
+      { rank: 79, delay: 0 },      // Start
+      { rank: 78, delay: 2000 },   // First climb
+      { rank: 77, delay: 2000 },   // Second climb  
+      { rank: 76, delay: 2000 },   // Peak
+      { rank: 77, delay: 2000 },   // Small drop
+      { rank: 78, delay: 2000 },   // Bigger drop
+      { rank: 77, delay: 2000 },   // Recover
+    ];
 
-    return () => clearTimeout(timer);
+    let timeoutIds: NodeJS.Timeout[] = [];
+    let currentDelay = 1000; // Initial delay
+
+    animationSequence.forEach((step, index) => {
+      const timeoutId = setTimeout(() => {
+        setIsAnimating(true);
+        setUserPosition(step.rank);
+        setAnimationPhase(index);
+      }, currentDelay);
+      
+      timeoutIds.push(timeoutId);
+      currentDelay += step.delay;
+    });
+
+    // Loop the animation
+    const loopTimeout = setTimeout(() => {
+      setAnimationPhase(0);
+      setUserPosition(79);
+      setIsAnimating(false);
+    }, currentDelay);
+    timeoutIds.push(loopTimeout);
+
+    return () => {
+      timeoutIds.forEach(clearTimeout);
+    };
   }, []);
   return (
     <section className="py-12 sm:py-16 bg-muted/30">
