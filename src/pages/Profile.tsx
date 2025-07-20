@@ -8,6 +8,8 @@ import { ProfileContent } from "@/components/profile/ProfileContent";
 import { useProfileState } from "@/hooks/use-profile-state";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { SocialShare } from "@/components/seo/SocialShare";
 
 const Profile = () => {
   const { userId: profileUserId } = useParams();
@@ -156,6 +158,23 @@ const Profile = () => {
       </Helmet>
       <Navigation />
       <main className="container max-w-6xl mx-auto py-8 px-4">
+        <Breadcrumbs customTitle={displayName} />
+        
+        {!isOwnProfile && (
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">{displayName}</h1>
+              <p className="text-muted-foreground">Player Profile</p>
+            </div>
+            <SocialShare
+              title={`${displayName} - Padel Player Profile`}
+              description={`Check out ${displayName}'s padel stats and match history in the Mauritius community`}
+              hashtags={["padel", "mauritius", "player", "profile"]}
+              showZapierIntegration={false}
+            />
+          </div>
+        )}
+        
         <div className="space-y-8">
           {/* Only show ProfileHeader when editing own profile */}
           {isEditing && isOwnProfile && (

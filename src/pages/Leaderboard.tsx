@@ -11,6 +11,8 @@ import { useLeaderboardFilters } from "@/hooks/use-leaderboard-filters";
 import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { SocialShare } from "@/components/seo/SocialShare";
 
 const Leaderboard = () => {
   const { user } = useAuth();
@@ -74,6 +76,21 @@ const Leaderboard = () => {
       </Helmet>
       <Navigation />
       <main className="container py-6 md:py-12 px-4 max-w-7xl mx-auto">
+        <Breadcrumbs />
+        
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Padel Leaderboard</h1>
+            <p className="text-muted-foreground">Mauritius's official padel rankings</p>
+          </div>
+          <SocialShare
+            title="Padel Leaderboard - Mauritius Rankings"
+            description={`Check out the official padel rankings for ${totalPlayers} players in Mauritius`}
+            hashtags={["padel", "mauritius", "leaderboard", "rankings"]}
+            showZapierIntegration={true}
+          />
+        </div>
+        
         <div className={`grid gap-6 md:gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-[1fr,320px]'}`}>
           <div className="space-y-6 md:space-y-8 animate-fade-in">
             <LeaderboardHeader 

@@ -16,6 +16,8 @@ import { toast } from "@/hooks/use-toast";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+import { SocialShare } from "@/components/seo/SocialShare";
 
 interface TournamentAdmin {
   user_id: string;
@@ -223,6 +225,8 @@ export default function Tournaments() {
       <Navigation />
       <div className="w-full min-h-screen">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
+          <Breadcrumbs />
+          
           {/* Header - Mobile optimized */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
@@ -233,13 +237,19 @@ export default function Tournaments() {
               
               {/* Action buttons - Stack on mobile, side by side on larger screens */}
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto shrink-0">
-                <Button 
-                  variant="outline" 
-                  className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3 w-full sm:w-auto"
-                >
-                  <Bell className="h-4 w-4 flex-shrink-0" />
-                  <span className="truncate">{isMobile ? "Alerts" : "Tournament Alerts"}</span>
-                </Button>
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3 w-full sm:w-auto"
+                  >
+                    <Bell className="h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">{isMobile ? "Alerts" : "Tournament Alerts"}</span>
+                  </Button>
+                  <SocialShare 
+                    title="Discover Padel Tournaments in Mauritius"
+                    description={`Join ${tournamentsCount} upcoming tournaments in the Mauritius padel community`}
+                    hashtags={["padel", "mauritius", "tournaments"]}
+                    showZapierIntegration={true}
+                  />
                 <Link to="/tournament/create-tournament" className="w-full sm:w-auto">
                   <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full px-3">
                     <Plus className="h-4 w-4 flex-shrink-0" />

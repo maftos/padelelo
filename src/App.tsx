@@ -22,6 +22,7 @@ import CreateTournament from "./pages/CreateTournament";
 import EditTournament from "./pages/EditTournament";
 import PadelCourts from "./pages/PadelCourts";
 import PlayerMatching from "./pages/PlayerMatching";
+import News from "./pages/News";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -68,6 +69,7 @@ function App() {
               <Route path="/tournament/create-tournament" element={<CreateTournament />} />
               <Route path="/padel-courts" element={<PadelCourts />} />
               <Route path="/open-bookings" element={<PlayerMatching />} />
+              <Route path="/news" element={<News />} />
             </Routes>
           </MainLayout>
           <Toaster />
