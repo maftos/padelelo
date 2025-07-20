@@ -2,13 +2,15 @@ import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Link } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Users, Shield, Clock, HelpCircle, CheckCircle, UserPlus, Trophy } from "lucide-react";
 import { 
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const HowItWorks = () => {
   const structuredData = {
@@ -50,101 +52,189 @@ const HowItWorks = () => {
       </Helmet>
       <Navigation />
       <PageContainer>
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center gap-3 mb-6">
-            <BookOpen className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold">How It Works</h1>
+        <div className="max-w-6xl mx-auto">
+          {/* Hero Section */}
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <BookOpen className="h-6 w-6 text-primary" />
+              </div>
+            </div>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+              How PadelELO Works
+            </h1>
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+              Master the platform with our comprehensive guide to tracking matches, building rankings, and connecting with the Mauritius padel community.
+            </p>
           </div>
 
-          <div className="space-y-8">
-            <section className="p-6 rounded-lg bg-accent">
-              <h2 className="text-xl font-semibold mb-4">General Rules</h2>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="font-medium mb-2">Rule 1 - Friends Only!</h3>
-                  <p className="text-muted-foreground">
-                    You can only register matches with your friends. To add your friends, 
-                    go to the 'Leaderboard' and click on their profile. Send them a friend request, 
-                    and once they confirm, you will be able to register matches for each other.
-                  </p>
+          {/* Main Rules Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            <Card className="group hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                  <Users className="h-5 w-5 text-primary" />
                 </div>
-                <div>
-                  <h3 className="font-medium mb-2">Rule 2 - Your Matches Only</h3>
-                  <p className="text-muted-foreground">
-                    You can't register a match if you're not playing in it.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Rule 3 - Order Matters!</h3>
-                  <p className="text-muted-foreground">
-                    You should register the matches in the same order you played them. 
-                    MMR (matchmaking rating) changes are calculated and adjusted after each set.
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            <section className="p-6 rounded-lg bg-accent">
-              <h2 className="text-xl font-semibold mb-4">Registering a Match</h2>
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-medium mb-2">Step 1 - Select the 3 other players</h3>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Step 2 - Select your partner</h3>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Step 3 - Add the final score</h3>
-                </div>
-                <p className="text-muted-foreground mt-4">
-                  Note - Currently a 'match' can only have one set. So if you play multiple sets, 
-                  you will need to record them separately. This also means that in a typical best of 3, 
-                  whether you win 2-0 or 2-1 will have a different impact on your mmr change - this helps 
-                  us calibrate players to their true rank faster.
+                <CardTitle className="text-lg flex items-center gap-2">
+                  Friends Only
+                  <Badge variant="secondary" className="text-xs">Rule 1</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-foreground/70 leading-relaxed">
+                  You can only register matches with your friends. Visit the leaderboard, find players, and send friend requests to start playing together.
                 </p>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                  <Shield className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  Your Matches Only
+                  <Badge variant="secondary" className="text-xs">Rule 2</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-foreground/70 leading-relaxed">
+                  You can only register matches that you actually participated in. No third-party match reporting allowed.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-lg transition-all duration-300">
+              <CardHeader>
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                  <Clock className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  Order Matters
+                  <Badge variant="secondary" className="text-xs">Rule 3</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-foreground/70 leading-relaxed">
+                  Register matches in the order you played them. MMR calculations are processed sequentially for accurate ratings.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Match Registration Process */}
+          <Card className="mb-12">
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Trophy className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">Registering a Match</CardTitle>
               </div>
-            </section>
+              <p className="text-foreground/70">Follow these simple steps to record your match results</p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-sm font-semibold text-primary">1</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">Select Players</h3>
+                    <p className="text-sm text-foreground/70">Choose the 3 other players who participated in your match from your friends list.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-sm font-semibold text-primary">2</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">Choose Partner</h3>
+                    <p className="text-sm text-foreground/70">Select your partner from the chosen players to form your team.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-sm font-semibold text-primary">3</span>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground mb-2">Add Score</h3>
+                    <p className="text-sm text-foreground/70">Enter the final score for the set you played.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-foreground/80">
+                      <strong>Note:</strong> Each match currently represents one set. For best-of-3 matches, record each set separately. 
+                      Winning 2-0 vs 2-1 will have different MMR impacts, helping us calibrate rankings more accurately.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            <section className="p-6 rounded-lg bg-accent">
-              <h2 className="text-xl font-semibold mb-4">Frequently Asked Questions</h2>
+          {/* FAQ Section */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <HelpCircle className="h-5 w-5 text-primary" />
+                </div>
+                <CardTitle className="text-2xl">Frequently Asked Questions</CardTitle>
+              </div>
+              <p className="text-foreground/70">Common questions about using PadelELO</p>
+            </CardHeader>
+            <CardContent>
               <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="item-1">
-                  <AccordionTrigger>Do the other players need to confirm the match after I register it?</AccordionTrigger>
-                  <AccordionContent>
-                    No, the match registration process on padelELO is honor-based. There's no confirmation needed.
+                <AccordionItem value="item-1" className="border-border">
+                  <AccordionTrigger className="text-left">
+                    Do other players need to confirm matches after I register them?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-foreground/70">
+                    No, PadelELO operates on an honor-based system. Match results are immediately recorded without requiring confirmation from other players.
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="item-2">
-                  <AccordionTrigger>Wait, does that mean I can register fake matches & steal points from my friends?</AccordionTrigger>
-                  <AccordionContent>
-                    Yes. The MMR system is zero sum, so - you can only increase your rating by taking them from other players. 
-                    Couple of things here - (a) not sure if they'll be your friends much longer, (b) all matches are public - 
-                    so everyone will know.
+                <AccordionItem value="item-2" className="border-border">
+                  <AccordionTrigger className="text-left">
+                    Can I register fake matches to boost my rating?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-foreground/70">
+                    Technically yes, but it's not recommended. The MMR system is zero-sum (you only gain points by taking them from others), 
+                    all matches are public, and you'll likely lose friends. Fair play keeps the community strong.
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="item-3">
-                  <AccordionTrigger>I registered a match by mistake, can I revert it?</AccordionTrigger>
-                  <AccordionContent>
-                    No.
+                <AccordionItem value="item-3" className="border-border">
+                  <AccordionTrigger className="text-left">
+                    Can I revert a match I registered by mistake?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-foreground/70">
+                    Currently, matches cannot be reverted once registered. Double-check all details before submitting your match results.
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="item-4">
-                  <AccordionTrigger>How are the points won/loss calculated?</AccordionTrigger>
-                  <AccordionContent>
-                    Basically the harder your matchup (playing against opponents with higher MMR), the more points you win if you lose. 
-                    This also means that if you lose a hard matchup, you would lose less points. See{' '}
-                    <Link to="/matchmaking-math" className="underline hover:text-primary">
+                <AccordionItem value="item-4" className="border-border">
+                  <AccordionTrigger className="text-left">
+                    How are MMR points calculated?
+                  </AccordionTrigger>
+                  <AccordionContent className="text-foreground/70">
+                    Points are based on match difficulty. Playing against higher-rated opponents gives more points for wins and fewer point losses for defeats. 
+                    See our <Link to="/matchmaking-math" className="text-primary hover:text-primary/80 underline font-medium">
                       Matchmaking Math
-                    </Link>{' '}
-                    for full details.
+                    </Link> page for detailed calculations.
                   </AccordionContent>
                 </AccordionItem>
               </Accordion>
-            </section>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </PageContainer>
     </>
