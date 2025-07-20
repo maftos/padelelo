@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -204,8 +205,63 @@ export default function TournamentDetail() {
     );
   }
 
+  const tournamentDate = formatTournamentDate(tournament.start_date, tournament.end_date);
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    "name": tournament.name,
+    "description": tournament.description,
+    "startDate": tournament.start_date,
+    "endDate": tournament.end_date || tournament.start_date,
+    "sport": "Padel",
+    "location": {
+      "@type": "Place",
+      "name": tournament.venue_name,
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "MU",
+        "addressLocality": "Mauritius"
+      }
+    },
+    "organizer": {
+      "@type": "Person",
+      "name": `${tournament.admin_first_name} ${tournament.admin_last_name}`
+    },
+    "eventStatus": tournament.status === 'ACTIVE' ? "https://schema.org/EventScheduled" : "https://schema.org/EventPostponed",
+    "maximumAttendeeCapacity": tournament.max_participants,
+    "url": `https://padel-elo.com/tournaments/${tournament.tournament_id}`
+  };
+
   return (
     <>
+      <Helmet>
+        <title>{tournament.name} - Padel Tournament in Mauritius | PadelELO</title>
+        <meta 
+          name="description" 
+          content={`Join ${tournament.name} on ${tournamentDate} at ${tournament.venue_name}. ${tournament.description.substring(0, 150)}...`}
+        />
+        <meta name="keywords" content={`${tournament.name}, padel tournament, ${tournament.venue_name}, mauritius padel, tournament registration`} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={`${tournament.name} - Padel Tournament`} />
+        <meta property="og:description" content={`Join this padel tournament on ${tournamentDate} at ${tournament.venue_name} in Mauritius.`} />
+        <meta property="og:type" content="event" />
+        <meta property="og:url" content={`https://padel-elo.com/tournaments/${tournament.tournament_id}`} />
+        <meta property="og:image" content={tournament.main_photo} />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${tournament.name} - Padel Tournament`} />
+        <meta name="twitter:description" content={`Join this padel tournament on ${tournamentDate}`} />
+        <meta name="twitter:image" content={tournament.main_photo} />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+        
+        <link rel="canonical" href={`https://padel-elo.com/tournaments/${tournament.tournament_id}`} />
+      </Helmet>
       <Navigation />
       <PageContainer className="pb-24 md:pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

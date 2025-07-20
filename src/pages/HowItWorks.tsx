@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Link } from "react-router-dom";
@@ -10,8 +11,43 @@ import {
 } from "@/components/ui/accordion";
 
 const HowItWorks = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to Use PadelELO - Mauritius Padel Community",
+    "description": "Learn how to use PadelELO to track matches, build rankings, and connect with padel players in Mauritius",
+    "url": "https://padel-elo.com/how-it-works"
+  };
+
   return (
     <>
+      <Helmet>
+        <title>How It Works - PadelELO Guide for Mauritius Players</title>
+        <meta 
+          name="description" 
+          content="Learn how to use PadelELO: track matches, build rankings, connect with friends, and improve your padel game in Mauritius. Complete guide for new players."
+        />
+        <meta name="keywords" content="padel guide mauritius, how to use padel elo, padel ranking system, MMR explained, padel community guide" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="How It Works - PadelELO Guide" />
+        <meta property="og:description" content="Learn how to use PadelELO to track matches and build rankings in Mauritius" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://padel-elo.com/how-it-works" />
+        <meta property="og:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="How It Works - PadelELO Guide" />
+        <meta name="twitter:description" content="Learn how to use PadelELO for padel in Mauritius" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+        
+        <link rel="canonical" href="https://padel-elo.com/how-it-works" />
+      </Helmet>
       <Navigation />
       <PageContainer>
         <div className="max-w-3xl mx-auto">

@@ -1,8 +1,44 @@
+import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 
 const MatchmakingMath = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "name": "PadelELO Matchmaking Algorithm & MMR System",
+    "description": "Detailed explanation of the ELO rating system used for padel matchmaking in Mauritius",
+    "url": "https://padel-elo.com/matchmaking-math"
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Matchmaking Algorithm & MMR System - PadelELO</title>
+        <meta 
+          name="description" 
+          content="Learn how PadelELO's MMR system works: ELO rating calculations, expected win rates, and how match results affect your ranking in Mauritius padel community."
+        />
+        <meta name="keywords" content="ELO rating system, MMR calculation, padel ranking algorithm, matchmaking math, tennis rating system" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Matchmaking Algorithm & MMR System - PadelELO" />
+        <meta property="og:description" content="Learn how PadelELO's MMR and ELO rating system works for padel matchmaking" />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://padel-elo.com/matchmaking-math" />
+        <meta property="og:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Matchmaking Algorithm - PadelELO" />
+        <meta name="twitter:description" content="Learn how ELO rating system works for padel" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+        
+        <link rel="canonical" href="https://padel-elo.com/matchmaking-math" />
+      </Helmet>
       <Navigation />
       <main className="container py-8 px-4 max-w-4xl mx-auto">
         <div className="space-y-8">

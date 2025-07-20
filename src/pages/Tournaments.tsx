@@ -1,4 +1,5 @@
 
+import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Button } from "@/components/ui/button";
@@ -172,8 +173,53 @@ export default function Tournaments() {
     );
   }
 
+  const tournamentsCount = tournaments?.length || 0;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SportsOrganization",
+    "name": "PadelELO Tournaments",
+    "description": "Discover and join padel tournaments in Mauritius",
+    "url": "https://padel-elo.com/tournaments",
+    "sport": "Padel",
+    "location": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "MU",
+        "addressLocality": "Mauritius"
+      }
+    }
+  };
+
   return (
     <>
+      <Helmet>
+        <title>Padel Tournaments in Mauritius - Join & Compete | PadelELO</title>
+        <meta 
+          name="description" 
+          content={`Discover ${tournamentsCount} upcoming padel tournaments in Mauritius. Join competitive events, meet players, and showcase your skills in the local padel community.`}
+        />
+        <meta name="keywords" content="padel tournaments mauritius, padel competitions, padel events mauritius, tournament registration" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Padel Tournaments in Mauritius - PadelELO" />
+        <meta property="og:description" content={`Discover ${tournamentsCount} upcoming padel tournaments in Mauritius. Join competitive events and meet fellow players.`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://padel-elo.com/tournaments" />
+        <meta property="og:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Padel Tournaments in Mauritius" />
+        <meta name="twitter:description" content="Join competitive padel tournaments in Mauritius" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+        
+        <link rel="canonical" href="https://padel-elo.com/tournaments" />
+      </Helmet>
       <Navigation />
       <div className="w-full min-h-screen">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">

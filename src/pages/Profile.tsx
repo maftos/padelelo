@@ -94,10 +94,32 @@ const Profile = () => {
     );
   }
 
-  const pageTitle = isOwnProfile ? "My Profile" : "User Profile";
+  const displayName = profileData?.profile?.first_name && profileData?.profile?.last_name 
+    ? `${profileData.profile.first_name} ${profileData.profile.last_name}` 
+    : "User";
+  const pageTitle = isOwnProfile ? "My Profile" : `${displayName} - Player Profile`;
   const pageDescription = isOwnProfile 
     ? "Manage your PadelELO profile, update your information, and track your progress in the Mauritius padel community."
-    : "View user profile and stats in the PadelELO community.";
+    : `View ${displayName}'s padel profile, stats, and match history in the Mauritius PadelELO community.`;
+
+  const structuredData = !isOwnProfile && profileData?.profile ? {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": displayName,
+    "description": `Padel player in Mauritius with ${profileData.profile.current_mmr || 'unrated'} MMR`,
+    "url": `https://padel-elo.com/profile/${targetUserId}`,
+    "image": profileData.profile.profile_photo,
+    "nationality": profileData.profile.nationality,
+    "sport": "Padel",
+    "location": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "MU",
+        "addressLocality": "Mauritius"
+      }
+    }
+  } : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,6 +129,30 @@ const Profile = () => {
           name="description" 
           content={pageDescription}
         />
+        <meta name="keywords" content={`${displayName}, padel player, mauritius padel, player profile, MMR ranking`} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content={`https://padel-elo.com/profile/${targetUserId}`} />
+        {profileData?.profile?.profile_photo && (
+          <meta property="og:image" content={profileData.profile.profile_photo} />
+        )}
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        
+        {/* Structured Data for public profiles */}
+        {structuredData && (
+          <script type="application/ld+json">
+            {JSON.stringify(structuredData)}
+          </script>
+        )}
+        
+        <link rel="canonical" href={`https://padel-elo.com/profile/${targetUserId}`} />
       </Helmet>
       <Navigation />
       <main className="container max-w-6xl mx-auto py-8 px-4">
