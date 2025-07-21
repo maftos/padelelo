@@ -43,6 +43,39 @@ export const ProfileContent = ({
   onCancel,
   isOwnProfile = true
 }: ProfileContentProps) => {
+  // If editing, show focused edit layout
+  if (isEditing && isOwnProfile) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="space-y-6">
+          <ProfileHeroCard 
+            isEditing={isEditing}
+            uploading={uploading}
+            formData={formData}
+            profileData={profileData}
+            onPhotoUpload={onPhotoUpload}
+            onEdit={onEdit}
+            onSave={onSave}
+            onCancel={onCancel}
+            isOwnProfile={isOwnProfile}
+          />
+          
+          <ProfileForm
+            formData={formData}
+            isEditing={isEditing}
+            uploading={uploading}
+            onFormChange={onFormChange}
+            onGenderSelect={onGenderSelect}
+            onPhotoUpload={onPhotoUpload}
+            onSave={onSave}
+            onCancel={onCancel}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Default view layout with full grid
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Left Column - Profile Info */}
@@ -59,19 +92,6 @@ export const ProfileContent = ({
             onCancel={onCancel}
             isOwnProfile={isOwnProfile}
           />
-          
-          {isEditing && isOwnProfile && (
-            <ProfileForm
-              formData={formData}
-              isEditing={isEditing}
-              uploading={uploading}
-              onFormChange={onFormChange}
-              onGenderSelect={onGenderSelect}
-              onPhotoUpload={onPhotoUpload}
-              onSave={onSave}
-              onCancel={onCancel}
-            />
-          )}
         </div>
       </div>
 
