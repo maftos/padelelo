@@ -4,9 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MapPin, Clock, Phone, Mail, Star, Globe, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MapPin, Star, Users, ExternalLink } from "lucide-react";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 export interface PadelClub {
   id: string;
@@ -169,117 +171,41 @@ const PadelCourts = () => {
               </p>
             </div>
 
-            <div className="grid gap-6">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {clubs.map((club) => (
-                <Card key={club.id} className="overflow-hidden">
+                <Card key={club.id} className="hover:shadow-md transition-shadow">
                   <CardHeader>
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                      <div className="space-y-2">
-                        <CardTitle className="flex items-center gap-2 text-xl">
-                          {club.name}
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{club.rating}</span>
-                          </div>
-                        </CardTitle>
-                        <CardDescription className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          Professional padel facility in Mauritius
-                        </CardDescription>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
-                        <Users className="h-4 w-4" />
-                        {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''} available
-                      </div>
+                    <div className="space-y-2">
+                      <CardTitle className="flex items-center justify-between text-lg">
+                        {club.name}
+                        <div className="flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-medium">{club.rating}</span>
+                        </div>
+                      </CardTitle>
+                      <CardDescription className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4" />
+                        Professional padel facility in Mauritius
+                      </CardDescription>
                     </div>
                   </CardHeader>
                   
-                  <CardContent className="space-y-6">
-                    <p className="text-muted-foreground leading-relaxed">
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full w-fit">
+                      <Users className="h-4 w-4" />
+                      {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''}
+                    </div>
+
+                    <p className="text-muted-foreground text-sm line-clamp-2">
                       {club.description}
                     </p>
 
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Contact Information */}
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Contact Information</h3>
-                        
-                        {club.phone && (
-                          <div className="flex items-center gap-3">
-                            <Phone className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="font-medium">Phone</p>
-                              <a href={`tel:${club.phone}`} className="text-primary hover:underline">
-                                {club.phone}
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        {club.email && (
-                          <div className="flex items-center gap-3">
-                            <Mail className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="font-medium">Email</p>
-                              <a href={`mailto:${club.email}`} className="text-primary hover:underline">
-                                {club.email}
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        {club.website && (
-                          <div className="flex items-center gap-3">
-                            <Globe className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="font-medium">Website</p>
-                              <a href={club.website} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                Visit Website
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex items-start gap-3">
-                          <Clock className="h-4 w-4 text-primary mt-1" />
-                          <div>
-                            <p className="font-medium">Opening Hours</p>
-                            <p className="text-sm text-muted-foreground">{club.openingHours}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Facilities & Pricing */}
-                      <div className="space-y-4">
-                        <h3 className="font-semibold text-lg">Facilities & Services</h3>
-                        
-                        <div>
-                          <p className="font-medium mb-2">Available Amenities</p>
-                          <div className="flex flex-wrap gap-2">
-                            {club.amenities.map((amenity, index) => (
-                              <span 
-                                key={index}
-                                className="px-3 py-1 bg-secondary text-secondary-foreground text-sm rounded-full"
-                              >
-                                {amenity}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <p className="font-medium">Pricing</p>
-                          <p className="text-muted-foreground">{club.priceRange}</p>
-                        </div>
-
-                        <div>
-                          <p className="font-medium">Court Booking</p>
-                          <p className="text-sm text-muted-foreground">
-                            Contact the facility directly to book your padel court and check availability.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <Button asChild className="w-full">
+                      <Link to={`/padel-courts/${club.id}`}>
+                        View Details
+                        <ExternalLink className="h-4 w-4 ml-2" />
+                      </Link>
+                    </Button>
                   </CardContent>
                 </Card>
               ))}

@@ -21,6 +21,7 @@ import TournamentDetail from "./pages/TournamentDetail";
 import CreateTournament from "./pages/CreateTournament";
 import EditTournament from "./pages/EditTournament";
 import PadelCourts from "./pages/PadelCourts";
+import PadelCourtDetail from "./pages/PadelCourtDetail";
 import PlayerMatching from "./pages/PlayerMatching";
 import NotFound from "./pages/NotFound";
 import News from "./pages/News";
@@ -69,6 +70,7 @@ function App() {
               <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
               <Route path="/tournament/create-tournament" element={<CreateTournament />} />
               <Route path="/padel-courts" element={<PadelCourts />} />
+              <Route path="/padel-courts/:courtId" element={<PadelCourtDetail />} />
               <Route path="/open-bookings" element={<PlayerMatching />} />
               <Route path="/news" element={<News />} />
               {/* Catch-all route for 404 - must be last */}
