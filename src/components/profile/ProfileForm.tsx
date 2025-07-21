@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Camera, Upload, Check, X } from "lucide-react";
+import { Camera, Upload, Check, X, User, UserX, ArrowLeft, ArrowRight, Hand } from "lucide-react";
 import { useRef } from "react";
 import { countries } from "@/lib/countries";
 import { cn } from "@/lib/utils";
@@ -83,11 +83,13 @@ const GenderCard = ({
   value, 
   selectedValue, 
   onChange, 
+  icon: Icon,
   children 
 }: { 
   value: string; 
   selectedValue: string; 
   onChange: (value: string) => void; 
+  icon: any;
   children: React.ReactNode;
 }) => (
   <Card 
@@ -97,11 +99,62 @@ const GenderCard = ({
     )}
     onClick={() => onChange(value)}
   >
-    <CardContent className="p-4 text-center">
-      {children}
+    <CardContent className="p-3 text-center">
+      <div className="flex flex-col items-center gap-2">
+        <Icon className="w-5 h-5 text-muted-foreground" />
+        {children}
+      </div>
     </CardContent>
   </Card>
 );
+
+// Image optimization utility
+const optimizeImage = async (file: File): Promise<File> => {
+  return new Promise((resolve) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      // Calculate new dimensions (max 400x400 for profile photos)
+      const maxDimension = 400;
+      let { width, height } = img;
+      
+      if (width > height) {
+        if (width > maxDimension) {
+          height = (height * maxDimension) / width;
+          width = maxDimension;
+        }
+      } else {
+        if (height > maxDimension) {
+          width = (width * maxDimension) / height;
+          height = maxDimension;
+        }
+      }
+      
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Draw and compress
+      ctx?.drawImage(img, 0, 0, width, height);
+      
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const optimizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, '.webp'), {
+              type: 'image/webp'
+            });
+            resolve(optimizedFile);
+          }
+        },
+        'image/webp',
+        0.8 // 80% quality for good compression
+      );
+    };
+    
+    img.src = URL.createObjectURL(file);
+  });
+};
 
 export const ProfileForm = ({
   formData,
@@ -124,6 +177,23 @@ export const ProfileForm = ({
   const handleAvatarClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Optimize the image before uploading
+      const optimizedFile = await optimizeImage(file);
+      // Create a new event with the optimized file
+      const optimizedEvent = {
+        ...event,
+        target: {
+          ...event.target,
+          files: [optimizedFile] as any
+        }
+      };
+      onPhotoUpload(optimizedEvent as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
@@ -163,7 +233,7 @@ export const ProfileForm = ({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={onPhotoUpload}
+            onChange={handleFileChange}
             className="hidden"
           />
         </CardContent>
@@ -222,15 +292,17 @@ export const ProfileForm = ({
                 value="male"
                 selectedValue={formData.gender}
                 onChange={onGenderSelect}
+                icon={User}
               >
-                <div className="font-medium">Male</div>
+                <div className="font-medium text-sm">Male</div>
               </GenderCard>
               <GenderCard
                 value="female"
                 selectedValue={formData.gender}
                 onChange={onGenderSelect}
+                icon={UserX}
               >
-                <div className="font-medium">Female</div>
+                <div className="font-medium text-sm">Female</div>
               </GenderCard>
             </div>
           </div>
@@ -242,15 +314,17 @@ export const ProfileForm = ({
                 value="left"
                 selectedValue={formData.preferred_side}
                 onChange={(value) => onFormChange('preferred_side', value)}
+                icon={ArrowLeft}
               >
-                <div className="font-medium">Left Side</div>
+                <div className="font-medium text-sm">Left Side</div>
               </GenderCard>
               <GenderCard
                 value="right"
                 selectedValue={formData.preferred_side}
                 onChange={(value) => onFormChange('preferred_side', value)}
+                icon={ArrowRight}
               >
-                <div className="font-medium">Right Side</div>
+                <div className="font-medium text-sm">Right Side</div>
               </GenderCard>
             </div>
           </div>
@@ -262,15 +336,17 @@ export const ProfileForm = ({
                 value="right-handed"
                 selectedValue={formData.handedness || ''}
                 onChange={(value) => onFormChange('handedness', value)}
+                icon={Hand}
               >
-                <div className="font-medium">Right Handed</div>
+                <div className="font-medium text-sm">Right Handed</div>
               </GenderCard>
               <GenderCard
                 value="left-handed"
                 selectedValue={formData.handedness || ''}
                 onChange={(value) => onFormChange('handedness', value)}
+                icon={Hand}
               >
-                <div className="font-medium">Left Handed</div>
+                <div className="font-medium text-sm">Left Handed</div>
               </GenderCard>
             </div>
           </div>
