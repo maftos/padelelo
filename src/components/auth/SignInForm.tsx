@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { countries } from "@/lib/countries";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { SignInFormData } from "@/types/auth";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { OTPInput } from "@/components/ui/otp-input";
+
 
 interface SignInFormProps {
   onVerificationStepChange?: (isVerification: boolean) => void;
@@ -284,22 +285,14 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
 
         <form onSubmit={(e) => { e.preventDefault(); handleVerifyOtp(); }} className="space-y-6">
           <div className="space-y-4">
-            <Label htmlFor="otp-input" className="text-center block">Verification Code</Label>
-            <div className="flex justify-center">
-              <Input
-                id="otp-input"
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                pattern="\d{6}"
-                value={verificationCode}
-                onChange={(e) => setVerificationCode(e.target.value)}
-                placeholder="000000"
-                className="text-center text-lg tracking-[0.5em] font-mono w-48"
-                disabled={passwordlessLoading}
-                autoComplete="one-time-code"
-              />
-            </div>
+            <Label className="text-center block text-sm font-medium">Verification Code</Label>
+            <OTPInput
+              length={6}
+              value={verificationCode}
+              onChange={setVerificationCode}
+              disabled={passwordlessLoading}
+              className="px-4"
+            />
           </div>
 
           <Button
