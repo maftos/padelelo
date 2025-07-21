@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, Star, Users, ExternalLink } from "lucide-react";
+import { MapPin, Star, Users, ExternalLink, CreditCard } from "lucide-react";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
@@ -24,6 +24,9 @@ export interface PadelClub {
   description: string;
   amenities: string[];
   priceRange: string;
+  region: string;
+  estimatedFeePerPerson: string;
+  image?: string;
 }
 
 const PadelCourts = () => {
@@ -57,7 +60,10 @@ const PadelCourts = () => {
       'Contact for hours',
     description: `Professional padel facility offering high-quality courts and equipment in Mauritius. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
     amenities: ['Equipment Rental', 'Professional Coaching', 'Parking Available', 'Changing Rooms'],
-    priceRange: 'Contact for pricing'
+    priceRange: 'Contact for pricing',
+    region: venue.region || 'CENTRAL',
+    estimatedFeePerPerson: 'Rs 800-1200',
+    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? venue.photo_gallery[0] : undefined
   })) : [];
 
   const structuredData = {
@@ -142,13 +148,12 @@ const PadelCourts = () => {
         <Navigation />
         
         <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
-          {/* Hero Section */}
-          <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight">Padel Courts in Mauritius</h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Discover the best padel courts and clubs across the beautiful island of Mauritius. 
-              From professional facilities to community courts, find the perfect place to play this exciting racquet sport.
-            </p>
+          {/* Header Section */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h1 className="text-3xl font-bold">Padel Courts</h1>
+              <p className="text-muted-foreground">Find your perfect court across Mauritius</p>
+            </div>
           </div>
 
           {/* Interactive Map Section */}
@@ -161,20 +166,28 @@ const PadelCourts = () => {
             </Card>
           </div>
 
-          {/* Complete Venue Directory */}
+          {/* Court Directory */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold mb-2">Complete Directory of Padel Courts</h2>
+              <h2 className="text-2xl font-semibold mb-2">All Padel Courts</h2>
               <p className="text-muted-foreground">
-                Browse all available padel courts in Mauritius with detailed information about facilities, 
-                contact details, and booking options.
+                Browse available padel courts across Mauritius
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {clubs.map((club) => (
-                <Card key={club.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader>
+                <Card key={club.id} className="hover:shadow-md transition-shadow overflow-hidden">
+                  {club.image && (
+                    <div className="aspect-video overflow-hidden">
+                      <img 
+                        src={club.image} 
+                        alt={club.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <CardHeader className="pb-3">
                     <div className="space-y-2">
                       <CardTitle className="flex items-center justify-between text-lg">
                         {club.name}
@@ -185,20 +198,22 @@ const PadelCourts = () => {
                       </CardTitle>
                       <CardDescription className="flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
-                        Professional padel facility in Mauritius
+                        {club.region}
                       </CardDescription>
                     </div>
                   </CardHeader>
                   
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full w-fit">
-                      <Users className="h-4 w-4" />
-                      {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''}
+                  <CardContent className="space-y-3 pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
+                        <Users className="h-4 w-4" />
+                        {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''}
+                      </div>
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <CreditCard className="h-4 w-4" />
+                        {club.estimatedFeePerPerson}
+                      </div>
                     </div>
-
-                    <p className="text-muted-foreground text-sm line-clamp-2">
-                      {club.description}
-                    </p>
 
                     <Button asChild className="w-full">
                       <Link to={`/padel-courts/${club.id}`}>

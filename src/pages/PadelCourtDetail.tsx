@@ -43,7 +43,10 @@ const PadelCourtDetail = () => {
       'Contact for hours',
     description: `Professional padel facility offering high-quality courts and equipment in Mauritius. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
     amenities: ['Equipment Rental', 'Professional Coaching', 'Parking Available', 'Changing Rooms'],
-    priceRange: 'Contact for pricing'
+    priceRange: 'Contact for pricing',
+    region: venue.region || 'CENTRAL',
+    estimatedFeePerPerson: 'Rs 800-1200',
+    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? venue.photo_gallery[0] : undefined
   })) : [];
 
   const club = clubs.find(c => c.id === courtId);
