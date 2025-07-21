@@ -11,8 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { countries } from "@/lib/countries";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { SignInFormData } from "@/types/auth";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
-export const SignInForm = () => {
+interface SignInFormProps {
+  onVerificationStepChange?: (isVerification: boolean) => void;
+}
+
+export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+230");
   const [password, setPassword] = useState("");
@@ -37,6 +42,11 @@ export const SignInForm = () => {
       setCountryCode(cachedCountryCode);
     }
   }, []);
+
+  // Notify parent component when verification step changes
+  useEffect(() => {
+    onVerificationStepChange?.(isVerificationStep);
+  }, [isVerificationStep, onVerificationStepChange]);
 
   // Save phone number and country code to localStorage whenever they change
   const saveToCache = (phone: string, country: string) => {
@@ -268,25 +278,37 @@ export const SignInForm = () => {
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold tracking-tight">Verify your WhatsApp</h1>
           <p className="text-muted-foreground">
-            Enter the 6-digit code sent to {countryCode}{phoneNumber}
+            Enter the 6-digit code sent to {countryCode}{formatPhoneDisplay(phoneNumber)}
           </p>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); handleVerifyOtp(); }} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="code">Verification Code</Label>
-            <Input
-              id="code"
-              type="text"
-              inputMode="numeric"
-              maxLength={6}
-              pattern="\d{6}"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-              placeholder="Enter 6-digit code"
-              className="text-center text-lg tracking-widest"
-              disabled={passwordlessLoading}
-            />
+        <form onSubmit={(e) => { e.preventDefault(); handleVerifyOtp(); }} className="space-y-6">
+          <div className="space-y-4">
+            <Label htmlFor="otp-input" className="text-center block">Verification Code</Label>
+            <div className="flex justify-center">
+              <InputOTP
+                maxLength={6}
+                value={verificationCode}
+                onChange={(value) => setVerificationCode(value)}
+                disabled={passwordlessLoading}
+                // Mobile optimizations for auto-fill
+                autoComplete="one-time-code"
+                inputMode="numeric"
+                // Additional mobile-specific attributes
+                data-testid="otp-input"
+                // These help with SMS auto-fill on mobile devices
+                {...({
+                  'data-sms-autofill': 'true',
+                  'x-webkit-autofill': 'one-time-code'
+                })}
+              >
+                <InputOTPGroup>
+                  {[...Array(6)].map((_, index) => (
+                    <InputOTPSlot key={index} index={index} />
+                  ))}
+                </InputOTPGroup>
+              </InputOTP>
+            </div>
           </div>
 
           <Button

@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
@@ -7,6 +8,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const Login = () => {
+  const [isVerificationStep, setIsVerificationStep] = useState(false);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
@@ -20,19 +23,22 @@ const Login = () => {
           </div>
           
           <div className="bg-card border border-border rounded-lg p-6 shadow-xl backdrop-blur-sm space-y-6">
-            <SignInForm />
+            <SignInForm onVerificationStepChange={setIsVerificationStep} />
             
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground mb-2">
-                Don't have an account?
-              </p>
-              <Link 
-                to="/signup" 
-                className="text-sm text-primary hover:underline underline-offset-4"
-              >
-                Create account
-              </Link>
-            </div>
+            {/* Only show the "Don't have an account" section when NOT in verification step */}
+            {!isVerificationStep && (
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">
+                  Don't have an account?
+                </p>
+                <Link 
+                  to="/signup" 
+                  className="text-sm text-primary hover:underline underline-offset-4"
+                >
+                  Create account
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
