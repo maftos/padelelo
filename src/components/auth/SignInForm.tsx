@@ -286,22 +286,19 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
           <div className="space-y-4">
             <Label htmlFor="otp-input" className="text-center block">Verification Code</Label>
             <div className="flex justify-center">
-              <InputOTP
+              <Input
+                id="otp-input"
+                type="text"
+                inputMode="numeric"
                 maxLength={6}
+                pattern="\d{6}"
                 value={verificationCode}
-                onChange={(value) => setVerificationCode(value)}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                placeholder="000000"
+                className="text-center text-lg tracking-[0.5em] font-mono w-48"
                 disabled={passwordlessLoading}
                 autoComplete="one-time-code"
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                  <InputOTPSlot index={5} />
-                </InputOTPGroup>
-              </InputOTP>
+              />
             </div>
           </div>
 
