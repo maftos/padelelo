@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { NewsSection } from "@/components/content/NewsSection";
-import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+
 import { SocialShare } from "@/components/seo/SocialShare";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -77,7 +77,6 @@ const News = () => {
       
       <PageContainer>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Breadcrumbs />
           
           {/* Header */}
           <div className="text-center mb-12">

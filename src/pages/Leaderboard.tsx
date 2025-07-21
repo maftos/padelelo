@@ -10,7 +10,7 @@ import { useLeaderboardFilters } from "@/hooks/use-leaderboard-filters";
 import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
-import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+
 import { SocialShare } from "@/components/seo/SocialShare";
 
 const Leaderboard = () => {
@@ -75,7 +75,6 @@ const Leaderboard = () => {
       </Helmet>
       <Navigation />
       <main className="container py-6 md:py-12 px-4 max-w-7xl mx-auto">
-        <Breadcrumbs />
         
         <div className="flex items-center justify-between mb-6">
           <div>

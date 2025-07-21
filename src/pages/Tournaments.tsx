@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+
 import { SocialShare } from "@/components/seo/SocialShare";
 
 interface TournamentAdmin {
@@ -225,7 +225,6 @@ export default function Tournaments() {
       <Navigation />
       <div className="w-full min-h-screen">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
-          <Breadcrumbs />
           
           {/* Header - Mobile optimized */}
           <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">

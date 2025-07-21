@@ -8,7 +8,7 @@ import { ProfileContent } from "@/components/profile/ProfileContent";
 import { useProfileState } from "@/hooks/use-profile-state";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+
 import { SocialShare } from "@/components/seo/SocialShare";
 
 const Profile = () => {
@@ -158,7 +158,6 @@ const Profile = () => {
       </Helmet>
       <Navigation />
       <main className="container max-w-6xl mx-auto py-8 px-4">
-        <Breadcrumbs customTitle={displayName} />
         
         {!isOwnProfile && (
           <div className="flex items-center justify-between mb-6">

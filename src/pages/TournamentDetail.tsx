@@ -17,7 +17,7 @@ import { TournamentInviteDialog } from "./TournamentInviteDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 import { BracketTypeDisplay } from "@/components/tournament/BracketTypeDisplay";
-import { Breadcrumbs } from "@/components/seo/Breadcrumbs";
+
 import { SocialShare } from "@/components/seo/SocialShare";
 
 interface Tournament {
@@ -267,7 +267,6 @@ export default function TournamentDetail() {
       <Navigation />
       <PageContainer className="pb-24 md:pb-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Breadcrumbs customTitle={tournament.name} />
           
           <Button
             variant="ghost"
