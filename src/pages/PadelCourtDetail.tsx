@@ -108,7 +108,7 @@ const PadelCourtDetail = () => {
         <Navigation />
         
         {/* Back Button */}
-        <div className="w-full max-w-7xl mx-auto px-4 py-4">
+        <div className="w-full max-w-4xl mx-auto px-4 py-4">
           <Button variant="ghost" asChild>
             <Link to="/padel-courts">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -117,13 +117,8 @@ const PadelCourtDetail = () => {
           </Button>
         </div>
 
-        {/* Photo Gallery - Hero Section */}
-        <div className="w-full">
-          <PhotoGallery photos={photoGallery} venueName={club.name} />
-        </div>
-
-        <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-6">
-          {/* Court Header */}
+        {/* Court Header - Above Gallery */}
+        <div className="w-full max-w-4xl mx-auto px-4 pb-6">
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div className="space-y-2">
@@ -145,6 +140,14 @@ const PadelCourtDetail = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Photo Gallery */}
+        <div className="w-full">
+          <PhotoGallery photos={photoGallery} venueName={club.name} />
+        </div>
+
+        <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-6">
 
           {/* Main Content */}
           <Card className="overflow-hidden">

@@ -30,7 +30,7 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, venueName })
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-4">
+    <div className="w-full max-w-4xl mx-auto px-4 py-4">
       <div className="grid grid-cols-4 gap-2 h-[400px] rounded-xl overflow-hidden">
         {/* Main large image - takes up 2 columns */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
