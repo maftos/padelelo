@@ -142,6 +142,24 @@ export const ProfileForm = ({
               </div>
             </RadioGroup>
           </div>
+
+          <div className="space-y-3">
+            <Label>Preferred Side</Label>
+            <RadioGroup
+              value={formData.preferred_side}
+              onValueChange={(value) => onFormChange('preferred_side', value)}
+              className="flex flex-row space-x-6"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="left" id="left" />
+                <Label htmlFor="left">Left</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="right" id="right" />
+                <Label htmlFor="right">Right</Label>
+              </div>
+            </RadioGroup>
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -35,6 +35,7 @@ interface ProfileFormState {
   current_mmr: number;
   years_playing: string;
   favorite_position: string;
+  preferred_side: string;
 }
 
 export const useProfileState = (profileUserId: string | undefined) => {
@@ -51,6 +52,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
     current_mmr: 0,
     years_playing: "",
     favorite_position: "",
+    preferred_side: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery<ViewProfileResponse | null>({
@@ -114,6 +116,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
         current_mmr: profileData.profile.current_mmr || 0,
         years_playing: "",
         favorite_position: "",
+        preferred_side: "",
       });
     }
   }, [profileData]);

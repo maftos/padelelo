@@ -3,11 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Check, X, UserPlus, Users, Clock } from "lucide-react";
+import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
+import { countries } from "@/lib/countries";
 
 interface ProfileFormState {
   first_name: string;
@@ -18,6 +19,7 @@ interface ProfileFormState {
   current_mmr: number;
   years_playing: string;
   favorite_position: string;
+  preferred_side: string;
 }
 
 interface ProfileHeroCardProps {
@@ -113,6 +115,12 @@ export const ProfileHeroCard = ({
   const friendshipStatus = getFriendshipStatus();
   const displayName = `${formData.first_name} ${formData.last_name}`.trim() || "User Name";
   
+  // Get country details
+  const countryData = countries.find(c => c.code === formData.nationality);
+  
+  // Mock weekly MMR change for now
+  const weeklyChange = 25; // Will be replaced with real data later
+  
   return (
     <Card>
       <CardContent className="p-6">
@@ -129,17 +137,31 @@ export const ProfileHeroCard = ({
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">{displayName}</h1>
             <div className="flex flex-wrap justify-center gap-2">
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="flex items-center gap-1">
                 {formData.current_mmr || 3000} MMR
+                {weeklyChange > 0 ? (
+                  <TrendingUp className="w-3 h-3 text-green-500" />
+                ) : weeklyChange < 0 ? (
+                  <TrendingDown className="w-3 h-3 text-red-500" />
+                ) : null}
+                <span className={`text-xs ${weeklyChange > 0 ? 'text-green-500' : weeklyChange < 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
+                  {weeklyChange > 0 ? '+' : ''}{weeklyChange}
+                </span>
               </Badge>
-              {formData.nationality && (
-                <Badge variant="outline">
-                  {formData.nationality}
+              {countryData && (
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <span>{countryData.flag}</span>
+                  {countryData.code}
                 </Badge>
               )}
               {formData.gender && (
                 <Badge variant="outline">
                   {formData.gender}
+                </Badge>
+              )}
+              {formData.preferred_side && (
+                <Badge variant="outline">
+                  {formData.preferred_side} side
                 </Badge>
               )}
             </div>

@@ -13,6 +13,7 @@ interface ProfileFormState {
   current_mmr: number;
   years_playing: string;
   favorite_position: string;
+  preferred_side: string;
 }
 
 interface ProfileContentProps {
