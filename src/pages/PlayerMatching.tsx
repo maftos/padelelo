@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { usePublicOpenGames } from "@/hooks/use-public-open-games";
 import { transformPublicOpenGameToUIFormat, formatGameDateTime, formatTimeAgo, calculateAverageMMR } from "@/utils/gameDataTransform";
 import { useAuth } from "@/contexts/AuthContext";
+import { Navigation } from "@/components/Navigation";
 
 export default function PlayerMatching() {
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
@@ -60,6 +61,7 @@ export default function PlayerMatching() {
 
   return (
     <div className="w-full min-h-screen">
+      <Navigation />
       <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
         {/* Header - Optimized for mobile */}
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">

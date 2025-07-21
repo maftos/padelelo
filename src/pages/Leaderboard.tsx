@@ -2,7 +2,6 @@
 import * as React from "react";
 import { Helmet } from "react-helmet";
 import { Navigation } from "@/components/Navigation";
-import { RecentMatches } from "@/components/RecentMatches";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
@@ -91,27 +90,19 @@ const Leaderboard = () => {
           />
         </div>
         
-        <div className={`grid gap-6 md:gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-[1fr,320px]'}`}>
-          <div className="space-y-6 md:space-y-8 animate-fade-in">
-            <LeaderboardHeader 
-              filters={filters}
-              onGenderChange={handleGenderChange}
-              onFriendsOnlyChange={handleFriendsOnlyChange}
-            />
-            
-            <LeaderboardTable 
-              isLoading={isLoading}
-              data={leaderboardData}
-              userId={userId}
-              onPlayerSelect={handlePlayerSelect}
-            />
-          </div>
+        <div className="space-y-6 md:space-y-8 animate-fade-in">
+          <LeaderboardHeader 
+            filters={filters}
+            onGenderChange={handleGenderChange}
+            onFriendsOnlyChange={handleFriendsOnlyChange}
+          />
           
-          {!isMobile && (
-            <div className="lg:sticky lg:top-24 lg:h-fit">
-              <RecentMatches />
-            </div>
-          )}
+          <LeaderboardTable 
+            isLoading={isLoading}
+            data={leaderboardData}
+            userId={userId}
+            onPlayerSelect={handlePlayerSelect}
+          />
         </div>
       </main>
     </div>
