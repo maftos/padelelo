@@ -63,7 +63,7 @@ const PadelCourts = () => {
     priceRange: 'Contact for pricing',
     region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800-1200',
-    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? venue.photo_gallery[0] : undefined
+    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? venue.photo_gallery[0] : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   })) : [];
 
   const structuredData = {
@@ -178,15 +178,13 @@ const PadelCourts = () => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {clubs.map((club) => (
                 <Card key={club.id} className="hover:shadow-md transition-shadow overflow-hidden">
-                  {club.image && (
-                    <div className="aspect-video overflow-hidden">
-                      <img 
-                        src={club.image} 
-                        alt={club.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
+                  <div className="aspect-video overflow-hidden">
+                    <img 
+                      src={club.image} 
+                      alt={club.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <CardHeader className="pb-3">
                     <div className="space-y-2">
                       <CardTitle className="flex items-center justify-between text-lg">
