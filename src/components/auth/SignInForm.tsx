@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -25,11 +25,44 @@ export const SignInForm = () => {
   const navigate = useNavigate();
   const { validatePhoneNumber, validatePassword, validateVerificationCode } = useFormValidation();
 
+  // Load cached phone number and country code on component mount
+  useEffect(() => {
+    const cachedPhone = localStorage.getItem('padel_cached_phone');
+    const cachedCountryCode = localStorage.getItem('padel_cached_country_code');
+    
+    if (cachedPhone) {
+      setPhoneNumber(cachedPhone);
+    }
+    if (cachedCountryCode) {
+      setCountryCode(cachedCountryCode);
+    }
+  }, []);
+
+  // Save phone number and country code to localStorage whenever they change
+  const saveToCache = (phone: string, country: string) => {
+    if (phone.trim()) {
+      localStorage.setItem('padel_cached_phone', phone);
+    }
+    if (country) {
+      localStorage.setItem('padel_cached_country_code', country);
+    }
+  };
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = e.target.value.replace(/\D/g, '');
     if (cleaned.length <= 8) {
       setPhoneNumber(cleaned);
+      // Cache the phone number as user types (but only if it's valid length)
+      if (cleaned.length >= 3) {
+        saveToCache(cleaned, countryCode);
+      }
     }
+  };
+
+  const handleCountryCodeChange = (newCountryCode: string) => {
+    setCountryCode(newCountryCode);
+    // Cache the country code immediately
+    saveToCache(phoneNumber, newCountryCode);
   };
 
   const formatPhoneDisplay = (phone: string) => {
@@ -91,6 +124,9 @@ export const SignInForm = () => {
       }
 
       if (data.session) {
+        // Cache the successful login phone number and country code
+        saveToCache(phoneNumber, countryCode);
+        
         toast({
           title: "Success!",
           description: "You have been successfully signed in",
@@ -134,6 +170,9 @@ export const SignInForm = () => {
 
       // Store the phone number for verification
       sessionStorage.setItem('loginPhone', fullPhoneNumber);
+      
+      // Cache the phone number and country code for future logins
+      saveToCache(phoneNumber, countryCode);
 
       toast({
         title: "WhatsApp Message Sent!",
@@ -291,7 +330,7 @@ export const SignInForm = () => {
           <div className="flex gap-2">
             <Select 
               value={countryCode} 
-              onValueChange={setCountryCode}
+              onValueChange={handleCountryCodeChange}
               disabled={loading || passwordlessLoading}
             >
               <SelectTrigger className="w-[110px]">
