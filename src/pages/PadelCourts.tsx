@@ -177,50 +177,45 @@ const PadelCourts = () => {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {clubs.map((club) => (
-                <Card key={club.id} className="hover:shadow-md transition-shadow overflow-hidden">
-                  <div className="aspect-video overflow-hidden">
-                    <img 
-                      src={club.image} 
-                      alt={club.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="space-y-2">
-                      <CardTitle className="flex items-center justify-between text-lg">
-                        {club.name}
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-sm font-medium">{club.rating}</span>
+                <Link key={club.id} to={`/padel-courts/${club.id}`}>
+                  <Card className="hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer overflow-hidden">
+                    <div className="aspect-video overflow-hidden">
+                      <img 
+                        src={club.image} 
+                        alt={club.name}
+                        className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
+                      />
+                    </div>
+                    <CardHeader className="pb-3">
+                      <div className="space-y-2">
+                        <CardTitle className="flex items-center justify-between text-lg">
+                          {club.name}
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                            <span className="text-sm font-medium">{club.rating}</span>
+                          </div>
+                        </CardTitle>
+                        <CardDescription className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {club.region}
+                        </CardDescription>
+                      </div>
+                    </CardHeader>
+                    
+                    <CardContent className="space-y-3 pt-0">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
+                          <Users className="h-4 w-4" />
+                          {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''}
                         </div>
-                      </CardTitle>
-                      <CardDescription className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {club.region}
-                      </CardDescription>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-3 pt-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
-                        <Users className="h-4 w-4" />
-                        {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''}
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <CreditCard className="h-4 w-4" />
+                          {club.estimatedFeePerPerson}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <CreditCard className="h-4 w-4" />
-                        {club.estimatedFeePerPerson}
-                      </div>
-                    </div>
-
-                    <Button asChild className="w-full">
-                      <Link to={`/padel-courts/${club.id}`}>
-                        View Details
-                        <ExternalLink className="h-4 w-4 ml-2" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </Link>
               ))}
             </div>
           </div>
