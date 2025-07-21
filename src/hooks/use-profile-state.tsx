@@ -36,6 +36,7 @@ interface ProfileFormState {
   years_playing: string;
   favorite_position: string;
   preferred_side: string;
+  instagram_handle?: string;
 }
 
 export const useProfileState = (profileUserId: string | undefined) => {
@@ -53,6 +54,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
     years_playing: "",
     favorite_position: "",
     preferred_side: "",
+    instagram_handle: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery<ViewProfileResponse | null>({
@@ -117,6 +119,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
         years_playing: "",
         favorite_position: "",
         preferred_side: "",
+        instagram_handle: "",
       });
     }
   }, [profileData]);

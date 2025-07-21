@@ -3,12 +3,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown } from "lucide-react";
+import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Instagram, Flag, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { countries } from "@/lib/countries";
+import { ReportPlayerModal } from "./ReportPlayerModal";
 
 interface ProfileFormState {
   first_name: string;
@@ -20,6 +21,7 @@ interface ProfileFormState {
   years_playing: string;
   favorite_position: string;
   preferred_side: string;
+  instagram_handle?: string;
 }
 
 interface ProfileHeroCardProps {
@@ -56,6 +58,7 @@ export const ProfileHeroCard = ({
   const { user } = useAuth();
   const { toast } = useToast();
   const [sendingRequest, setSendingRequest] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const handleSendFriendRequest = async () => {
     if (!user || !profileData?.profile?.id) {
@@ -120,6 +123,9 @@ export const ProfileHeroCard = ({
   
   // Mock weekly MMR change for now
   const weeklyChange = 25; // Will be replaced with real data later
+
+  // Mock mutual friends count (will be replaced with real data)
+  const mutualFriendsCount = !isOwnProfile ? 5 : 0;
   
   return (
     <Card>
@@ -136,6 +142,12 @@ export const ProfileHeroCard = ({
           
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">{displayName}</h1>
+            {!isOwnProfile && mutualFriendsCount > 0 && (
+              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                <Users className="w-3 h-3" />
+                {mutualFriendsCount} mutual friend{mutualFriendsCount > 1 ? 's' : ''}
+              </p>
+            )}
             <div className="flex flex-wrap justify-center gap-2">
               <Badge variant="secondary" className="flex items-center gap-1">
                 {formData.current_mmr || 3000} MMR
@@ -165,6 +177,22 @@ export const ProfileHeroCard = ({
                 </Badge>
               )}
             </div>
+            
+            {/* Instagram Handle */}
+            {formData.instagram_handle && (
+              <div className="flex justify-center">
+                <a
+                  href={`https://instagram.com/${formData.instagram_handle.replace('@', '')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <Instagram className="w-3 h-3" />
+                  {formData.instagram_handle}
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Action Controls */}
@@ -201,17 +229,34 @@ export const ProfileHeroCard = ({
                   Request Sent
                 </Button>
               ) : (
-                <Button 
-                  onClick={handleSendFriendRequest} 
-                  disabled={sendingRequest}
-                  className="w-full"
-                >
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  {sendingRequest ? 'Sending...' : 'Add Friend'}
-                </Button>
+                <>
+                  <Button 
+                    onClick={handleSendFriendRequest} 
+                    disabled={sendingRequest}
+                    className="flex-1"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    {sendingRequest ? 'Sending...' : 'Add Friend'}
+                  </Button>
+                  <Button 
+                    onClick={() => setShowReportModal(true)}
+                    variant="outline"
+                    size="icon"
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    <Flag className="w-4 h-4" />
+                  </Button>
+                </>
               )
             )}
           </div>
+          
+          <ReportPlayerModal
+            isOpen={showReportModal}
+            onClose={() => setShowReportModal(false)}
+            playerName={displayName}
+            playerId={profileData?.profile?.id || ""}
+          />
         </div>
       </CardContent>
     </Card>
