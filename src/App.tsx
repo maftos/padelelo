@@ -22,6 +22,7 @@ import CreateTournament from "./pages/CreateTournament";
 import EditTournament from "./pages/EditTournament";
 import PadelCourts from "./pages/PadelCourts";
 import PlayerMatching from "./pages/PlayerMatching";
+import NotFound from "./pages/NotFound";
 import News from "./pages/News";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
@@ -70,6 +71,8 @@ function App() {
               <Route path="/padel-courts" element={<PadelCourts />} />
               <Route path="/open-bookings" element={<PlayerMatching />} />
               <Route path="/news" element={<News />} />
+              {/* Catch-all route for 404 - must be last */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </MainLayout>
           <Toaster />
