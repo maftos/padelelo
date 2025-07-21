@@ -120,10 +120,10 @@ const PadelCourtDetail = () => {
         {/* Court Header - Above Gallery */}
         <div className="w-full max-w-4xl mx-auto px-4 pb-6">
           <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-              <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-                  {club.name}
+            <div className="flex flex-col gap-4">
+              <div className="space-y-3">
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex flex-col sm:flex-row sm:items-center gap-3">
+                  <span>{club.name}</span>
                   <div className="flex items-center gap-1">
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
                     <span className="text-lg font-medium">{club.rating}</span>
@@ -134,7 +134,7 @@ const PadelCourtDetail = () => {
                   Professional padel facility in Mauritius
                 </p>
               </div>
-              <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-4 py-2 rounded-full">
+              <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-4 py-2 rounded-full w-fit">
                 <Users className="h-4 w-4" />
                 {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''} available
               </div>
@@ -151,7 +151,7 @@ const PadelCourtDetail = () => {
 
           {/* Main Content */}
           <Card className="overflow-hidden">
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="p-4 md:p-6 space-y-6">
               <div>
                 <h2 className="text-xl font-semibold mb-3">About This Facility</h2>
                 <p className="text-muted-foreground leading-relaxed">
@@ -159,7 +159,7 @@ const PadelCourtDetail = () => {
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                 {/* Contact Information */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Contact Information</h3>
@@ -243,7 +243,7 @@ const PadelCourtDetail = () => {
 
               {/* Call to Action */}
               <div className="pt-6 border-t">
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-3">
                   {club.phone && (
                     <Button asChild>
                       <a href={`tel:${club.phone}`}>

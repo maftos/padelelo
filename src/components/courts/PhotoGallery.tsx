@@ -31,12 +31,12 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, venueName })
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-4">
-      <div className="grid grid-cols-4 gap-2 h-[400px] rounded-xl overflow-hidden">
-        {/* Main large image - takes up 2 columns */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-xl overflow-hidden">
+        {/* Mobile: Single large image, Desktop: Main large image - takes up 2 columns */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <div 
-              className="col-span-2 relative cursor-pointer group h-full"
+              className="col-span-1 md:col-span-2 relative cursor-pointer group h-full"
               onClick={() => {
                 setCurrentImageIndex(0);
                 setIsDialogOpen(true);
@@ -48,11 +48,16 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, venueName })
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              
+              {/* Mobile: Show photo count overlay */}
+              <div className="md:hidden absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-medium">
+                1 / {galleryPhotos.length}
+              </div>
             </div>
           </DialogTrigger>
 
-          {/* Grid of 4 smaller images on the right */}
-          <div className="col-span-2 grid grid-cols-2 gap-2 h-full">
+          {/* Desktop only: Grid of 4 smaller images on the right */}
+          <div className="hidden md:grid md:col-span-2 grid-cols-2 gap-2 h-full">
             {galleryPhotos.slice(1, 5).map((photo, index) => (
               <Dialog key={index + 1} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>

@@ -177,7 +177,7 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
                 Write Review
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md mx-4">
               <DialogHeader>
                 <DialogTitle>Review {venueName}</DialogTitle>
               </DialogHeader>
@@ -191,7 +191,7 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="text-sm">Court Quality</Label>
                     <RatingStars 
@@ -249,7 +249,7 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
           </Dialog>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="p-4 md:p-6 space-y-6">
         {reviews.map((review) => (
           <div key={review.id} className="border-b last:border-b-0 pb-6 last:pb-0">
             <div className="flex items-start gap-3">
@@ -271,18 +271,18 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
               </div>
               
               <div className="flex-1 space-y-3">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
                   <div className="space-y-1">
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                       <p className={`font-medium ${review.is_anonymous ? "blur-sm" : ""}`}>
                         {review.is_anonymous ? "Anonymous Player" : review.user_name}
                       </p>
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium w-fit">
                         {review.rank_summary}
                       </span>
                     </div>
                     
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
                       <span>Played: {review.play_time}</span>
                       {review.court_number && (
                         <span>Court {review.court_number}</span>
