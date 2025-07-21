@@ -30,33 +30,31 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, venueName })
   };
 
   return (
-    <Card>
-      <CardContent className="p-6">
-        <h3 className="font-semibold text-lg mb-4">Photo Gallery</h3>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {galleryPhotos.slice(0, 4).map((photo, index) => (
-            <Dialog key={index} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <div 
-                  className="relative aspect-square overflow-hidden rounded-lg cursor-pointer group"
-                  onClick={() => {
-                    setCurrentImageIndex(index);
-                    setIsDialogOpen(true);
-                  }}
-                >
-                  <img 
-                    src={photo} 
-                    alt={`${venueName} - Photo ${index + 1}`}
-                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
-                  />
-                  {index === 3 && galleryPhotos.length > 4 && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                      <span className="text-white font-semibold">+{galleryPhotos.length - 4} more</span>
-                    </div>
-                  )}
-                </div>
-              </DialogTrigger>
+    <div className="w-full">
+      {/* Main Hero Image */}
+      <div className="relative h-[60vh] min-h-[400px] w-full">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <div 
+              className="relative w-full h-full cursor-pointer group overflow-hidden"
+              onClick={() => {
+                setCurrentImageIndex(0);
+                setIsDialogOpen(true);
+              }}
+            >
+              <img 
+                src={galleryPhotos[0]} 
+                alt={`${venueName} - Main Photo`}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+              
+              {/* Photo count overlay */}
+              <div className="absolute bottom-4 right-4 bg-black/70 text-white px-3 py-1 rounded-lg text-sm font-medium">
+                1 / {galleryPhotos.length}
+              </div>
+            </div>
+          </DialogTrigger>
               
               <DialogContent className="max-w-4xl w-full h-[80vh] p-0">
                 <div className="relative w-full h-full flex items-center justify-center bg-black">
@@ -98,10 +96,36 @@ export const PhotoGallery: React.FC<PhotoGalleryProps> = ({ photos, venueName })
                   </div>
                 </div>
               </DialogContent>
+          </Dialog>
+        
+        {/* Secondary Images Grid */}
+        <div className="absolute bottom-4 left-4 flex gap-2">
+          {galleryPhotos.slice(1, 5).map((photo, index) => (
+            <Dialog key={index + 1} open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <div 
+                  className="relative w-16 h-16 rounded-lg overflow-hidden cursor-pointer group border-2 border-white/80 hover:border-white transition-colors"
+                  onClick={() => {
+                    setCurrentImageIndex(index + 1);
+                    setIsDialogOpen(true);
+                  }}
+                >
+                  <img 
+                    src={photo} 
+                    alt={`${venueName} - Photo ${index + 2}`}
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-110"
+                  />
+                  {index === 3 && galleryPhotos.length > 5 && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <span className="text-white text-xs font-medium">+{galleryPhotos.length - 5}</span>
+                    </div>
+                  )}
+                </div>
+              </DialogTrigger>
             </Dialog>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };

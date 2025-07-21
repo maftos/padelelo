@@ -107,15 +107,22 @@ const PadelCourtDetail = () => {
       <div className="min-h-screen bg-background">
         <Navigation />
         
-        <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-6">
-          {/* Back Button */}
-          <Button variant="ghost" asChild className="mb-4">
+        {/* Back Button */}
+        <div className="w-full max-w-7xl mx-auto px-4 py-4">
+          <Button variant="ghost" asChild>
             <Link to="/padel-courts">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Courts
             </Link>
           </Button>
+        </div>
 
+        {/* Photo Gallery - Hero Section */}
+        <div className="w-full">
+          <PhotoGallery photos={photoGallery} venueName={club.name} />
+        </div>
+
+        <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-6">
           {/* Court Header */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
@@ -254,9 +261,6 @@ const PadelCourtDetail = () => {
               </div>
             </CardContent>
           </Card>
-
-          {/* Photo Gallery */}
-          <PhotoGallery photos={photoGallery} venueName={club.name} />
 
           {/* Review Section */}
           <ReviewSection venueId={club.id} venueName={club.name} />

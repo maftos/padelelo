@@ -18,6 +18,11 @@ interface Review {
   facilities: number;
   comment: string;
   created_at: string;
+  nationality: string;
+  play_time: string;
+  court_number?: number;
+  rank_summary: string;
+  is_anonymous: boolean;
 }
 
 interface ReviewSectionProps {
@@ -37,7 +42,12 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
       wind_protection: 5,
       facilities: 4,
       comment: "Excellent courts with great surface quality. The lighting is perfect for evening games and the wind protection makes it comfortable to play even on breezy days.",
-      created_at: "2024-01-15T10:30:00Z"
+      created_at: "2024-01-15T10:30:00Z",
+      nationality: "MX",
+      play_time: "Evening",
+      court_number: 1,
+      rank_summary: "Top 25",
+      is_anonymous: false
     },
     {
       id: "2", 
@@ -49,7 +59,12 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
       wind_protection: 3,
       facilities: 4,
       comment: "Great facility overall. The courts are well-maintained and the lighting system is top-notch. Could use better wind barriers on court 2, but otherwise very satisfied.",
-      created_at: "2024-01-10T16:45:00Z"
+      created_at: "2024-01-10T16:45:00Z",
+      nationality: "BR",
+      play_time: "Afternoon",
+      court_number: 2,
+      rank_summary: "Top 100",
+      is_anonymous: false
     },
     {
       id: "3",
@@ -61,7 +76,11 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
       wind_protection: 4,
       facilities: 5,
       comment: "One of the best padel facilities in Mauritius! Professional-grade courts, excellent lighting for night games, and great amenities. Highly recommend!",
-      created_at: "2024-01-08T14:20:00Z"
+      created_at: "2024-01-08T14:20:00Z",
+      nationality: "GB",
+      play_time: "Night",
+      rank_summary: "Top 10",
+      is_anonymous: true
     }
   ]);
 
@@ -110,19 +129,47 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
     );
   };
 
+  const RatingBar = ({ category, rating, maxRating = 5 }: { category: string, rating: number, maxRating?: number }) => {
+    const percentage = (rating / maxRating) * 100;
+    return (
+      <div className="flex items-center justify-between">
+        <span className="text-sm text-muted-foreground min-w-0 flex-1">{category}</span>
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <div className="w-full bg-muted rounded-full h-2">
+            <div 
+              className="bg-primary h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+          <span className="text-sm font-medium min-w-8 text-right">{rating}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const getCountryFlag = (countryCode: string) => {
+    const flags: { [key: string]: string } = {
+      MX: "🇲🇽", BR: "🇧🇷", GB: "🇬🇧", FR: "🇫🇷", ES: "🇪🇸", 
+      IT: "🇮🇹", DE: "🇩🇪", US: "🇺🇸", CA: "🇨🇦", AU: "🇦🇺",
+      MU: "🇲🇺", IN: "🇮🇳", ZA: "🇿🇦"
+    };
+    return flags[countryCode] || "🏳️";
+  };
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Reviews</CardTitle>
-            <div className="flex items-center gap-2 mt-1">
-              <RatingStars rating={Math.round(averageRating)} />
-              <span className="text-sm text-muted-foreground">
-                {averageRating.toFixed(1)} out of 5 ({reviews.length} reviews)
-              </span>
+            <div>
+              <CardTitle className="flex items-center gap-3">
+                Reviews
+                <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-1 rounded-full">
+                  <Star className="h-4 w-4 fill-primary" />
+                  <span className="font-bold">{averageRating.toFixed(1)}</span>
+                  <span className="text-sm">({reviews.length})</span>
+                </div>
+              </CardTitle>
             </div>
-          </div>
           <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
             <DialogTrigger asChild>
               <Button>
@@ -206,38 +253,60 @@ export const ReviewSection: React.FC<ReviewSectionProps> = ({ venueId, venueName
         {reviews.map((review) => (
           <div key={review.id} className="border-b last:border-b-0 pb-6 last:pb-0">
             <div className="flex items-start gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={review.user_avatar} alt={review.user_name} />
-                <AvatarFallback>{review.user_name.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{review.user_name}</p>
-                    <RatingStars rating={review.rating} />
+              <div className="relative">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage 
+                    src={review.is_anonymous ? undefined : review.user_avatar} 
+                    alt={review.is_anonymous ? "Anonymous User" : review.user_name}
+                    className={review.is_anonymous ? "blur-sm" : ""}
+                  />
+                  <AvatarFallback className={review.is_anonymous ? "blur-sm" : ""}>
+                    {review.is_anonymous ? "?" : review.user_name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                {/* Country flag */}
+                <div className="absolute -bottom-1 -right-1 text-lg">
+                  {getCountryFlag(review.nationality)}
+                </div>
+              </div>
+              
+              <div className="flex-1 space-y-3">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className={`font-medium ${review.is_anonymous ? "blur-sm" : ""}`}>
+                        {review.is_anonymous ? "Anonymous Player" : review.user_name}
+                      </p>
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
+                        {review.rank_summary}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>Played: {review.play_time}</span>
+                      {review.court_number && (
+                        <span>Court {review.court_number}</span>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 bg-yellow-50 text-yellow-700 px-2 py-1 rounded-full">
+                        <Star className="h-3 w-3 fill-current" />
+                        <span className="text-sm font-medium">{review.rating}</span>
+                      </div>
+                    </div>
                   </div>
+                  
                   <span className="text-sm text-muted-foreground">
                     {new Date(review.created_at).toLocaleDateString()}
                   </span>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Court Quality:</span>
-                    <RatingStars rating={review.court_quality} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Lighting:</span>
-                    <RatingStars rating={review.lighting} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Wind Protection:</span>
-                    <RatingStars rating={review.wind_protection} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Facilities:</span>
-                    <RatingStars rating={review.facilities} />
-                  </div>
+                <div className="space-y-2">
+                  <RatingBar category="Court Quality" rating={review.court_quality} />
+                  <RatingBar category="Lighting" rating={review.lighting} />
+                  <RatingBar category="Wind Protection" rating={review.wind_protection} />
+                  <RatingBar category="Facilities" rating={review.facilities} />
                 </div>
                 
                 <p className="text-muted-foreground leading-relaxed">{review.comment}</p>
