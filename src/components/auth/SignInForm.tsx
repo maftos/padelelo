@@ -291,21 +291,15 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
                 value={verificationCode}
                 onChange={(value) => setVerificationCode(value)}
                 disabled={passwordlessLoading}
-                // Mobile optimizations for auto-fill
                 autoComplete="one-time-code"
-                inputMode="numeric"
-                // Additional mobile-specific attributes
-                data-testid="otp-input"
-                // These help with SMS auto-fill on mobile devices
-                {...({
-                  'data-sms-autofill': 'true',
-                  'x-webkit-autofill': 'one-time-code'
-                })}
               >
                 <InputOTPGroup>
-                  {[...Array(6)].map((_, index) => (
-                    <InputOTPSlot key={index} index={index} />
-                  ))}
+                  <InputOTPSlot index={0} />
+                  <InputOTPSlot index={1} />
+                  <InputOTPSlot index={2} />
+                  <InputOTPSlot index={3} />
+                  <InputOTPSlot index={4} />
+                  <InputOTPSlot index={5} />
                 </InputOTPGroup>
               </InputOTP>
             </div>
