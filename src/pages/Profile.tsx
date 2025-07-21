@@ -1,6 +1,5 @@
 
 import { Helmet } from "react-helmet";
-import { Navigation } from "@/components/Navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
@@ -36,7 +35,6 @@ const Profile = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background">
-        <Navigation />
         <main className="container max-w-6xl mx-auto py-8 px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column - Profile Info Skeleton */}
@@ -156,7 +154,6 @@ const Profile = () => {
         
         <link rel="canonical" href={`https://padel-elo.com/profile/${targetUserId}`} />
       </Helmet>
-      <Navigation />
       <main className="container max-w-6xl mx-auto py-8 px-4">
         
         {!isOwnProfile && (
