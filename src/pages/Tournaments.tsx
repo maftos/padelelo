@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { Navigation } from "@/components/Navigation";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Check, MapPin, Users, Calendar, Plus, ArrowUpDown, Bell } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -151,27 +151,21 @@ export default function Tournaments() {
 
   if (isLoading) {
     return (
-      <>
-        <Navigation />
-        <PageContainer>
-          <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="animate-pulse">Loading tournaments...</div>
-          </div>
-        </PageContainer>
-      </>
+      <PageContainer>
+        <div className="flex justify-center items-center min-h-[60vh]">
+          <div className="animate-pulse">Loading tournaments...</div>
+        </div>
+      </PageContainer>
     );
   }
 
   if (error) {
     return (
-      <>
-        <Navigation />
-        <PageContainer>
-          <div className="text-center text-destructive">
-            Error loading tournaments. Please try again later.
-          </div>
-        </PageContainer>
-      </>
+      <PageContainer>
+        <div className="text-center text-destructive">
+          Error loading tournaments. Please try again later.
+        </div>
+      </PageContainer>
     );
   }
 
@@ -222,7 +216,7 @@ export default function Tournaments() {
         
         <link rel="canonical" href="https://padel-elo.com/tournaments" />
       </Helmet>
-      <Navigation />
+      
       <div className="w-full min-h-screen">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
           

@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { Helmet } from "react-helmet";
-import { Navigation } from "@/components/Navigation";
+
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useAuth } from "@/contexts/AuthContext";
 import { LeaderboardHeader } from "@/components/leaderboard/LeaderboardHeader";
@@ -73,7 +73,7 @@ const Leaderboard = () => {
         
         <link rel="canonical" href="https://padel-elo.com/leaderboard" />
       </Helmet>
-      <Navigation />
+      
       <main className="container py-6 md:py-12 px-4 max-w-7xl mx-auto">
         
         <div className="flex items-center justify-between mb-6">
