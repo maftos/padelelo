@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, MapPin, Clock, Phone, Mail, Star, Globe, Users } from "lucide-react";
 import { Helmet } from "react-helmet";
 import { PadelClub } from "./PadelCourts";
+import { PhotoGallery } from "@/components/courts/PhotoGallery";
+import { ReviewSection } from "@/components/courts/ReviewSection";
 
 const PadelCourtDetail = () => {
   const { courtId } = useParams();
@@ -50,6 +52,10 @@ const PadelCourtDetail = () => {
   })) : [];
 
   const club = clubs.find(c => c.id === courtId);
+
+  // Extract photo gallery from venue data
+  const venueData = Array.isArray(venues) ? venues.find((v: any) => v.venue_id === courtId) : null;
+  const photoGallery = (venueData as any)?.photo_gallery || [];
 
   if (isLoading) {
     return (
@@ -248,6 +254,12 @@ const PadelCourtDetail = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Photo Gallery */}
+          <PhotoGallery photos={photoGallery} venueName={club.name} />
+
+          {/* Review Section */}
+          <ReviewSection venueId={club.id} venueName={club.name} />
         </div>
       </div>
     </>
