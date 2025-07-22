@@ -15,11 +15,13 @@ export interface OpenGame {
   created_at: string;
   created_by: string;
   is_creator: boolean;
+  booking_fee_per_player: number;
   participants: Array<{
     player_id: string;
     first_name: string;
     last_name: string;
     profile_photo: string;
+    current_mmr: number;
   }>;
 }
 

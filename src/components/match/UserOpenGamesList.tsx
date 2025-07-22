@@ -116,11 +116,11 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
       description: game.description || "Your open game waiting for more players to join",
       publishedAt: createdAt,
       existingPlayers: [
-        // Mock player data based on participant count
+        // Use actual participant data with dynamic MMR
         ...Array(game.player_count).fill(null).map((_, index) => ({
-          id: `player${index + 1}`,
+          id: game.participants[index]?.player_id || `player${index + 1}`,
           name: index === 0 && game.is_creator ? "You" : game.participants[index]?.first_name || "Player",
-          mmr: 3000, // Mock MMR
+          mmr: game.participants[index]?.current_mmr || 3000,
           avatar: game.participants[index]?.profile_photo || null,
           isHost: index === 0 && game.is_creator
         })),
@@ -128,7 +128,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
         ...Array(4 - game.player_count).fill(null)
       ],
       createdBy: game.created_by,
-      price: "Rs 400", // Mock price
+      price: `Rs ${game.booking_fee_per_player || 400}`,
       startTime: format(gameDate, "HH:mm"),
       createdAt
     };
