@@ -78,6 +78,82 @@ const MatchmakingMath = () => {
                   and the relative skill difference between teams.
                 </p>
               </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {/* Current Rating Systems Issues */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-foreground mb-3">Why Traditional Padel Rating Systems Fall Short</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded bg-orange-500/20 flex items-center justify-center">
+                            <span className="text-xs font-bold text-orange-600">1-7</span>
+                          </div>
+                          <h5 className="font-semibold text-orange-700 dark:text-orange-300">Level Charts (1-7 or 1-10)</h5>
+                        </div>
+                        <p className="text-sm text-foreground/70 mb-2">
+                          <strong>Issue:</strong> Self-assessment inaccuracy
+                        </p>
+                        <ul className="text-xs text-foreground/60 space-y-1">
+                          <li>• Subjective rating - players over/underestimate themselves</li>
+                          <li>• No objective measurement of actual performance</li>
+                          <li>• Static ratings that don't update with improvement</li>
+                        </ul>
+                      </div>
+                      
+                      <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="w-6 h-6 rounded bg-purple-500/20 flex items-center justify-center">
+                            <span className="text-xs font-bold text-purple-600">🏆</span>
+                          </div>
+                          <h5 className="font-semibold text-purple-700 dark:text-purple-300">Ranking Points System</h5>
+                        </div>
+                        <p className="text-sm text-foreground/70 mb-2">
+                          <strong>Issue:</strong> Tournament-focused, not skill-focused
+                        </p>
+                        <ul className="text-xs text-foreground/60 space-y-1">
+                          <li>• Encourages tournament play quantity over quality</li>
+                          <li>• Doesn't reflect true skill for amateur players</li>
+                          <li>• Favors professionals and frequent tournament players</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ELO Advantages */}
+                  <div>
+                    <h4 className="text-lg font-semibold text-foreground mb-3">How ELO Solves These Problems</h4>
+                    <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <h5 className="font-semibold text-green-700 dark:text-green-300 mb-2">🎯 True Relative Skill Measurement</h5>
+                          <ul className="text-sm text-foreground/70 space-y-1">
+                            <li>• Objective rating based on actual match results</li>
+                            <li>• Reflects your skill <em>relative</em> to other players</li>
+                            <li>• Updates dynamically with every game played</li>
+                          </ul>
+                        </div>
+                        <div>
+                          <h5 className="font-semibold text-green-700 dark:text-green-300 mb-2">⚖️ Win Probability-Based Rewards</h5>
+                          <ul className="text-sm text-foreground/70 space-y-1">
+                            <li>• Bigger rewards for beating higher-rated opponents</li>
+                            <li>• Smaller penalties for losing to better players</li>
+                            <li>• Fair regardless of how often you play</li>
+                          </ul>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 p-3 rounded bg-green-500/5 border border-green-500/10">
+                        <p className="text-sm text-foreground/80">
+                          <strong>Perfect for Amateur Players:</strong> ELO doesn't care if you play once a week or every day - 
+                          it optimizes for balanced, competitive games by matching you with players of similar skill level, 
+                          making every match engaging regardless of your playing frequency.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
             </Card>
 
             {/* Expected Win Rate Formula */}
