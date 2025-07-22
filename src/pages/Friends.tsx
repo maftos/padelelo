@@ -8,8 +8,10 @@ import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
 import { CompactFriendsList } from "@/components/friends/CompactFriendsList";
 import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
-import { Users } from "lucide-react";
+import { QRShareModal } from "@/components/friends/QRShareModal";
+import { Users, QrCode } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 const Friends = () => {
   const [showAuthAlert, setShowAuthAlert] = useState(false);
@@ -56,6 +58,12 @@ const Friends = () => {
               <Users className="h-6 w-6 text-primary" />
               <h1 className="text-2xl font-bold">Friends</h1>
             </div>
+            <QRShareModal>
+              <Button variant="outline" className="gap-2">
+                <QrCode className="h-4 w-4" />
+                Share Profile
+              </Button>
+            </QRShareModal>
           </div>
 
           {/* Content Sections */}
