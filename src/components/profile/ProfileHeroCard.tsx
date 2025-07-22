@@ -3,13 +3,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Instagram, Flag, ExternalLink } from "lucide-react";
+import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Instagram, Flag, ExternalLink, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { countries } from "@/lib/countries";
 import { ReportPlayerModal } from "./ReportPlayerModal";
+import { useNavigate } from "react-router-dom";
 
 interface ProfileFormState {
   first_name: string;
@@ -57,6 +58,7 @@ export const ProfileHeroCard = ({
 }: ProfileHeroCardProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [sendingRequest, setSendingRequest] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
 
@@ -211,10 +213,20 @@ export const ProfileHeroCard = ({
                   </Button>
                 </>
               ) : (
-                <Button onClick={onEdit} variant="outline" className="w-full">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Edit Profile
-                </Button>
+                <div className="w-full space-y-2">
+                  <Button onClick={onEdit} variant="outline" className="w-full">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                  <Button 
+                    onClick={() => navigate('/settings')} 
+                    variant="ghost" 
+                    className="w-full"
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    Settings
+                  </Button>
+                </div>
               )
             ) : (
               // Friend Request Controls - For other users' profiles
