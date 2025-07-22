@@ -1,10 +1,10 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface Friend {
   friend_id: string;
@@ -15,12 +15,13 @@ interface Friend {
   current_mmr: number;
 }
 
-interface FriendsListProps {
+interface CompactFriendsListProps {
   userId: string | undefined;
 }
 
-export const FriendsList = ({ userId }: FriendsListProps) => {
+export const CompactFriendsList = ({ userId }: CompactFriendsListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const { data: friends, isLoading, error } = useQuery({
     queryKey: ['friends', userId],
@@ -43,8 +44,12 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
     enabled: !!userId,
   });
 
+  const handleFriendClick = (friendId: string) => {
+    navigate(`/profile/${friendId}`);
+  };
+
   if (error) {
-    console.error('Error in FriendsList component:', error);
+    console.error('Error in CompactFriendsList component:', error);
     return (
       <div className="text-red-500">
         Error loading friends: {(error as Error).message}
@@ -57,8 +62,19 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
     return displayName.toLowerCase().includes(searchQuery.toLowerCase());
   }) || [];
 
+  if (!friends?.length && !isLoading) {
+    return null;
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <h2 className="text-xl font-semibold">My Friends</h2>
+        {friends && friends.length > 0 && (
+          <span className="text-sm text-muted-foreground">({friends.length})</span>
+        )}
+      </div>
+
       {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
@@ -71,44 +87,45 @@ export const FriendsList = ({ userId }: FriendsListProps) => {
       </div>
 
       {isLoading ? (
-        <div className="animate-pulse space-y-4">
+        <div className="animate-pulse space-y-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex items-center space-x-4">
-              <div className="h-10 w-10 rounded-full bg-muted"></div>
-              <div className="flex-1 space-y-2">
-                <div className="h-4 bg-muted rounded w-3/4"></div>
-                <div className="h-3 bg-muted rounded w-1/2"></div>
+            <div key={i} className="flex items-center space-x-3 p-3 rounded-lg bg-muted/30">
+              <div className="h-8 w-8 rounded-full bg-muted"></div>
+              <div className="flex-1 space-y-1">
+                <div className="h-3 bg-muted rounded w-3/4"></div>
+                <div className="h-2 bg-muted rounded w-1/2"></div>
               </div>
             </div>
           ))}
         </div>
       ) : !filteredFriends.length ? (
-        <div className="text-center text-muted-foreground py-4">
+        <div className="text-center text-muted-foreground py-6">
           {searchQuery ? "No friends found matching your search" : "No friends found"}
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {filteredFriends.map((friend) => {
             const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
             return (
               <div 
                 key={friend.friend_id}
-                className="flex items-center space-x-4 p-4 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer bg-background shadow-sm"
+                onClick={() => handleFriendClick(friend.friend_id)}
+                className="flex items-center space-x-3 p-3 rounded-lg hover:bg-muted/70 transition-colors cursor-pointer group"
               >
-                <Avatar>
+                <Avatar className="h-8 w-8">
                   <AvatarImage src={friend.profile_photo || ''} alt={displayName} />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-xs">
                     {displayName.substring(0, 2).toUpperCase() || 'FR'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{displayName}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Friend since {new Date(friend.created_at).toLocaleDateString()}
+                  <p className="text-sm font-medium truncate group-hover:text-primary transition-colors">
+                    {displayName}
                   </p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <span className="text-xs text-muted-foreground">MMR:</span>
-                    <span className="text-xs font-medium">{friend.current_mmr}</span>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>{friend.current_mmr} MMR</span>
+                    <span>•</span>
+                    <span>Friend since {new Date(friend.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>

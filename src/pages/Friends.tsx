@@ -6,7 +6,7 @@ import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, A
 import { useNavigate } from "react-router-dom";
 import { FriendRequests } from "@/components/FriendRequests";
 import { supabase } from "@/integrations/supabase/client";
-import { FriendsList } from "@/components/friends/FriendsList";
+import { CompactFriendsList } from "@/components/friends/CompactFriendsList";
 import { SuggestedFriends } from "@/components/friends/SuggestedFriends";
 import { Users } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -58,13 +58,11 @@ const Friends = () => {
             </div>
           </div>
 
-          {/* Combined Content */}
+          {/* Content Sections */}
           <div className="space-y-8">
             <FriendRequests />
             <SuggestedFriends userId={userId} />
-            <div className="bg-accent rounded-lg p-4">
-              <FriendsList userId={userId} />
-            </div>
+            <CompactFriendsList userId={userId} />
           </div>
         </div>
       </div>
