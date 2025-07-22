@@ -18,6 +18,9 @@ import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Calendar, AlertCircle } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 interface JoinGameResponsiveProps {
   open: boolean;
@@ -26,15 +29,19 @@ interface JoinGameResponsiveProps {
     id: string;
     title: string;
     courtName: string;
-    distance: string;
+    venueId: string;
     gameDate: Date;
     startTime: string;
-    endTime: string;
     price: string;
-    preferences: string;
     description: string;
-    existingPlayers: Array<{ id: string; name: string | null; mmr: number; avatar: string | null; isHost: boolean } | null>;
+    existingPlayers: Array<{ 
+      id: string; 
+      name: string | null; 
+      current_mmr: number; 
+      avatar: string | null; 
+    } | null>;
     spotsAvailable: number;
+    createdBy: string;
   } | null;
 }
 
@@ -73,7 +80,7 @@ const JoinGameContent = ({ gamePost, onJoinRequest, isSubmitting, onClose }: {
 }) => {
   if (!gamePost) return null;
 
-  const hostPlayer = gamePost.existingPlayers.find(player => player?.isHost);
+  const hostPlayer = gamePost.existingPlayers.find(player => player?.id === gamePost.createdBy);
 
   return (
     <div className="space-y-6">
@@ -91,7 +98,7 @@ const JoinGameContent = ({ gamePost, onJoinRequest, isSubmitting, onClose }: {
             <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             <div>
               <div className="font-medium">{formatGameDate(gamePost.gameDate)}</div>
-              <div className="text-xs text-muted-foreground">{gamePost.startTime} - {gamePost.endTime}</div>
+              <div className="text-xs text-muted-foreground">{gamePost.startTime}</div>
             </div>
           </div>
         </div>
@@ -110,7 +117,7 @@ const JoinGameContent = ({ gamePost, onJoinRequest, isSubmitting, onClose }: {
             </Avatar>
             <div className="text-sm">
               <div className="font-medium">{hostPlayer.name || 'Host'}</div>
-              <div className="text-xs text-muted-foreground">{hostPlayer.mmr} MMR</div>
+              <div className="text-xs text-muted-foreground">{hostPlayer.current_mmr} MMR</div>
             </div>
           </div>
         </div>
@@ -167,24 +174,51 @@ const JoinGameContent = ({ gamePost, onJoinRequest, isSubmitting, onClose }: {
 export const JoinGameResponsive = ({ open, onOpenChange, gamePost }: JoinGameResponsiveProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
+  const { toast } = useToast();
 
   const handleJoinRequest = async () => {
-    if (!gamePost) return;
+    if (!gamePost || !user) return;
     
     setIsSubmitting(true);
-    console.log("Sending join request for game:", gamePost.id);
     
-    // TODO: Implement actual join request logic
-    // This would typically involve:
-    // 1. Creating a join request in the database
-    // 2. Notifying the host
-    // 3. Setting up the request expiry
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    setIsSubmitting(false);
-    onOpenChange(false);
+    try {
+      const { data, error } = await supabase
+        .rpc('apply_open_booking' as any, {
+          p_user_id: user.id,
+          p_booking_id: gamePost.id
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      // Cast the response to the expected format
+      const response = data as { success: boolean; message: string } | null;
+
+      if (response?.success) {
+        toast({
+          title: "Request sent successfully!",
+          description: response.message || "Your join request has been submitted to the host.",
+        });
+        onOpenChange(false);
+      } else {
+        toast({
+          title: "Request failed",
+          description: response?.message || "Unable to send join request. Please try again.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Error applying to booking:', error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => onOpenChange(false);
