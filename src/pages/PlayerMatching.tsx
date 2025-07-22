@@ -7,6 +7,7 @@ import { PlayerMatchingNotificationModal } from "@/components/PlayerMatchingNoti
 import { JoinGameResponsive } from "@/components/JoinGameResponsive";
 import { AddOpenMatchWizard } from "@/components/AddOpenMatchWizard";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 import { usePublicOpenGames } from "@/hooks/use-public-open-games";
 import { transformPublicOpenGameToUIFormat, formatGameDateTime, formatTimeAgo, calculateAverageMMR } from "@/utils/gameDataTransform";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +21,7 @@ export default function PlayerMatching() {
   const [sortBy, setSortBy] = useState("newest");
   const isMobile = useIsMobile();
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const { publicOpenGames, isLoading, error } = usePublicOpenGames(sortBy);
 
@@ -183,7 +185,11 @@ export default function PlayerMatching() {
                       }
                       
                       return (
-                        <div key={player.id} className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px]">
+                        <div 
+                          key={player.id} 
+                          className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] cursor-pointer hover:bg-muted/80 hover:shadow-sm transition-all duration-200"
+                          onClick={() => navigate(`/profile/${player.id}`)}
+                        >
                           <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                             <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
                             <AvatarFallback className="text-xs">
