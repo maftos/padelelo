@@ -203,17 +203,52 @@ export const JoinGameResponsive = ({ open, onOpenChange, gamePost }: JoinGameRes
         });
         onOpenChange(false);
       } else {
-        toast({
-          title: "Request failed",
-          description: response?.message || "Unable to send join request. Please try again.",
-          variant: "destructive",
-        });
+        // Handle specific failure scenarios with appropriate toast messages
+        const message = response?.message || "Unable to send join request. Please try again.";
+        
+        if (message.includes("already part of this booking")) {
+          toast({
+            title: "Already joined",
+            description: "You're already part of this game.",
+            variant: "destructive",
+          });
+        } else if (message.includes("already applied")) {
+          toast({
+            title: "Already applied",
+            description: "You've already sent a request to join this game.",
+            variant: "destructive",
+          });
+        } else if (message.includes("maximum number of players")) {
+          toast({
+            title: "Game is full",
+            description: "This game already has the maximum number of players.",
+            variant: "destructive",
+          });
+        } else if (message.includes("not open for applications")) {
+          toast({
+            title: "Game unavailable",
+            description: "This game is no longer accepting applications.",
+            variant: "destructive",
+          });
+        } else if (message.includes("not found")) {
+          toast({
+            title: "Game not found",
+            description: "This game could not be found.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Request failed",
+            description: message,
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       console.error('Error applying to booking:', error);
       toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
+        title: "Connection error",
+        description: "Unable to connect to the server. Please check your internet connection and try again.",
         variant: "destructive",
       });
     } finally {
