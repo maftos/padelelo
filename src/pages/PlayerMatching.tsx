@@ -142,7 +142,12 @@ export default function PlayerMatching() {
                     {/* Second row: Location */}
                     <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
                       <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                      <span className="truncate">{post.courtName}</span>
+                      <span 
+                        className="truncate cursor-pointer hover:text-primary hover:underline transition-colors duration-200"
+                        onClick={() => navigate(`/padel-court/${post.venueId}`)}
+                      >
+                        {post.courtName}
+                      </span>
                     </div>
                   </div>
                 </div>
