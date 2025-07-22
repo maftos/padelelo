@@ -20,7 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface JoinGameResponsiveProps {
   open: boolean;
@@ -175,7 +175,6 @@ export const JoinGameResponsive = ({ open, onOpenChange, gamePost }: JoinGameRes
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isMobile = useIsMobile();
   const { user } = useAuth();
-  const { toast } = useToast();
 
   const handleJoinRequest = async () => {
     if (!gamePost || !user) return;
@@ -197,8 +196,7 @@ export const JoinGameResponsive = ({ open, onOpenChange, gamePost }: JoinGameRes
       const response = data as { success: boolean; message: string } | null;
 
       if (response?.success) {
-        toast({
-          title: "Request sent successfully!",
+        toast.success("Request sent successfully!", {
           description: response.message || "Your join request has been submitted to the host.",
         });
         onOpenChange(false);
@@ -207,49 +205,35 @@ export const JoinGameResponsive = ({ open, onOpenChange, gamePost }: JoinGameRes
         const message = response?.message || "Unable to send join request. Please try again.";
         
         if (message.includes("already part of this booking")) {
-          toast({
-            title: "Already joined",
+          toast.error("Already joined", {
             description: "You're already part of this game.",
-            variant: "destructive",
           });
         } else if (message.includes("already applied")) {
-          toast({
-            title: "Already applied",
+          toast.error("Already applied", {
             description: "You've already sent a request to join this game.",
-            variant: "destructive",
           });
         } else if (message.includes("maximum number of players")) {
-          toast({
-            title: "Game is full",
+          toast.error("Game is full", {
             description: "This game already has the maximum number of players.",
-            variant: "destructive",
           });
         } else if (message.includes("not open for applications")) {
-          toast({
-            title: "Game unavailable",
+          toast.error("Game unavailable", {
             description: "This game is no longer accepting applications.",
-            variant: "destructive",
           });
         } else if (message.includes("not found")) {
-          toast({
-            title: "Game not found",
+          toast.error("Game not found", {
             description: "This game could not be found.",
-            variant: "destructive",
           });
         } else {
-          toast({
-            title: "Request failed",
+          toast.error("Request failed", {
             description: message,
-            variant: "destructive",
           });
         }
       }
     } catch (error) {
       console.error('Error applying to booking:', error);
-      toast({
-        title: "Connection error",
+      toast.error("Connection error", {
         description: "Unable to connect to the server. Please check your internet connection and try again.",
-        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
