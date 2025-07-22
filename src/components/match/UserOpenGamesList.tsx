@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Clock, DollarSign } from "lucide-react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { useOpenGames } from "@/hooks/use-open-games";
 
 interface UserOpenGamesListProps {
@@ -67,6 +68,7 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 
 export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) => {
   const { openGames, isLoading } = useOpenGames();
+  const navigate = useNavigate();
 
   // Mock applicants count - in real implementation this would come from the hook
   const getApplicantsCount = (gameId: string) => {
@@ -216,11 +218,8 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   return (
                     <div 
                       key={player.id} 
-                      className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] cursor-pointer hover:bg-muted/70 transition-colors"
-                      onClick={() => {
-                        // Navigate to user profile - implementation needed
-                        console.log('Navigate to profile:', player.id);
-                      }}
+                      className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] cursor-pointer hover:bg-muted/80 hover:shadow-sm transition-all duration-200"
+                      onClick={() => navigate(`/profile/${player.id}`)}
                     >
                       <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                         <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
