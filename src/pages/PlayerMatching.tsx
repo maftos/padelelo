@@ -144,7 +144,7 @@ export default function PlayerMatching() {
                       <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                       <span 
                         className="truncate cursor-pointer hover:text-primary hover:underline transition-colors duration-200"
-                        onClick={() => navigate(`/padel-court/${post.venueId}`)}
+                        onClick={() => navigate(`/padel-courts/${post.venueId}`)}
                       >
                         {post.courtName}
                       </span>
