@@ -10,10 +10,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 import { Check, X, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
 
 interface Applicant {
   id: string;
@@ -44,15 +48,48 @@ const ViewApplicantsContent = ({
   onClose: () => void;
 }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
-  const handleAcceptApplicant = (applicantId: string) => {
-    console.log('Accept applicant:', applicantId);
-    // TODO: Implement accept logic
+  const handleRespondToApplication = async (applicationId: string, status: 'ACCEPTED' | 'DECLINED') => {
+    if (!user?.id) {
+      toast.error('You must be logged in to respond to applications');
+      return;
+    }
+
+    setLoadingStates(prev => ({ ...prev, [applicationId]: true }));
+
+    try {
+      const { data, error } = await supabase.rpc('respond_booking_application' as any, {
+        p_user_id: user.id,
+        p_booking_id: gameId,
+        p_application_id: applicationId,
+        p_status_new: status
+      });
+
+      if (error) throw error;
+
+      const result = data as { success: boolean; message: string };
+      if (result?.success) {
+        toast.success(result.message);
+        // The parent component should refetch the data to update the list
+      } else {
+        toast.error(result?.message || 'Failed to respond to application');
+      }
+    } catch (error) {
+      console.error('Error responding to application:', error);
+      toast.error('An error occurred while responding to the application');
+    } finally {
+      setLoadingStates(prev => ({ ...prev, [applicationId]: false }));
+    }
   };
 
-  const handleRejectApplicant = (applicantId: string) => {
-    console.log('Reject applicant:', applicantId);
-    // TODO: Implement reject logic
+  const handleAcceptApplicant = (applicationId: string) => {
+    handleRespondToApplication(applicationId, 'ACCEPTED');
+  };
+
+  const handleRejectApplicant = (applicationId: string) => {
+    handleRespondToApplication(applicationId, 'DECLINED');
   };
 
   const handleProfileClick = (applicantId: string) => {
@@ -109,19 +146,21 @@ const ViewApplicantsContent = ({
                   size="sm"
                   variant="default"
                   onClick={() => handleAcceptApplicant(applicant.id)}
+                  disabled={loadingStates[applicant.id]}
                   className="flex-1"
                 >
                   <Check className="w-4 h-4 mr-1" />
-                  Accept
+                  {loadingStates[applicant.id] ? 'Processing...' : 'Accept'}
                 </Button>
                 <Button 
                   size="sm"
                   variant="outline"
                   onClick={() => handleRejectApplicant(applicant.id)}
+                  disabled={loadingStates[applicant.id]}
                   className="flex-1"
                 >
                   <X className="w-4 h-4 mr-1" />
-                  Decline
+                  {loadingStates[applicant.id] ? 'Processing...' : 'Decline'}
                 </Button>
               </div>
             </div>
