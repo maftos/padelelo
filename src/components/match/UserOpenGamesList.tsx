@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Clock, DollarSign } from "lucide-react";
+import { Calendar, MapPin, Clock, DollarSign, Edit } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useOpenGames } from "@/hooks/use-open-games";
@@ -190,6 +190,15 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                 <h4 className="font-medium text-sm">
                   Players
                 </h4>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate(`/edit-match/${post.id}`)}
+                  className="h-8 px-3 text-xs"
+                >
+                  <Edit className="h-3 w-3 mr-1" />
+                  Edit
+                </Button>
               </div>
               
               {/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
