@@ -45,34 +45,43 @@ export const useBookingDetails = (bookingId: string | undefined) => {
       if (!user?.id || !bookingId) throw new Error('User not authenticated or booking ID missing');
 
       // Use the public.view_booking function
-      const { data: response, error: bookingError } = await supabase
+      const { data: bookingResponse, error: bookingError } = await supabase
         .rpc('view_booking' as any, { 
           p_user_id: user.id, 
           p_booking_id: bookingId 
         });
 
       if (bookingError) throw bookingError;
-      if (!response) throw new Error('Booking not found');
+      if (!bookingResponse) throw new Error('Booking not found');
 
-      // The function returns JSON, so we need to properly parse and transform it
-      const bookingData = response as any;
+      // The function returns JSON with a specific structure
+      const response = bookingResponse as any;
       
+      if (!response.success || !response.booking) {
+        throw new Error('Booking not found');
+      }
+
       // Transform the response to match our BookingDetails interface
       const bookingDetails: BookingDetails = {
-        booking_id: bookingData.booking_id,
-        venue_id: bookingData.venue_id,
-        venue_name: bookingData.venue_name,
-        start_time: bookingData.start_time,
-        title: bookingData.title || '',
-        description: bookingData.description || '',
-        status: bookingData.status,
-        player_count: bookingData.player_count || 0,
-        created_at: bookingData.created_at,
-        created_by: bookingData.created_by,
-        is_creator: bookingData.is_creator || false,
-        booking_fee_per_player: bookingData.booking_fee_per_player,
-        participants: bookingData.participants || [],
-        applications: bookingData.applications || []
+        booking_id: response.booking.booking_id,
+        venue_id: response.booking.venue_id,
+        venue_name: response.booking.venue_name,
+        start_time: response.booking.start_time,
+        title: response.booking.title || '',
+        description: response.booking.description || '',
+        status: response.booking.status,
+        player_count: response.player_count || response.players?.length || 0,
+        created_at: response.booking.created_at,
+        created_by: response.booking.created_by,
+        is_creator: response.user_context?.is_creator || false,
+        booking_fee_per_player: response.booking.booking_fee_per_player,
+        participants: response.players?.map((player: any) => ({
+          player_id: player.user_id,
+          first_name: player.first_name || '',
+          last_name: player.last_name || '',
+          profile_photo: player.profile_photo || '',
+          current_mmr: player.current_mmr
+        })) || []
       };
 
       return bookingDetails;

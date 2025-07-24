@@ -44,13 +44,18 @@ const EditMatchWizard = () => {
   const totalSteps = isOpenGame ? 3 : 2;
 
   useEffect(() => {
-    if (booking) {
+    if (booking && booking.start_time) {
+      // Add null checks for all required fields
+      const startTime = booking.start_time || '';
+      const [date, timeWithZ] = startTime.split('T');
+      const time = timeWithZ ? timeWithZ.substring(0, 5) : '';
+      
       setWizardData({
-        selectedPlayers: booking.participants.map(p => p.player_id),
-        location: booking.venue_id,
-        matchDate: booking.start_time.split('T')[0],
-        matchTime: booking.start_time.split('T')[1].substring(0, 5),
-        feePerPlayer: "",
+        selectedPlayers: booking.participants?.map(p => p.player_id) || [],
+        location: booking.venue_id || '',
+        matchDate: date || '',
+        matchTime: time || '',
+        feePerPlayer: booking.booking_fee_per_player?.toString() || "",
         gameTitle: booking.title || "",
         gameDescription: booking.description || ""
       });
