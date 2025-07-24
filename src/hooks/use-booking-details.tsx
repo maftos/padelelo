@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useEffect } from "react";
 
 export interface BookingDetails {
   booking_id: string;
@@ -38,6 +39,16 @@ export interface BookingDetails {
 
 export const useBookingDetails = (bookingId: string | undefined) => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  // Invalidate any cached booking data when this hook is called
+  useEffect(() => {
+    if (bookingId && user?.id) {
+      // Invalidate cached data from manage-bookings page
+      queryClient.invalidateQueries({ queryKey: ['open-games'] });
+      queryClient.invalidateQueries({ queryKey: ['confirmed-matches'] });
+    }
+  }, [bookingId, user?.id, queryClient]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['booking-details', bookingId, user?.id],
@@ -86,7 +97,11 @@ export const useBookingDetails = (bookingId: string | undefined) => {
 
       return bookingDetails;
     },
-    enabled: !!user?.id && !!bookingId
+    enabled: !!user?.id && !!bookingId,
+    staleTime: 0, // Always fetch fresh data
+    gcTime: 0, // Don't cache the result (renamed from cacheTime)
+    refetchOnMount: true, // Always refetch when component mounts
+    refetchOnWindowFocus: true // Refetch when window regains focus
   });
 
   return {
