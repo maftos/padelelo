@@ -40,17 +40,22 @@ const EditMatchWizard = () => {
     gameDescription: ""
   });
 
-  const isOpenGame = wizardData.selectedPlayers.length < 4;
-  const totalSteps = isOpenGame ? 3 : 2;
+  const isOpenGame = booking?.status === 'OPEN' || wizardData.selectedPlayers.length < 4;
+  // In edit mode, always show all 3 steps regardless of booking status
+  const totalSteps = 3;
+  
+  console.log('EditMatchWizard: isOpenGame:', isOpenGame, 'totalSteps:', totalSteps, 'booking status:', booking?.status, 'selectedPlayers:', wizardData.selectedPlayers.length);
 
   useEffect(() => {
     if (booking && booking.start_time) {
+      console.log('EditMatchWizard: Booking data received:', booking);
+      
       // Add null checks for all required fields
       const startTime = booking.start_time || '';
       const [date, timeWithZ] = startTime.split('T');
       const time = timeWithZ ? timeWithZ.substring(0, 5) : '';
       
-      setWizardData({
+      const updatedData = {
         selectedPlayers: booking.participants?.map(p => p.player_id) || [],
         location: booking.venue_id || '',
         matchDate: date || '',
@@ -58,7 +63,10 @@ const EditMatchWizard = () => {
         feePerPlayer: booking.booking_fee_per_player?.toString() || "",
         gameTitle: booking.title || "",
         gameDescription: booking.description || ""
-      });
+      };
+      
+      console.log('EditMatchWizard: Setting wizard data:', updatedData);
+      setWizardData(updatedData);
     }
   }, [booking]);
 

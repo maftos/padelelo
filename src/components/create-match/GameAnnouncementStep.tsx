@@ -16,6 +16,8 @@ interface GameAnnouncementStepProps {
 }
 
 export const GameAnnouncementStep = ({ data, onDataChange }: GameAnnouncementStepProps) => {
+  console.log('GameAnnouncementStep: Received data:', data);
+  
   return (
     <div className="space-y-6">
       <StepHeader 
