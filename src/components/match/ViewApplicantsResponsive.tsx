@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-import { Check, User } from "lucide-react";
+import { User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 
 interface Applicant {
   id: number;
+  player_id: string;
   display_name: string;
   profile_photo?: string;
   current_mmr: number;
@@ -115,9 +116,9 @@ const ViewApplicantsContent = ({
     setSelectedApplicantId(selectedApplicantId === applicantId ? null : applicantId);
   };
 
-  const handleProfileClick = (applicantId: number) => {
-    console.log('Navigate to profile:', applicantId);
-    navigate(`/profile/${applicantId}`);
+  const handleProfileClick = (playerId: string) => {
+    console.log('Navigate to profile:', playerId);
+    navigate(`/profile/${playerId}`);
     onClose();
   };
 
@@ -164,25 +165,18 @@ const ViewApplicantsContent = ({
                             Friend
                           </Badge>
                         )}
-                        {selectedApplicantId === applicant.id && (
-                          <Badge variant="default" className="text-xs">
-                            Selected
-                          </Badge>
-                        )}
                       </div>
                     </div>
-                    {/* Profile link icon */}
-                    <Button
-                      size="sm"
-                      variant="ghost"
+                    {/* Profile link - larger clickable area */}
+                    <div
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleProfileClick(applicant.id);
+                        handleProfileClick(applicant.player_id);
                       }}
-                      className="opacity-60 hover:opacity-100"
+                      className="p-3 -m-1 cursor-pointer rounded-md hover:bg-muted/50 transition-colors"
                     >
-                      <User className="w-4 h-4" />
-                    </Button>
+                      <User className="w-5 h-5 text-muted-foreground hover:text-foreground" />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -195,7 +189,7 @@ const ViewApplicantsContent = ({
             )}
           </div>
 
-          {/* Accept Applicant Button - Always visible */}
+          {/* Accept Player Button - Always visible */}
           <div className="pt-4 border-t">
             <Button 
               onClick={handleAcceptSelected}
@@ -203,12 +197,9 @@ const ViewApplicantsContent = ({
               className="w-full"
               size="lg"
             >
-              <Check className="w-4 h-4 mr-2" />
               {selectedApplicantId !== null && loadingStates[selectedApplicantId.toString()] 
                 ? 'Processing...' 
-                : selectedApplicantId !== null 
-                  ? 'Accept Selected Applicant'
-                  : 'Select an Applicant to Accept'
+                : 'Accept Player'
               }
             </Button>
           </div>

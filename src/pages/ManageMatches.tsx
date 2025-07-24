@@ -45,6 +45,7 @@ const ManageMatches = () => {
     const spotsAvailable = 4 - game.player_count;
     const applicants = game.applications.map(app => ({
       id: parseInt(app.id),
+      player_id: app.player_id,
       display_name: `${app.first_name} ${app.last_name}`,
       profile_photo: app.profile_photo,
       current_mmr: app.current_mmr,
