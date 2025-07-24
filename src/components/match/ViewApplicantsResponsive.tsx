@@ -24,7 +24,7 @@ interface Applicant {
   display_name: string;
   profile_photo?: string;
   current_mmr: number;
-  status: 'pending' | 'accepted' | 'rejected';
+  status: 'pending' | 'accepted' | 'rejected' | 'declined';
   isFriend?: boolean;
 }
 
@@ -94,8 +94,12 @@ const ViewApplicantsContent = ({
           // Close the modal/drawer only for accepted applications
           onClose();
         } else if (status === 'DECLINED') {
-          // For declined applications, just remove from local list without closing modal
-          setLocalApplicants(prev => prev.filter(app => app.id !== applicationId));
+          // For declined applications, update status to 'declined' locally without closing modal
+          setLocalApplicants(prev => prev.map(app => 
+            app.id === applicationId 
+              ? { ...app, status: 'declined' as const }
+              : app
+          ));
           
           // Still call the callback for data consistency
           if (onApplicationResponse && applicant) {
@@ -135,65 +139,124 @@ const ViewApplicantsContent = ({
           <p className="text-muted-foreground">No applicants yet</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {localApplicants.map((applicant) => (
-            <div 
-              key={applicant.id} 
-              className="border rounded-lg p-4 space-y-3"
-            >
-              {/* Profile section - clickable */}
-              <div 
-                className="flex items-center gap-3 cursor-pointer hover:bg-muted/30 -m-2 p-2 rounded-md transition-colors"
-                onClick={() => handleProfileClick(applicant.id)}
-              >
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={applicant.profile_photo} />
-                  <AvatarFallback>
-                    {applicant.display_name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <p className="font-medium hover:underline transition-all duration-200">
-                    {applicant.display_name}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="text-xs">
-                      {applicant.current_mmr} MMR
-                    </Badge>
-                    {applicant.isFriend && (
-                      <Badge variant="secondary" className="text-xs">
-                        Friend
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              {/* Action buttons */}
-              <div className="flex gap-2">
-                <Button 
-                  size="sm"
-                  variant="default"
-                  onClick={() => handleAcceptApplicant(applicant.id)}
-                  disabled={loadingStates[applicant.id.toString()]}
-                  className="flex-1"
-                >
-                  <Check className="w-4 h-4 mr-1" />
-                  {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Accept'}
-                </Button>
-                <Button 
-                  size="sm"
-                  variant="outline"
-                  onClick={() => handleRejectApplicant(applicant.id)}
-                  disabled={loadingStates[applicant.id.toString()]}
-                  className="flex-1"
-                >
-                  <X className="w-4 h-4 mr-1" />
-                  {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Decline'}
-                </Button>
+        <div className="space-y-6">
+          {/* Pending Applications Section */}
+          {localApplicants.filter(app => app.status === 'pending').length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Pending</h3>
+              <div className="space-y-3">
+                {localApplicants
+                  .filter(app => app.status === 'pending')
+                  .map((applicant) => (
+                    <div 
+                      key={applicant.id} 
+                      className="border rounded-lg p-4 space-y-3"
+                    >
+                      {/* Profile section - clickable */}
+                      <div 
+                        className="flex items-center gap-3 cursor-pointer hover:bg-muted/30 -m-2 p-2 rounded-md transition-colors"
+                        onClick={() => handleProfileClick(applicant.id)}
+                      >
+                        <Avatar className="w-12 h-12">
+                          <AvatarImage src={applicant.profile_photo} />
+                          <AvatarFallback>
+                            {applicant.display_name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="font-medium hover:underline transition-all duration-200">
+                            {applicant.display_name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs">
+                              {applicant.current_mmr} MMR
+                            </Badge>
+                            {applicant.isFriend && (
+                              <Badge variant="secondary" className="text-xs">
+                                Friend
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Action buttons - only for pending */}
+                      <div className="flex gap-2">
+                        <Button 
+                          size="sm"
+                          variant="default"
+                          onClick={() => handleAcceptApplicant(applicant.id)}
+                          disabled={loadingStates[applicant.id.toString()]}
+                          className="flex-1"
+                        >
+                          <Check className="w-4 h-4 mr-1" />
+                          {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Accept'}
+                        </Button>
+                        <Button 
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleRejectApplicant(applicant.id)}
+                          disabled={loadingStates[applicant.id.toString()]}
+                          className="flex-1"
+                        >
+                          <X className="w-4 h-4 mr-1" />
+                          {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Decline'}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Declined Applications Section */}
+          {localApplicants.filter(app => app.status === 'declined').length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3">Declined</h3>
+              <div className="space-y-3">
+                {localApplicants
+                  .filter(app => app.status === 'declined')
+                  .map((applicant) => (
+                    <div 
+                      key={applicant.id} 
+                      className="border rounded-lg p-4 bg-muted/20"
+                    >
+                      {/* Profile section - clickable but muted */}
+                      <div 
+                        className="flex items-center gap-3 cursor-pointer hover:bg-muted/30 -m-2 p-2 rounded-md transition-colors"
+                        onClick={() => handleProfileClick(applicant.id)}
+                      >
+                        <Avatar className="w-12 h-12 opacity-75">
+                          <AvatarImage src={applicant.profile_photo} />
+                          <AvatarFallback>
+                            {applicant.display_name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <p className="font-medium hover:underline transition-all duration-200 opacity-75">
+                            {applicant.display_name}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="outline" className="text-xs opacity-75">
+                              {applicant.current_mmr} MMR
+                            </Badge>
+                            {applicant.isFriend && (
+                              <Badge variant="secondary" className="text-xs opacity-75">
+                                Friend
+                              </Badge>
+                            )}
+                            <Badge variant="destructive" className="text-xs">
+                              Declined
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                      {/* No action buttons for declined applicants */}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
