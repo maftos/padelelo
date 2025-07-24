@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Users, Trash2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Users, X } from "lucide-react";
 import { PlayersStep } from "../create-match/PlayersStep";
 import { LocationDetailsStep } from "../create-match/LocationDetailsStep";
 import { GameAnnouncementStep } from "../create-match/GameAnnouncementStep";
 import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
+import { CancelBookingDialog } from "./CancelBookingDialog";
 import { toast } from "sonner";
 
 interface WizardData {
@@ -30,6 +31,7 @@ const EditMatchWizard = () => {
   const booking = confirmedMatches.find(b => b.booking_id === bookingId);
   
   const [currentStep, setCurrentStep] = useState(1);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [wizardData, setWizardData] = useState<WizardData>({
     selectedPlayers: [],
     location: "venue1",
@@ -82,14 +84,8 @@ const EditMatchWizard = () => {
     navigate("/manage-matches");
   };
 
-  const handleDeleteMatch = () => {
-    if (!bookingId) return;
-    
-    if (confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
-      // TODO: Implement delete booking functionality
-      toast.error("Delete functionality not yet implemented");
-      // navigate("/manage-matches");
-    }
+  const handleCancelBooking = () => {
+    setShowCancelDialog(true);
   };
 
   const canProceed = () => {
@@ -229,15 +225,14 @@ const EditMatchWizard = () => {
           </p>
         </div>
         
-        {/* Delete Button - Top Right */}
+        {/* Cancel Button - Top Right */}
         <Button 
-          onClick={handleDeleteMatch}
+          onClick={handleCancelBooking}
           variant="destructive" 
           size="sm"
-          disabled={false}
         >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Delete
+          <X className="h-4 w-4 mr-2" />
+          Cancel
         </Button>
       </div>
 
@@ -278,6 +273,15 @@ const EditMatchWizard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Cancel Booking Dialog */}
+      {bookingId && (
+        <CancelBookingDialog
+          bookingId={bookingId}
+          isOpen={showCancelDialog}
+          onOpenChange={setShowCancelDialog}
+        />
+      )}
     </div>
   );
 };
