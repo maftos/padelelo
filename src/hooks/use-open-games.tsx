@@ -23,6 +23,18 @@ export interface OpenGame {
     profile_photo: string;
     current_mmr: number;
   }>;
+  applications: Array<{
+    id: string;
+    player_id: string;
+    first_name: string;
+    last_name: string;
+    profile_photo: string;
+    current_mmr: number;
+    status: string;
+    message: string;
+    created_at: string;
+    updated_at: string;
+  }>;
 }
 
 export const useOpenGames = () => {

@@ -9,6 +9,7 @@ import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsRespo
 import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
 import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
+import { useOpenGames } from "@/hooks/use-open-games";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
@@ -17,6 +18,7 @@ const ManageMatches = () => {
   const [selectedGameId, setSelectedGameId] = useState<string>();
   const [showAddResults, setShowAddResults] = useState(false);
   const { confirmedMatches } = useConfirmedMatches();
+  const { openGames } = useOpenGames();
 
   const handleSelectMatch = (matchId: string) => {
     setSelectedMatchId(matchId);
@@ -33,10 +35,22 @@ const ManageMatches = () => {
     setApplicantsDialogOpen(true);
   };
 
-  // Mock function to get spots available for a game
-  const getSpotsAvailable = (gameId: string) => {
-    // In real implementation, this would come from the game data
-    return 3; // Mock value
+  // Get spots available and applicants from the actual game data
+  const getGameData = (gameId: string) => {
+    const game = openGames.find(g => g.booking_id === gameId);
+    if (!game) return { spotsAvailable: 0, applicants: [] };
+    
+    const spotsAvailable = 4 - game.player_count;
+    const applicants = game.applications.map(app => ({
+      id: app.player_id,
+      display_name: `${app.first_name} ${app.last_name}`,
+      profile_photo: app.profile_photo,
+      current_mmr: app.current_mmr,
+      status: app.status.toLowerCase() as 'pending' | 'accepted' | 'rejected',
+      isFriend: false // This would need friendship logic
+    }));
+    
+    return { spotsAvailable, applicants };
   };
 
   // Get match players from the actual match data
@@ -129,7 +143,8 @@ const ManageMatches = () => {
         open={applicantsDialogOpen}
         onOpenChange={setApplicantsDialogOpen}
         gameId={selectedGameId || ""}
-        spotsAvailable={selectedGameId ? getSpotsAvailable(selectedGameId) : 3}
+        spotsAvailable={selectedGameId ? getGameData(selectedGameId).spotsAvailable : 0}
+        applicants={selectedGameId ? getGameData(selectedGameId).applicants : []}
       />
     </>
   );

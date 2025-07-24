@@ -70,10 +70,10 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
   const { openGames, isLoading } = useOpenGames();
   const navigate = useNavigate();
 
-  // Mock applicants count - in real implementation this would come from the hook
+  // Get applicants count from the actual game data
   const getApplicantsCount = (gameId: string) => {
-    // Mock data - replace with actual applicants count
-    return 5;
+    const game = openGames.find(g => g.booking_id === gameId);
+    return game?.applications?.length || 0;
   };
 
   if (isLoading) {

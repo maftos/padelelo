@@ -47,51 +47,7 @@ const ViewApplicantsContent = ({
   const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  // Mock applicants data with friends and others
-  const mockApplicants: Applicant[] = [
-    {
-      id: "friend-1",
-      display_name: "Sarah Wilson",
-      profile_photo: "https://images.unsplash.com/photo-1494790108755-2616b612b630?w=150&h=150&fit=crop&crop=face",
-      current_mmr: 3200,
-      status: 'pending',
-      isFriend: true
-    },
-    {
-      id: "friend-2", 
-      display_name: "Mike Johnson",
-      profile_photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      current_mmr: 2900,
-      status: 'pending',
-      isFriend: true
-    },
-    {
-      id: "other-1",
-      display_name: "John Smith",
-      profile_photo: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      current_mmr: 2800,
-      status: 'pending',
-      isFriend: false
-    },
-    {
-      id: "other-2",
-      display_name: "Alex Chen",
-      profile_photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-      current_mmr: 3100,
-      status: 'pending',
-      isFriend: false
-    },
-    {
-      id: "other-3",
-      display_name: "Emma Davis",
-      profile_photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop&crop=face",
-      current_mmr: 2950,
-      status: 'pending',
-      isFriend: false
-    }
-  ];
-
-  const displayApplicants = applicants.length > 0 ? applicants : mockApplicants;
+  const displayApplicants = applicants;
   const friends = displayApplicants.filter(applicant => applicant.isFriend);
   const others = displayApplicants.filter(applicant => !applicant.isFriend);
 
