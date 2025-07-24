@@ -54,10 +54,12 @@ const ViewApplicantsContent = ({
   const { user } = useAuth();
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
   const [localApplicants, setLocalApplicants] = useState(applicants);
+  const [selectedApplicantId, setSelectedApplicantId] = useState<number | null>(null);
 
   // Update local applicants when prop changes
   useEffect(() => {
     setLocalApplicants(applicants);
+    setSelectedApplicantId(null); // Reset selection when applicants change
   }, [applicants]);
 
   const handleRespondToApplication = async (applicationId: number, status: 'ACCEPTED') => {
@@ -103,8 +105,14 @@ const ViewApplicantsContent = ({
     }
   };
 
-  const handleAcceptApplicant = (applicationId: number) => {
-    handleRespondToApplication(applicationId, 'ACCEPTED');
+  const handleAcceptSelected = () => {
+    if (selectedApplicantId !== null) {
+      handleRespondToApplication(selectedApplicantId, 'ACCEPTED');
+    }
+  };
+
+  const handleApplicantSelect = (applicantId: number) => {
+    setSelectedApplicantId(selectedApplicantId === applicantId ? null : applicantId);
   };
 
   const handleProfileClick = (applicantId: number) => {
@@ -121,65 +129,87 @@ const ViewApplicantsContent = ({
           <p className="text-muted-foreground">No applicants yet</p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {localApplicants
-            .filter(app => app.status === 'pending')
-            .map((applicant) => (
-              <div 
-                key={applicant.id} 
-                className="border rounded-lg p-4 space-y-3"
-              >
-                {/* Profile section - clickable */}
+        <>
+          <div className="space-y-3">
+            {localApplicants
+              .filter(app => app.status === 'pending')
+              .map((applicant) => (
                 <div 
-                  className="flex items-center gap-3 cursor-pointer hover:bg-muted/30 -m-2 p-2 rounded-md transition-colors"
-                  onClick={() => handleProfileClick(applicant.id)}
+                  key={applicant.id} 
+                  className={`border rounded-lg p-4 cursor-pointer transition-all duration-200 ${
+                    selectedApplicantId === applicant.id 
+                      ? 'border-primary bg-primary/5 ring-2 ring-primary/20' 
+                      : 'hover:border-primary/50 hover:bg-muted/30'
+                  }`}
+                  onClick={() => handleApplicantSelect(applicant.id)}
                 >
-                  <Avatar className="w-12 h-12">
-                    <AvatarImage src={applicant.profile_photo} />
-                    <AvatarFallback>
-                      {applicant.display_name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="font-medium hover:underline transition-all duration-200">
-                      {applicant.display_name}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">
-                        {applicant.current_mmr} MMR
-                      </Badge>
-                      {applicant.isFriend && (
-                        <Badge variant="secondary" className="text-xs">
-                          Friend
+                  {/* Profile section */}
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-12 h-12">
+                      <AvatarImage src={applicant.profile_photo} />
+                      <AvatarFallback>
+                        {applicant.display_name.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="font-medium">
+                        {applicant.display_name}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="outline" className="text-xs">
+                          {applicant.current_mmr} MMR
                         </Badge>
-                      )}
+                        {applicant.isFriend && (
+                          <Badge variant="secondary" className="text-xs">
+                            Friend
+                          </Badge>
+                        )}
+                        {selectedApplicantId === applicant.id && (
+                          <Badge variant="default" className="text-xs">
+                            Selected
+                          </Badge>
+                        )}
+                      </div>
                     </div>
+                    {/* Profile link icon */}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleProfileClick(applicant.id);
+                      }}
+                      className="opacity-60 hover:opacity-100"
+                    >
+                      <User className="w-4 h-4" />
+                    </Button>
                   </div>
                 </div>
-                
-                {/* Accept button only */}
-                <div className="flex">
-                  <Button 
-                    size="sm"
-                    variant="default"
-                    onClick={() => handleAcceptApplicant(applicant.id)}
-                    disabled={loadingStates[applicant.id.toString()]}
-                    className="w-full"
-                  >
-                    <Check className="w-4 h-4 mr-1" />
-                    {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Accept'}
-                  </Button>
-                </div>
+              ))}
+            
+            {localApplicants.filter(app => app.status === 'pending').length === 0 && (
+              <div className="text-center py-8">
+                <User className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+                <p className="text-muted-foreground">No pending applicants</p>
               </div>
-            ))}
-          
-          {localApplicants.filter(app => app.status === 'pending').length === 0 && (
-            <div className="text-center py-8">
-              <User className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
-              <p className="text-muted-foreground">No pending applicants</p>
+            )}
+          </div>
+
+          {/* Accept Selected Button */}
+          {selectedApplicantId !== null && (
+            <div className="pt-4 border-t">
+              <Button 
+                onClick={handleAcceptSelected}
+                disabled={loadingStates[selectedApplicantId.toString()]}
+                className="w-full"
+                size="lg"
+              >
+                <Check className="w-4 h-4 mr-2" />
+                {loadingStates[selectedApplicantId.toString()] ? 'Processing...' : 'Accept Selected Applicant'}
+              </Button>
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
