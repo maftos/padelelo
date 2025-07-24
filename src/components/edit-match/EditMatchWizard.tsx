@@ -40,9 +40,9 @@ const EditMatchWizard = () => {
     gameDescription: ""
   });
 
-  const isOpenGame = booking?.status === 'OPEN' || wizardData.selectedPlayers.length < 4;
-  // In edit mode, always show all 3 steps regardless of booking status
-  const totalSteps = 3;
+  const isOpenGame = wizardData.selectedPlayers.length < 4;
+  // Show 3 steps for open games (< 4 players), 2 steps for closed games (4 players)
+  const totalSteps = isOpenGame ? 3 : 2;
   
   console.log('EditMatchWizard: isOpenGame:', isOpenGame, 'totalSteps:', totalSteps, 'booking status:', booking?.status, 'selectedPlayers:', wizardData.selectedPlayers.length);
 
@@ -52,7 +52,12 @@ const EditMatchWizard = () => {
       
       // Add null checks for all required fields
       const startTime = booking.start_time || '';
-      const [date, timeWithZ] = startTime.split('T');
+      
+      // Convert from UTC to UTC+04:00 for display
+      const utcDate = new Date(startTime);
+      const mauritiusDate = new Date(utcDate.getTime() + (4 * 60 * 60 * 1000)); // Add 4 hours
+      
+      const [date, timeWithZ] = mauritiusDate.toISOString().split('T');
       const time = timeWithZ ? timeWithZ.substring(0, 5) : '';
       
       const updatedData = {
