@@ -81,7 +81,7 @@ const EditMatchWizard = () => {
     } else {
       toast.success("Match updated successfully!");
     }
-    navigate("/manage-matches");
+    navigate("/manage-bookings");
   };
 
   const handleCancelBooking = () => {
@@ -205,7 +205,7 @@ const EditMatchWizard = () => {
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center py-8">
           <p className="text-muted-foreground">Booking not found</p>
-          <Button onClick={() => navigate("/manage-matches")} className="mt-4">
+          <Button onClick={() => navigate("/manage-bookings")} className="mt-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Matches
           </Button>
@@ -256,7 +256,7 @@ const EditMatchWizard = () => {
         <CardContent className="p-6">
           <div className="flex justify-between">
             <Button
-              onClick={currentStep === 1 ? () => navigate("/manage-matches") : handlePrevious}
+              onClick={currentStep === 1 ? () => navigate("/manage-bookings") : handlePrevious}
               variant="outline"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

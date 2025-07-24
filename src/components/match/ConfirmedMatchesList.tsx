@@ -45,7 +45,7 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
 
   const handleEdit = (bookingId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/edit-match/${bookingId}`);
+    navigate(`/edit-booking/${bookingId}`);
   };
 
   if (isLoading) {

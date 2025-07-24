@@ -99,11 +99,11 @@ export const SideMenuContent = ({
           
           <SheetClose asChild>
             <Link
-              to="/manage-matches"
+              to="/manage-bookings"
               className="flex items-center gap-3 p-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors min-h-[44px]"
             >
               <ClipboardEdit className="h-5 w-5" />
-              <span className="font-medium">My Matches</span>
+              <span className="font-medium">My Bookings</span>
             </Link>
           </SheetClose>
 

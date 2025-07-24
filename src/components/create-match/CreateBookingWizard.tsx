@@ -57,7 +57,7 @@ const CreateBookingWizard = () => {
   const handleFinish = async () => {
     const success = await submitBooking(wizardData);
     if (success) {
-      navigate("/manage-matches");
+      navigate("/manage-bookings");
     }
   };
 
@@ -195,7 +195,7 @@ const CreateBookingWizard = () => {
         <CardContent className="p-6">
           <div className="flex justify-between">
             <Button
-              onClick={currentStep === 1 ? () => navigate("/manage-matches") : handlePrevious}
+              onClick={currentStep === 1 ? () => navigate("/manage-bookings") : handlePrevious}
               variant="outline"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

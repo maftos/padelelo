@@ -67,7 +67,7 @@ export function CancelBookingDialog({ bookingId, isOpen, onOpenChange, onBooking
         // Call callback to notify parent component
         onBookingCancelled?.(bookingId);
         
-        navigate("/manage-matches");
+        navigate("/manage-bookings");
       } else {
         toast.error(result?.message || "Failed to cancel booking");
       }

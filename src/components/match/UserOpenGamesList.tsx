@@ -73,7 +73,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
 
   const handleEdit = (bookingId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/edit-match/${bookingId}`);
+    navigate(`/edit-booking/${bookingId}`);
   };
 
   // Get applicants count from the actual game data

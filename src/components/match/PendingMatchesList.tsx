@@ -70,7 +70,7 @@ export const PendingMatchesList = ({ onSelectMatch, selectedMatchId }: PendingMa
 
   const handleEdit = (matchId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    navigate(`/edit-match/${matchId}`);
+    navigate(`/edit-booking/${matchId}`);
   };
 
   if (isLoading) {

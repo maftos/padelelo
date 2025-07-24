@@ -18,7 +18,7 @@ export const CTASection = () => {
         </p>
         
         <Button asChild size="lg" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto max-w-xs mx-auto">
-          <Link to={user ? "/manage-matches" : "/signup"}>
+          <Link to={user ? "/manage-bookings" : "/signup"}>
             Sign Up Now
           </Link>
         </Button>

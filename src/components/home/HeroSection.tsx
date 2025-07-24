@@ -33,7 +33,7 @@ export const HeroSection = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
             <Button asChild size="lg" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
-              <Link to={user ? "/manage-matches" : "/signup"}>
+              <Link to={user ? "/manage-bookings" : "/signup"}>
                 Start Playing
               </Link>
             </Button>

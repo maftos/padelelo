@@ -54,7 +54,7 @@ export const CommunitySection = () => {
             </div>
             
             <Button asChild size="lg" className="text-base px-6 sm:px-8 w-full sm:w-auto">
-              <Link to={user ? "/manage-matches" : "/signup"}>
+              <Link to={user ? "/manage-bookings" : "/signup"}>
                 Join Community
               </Link>
             </Button>

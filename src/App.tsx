@@ -56,9 +56,9 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
-              <Route path="/manage-matches" element={<ManageMatches />} />
+              <Route path="/manage-bookings" element={<ManageMatches />} />
               <Route path="/create-match" element={<CreateMatch />} />
-              <Route path="/edit-match/:bookingId" element={<EditMatch />} />
+              <Route path="/edit-booking/:bookingId" element={<EditMatch />} />
               <Route path="/matches" element={<Matches />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/leaderboard" element={<Leaderboard />} />

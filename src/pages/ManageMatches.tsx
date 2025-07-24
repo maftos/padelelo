@@ -106,8 +106,8 @@ const ManageMatches = () => {
             <div className="flex flex-col gap-3 sm:gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-xl sm:text-2xl font-bold text-foreground">My Matches</h1>
-                  <p className="text-sm text-muted-foreground mt-1">Manage your confirmed matches and open games</p>
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground">My Bookings</h1>
+                  <p className="text-sm text-muted-foreground mt-1">Manage your confirmed bookings and open games</p>
                 </div>
                 
                 {/* Create Match Button */}
@@ -126,8 +126,8 @@ const ManageMatches = () => {
             {/* Confirmed Matches Section */}
             <div className="space-y-4">
               <div className="space-y-1">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Confirmed Matches</h2>
-                <p className="text-sm text-muted-foreground">Complete your scheduled matches</p>
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Confirmed Bookings</h2>
+                <p className="text-sm text-muted-foreground">Complete your scheduled bookings</p>
               </div>
               <ConfirmedMatchesList 
                 onSelectMatch={handleSelectMatch}

@@ -53,7 +53,7 @@ export function useBookingSubmission() {
         }
 
         toast.success("Open game published successfully!");
-        navigate("/manage-matches");
+        navigate("/manage-bookings");
         return true;
       } else {
         // Use create_booking_closed for complete bookings (closed games)
@@ -76,7 +76,7 @@ export function useBookingSubmission() {
         }
 
         toast.success("Booking created successfully!");
-        navigate("/manage-matches");
+        navigate("/manage-bookings");
         return true;
       }
     } catch (error) {
