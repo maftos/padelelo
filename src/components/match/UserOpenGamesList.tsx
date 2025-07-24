@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Calendar, MapPin, Clock, DollarSign } from "lucide-react";
+import { Calendar, MapPin, Clock, DollarSign, Users } from "lucide-react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useOpenGames } from "@/hooks/use-open-games";
@@ -12,20 +12,21 @@ interface UserOpenGamesListProps {
 }
 
 // Helper functions from PlayerMatching page
-const formatGameDate = (date: Date) => {
+const formatGameDateTime = (date: Date) => {
   const now = new Date();
   const diffTime = date.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const dayName = dayNames[date.getDay()];
+  const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   
   if (diffDays === 1) {
-    return `Tomorrow, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
+    return `Tomorrow, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
   } else if (diffDays <= 7) {
-    return `Next ${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
+    return `Next ${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
   } else {
-    return `${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })}`;
+    return `${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
   }
 };
 
@@ -69,6 +70,11 @@ const calculateAverageMMR = (players: Array<{ mmr: number } | null>) => {
 export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) => {
   const { openGames, isLoading } = useOpenGames();
   const navigate = useNavigate();
+
+  const handleEdit = (bookingId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/edit-match/${bookingId}`);
+  };
 
   // Get applicants count from the actual game data
   const getApplicantsCount = (gameId: string) => {
@@ -152,28 +158,22 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   </span>
                 </div>
                 
-                {/* Location and Date - Stack on mobile */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground mb-2">
-                  <div className="flex items-center gap-1 min-w-0">
-                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="truncate">{post.courtName}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span className="text-xs sm:text-sm">{formatGameDate(post.gameDate)}</span>
-                  </div>
-                </div>
-                
-                {/* Time and Price - Stack on mobile */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+                {/* First row: Start Time and Fee */}
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm mb-2">
                   <div className="flex items-center gap-1">
                     <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                    <span>{post.startTime}</span>
+                    <span className="text-xs sm:text-sm bg-primary/10 text-primary px-2 py-1 rounded-md font-medium">{formatGameDateTime(post.gameDate)}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 text-muted-foreground">
                     <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                     <span>{post.price}</span>
                   </div>
+                </div>
+                
+                {/* Second row: Location */}
+                <div className="flex items-center gap-1 text-xs sm:text-sm text-muted-foreground">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <span className="truncate">{post.courtName}</span>
                 </div>
               </div>
             </div>
@@ -185,12 +185,12 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
             </CardDescription>
             
             {/* Current Players - Mobile optimized grid */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h4 className="font-medium text-sm">
-                  Players
-                </h4>
-              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-medium text-sm">
+                    Current Players
+                  </h4>
+                </div>
               
               {/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
               <div className="grid grid-cols-2 gap-2 sm:gap-3">
@@ -199,45 +199,63 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                   
                   if (player === null) {
                     return (
-                      <div 
-                        key={index} 
-                        className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[50px] sm:min-h-[60px] touch-manipulation"
-                        onClick={() => onViewApplicants?.(post.id)}
-                      >
-                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                          <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-primary text-xs sm:text-sm">{post.applicantsCount} Applicants</div>
-                          <div className="text-xs text-muted-foreground hidden sm:block">Tap to choose</div>
+                        <div 
+                          key={index} 
+                          className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[50px] sm:min-h-[60px] touch-manipulation"
+                          onClick={() => onViewApplicants?.(post.id)}
+                        >
+                          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                            <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-medium text-primary text-xs sm:text-sm">{post.applicantsCount} Applicants</div>
+                            <div className="text-xs text-muted-foreground hidden sm:block">Tap to choose</div>
+                          </div>
                         </div>
-                      </div>
                     );
                   }
                   
                   return (
-                    <div 
-                      key={player.id} 
-                      className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[70px] sm:min-h-[80px] cursor-pointer hover:bg-muted/80 hover:shadow-sm transition-all duration-200"
-                      onClick={() => navigate(`/profile/${player.id}`)}
-                    >
-                      <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                        <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
-                        <AvatarFallback className="text-xs">
-                          {player.name ? player.name[0] : 'P'}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="text-xs sm:text-sm flex-1 min-w-0">
-                        <div className="font-medium truncate">
-                          {player.name || 'Player'}
-                          {/* Show host tag only on desktop */}
-                          {player.isHost && <span className="text-xs text-primary ml-1 hidden sm:inline">(Host)</span>}
+                      <div 
+                        key={player.id} 
+                        className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] cursor-pointer hover:bg-muted/80 hover:shadow-sm transition-all duration-200"
+                        onClick={() => navigate(`/profile/${player.id}`)}
+                      >
+                        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                          <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
+                          <AvatarFallback className="text-xs">
+                            {player.name ? player.name[0] : 'P'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="text-xs sm:text-sm flex-1 min-w-0">
+                          <div className="font-medium truncate">
+                            {player.name || 'Player'}
+                            {player.isHost && <span className="text-xs text-primary ml-1 hidden sm:inline">(Host)</span>}
+                          </div>
+                          <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
                         </div>
-                        <div className="text-xs text-muted-foreground">{player.mmr} MMR</div>
                       </div>
-                    </div>
                   );
                 })}
+              </div>
+
+              {/* CTAs - Side by side on mobile */}
+              <div className="flex gap-2 pt-3 border-t">
+                <Button 
+                  onClick={(e) => onViewApplicants?.(post.id)}
+                  className="flex-1 h-8 sm:h-9"
+                  size="sm"
+                >
+                  <span className="text-xs sm:text-sm">View Applicants</span>
+                </Button>
+                <Button 
+                  onClick={(e) => handleEdit(post.id, e)}
+                  variant="outline"
+                  className="flex-1 h-8 sm:h-9"
+                  size="sm"
+                >
+                  <span className="text-xs sm:text-sm">Edit</span>
+                </Button>
               </div>
             </div>
           </CardContent>
