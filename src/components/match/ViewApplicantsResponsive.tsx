@@ -20,7 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 
 interface Applicant {
-  id: string;
+  id: number;
   display_name: string;
   profile_photo?: string;
   current_mmr: number;
@@ -51,13 +51,13 @@ const ViewApplicantsContent = ({
   const { user } = useAuth();
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
 
-  const handleRespondToApplication = async (applicationId: string, status: 'ACCEPTED' | 'DECLINED') => {
+  const handleRespondToApplication = async (applicationId: number, status: 'ACCEPTED' | 'DECLINED') => {
     if (!user?.id) {
       toast.error('You must be logged in to respond to applications');
       return;
     }
 
-    setLoadingStates(prev => ({ ...prev, [applicationId]: true }));
+    setLoadingStates(prev => ({ ...prev, [applicationId.toString()]: true }));
 
     try {
       const { data, error } = await supabase.rpc('respond_booking_application' as any, {
@@ -80,19 +80,19 @@ const ViewApplicantsContent = ({
       console.error('Error responding to application:', error);
       toast.error('An error occurred while responding to the application');
     } finally {
-      setLoadingStates(prev => ({ ...prev, [applicationId]: false }));
+      setLoadingStates(prev => ({ ...prev, [applicationId.toString()]: false }));
     }
   };
 
-  const handleAcceptApplicant = (applicationId: string) => {
+  const handleAcceptApplicant = (applicationId: number) => {
     handleRespondToApplication(applicationId, 'ACCEPTED');
   };
 
-  const handleRejectApplicant = (applicationId: string) => {
+  const handleRejectApplicant = (applicationId: number) => {
     handleRespondToApplication(applicationId, 'DECLINED');
   };
 
-  const handleProfileClick = (applicantId: string) => {
+  const handleProfileClick = (applicantId: number) => {
     console.log('Navigate to profile:', applicantId);
     navigate(`/profile/${applicantId}`);
     onClose();
@@ -146,21 +146,21 @@ const ViewApplicantsContent = ({
                   size="sm"
                   variant="default"
                   onClick={() => handleAcceptApplicant(applicant.id)}
-                  disabled={loadingStates[applicant.id]}
+                  disabled={loadingStates[applicant.id.toString()]}
                   className="flex-1"
                 >
                   <Check className="w-4 h-4 mr-1" />
-                  {loadingStates[applicant.id] ? 'Processing...' : 'Accept'}
+                  {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Accept'}
                 </Button>
                 <Button 
                   size="sm"
                   variant="outline"
                   onClick={() => handleRejectApplicant(applicant.id)}
-                  disabled={loadingStates[applicant.id]}
+                  disabled={loadingStates[applicant.id.toString()]}
                   className="flex-1"
                 >
                   <X className="w-4 h-4 mr-1" />
-                  {loadingStates[applicant.id] ? 'Processing...' : 'Decline'}
+                  {loadingStates[applicant.id.toString()] ? 'Processing...' : 'Decline'}
                 </Button>
               </div>
             </div>
