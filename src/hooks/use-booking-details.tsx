@@ -88,7 +88,7 @@ export const useBookingDetails = (bookingId: string | undefined) => {
         created_at: response.booking.created_at,
         created_by: response.booking.created_by,
         is_creator: response.user_context?.is_creator || false,
-        booking_fee_per_player: response.booking.booking_fee_total ? (response.booking.booking_fee_total / 4) : undefined,
+        booking_fee_per_player: response.booking.booking_fee_per_player,
         participants: response.players?.map((player: any) => ({
           player_id: player.user_id,
           first_name: player.first_name || '',
