@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -29,13 +30,15 @@ interface CancelBookingDialogProps {
   bookingId: string;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onBookingCancelled?: (bookingId: string) => void;
 }
 
-export function CancelBookingDialog({ bookingId, isOpen, onOpenChange }: CancelBookingDialogProps) {
+export function CancelBookingDialog({ bookingId, isOpen, onOpenChange, onBookingCancelled }: CancelBookingDialogProps) {
   const [isCancelling, setIsCancelling] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
 
   const handleCancelBooking = async () => {
     if (!user?.id || !bookingId) return;
@@ -54,6 +57,16 @@ export function CancelBookingDialog({ bookingId, isOpen, onOpenChange }: CancelB
       
       if (result?.success) {
         toast.success(result.message);
+        
+        // Optimistically remove the booking from cache
+        queryClient.setQueryData(['confirmed-matches', user.id], (oldData: any) => {
+          if (!oldData) return oldData;
+          return oldData.filter((match: any) => match.booking_id !== bookingId);
+        });
+        
+        // Call callback to notify parent component
+        onBookingCancelled?.(bookingId);
+        
         navigate("/manage-matches");
       } else {
         toast.error(result?.message || "Failed to cancel booking");
