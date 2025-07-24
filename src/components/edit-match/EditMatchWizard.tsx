@@ -7,8 +7,7 @@ import { ArrowLeft, ArrowRight, Users, X } from "lucide-react";
 import { PlayersStep } from "../create-match/PlayersStep";
 import { LocationDetailsStep } from "../create-match/LocationDetailsStep";
 import { GameAnnouncementStep } from "../create-match/GameAnnouncementStep";
-import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
-import { useOpenGames } from "@/hooks/use-open-games";
+import { useBookingDetails } from "@/hooks/use-booking-details";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { CancelBookingDialog } from "./CancelBookingDialog";
 import { toast } from "sonner";
@@ -27,14 +26,7 @@ const EditMatchWizard = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
   const navigate = useNavigate();
   const { getPlayerName } = usePlayerSelection();
-  const { confirmedMatches, isLoading: confirmedLoading } = useConfirmedMatches();
-  const { openGames, isLoading: openLoading } = useOpenGames();
-  
-  // Try to find booking in confirmed matches first, then in open games
-  const booking = confirmedMatches.find(b => b.booking_id === bookingId) || 
-                  openGames.find(g => g.booking_id === bookingId);
-  
-  const isLoading = confirmedLoading || openLoading;
+  const { booking, isLoading, error } = useBookingDetails(bookingId);
   
   const [currentStep, setCurrentStep] = useState(1);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
