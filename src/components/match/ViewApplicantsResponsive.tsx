@@ -34,18 +34,21 @@ interface ViewApplicantsResponsiveProps {
   gameId: string;
   spotsAvailable?: number;
   applicants?: Applicant[];
+  onApplicationResponse?: (applicationId: number, status: 'ACCEPTED' | 'DECLINED', applicant: Applicant) => void;
 }
 
 const ViewApplicantsContent = ({ 
   gameId, 
   spotsAvailable = 3,
   applicants = [],
-  onClose
+  onClose,
+  onApplicationResponse
 }: {
   gameId: string;
   spotsAvailable: number;
   applicants: Applicant[];
   onClose: () => void;
+  onApplicationResponse?: (applicationId: number, status: 'ACCEPTED' | 'DECLINED', applicant: Applicant) => void;
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -72,7 +75,17 @@ const ViewApplicantsContent = ({
       const result = data as { success: boolean; message: string };
       if (result?.success) {
         toast.success(result.message);
-        // The parent component should refetch the data to update the list
+        
+        // Find the applicant details
+        const applicant = applicants.find(app => app.id === applicationId);
+        
+        // Call the callback to update the parent component
+        if (onApplicationResponse && applicant) {
+          onApplicationResponse(applicationId, status, applicant);
+        }
+        
+        // Close the modal/drawer
+        onClose();
       } else {
         toast.error(result?.message || 'Failed to respond to application');
       }
@@ -176,7 +189,8 @@ export const ViewApplicantsResponsive = ({
   onOpenChange, 
   gameId, 
   spotsAvailable = 3,
-  applicants = [] 
+  applicants = [],
+  onApplicationResponse
 }: ViewApplicantsResponsiveProps) => {
   const isMobile = useIsMobile();
 
@@ -200,6 +214,7 @@ export const ViewApplicantsResponsive = ({
             spotsAvailable={spotsAvailable}
             applicants={applicants}
             onClose={handleClose}
+            onApplicationResponse={onApplicationResponse}
           />
         </DrawerContent>
       </Drawer>
@@ -220,6 +235,7 @@ export const ViewApplicantsResponsive = ({
           spotsAvailable={spotsAvailable}
           applicants={applicants}
           onClose={handleClose}
+          onApplicationResponse={onApplicationResponse}
         />
       </DialogContent>
     </Dialog>

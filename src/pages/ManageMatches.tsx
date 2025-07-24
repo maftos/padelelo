@@ -10,9 +10,11 @@ import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
 import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 import { useOpenGames } from "@/hooks/use-open-games";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
+  const queryClient = useQueryClient();
   const [selectedMatchId, setSelectedMatchId] = useState<string>();
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
@@ -51,6 +53,12 @@ const ManageMatches = () => {
     }));
     
     return { spotsAvailable, applicants };
+  };
+
+  // Handle successful application response
+  const handleApplicationResponse = (applicationId: number, status: 'ACCEPTED' | 'DECLINED', applicant: any) => {
+    // Invalidate and refetch the open games query to get updated data
+    queryClient.invalidateQueries({ queryKey: ['open-games'] });
   };
 
   // Get match players from the actual match data
@@ -145,6 +153,7 @@ const ManageMatches = () => {
         gameId={selectedGameId || ""}
         spotsAvailable={selectedGameId ? getGameData(selectedGameId).spotsAvailable : 0}
         applicants={selectedGameId ? getGameData(selectedGameId).applicants : []}
+        onApplicationResponse={handleApplicationResponse}
       />
     </>
   );
