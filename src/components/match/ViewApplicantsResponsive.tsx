@@ -10,9 +10,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
-import { Users, UserCheck } from "lucide-react";
+
+import { Check, X, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -44,31 +43,16 @@ const ViewApplicantsContent = ({
   applicants: Applicant[];
   onClose: () => void;
 }) => {
-  const [selectedApplicants, setSelectedApplicants] = useState<string[]>([]);
   const navigate = useNavigate();
 
-  const displayApplicants = applicants;
-  const friends = displayApplicants.filter(applicant => applicant.isFriend);
-  const others = displayApplicants.filter(applicant => !applicant.isFriend);
-
-  const handleApplicantToggle = (applicantId: string) => {
-    setSelectedApplicants(prev => {
-      if (prev.includes(applicantId)) {
-        return prev.filter(id => id !== applicantId);
-      } else {
-        // Limit selection to available spots
-        if (prev.length < spotsAvailable) {
-          return [...prev, applicantId];
-        }
-        return prev;
-      }
-    });
+  const handleAcceptApplicant = (applicantId: string) => {
+    console.log('Accept applicant:', applicantId);
+    // TODO: Implement accept logic
   };
 
-  const handleBundleAccept = () => {
-    console.log('Bundle accept applicants:', selectedApplicants);
-    // TODO: Implement bundle accept logic
-    onClose();
+  const handleRejectApplicant = (applicantId: string) => {
+    console.log('Reject applicant:', applicantId);
+    // TODO: Implement reject logic
   };
 
   const handleProfileClick = (applicantId: string) => {
@@ -77,85 +61,71 @@ const ViewApplicantsContent = ({
     onClose();
   };
 
-  const renderApplicantSection = (title: string, sectionApplicants: Applicant[]) => {
-    if (sectionApplicants.length === 0) return null;
-
-    return (
-      <div className="space-y-3">
-        <h3 className="font-medium text-sm text-muted-foreground flex items-center gap-2">
-          {title === 'Friends' ? <Users className="w-4 h-4" /> : <UserCheck className="w-4 h-4" />}
-          {title} ({sectionApplicants.length})
-        </h3>
-        <div className="space-y-2">
-          {sectionApplicants.map((applicant) => (
+  return (
+    <div className="space-y-4">
+      {applicants.length === 0 ? (
+        <div className="text-center py-8">
+          <User className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
+          <p className="text-muted-foreground">No applicants yet</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {applicants.map((applicant) => (
             <div 
               key={applicant.id} 
-              className="flex items-center border rounded-lg overflow-hidden transition-colors group"
+              className="border rounded-lg p-4 space-y-3"
             >
-              {/* Left half - Profile click area */}
+              {/* Profile section - clickable */}
               <div 
-                className="flex items-center gap-3 p-3 flex-1 cursor-pointer hover:bg-muted/50 transition-colors"
+                className="flex items-center gap-3 cursor-pointer hover:bg-muted/30 -m-2 p-2 rounded-md transition-colors"
                 onClick={() => handleProfileClick(applicant.id)}
               >
-                <Avatar className="w-10 h-10">
+                <Avatar className="w-12 h-12">
                   <AvatarImage src={applicant.profile_photo} />
                   <AvatarFallback>
                     {applicant.display_name.split(' ').map(n => n[0]).join('')}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="font-medium transition-all duration-200 group-hover:underline">
+                  <p className="font-medium hover:underline transition-all duration-200">
                     {applicant.display_name}
                   </p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mt-1">
                     <Badge variant="outline" className="text-xs">
                       {applicant.current_mmr} MMR
                     </Badge>
+                    {applicant.isFriend && (
+                      <Badge variant="secondary" className="text-xs">
+                        Friend
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </div>
               
-              {/* Right half - Selection toggle area */}
-              <div 
-                className="p-3 cursor-pointer flex items-center justify-center min-w-[60px] hover:bg-accent/50 transition-colors"
-                onClick={() => handleApplicantToggle(applicant.id)}
-              >
-                <div className="hover:scale-110 transition-transform duration-200">
-                  <Checkbox
-                    checked={selectedApplicants.includes(applicant.id)}
-                    disabled={!selectedApplicants.includes(applicant.id) && selectedApplicants.length >= spotsAvailable}
-                  />
-                </div>
+              {/* Action buttons */}
+              <div className="flex gap-2">
+                <Button 
+                  size="sm"
+                  variant="default"
+                  onClick={() => handleAcceptApplicant(applicant.id)}
+                  className="flex-1"
+                >
+                  <Check className="w-4 h-4 mr-1" />
+                  Accept
+                </Button>
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleRejectApplicant(applicant.id)}
+                  className="flex-1"
+                >
+                  <X className="w-4 h-4 mr-1" />
+                  Decline
+                </Button>
               </div>
             </div>
           ))}
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className="space-y-6">
-      {displayApplicants.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-muted-foreground">No applicants yet</p>
-        </div>
-      ) : (
-        <>
-          {renderApplicantSection('Friends', friends)}
-          {renderApplicantSection('Others', others)}
-        </>
-      )}
-      
-      {selectedApplicants.length > 0 && (
-        <div className="pt-4 border-t">
-          <Button 
-            onClick={handleBundleAccept}
-            className="w-full"
-            disabled={selectedApplicants.length === 0}
-          >
-            Accept Selected ({selectedApplicants.length})
-          </Button>
         </div>
       )}
     </div>
