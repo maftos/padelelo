@@ -68,6 +68,9 @@ export const useBookingDetails = (bookingId: string | undefined) => {
       // The function returns JSON with a specific structure
       const response = bookingResponse as any;
       
+      console.log('useBookingDetails: Full response from view_booking:', response);
+      console.log('useBookingDetails: Booking data:', response.booking);
+      
       if (!response.success || !response.booking) {
         throw new Error('Booking not found');
       }
@@ -85,7 +88,7 @@ export const useBookingDetails = (bookingId: string | undefined) => {
         created_at: response.booking.created_at,
         created_by: response.booking.created_by,
         is_creator: response.user_context?.is_creator || false,
-        booking_fee_per_player: response.booking.booking_fee_per_player,
+        booking_fee_per_player: response.booking.booking_fee_total ? (response.booking.booking_fee_total / 4) : undefined,
         participants: response.players?.map((player: any) => ({
           player_id: player.user_id,
           first_name: player.first_name || '',

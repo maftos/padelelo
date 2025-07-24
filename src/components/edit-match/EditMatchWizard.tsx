@@ -129,8 +129,8 @@ const EditMatchWizard = () => {
         return (
           <LocationDetailsStep
             data={{
-              venueId: "",
-              location: wizardData.location,
+              venueId: wizardData.location, // Use the actual venue ID from booking data
+              location: wizardData.location, // Keep for backward compatibility
               matchDate: wizardData.matchDate,
               matchTime: wizardData.matchTime,
               feePerPlayer: wizardData.feePerPlayer
