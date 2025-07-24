@@ -42,7 +42,7 @@ export function CancelBookingDialog({ bookingId, isOpen, onOpenChange }: CancelB
 
     setIsCancelling(true);
     try {
-      const { data, error } = await supabase.rpc('cancel_booking', {
+      const { data, error } = await supabase.rpc('cancel_booking' as any, {
         p_user_id: user.id,
         p_booking_id: bookingId
       });
