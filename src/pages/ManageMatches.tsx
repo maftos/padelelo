@@ -56,7 +56,7 @@ const ManageMatches = () => {
   };
 
   // Handle successful application response
-  const handleApplicationResponse = (applicationId: number, status: 'ACCEPTED' | 'DECLINED', applicant: any) => {
+  const handleApplicationResponse = (applicationId: number, status: 'ACCEPTED', applicant: any) => {
     // Invalidate and refetch the open games query to get updated data
     queryClient.invalidateQueries({ queryKey: ['open-games'] });
   };
