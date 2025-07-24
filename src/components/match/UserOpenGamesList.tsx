@@ -243,10 +243,11 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
               <div className="pt-3 border-t">
                 <Button 
                   onClick={(e) => handleEdit(post.id, e)}
+                  variant="outline"
                   className="w-full h-8 sm:h-9"
                   size="sm"
                 >
-                  <span className="text-xs sm:text-sm">Edit Game</span>
+                  <span className="text-xs sm:text-sm">Edit</span>
                 </Button>
               </div>
             </div>
