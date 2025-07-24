@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Applicant {
   id: number;
@@ -53,6 +53,12 @@ const ViewApplicantsContent = ({
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loadingStates, setLoadingStates] = useState<Record<string, boolean>>({});
+  const [localApplicants, setLocalApplicants] = useState(applicants);
+
+  // Update local applicants when prop changes
+  useEffect(() => {
+    setLocalApplicants(applicants);
+  }, [applicants]);
 
   const handleRespondToApplication = async (applicationId: number, status: 'ACCEPTED' | 'DECLINED') => {
     if (!user?.id) {
@@ -77,15 +83,25 @@ const ViewApplicantsContent = ({
         toast.success(result.message);
         
         // Find the applicant details
-        const applicant = applicants.find(app => app.id === applicationId);
+        const applicant = localApplicants.find(app => app.id === applicationId);
         
-        // Call the callback to update the parent component
-        if (onApplicationResponse && applicant) {
-          onApplicationResponse(applicationId, status, applicant);
+        if (status === 'ACCEPTED') {
+          // Call the callback to update the parent component
+          if (onApplicationResponse && applicant) {
+            onApplicationResponse(applicationId, status, applicant);
+          }
+          
+          // Close the modal/drawer only for accepted applications
+          onClose();
+        } else if (status === 'DECLINED') {
+          // For declined applications, just remove from local list without closing modal
+          setLocalApplicants(prev => prev.filter(app => app.id !== applicationId));
+          
+          // Still call the callback for data consistency
+          if (onApplicationResponse && applicant) {
+            onApplicationResponse(applicationId, status, applicant);
+          }
         }
-        
-        // Close the modal/drawer
-        onClose();
       } else {
         toast.error(result?.message || 'Failed to respond to application');
       }
@@ -113,14 +129,14 @@ const ViewApplicantsContent = ({
 
   return (
     <div className="space-y-4">
-      {applicants.length === 0 ? (
+      {localApplicants.length === 0 ? (
         <div className="text-center py-8">
           <User className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
           <p className="text-muted-foreground">No applicants yet</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {applicants.map((applicant) => (
+          {localApplicants.map((applicant) => (
             <div 
               key={applicant.id} 
               className="border rounded-lg p-4 space-y-3"
