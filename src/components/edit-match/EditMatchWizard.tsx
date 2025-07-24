@@ -7,7 +7,7 @@ import { ArrowLeft, ArrowRight, Users, Trash2 } from "lucide-react";
 import { PlayersStep } from "../create-match/PlayersStep";
 import { LocationDetailsStep } from "../create-match/LocationDetailsStep";
 import { GameAnnouncementStep } from "../create-match/GameAnnouncementStep";
-import { usePendingMatches } from "@/hooks/use-pending-matches";
+import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { toast } from "sonner";
 
@@ -22,12 +22,12 @@ interface WizardData {
 }
 
 const EditMatchWizard = () => {
-  const { matchId } = useParams<{ matchId: string }>();
+  const { bookingId } = useParams<{ bookingId: string }>();
   const navigate = useNavigate();
   const { getPlayerName } = usePlayerSelection();
-  const { pendingMatches, deletePendingMatch, isDeletingMatch } = usePendingMatches();
+  const { confirmedMatches, isLoading } = useConfirmedMatches();
   
-  const match = pendingMatches.find(m => m.match_id === matchId);
+  const booking = confirmedMatches.find(b => b.booking_id === bookingId);
   
   const [currentStep, setCurrentStep] = useState(1);
   const [wizardData, setWizardData] = useState<WizardData>({
@@ -44,23 +44,18 @@ const EditMatchWizard = () => {
   const totalSteps = isOpenGame ? 3 : 2;
 
   useEffect(() => {
-    if (match) {
+    if (booking) {
       setWizardData({
-        selectedPlayers: [
-          match.team1_player1_id,
-          match.team1_player2_id,
-          match.team2_player1_id,
-          match.team2_player2_id
-        ],
-        location: "venue1",
-        matchDate: match.match_date.split('T')[0],
-        matchTime: match.match_date.split('T')[1].substring(0, 5),
+        selectedPlayers: booking.participants.map(p => p.player_id),
+        location: booking.venue_id,
+        matchDate: booking.start_time.split('T')[0],
+        matchTime: booking.start_time.split('T')[1].substring(0, 5),
         feePerPlayer: "",
-        gameTitle: "",
-        gameDescription: ""
+        gameTitle: booking.title || "",
+        gameDescription: booking.description || ""
       });
     }
-  }, [match]);
+  }, [booking]);
 
   const updateWizardData = (data: Partial<WizardData>) => {
     setWizardData(prev => ({ ...prev, ...data }));
@@ -88,11 +83,12 @@ const EditMatchWizard = () => {
   };
 
   const handleDeleteMatch = () => {
-    if (!matchId) return;
+    if (!bookingId) return;
     
-    if (confirm('Are you sure you want to delete this match? This action cannot be undone.')) {
-      deletePendingMatch(matchId);
-      navigate("/manage-matches");
+    if (confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
+      // TODO: Implement delete booking functionality
+      toast.error("Delete functionality not yet implemented");
+      // navigate("/manage-matches");
     }
   };
 
@@ -198,11 +194,21 @@ const EditMatchWizard = () => {
     }
   };
 
-  if (!match) {
+  if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center py-8">
-          <p className="text-muted-foreground">Match not found</p>
+          <p className="text-muted-foreground">Loading booking details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!booking) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6">
+        <div className="text-center py-8">
+          <p className="text-muted-foreground">Booking not found</p>
           <Button onClick={() => navigate("/manage-matches")} className="mt-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Matches
@@ -217,7 +223,7 @@ const EditMatchWizard = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Edit Match</h1>
+          <h1 className="text-2xl font-bold">Edit Booking</h1>
           <p className="text-sm text-muted-foreground">
             Step {currentStep} of {totalSteps}: {getStepTitle()}
           </p>
@@ -228,10 +234,10 @@ const EditMatchWizard = () => {
           onClick={handleDeleteMatch}
           variant="destructive" 
           size="sm"
-          disabled={isDeletingMatch}
+          disabled={false}
         >
           <Trash2 className="h-4 w-4 mr-2" />
-          {isDeletingMatch ? 'Deleting...' : 'Delete'}
+          Delete
         </Button>
       </div>
 
