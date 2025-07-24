@@ -239,22 +239,14 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                 })}
               </div>
 
-              {/* CTAs - Side by side on mobile */}
-              <div className="flex gap-2 pt-3 border-t">
-                <Button 
-                  onClick={(e) => onViewApplicants?.(post.id)}
-                  className="flex-1 h-8 sm:h-9"
-                  size="sm"
-                >
-                  <span className="text-xs sm:text-sm">View Applicants</span>
-                </Button>
+              {/* Edit button */}
+              <div className="pt-3 border-t">
                 <Button 
                   onClick={(e) => handleEdit(post.id, e)}
-                  variant="outline"
-                  className="flex-1 h-8 sm:h-9"
+                  className="w-full h-8 sm:h-9"
                   size="sm"
                 >
-                  <span className="text-xs sm:text-sm">Edit</span>
+                  <span className="text-xs sm:text-sm">Edit Game</span>
                 </Button>
               </div>
             </div>
