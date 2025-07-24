@@ -195,20 +195,23 @@ const ViewApplicantsContent = ({
             )}
           </div>
 
-          {/* Accept Selected Button */}
-          {selectedApplicantId !== null && (
-            <div className="pt-4 border-t">
-              <Button 
-                onClick={handleAcceptSelected}
-                disabled={loadingStates[selectedApplicantId.toString()]}
-                className="w-full"
-                size="lg"
-              >
-                <Check className="w-4 h-4 mr-2" />
-                {loadingStates[selectedApplicantId.toString()] ? 'Processing...' : 'Accept Selected Applicant'}
-              </Button>
-            </div>
-          )}
+          {/* Accept Applicant Button - Always visible */}
+          <div className="pt-4 border-t">
+            <Button 
+              onClick={handleAcceptSelected}
+              disabled={selectedApplicantId === null || (selectedApplicantId !== null && loadingStates[selectedApplicantId.toString()])}
+              className="w-full"
+              size="lg"
+            >
+              <Check className="w-4 h-4 mr-2" />
+              {selectedApplicantId !== null && loadingStates[selectedApplicantId.toString()] 
+                ? 'Processing...' 
+                : selectedApplicantId !== null 
+                  ? 'Accept Selected Applicant'
+                  : 'Select an Applicant to Accept'
+              }
+            </Button>
+          </div>
         </>
       )}
     </div>
