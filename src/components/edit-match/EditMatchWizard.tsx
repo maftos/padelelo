@@ -11,6 +11,8 @@ import { useBookingDetails } from "@/hooks/use-booking-details";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { CancelBookingDialog } from "./CancelBookingDialog";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { useEditBooking } from "@/hooks/use-edit-booking";
 
 interface WizardData {
   selectedPlayers: string[];
@@ -27,9 +29,12 @@ const EditMatchWizard = () => {
   const navigate = useNavigate();
   const { getPlayerName } = usePlayerSelection();
   const { booking, isLoading, error } = useBookingDetails(bookingId);
+  const { user } = useAuth();
+  const { editBooking } = useEditBooking();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [wizardData, setWizardData] = useState<WizardData>({
     selectedPlayers: [],
     location: "venue1",
@@ -91,13 +96,51 @@ const EditMatchWizard = () => {
     }
   };
 
-  const handleSaveChanges = () => {
-    if (isOpenGame) {
-      toast.success("Open game updated successfully!");
-    } else {
-      toast.success("Match updated successfully!");
+  const handleSaveChanges = async () => {
+    if (!user?.id || !bookingId) {
+      toast.error("Missing user or booking information");
+      return;
     }
-    navigate("/manage-bookings");
+
+    setIsSubmitting(true);
+    
+    try {
+      // Convert UI time back to UTC for storage
+      const localDateTime = `${wizardData.matchDate}T${wizardData.matchTime}:00`;
+      const localDate = new Date(localDateTime);
+      const utcDate = new Date(localDate.getTime() - (4 * 60 * 60 * 1000)); // Subtract 4 hours to get UTC
+      
+      const { data, error } = await editBooking({
+        p_user_id: user.id,
+        p_booking_id: bookingId,
+        p_player_ids: wizardData.selectedPlayers,
+        p_title: wizardData.gameTitle || null,
+        p_description: wizardData.gameDescription || null,
+        p_venue_id: wizardData.location || null,
+        p_start_time: utcDate.toISOString(),
+        p_end_time: null, // Not handled in wizard yet
+        p_booking_fee_per_player: wizardData.feePerPlayer ? parseFloat(wizardData.feePerPlayer) : null
+      });
+
+      if (error) {
+        console.error('Error updating booking:', error);
+        toast.error(error.message || "Failed to update booking");
+        return;
+      }
+
+      const result = data as any;
+      if (result?.success) {
+        toast.success(result.message || "Booking updated successfully!");
+        navigate("/manage-bookings");
+      } else {
+        toast.error(result?.message || "Failed to update booking");
+      }
+    } catch (error) {
+      console.error('Error updating booking:', error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleCancelBooking = () => {
@@ -281,10 +324,10 @@ const EditMatchWizard = () => {
 
             <Button
               onClick={handleButtonClick}
-              disabled={!canProceed()}
+              disabled={!canProceed() || isSubmitting}
               size="lg"
             >
-              {getNextButtonContent()}
+              {isSubmitting ? "Saving..." : getNextButtonContent()}
             </Button>
           </div>
         </CardContent>
