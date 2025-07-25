@@ -15,8 +15,19 @@ interface EditBookingParams {
 export const useEditBooking = () => {
   const editBooking = async (params: EditBookingParams) => {
     try {
+      console.log('edit_booking params:', params);
+      
+      // Convert player_ids array to JSON for the database function
+      const payload = {
+        ...params,
+        p_player_ids: JSON.stringify(params.p_player_ids)
+      };
+      
+      console.log('edit_booking payload:', payload);
+      
       // Use the underlying supabase client to call the function directly
-      const response = await supabase.rpc('edit_booking' as any, params);
+      const response = await supabase.rpc('edit_booking' as any, payload);
+      console.log('edit_booking response:', response);
       return response;
     } catch (error) {
       console.error('Error calling edit_booking:', error);
