@@ -17,16 +17,9 @@ export const useEditBooking = () => {
     try {
       console.log('edit_booking params:', params);
       
-      // Convert player_ids array to JSON for the database function
-      const payload = {
-        ...params,
-        p_player_ids: JSON.stringify(params.p_player_ids)
-      };
-      
-      console.log('edit_booking payload:', payload);
-      
       // Use the underlying supabase client to call the function directly
-      const response = await supabase.rpc('edit_booking' as any, payload);
+      // Pass player_ids array directly - Supabase RPC will handle JSONB conversion
+      const response = await supabase.rpc('edit_booking' as any, params);
       console.log('edit_booking response:', response);
       return response;
     } catch (error) {
