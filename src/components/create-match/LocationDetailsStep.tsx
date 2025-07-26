@@ -55,10 +55,9 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
         <Select 
           value={data.venueId} 
           onValueChange={(value) => {
-            const selectedVenue = venues.find(v => v.venue_id === value);
             onDataChange({ 
               venueId: value, 
-              location: selectedVenue?.name || "" 
+              location: value // Pass the venue UUID, not the name
             });
           }}
           disabled={isLoadingVenues}
