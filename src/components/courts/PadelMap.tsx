@@ -108,36 +108,37 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         offset: 25,
         closeButton: false,
         closeOnClick: true,
-        maxWidth: '280px'
+        maxWidth: '320px'
       }).setHTML(`
-        <div class="bg-background border border-border rounded-lg overflow-hidden shadow-lg">
-          ${club.image ? `
-            <div class="h-24 w-full bg-cover bg-center" style="background-image: url('${club.image}')"></div>
-          ` : ''}
-          <div class="p-3 space-y-2">
-            <h3 class="font-semibold text-sm text-foreground">${club.name}</h3>
-            
-            <div class="flex items-center gap-2 text-xs">
-              <div class="flex items-center">
-                ${Array.from({length: 5}, (_, i) => 
-                  i < Math.floor(club.rating || 0) 
-                    ? '<span class="text-yellow-400">★</span>' 
-                    : '<span class="text-muted-foreground">☆</span>'
-                ).join('')}
-                <span class="ml-1 text-muted-foreground">${club.rating || 'N/A'}</span>
+        <div class="bg-card border border-border rounded-lg overflow-hidden shadow-lg">
+          <div class="flex h-20">
+            ${club.image ? `
+              <div class="w-24 h-20 bg-cover bg-center flex-shrink-0" style="background-image: url('${club.image}')"></div>
+            ` : `
+              <div class="w-24 h-20 bg-muted flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl">🏓</span>
               </div>
+            `}
+            <div class="flex-1 p-3 flex flex-col justify-between">
+              <div>
+                <h3 class="font-semibold text-sm text-card-foreground mb-1">${club.name}</h3>
+                <div class="flex items-center gap-1 mb-1">
+                  ${Array.from({length: 5}, (_, i) => 
+                    i < Math.floor(club.rating || 0) 
+                      ? '<span class="text-yellow-400 text-xs">★</span>' 
+                      : '<span class="text-muted-foreground text-xs">☆</span>'
+                  ).join('')}
+                  <span class="ml-1 text-xs text-muted-foreground">${club.rating || 'N/A'}</span>
+                </div>
+                <p class="text-xs text-muted-foreground">
+                  ${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}
+                </p>
+              </div>
+              <a href="/padel-courts/${club.id}" 
+                 class="inline-block text-center bg-primary text-primary-foreground px-2 py-1 rounded text-xs font-medium hover:bg-primary/90 transition-colors mt-1">
+                View Details
+              </a>
             </div>
-            
-            <p class="text-xs text-muted-foreground">
-              ${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}
-            </p>
-            
-            ${club.phone ? `<p class="text-xs text-muted-foreground">${club.phone}</p>` : ''}
-            
-            <a href="/padel-courts/${club.id}" 
-               class="inline-block w-full text-center bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors">
-              View Details
-            </a>
           </div>
         </div>
       `);
