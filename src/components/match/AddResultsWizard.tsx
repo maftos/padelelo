@@ -127,55 +127,33 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Mobile-optimized header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-lg md:text-2xl font-bold">Add Match Results</h1>
-            <p className="text-xs md:text-sm text-muted-foreground">
-              {currentStep === "selection" && "Select matchups played"}
-              {currentStep === "scoring" && `Match ${currentMatchupIndex + 1} of ${selectedMatchups.length}`}
-              {currentStep === "preview" && "Review and save"}
-            </p>
-          </div>
-          
-          {/* Mobile progress indicator */}
-          {(currentStep === "scoring" || currentStep === "preview") && (
-            <div className="flex items-center gap-2">
-              <div className="text-xs text-muted-foreground">
-                {currentStep === "scoring" ? `${queuedResults.length}/${selectedMatchups.length}` : "Review"}
-              </div>
-              <div className="w-12 bg-muted rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: currentStep === "preview" ? "100%" : `${(queuedResults.length / selectedMatchups.length) * 100}%` 
-                  }}
-                />
-              </div>
-            </div>
-          )}
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-4">
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold">Add Match Results</h1>
+          <p className="text-sm text-muted-foreground">
+            {currentStep === "selection" && "Select which matchups were played in order"}
+            {currentStep === "scoring" && "Enter scores for each matchup"}
+            {currentStep === "preview" && "Review and save your results"}
+          </p>
         </div>
       </div>
 
-      {/* Content area - no card wrapper for mobile */}
-      <div className="flex-1 overflow-auto">
-        {/* Mobile-optimized progress overview */}
-        {currentStep === "scoring" && (
-          <div className="px-4 py-3 border-b">
-            <MatchupProgressOverview
-              players={players}
-              selectedMatchups={selectedMatchups}
-              queuedResults={queuedResults}
-              currentIndex={currentMatchupIndex}
-              onMatchupClick={handleJumpToMatchup}
-            />
-          </div>
-        )}
+      {/* Progress Overview - Show only in scoring step, not in preview */}
+      {currentStep === "scoring" && (
+        <MatchupProgressOverview
+          players={players}
+          selectedMatchups={selectedMatchups}
+          queuedResults={queuedResults}
+          currentIndex={currentMatchupIndex}
+          onMatchupClick={handleJumpToMatchup}
+        />
+      )}
 
-        {/* Step content with mobile padding */}
-        <div className="px-4 py-6">
+      {/* Step Content */}
+      <Card>
+        <CardContent className="p-6">
           {currentStep === "selection" && (
             <MatchupSelectionStep
               players={players}
@@ -202,44 +180,45 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
               onRemoveResult={handleRemoveResult}
             />
           )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
-      {/* Sticky bottom navigation for mobile */}
-      <div className="sticky bottom-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t p-4">
-        <div className="flex justify-between gap-4">
-          <Button
-            onClick={currentStep === "selection" ? onClose : goToPreviousStep}
-            variant="outline"
-            className="flex-1 h-12 text-base"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {currentStep === "selection" ? "Cancel" : "Back"}
-          </Button>
+      {/* Navigation */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex justify-between">
+            <Button
+              onClick={currentStep === "selection" ? onClose : goToPreviousStep}
+              variant="outline"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              {currentStep === "selection" ? "Cancel" : "Back"}
+            </Button>
 
-          {currentStep === "selection" && (
-            <Button
-              onClick={goToNextStep}
-              disabled={selectedMatchups.length === 0}
-              className="flex-1 h-12 text-base"
-            >
-              Next ({selectedMatchups.length})
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          )}
-          
-          {currentStep === "preview" && (
-            <Button
-              onClick={handleSubmit}
-              disabled={queuedResults.length === 0 || isSubmitting}
-              className="flex-1 h-12 text-base"
-            >
-              <Users className="h-4 w-4 mr-2" />
-              {isSubmitting ? "Saving..." : `Save ${queuedResults.length} Results`}
-            </Button>
-          )}
-        </div>
-      </div>
+            {currentStep === "selection" && (
+              <Button
+                onClick={goToNextStep}
+                disabled={selectedMatchups.length === 0}
+                size="lg"
+              >
+                Next
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+            
+            {currentStep === "preview" && (
+              <Button
+                onClick={handleSubmit}
+                disabled={queuedResults.length === 0 || isSubmitting}
+                size="lg"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                {isSubmitting ? "Saving..." : "Save Results"}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

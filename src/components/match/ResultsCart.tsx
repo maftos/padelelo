@@ -105,73 +105,57 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
   }
 
   return (
-    <div className="space-y-4">
-      <div className="text-center text-sm font-medium text-muted-foreground mb-6 bg-green-50 text-green-700 p-3 rounded-lg">
-        ✓ {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
+    <div className="space-y-4 max-w-2xl mx-auto px-4">
+      <div className="text-center text-sm text-muted-foreground mb-4">
+        {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
       </div>
       
-      {Object.entries(groupedResults).map(([key, group], index) => {
+      {Object.entries(groupedResults).map(([key, group]) => {
         const unifiedOrderNumbers = getUnifiedOrderNumbers(key);
         
         return (
-          <Card key={key} className="border-green-200 bg-green-50/50 shadow-lg">          
-            <CardContent className="p-4 md:p-6">
-              {/* Mobile-optimized layout */}
-              <div className="space-y-4">
-                {/* Match header */}
-                <div className="flex items-center justify-between">
-                  <div className="text-sm font-medium text-muted-foreground">
-                    Match {index + 1}
+          <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
+            <CardContent className="p-6">
+              <div className="grid grid-cols-[1fr,auto] gap-6 items-center">
+                {/* Team players section */}
+                <div className="space-y-2">
+                  {/* Team 1 players */}
+                  <div className="flex items-center gap-4 h-10 border-b border-border pb-2">
+                    <PlayerDisplay playerId={group.team1[0]} />
+                    <PlayerDisplay playerId={group.team1[1]} />
                   </div>
-                  <div className="flex gap-1">
-                    {unifiedOrderNumbers.map((orderNum, idx) => (
-                      <div key={idx} className="text-xs bg-primary text-primary-foreground px-2 py-1 rounded-full">
-                        #{orderNum}
-                      </div>
-                    ))}
+                  
+                  {/* Team 2 players */}
+                  <div className="flex items-center gap-4 h-10 pt-2">
+                    <PlayerDisplay playerId={group.team2[0]} />
+                    <PlayerDisplay playerId={group.team2[1]} />
                   </div>
                 </div>
                 
-                {/* Teams and scores - responsive layout */}
-                <div className="space-y-4 md:space-y-0 md:grid md:grid-cols-[1fr,auto] md:gap-6 md:items-center">
-                  {/* Team players section */}
-                  <div className="space-y-3">
-                    {/* Team 1 players */}
-                    <div className="flex items-center gap-4 p-3 bg-white/60 rounded-lg">
-                      <PlayerDisplay playerId={group.team1[0]} />
-                      <PlayerDisplay playerId={group.team1[1]} />
-                    </div>
-                    
-                    {/* Team 2 players */}
-                    <div className="flex items-center gap-4 p-3 bg-white/60 rounded-lg">
-                      <PlayerDisplay playerId={group.team2[0]} />
-                      <PlayerDisplay playerId={group.team2[1]} />
-                    </div>
-                  </div>
-                  
-                  {/* Scores section - horizontal on mobile, vertical on desktop */}
-                  <div className="flex justify-center gap-4 md:flex-col md:gap-2">
-                    {group.results.map((result, resultIndex) => (
-                      <div key={resultIndex} className="flex flex-col items-center md:flex-row md:gap-2">
-                        {/* Set indicator for multiple sets */}
-                        {group.results.length > 1 && (
-                          <div className="text-xs text-muted-foreground mb-1 md:mb-0">
-                            Set {resultIndex + 1}
-                          </div>
-                        )}
-                        
-                        <div className="flex items-center gap-2 bg-white p-3 rounded-lg shadow-sm">
-                          <span className="text-xl font-bold text-green-700">
-                            {result.team1Score}
-                          </span>
-                          <span className="text-sm text-muted-foreground">-</span>
-                          <span className="text-xl font-bold text-green-700">
-                            {result.team2Score}
-                          </span>
-                        </div>
+                {/* Scores section */}
+                <div className="flex gap-4">
+                  {group.results.map((result, index) => (
+                    <div key={index} className="flex flex-col items-center">
+                      {/* Unified order number */}
+                      <div className="text-[10px] text-muted-foreground/60 font-light mb-1 h-3 flex items-center">
+                        {unifiedOrderNumbers[index] || ''}
                       </div>
-                    ))}
-                  </div>
+                      
+                      {/* Team 1 Score */}
+                      <div className="flex items-center justify-center h-10 border-b border-border pb-2 mb-2">
+                        <span className="text-lg font-bold text-green-700">
+                          {result.team1Score}
+                        </span>
+                      </div>
+                      
+                      {/* Team 2 Score */}
+                      <div className="flex items-center justify-center h-10 pt-2">
+                        <span className="text-lg font-bold text-green-700">
+                          {result.team2Score}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </CardContent>

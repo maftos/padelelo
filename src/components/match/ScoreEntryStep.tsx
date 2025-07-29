@@ -162,92 +162,87 @@ export const ScoreEntryStep = ({
   );
 
   return (
-    <div className="space-y-6">
-      {/* Mobile-friendly layout */}
+    <div className="space-y-6 max-w-lg mx-auto px-4">
+      <div className="text-center text-sm text-muted-foreground">
+        Match {currentIndex + 1} of {selectedMatchups.length}
+      </div>
+      
       <Card className="border-primary bg-primary/5 shadow-lg">
-        <CardContent className="p-6">
-          {/* Team display - stacked on mobile, side by side on desktop */}
-          <div className="space-y-6 md:space-y-0 md:flex md:items-center md:justify-between md:gap-6 mb-8">
-            {/* Team 1 */}
+        <CardContent className="p-6 sm:p-8">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            {/* Team 1 players */}
             <div className="flex-1">
-              <div className="text-xs text-muted-foreground mb-2 text-center md:text-left">Team 1</div>
-              <div className="flex justify-center md:justify-start">
-                <TeamDisplay team={currentMatchup.team1} />
-              </div>
+              <TeamDisplay team={currentMatchup.team1} />
             </div>
             
-            {/* Score inputs - prominent on mobile */}
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex flex-col items-center gap-2">
-                <Input
-                  ref={team1InputRef}
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={team1Score}
-                  onChange={(e) => handleTeam1ScoreChange(e.target.value)}
-                  onKeyDown={handleTeam1KeyDown}
-                  placeholder="0"
-                  className="w-16 h-16 text-center text-2xl font-bold border-2 touch-manipulation"
-                  min="0"
-                  max="9"
-                />
-                <div className="text-xs text-muted-foreground">Score</div>
-              </div>
-              
-              <div className="text-2xl font-bold text-muted-foreground px-4">
-                VS
-              </div>
-              
-              <div className="flex flex-col items-center gap-2">
-                <Input
-                  ref={team2InputRef}
-                  type="number"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={team2Score}
-                  onChange={(e) => handleTeam2ScoreChange(e.target.value)}
-                  onKeyDown={handleTeam2KeyDown}
-                  placeholder="0"
-                  className="w-16 h-16 text-center text-2xl font-bold border-2 touch-manipulation"
-                  min="0"
-                  max="9"
-                />
-                <div className="text-xs text-muted-foreground">Score</div>
-              </div>
+            {/* Team 1 score */}
+            <div>
+              <Input
+                ref={team1InputRef}
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={team1Score}
+                onChange={(e) => handleTeam1ScoreChange(e.target.value)}
+                onKeyDown={handleTeam1KeyDown}
+                placeholder="0"
+                className="w-12 text-center text-xl font-bold h-12"
+                min="0"
+                max="9"
+              />
             </div>
             
-            {/* Team 2 */}
-            <div className="flex-1">
-              <div className="text-xs text-muted-foreground mb-2 text-center md:text-right">Team 2</div>
-              <div className="flex justify-center md:justify-end">
-                <TeamDisplay team={currentMatchup.team2} />
-              </div>
+            {/* VS */}
+            <div className="text-lg font-bold text-muted-foreground px-2">
+              VS
+            </div>
+            
+            {/* Team 2 score */}
+            <div>
+              <Input
+                ref={team2InputRef}
+                type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={team2Score}
+                onChange={(e) => handleTeam2ScoreChange(e.target.value)}
+                onKeyDown={handleTeam2KeyDown}
+                placeholder="0"
+                className="w-12 text-center text-xl font-bold h-12"
+                min="0"
+                max="9"
+              />
+            </div>
+            
+            {/* Team 2 players */}
+            <div className="flex-1 flex justify-end">
+              <TeamDisplay team={currentMatchup.team2} />
             </div>
           </div>
           
-          {/* Save button - full width on mobile */}
-          <Button
-            onClick={handleSubmit}
-            disabled={!canSubmit}
-            className={`
-              w-full h-12 text-base font-semibold transition-all duration-200 touch-manipulation
-              ${canSubmit 
-                ? "bg-primary hover:bg-primary/90 text-primary-foreground active:scale-95" 
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-              }
-            `}
-          >
-            {isSubmitting ? "Saving..." : `Save Match ${currentIndex + 1}`}
-          </Button>
+          {/* Save button */}
+          <div className="flex justify-center">
+            <Button
+              onClick={handleSubmit}
+              disabled={!canSubmit}
+              className={`
+                w-full max-w-xs h-10 sm:h-12 text-sm sm:text-base font-semibold transition-all duration-200
+                ${canSubmit 
+                  ? "bg-primary hover:bg-primary/90 text-primary-foreground" 
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+                }
+              `}
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
       
-      {/* Mobile-optimized instructions */}
-      <div className="text-center text-sm text-muted-foreground bg-muted/30 p-4 rounded-lg">
-        <p className="font-medium mb-1">Quick entry tips:</p>
-        <p>• Enter scores and tap Save</p>
-        <p>• Use device keyboard for fastest input</p>
+      {/* Instructions */}
+      <div className="text-center text-xs sm:text-sm text-muted-foreground space-y-1">
+        <p>Enter scores and press Enter to move to next field</p>
+        <p>Or click Save to confirm this match result</p>
       </div>
     </div>
   );

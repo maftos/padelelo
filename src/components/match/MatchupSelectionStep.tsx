@@ -81,36 +81,30 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
   };
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
-    <div className="flex flex-col items-center gap-2 min-w-0">
+    <div className="flex flex-col items-center gap-2">
       {team.map((playerId) => (
-        <div key={playerId} className="flex items-center gap-2 min-w-0">
-          <Avatar className="h-8 w-8 md:h-6 md:w-6 shrink-0">
+        <div key={playerId} className="flex items-center gap-2">
+          <Avatar className="h-6 w-6">
             <AvatarImage src={getPlayerPhoto(playerId)} />
             <AvatarFallback className="text-xs">
               {getInitials(getPlayerName(playerId))}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium truncate">
-            {getPlayerName(playerId)}
-          </span>
+          <span className="text-sm font-medium">{getPlayerName(playerId)}</span>
         </div>
       ))}
     </div>
   );
 
   return (
-    <div className="space-y-4">
-      <div className="text-center text-sm text-muted-foreground mb-6">
-        Tap a matchup to add it to your sequence
-      </div>
-      
+    <div className="space-y-4 max-w-md mx-auto">
       {possibleMatchups.map((matchup) => {
         const matchNumbers = getMatchupNumbers(matchup.id);
         
         return (
           <Card 
             key={matchup.id} 
-            className="border-dashed hover:bg-accent/50 active:bg-accent/70 cursor-pointer hover:shadow-md transition-all duration-200 relative touch-manipulation"
+            className="border-dashed hover:bg-accent/50 cursor-pointer hover:shadow-md transition-all duration-300 relative"
             onClick={() => handleMatchupClick(matchup)}
           >
             {matchNumbers.length > 0 && (
@@ -118,32 +112,23 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
                 {matchNumbers.map((matchNumber, index) => (
                   <Badge 
                     key={index}
-                    className="bg-primary text-primary-foreground min-w-8 h-8 md:min-w-6 md:h-6 flex items-center justify-center rounded-full text-sm md:text-xs"
+                    className="bg-primary text-primary-foreground min-w-6 h-6 flex items-center justify-center rounded-full"
                   >
                     {matchNumber}
                   </Badge>
                 ))}
               </div>
             )}
-            <CardContent className="p-6 md:p-4">
-              <div className="flex items-center justify-between gap-4">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
                 <TeamDisplay team={matchup.team1} />
-                <div className="text-xl md:text-lg font-bold text-muted-foreground px-2 shrink-0">VS</div>
+                <div className="text-xl font-bold text-muted-foreground px-4">VS</div>
                 <TeamDisplay team={matchup.team2} />
               </div>
             </CardContent>
           </Card>
         );
       })}
-      
-      {/* Selection summary */}
-      {selectedMatchups.length > 0 && (
-        <div className="mt-6 p-4 bg-primary/5 rounded-lg border">
-          <div className="text-sm font-medium text-center">
-            {selectedMatchups.length} match{selectedMatchups.length > 1 ? 'es' : ''} selected
-          </div>
-        </div>
-      )}
     </div>
   );
 };
