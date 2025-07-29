@@ -162,61 +162,71 @@ export const ScoreEntryStep = ({
   );
 
   return (
-    <div className="space-y-6 max-w-lg mx-auto px-4">
+    <div className="space-y-6 md:max-w-lg md:mx-auto md:px-4">
       <div className="text-center text-sm text-muted-foreground">
         Match {currentIndex + 1} of {selectedMatchups.length}
       </div>
       
       <Card className="border-primary bg-primary/5 shadow-lg">
         <CardContent className="p-6 sm:p-8">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            {/* Team 1 players */}
-            <div className="flex-1">
-              <TeamDisplay team={currentMatchup.team1} />
+          {/* Teams layout */}
+          <div className="space-y-4 mb-6">
+            {/* Team 1 and Team 2 players */}
+            <div className="flex items-center justify-between">
+              {/* Team 1 players */}
+              <div className="flex-1">
+                <TeamDisplay team={currentMatchup.team1} />
+              </div>
+              
+              {/* VS */}
+              <div className="text-lg font-bold text-muted-foreground px-4">
+                VS
+              </div>
+              
+              {/* Team 2 players */}
+              <div className="flex-1 flex justify-end">
+                <TeamDisplay team={currentMatchup.team2} />
+              </div>
             </div>
             
-            {/* Team 1 score */}
-            <div>
-              <Input
-                ref={team1InputRef}
-                type="number"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={team1Score}
-                onChange={(e) => handleTeam1ScoreChange(e.target.value)}
-                onKeyDown={handleTeam1KeyDown}
-                placeholder="0"
-                className="w-12 text-center text-xl font-bold h-12"
-                min="0"
-                max="9"
-              />
-            </div>
-            
-            {/* VS */}
-            <div className="text-lg font-bold text-muted-foreground px-2">
-              VS
-            </div>
-            
-            {/* Team 2 score */}
-            <div>
-              <Input
-                ref={team2InputRef}
-                type="number"
-                inputMode="numeric"
-                pattern="[0-9]*"
-                value={team2Score}
-                onChange={(e) => handleTeam2ScoreChange(e.target.value)}
-                onKeyDown={handleTeam2KeyDown}
-                placeholder="0"
-                className="w-12 text-center text-xl font-bold h-12"
-                min="0"
-                max="9"
-              />
-            </div>
-            
-            {/* Team 2 players */}
-            <div className="flex-1 flex justify-end">
-              <TeamDisplay team={currentMatchup.team2} />
+            {/* Scores below players, maintaining team alignment */}
+            <div className="flex items-center justify-between">
+              {/* Team 1 score */}
+              <div className="flex-1 flex justify-center">
+                <Input
+                  ref={team1InputRef}
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={team1Score}
+                  onChange={(e) => handleTeam1ScoreChange(e.target.value)}
+                  onKeyDown={handleTeam1KeyDown}
+                  placeholder="0"
+                  className="w-12 text-center text-xl font-bold h-12"
+                  min="0"
+                  max="9"
+                />
+              </div>
+              
+              {/* Spacer for VS alignment */}
+              <div className="px-4"></div>
+              
+              {/* Team 2 score */}
+              <div className="flex-1 flex justify-center">
+                <Input
+                  ref={team2InputRef}
+                  type="number"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  value={team2Score}
+                  onChange={(e) => handleTeam2ScoreChange(e.target.value)}
+                  onKeyDown={handleTeam2KeyDown}
+                  placeholder="0"
+                  className="w-12 text-center text-xl font-bold h-12"
+                  min="0"
+                  max="9"
+                />
+              </div>
             </div>
           </div>
           

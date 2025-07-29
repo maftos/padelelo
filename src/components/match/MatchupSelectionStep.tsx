@@ -97,7 +97,7 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
   );
 
   return (
-    <div className="space-y-4 max-w-md mx-auto">
+    <div className="space-y-4 md:max-w-md md:mx-auto">
       {possibleMatchups.map((matchup) => {
         const matchNumbers = getMatchupNumbers(matchup.id);
         

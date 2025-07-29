@@ -105,7 +105,7 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
   }
 
   return (
-    <div className="space-y-4 max-w-2xl mx-auto px-4">
+    <div className="space-y-4 md:max-w-2xl md:mx-auto md:px-4">
       <div className="text-center text-sm text-muted-foreground mb-4">
         {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
       </div>
