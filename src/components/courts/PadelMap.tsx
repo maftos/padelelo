@@ -63,7 +63,6 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       markerElement.style.width = '30px';
       markerElement.style.height = '30px';
       markerElement.style.borderRadius = '50%';
-      markerElement.style.backgroundColor = '#10b981';
       markerElement.style.border = '3px solid white';
       markerElement.style.cursor = 'pointer';
       markerElement.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
@@ -73,7 +72,31 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       markerElement.style.color = 'white';
       markerElement.style.fontSize = '12px';
       markerElement.style.fontWeight = 'bold';
-      markerElement.textContent = '🏓';
+      
+      // Use venue photo as background or fallback to emoji
+      if (club.image && !club.image.includes('unsplash.com')) {
+        markerElement.style.backgroundImage = `url(${club.image})`;
+        markerElement.style.backgroundSize = 'cover';
+        markerElement.style.backgroundPosition = 'center';
+        markerElement.style.backgroundColor = 'transparent';
+        
+        // Add error handling for failed image loads
+        const img = new Image();
+        img.onload = () => {
+          // Image loaded successfully, keep the background image
+        };
+        img.onerror = () => {
+          // Image failed to load, fallback to emoji
+          markerElement.style.backgroundImage = 'none';
+          markerElement.style.backgroundColor = '#10b981';
+          markerElement.textContent = '🏓';
+        };
+        img.src = club.image;
+      } else {
+        // No image or using fallback image, use emoji
+        markerElement.style.backgroundColor = '#10b981';
+        markerElement.textContent = '🏓';
+      }
 
       // Create marker
       const marker = new mapboxgl.Marker(markerElement)
