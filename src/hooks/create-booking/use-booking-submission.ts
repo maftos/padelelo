@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface WizardData {
   selectedPlayers: string[];
@@ -20,6 +21,7 @@ export function useBookingSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { profile } = useUserProfile();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const submitBooking = async (wizardData: WizardData) => {
     if (!profile?.id) {
@@ -76,6 +78,10 @@ export function useBookingSubmission() {
         }
 
         toast.success("Booking created successfully!");
+        
+        // Optimistically update the confirmed matches list
+        queryClient.invalidateQueries({ queryKey: ['confirmed-matches'] });
+        
         navigate("/manage-bookings");
         return true;
       }

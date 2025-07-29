@@ -110,11 +110,11 @@ const ManageMatches = () => {
                   <p className="text-sm text-muted-foreground mt-1">Manage your confirmed bookings and open games</p>
                 </div>
                 
-                {/* Create Match Button */}
+                {/* Create Booking Button */}
                 <Link to="/create-match" className="w-full sm:w-auto">
                   <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full sm:w-auto px-4">
                     <Plus className="h-4 w-4" />
-                    <span>Create Match</span>
+                    <span>Create Booking</span>
                   </Button>
                 </Link>
               </div>
