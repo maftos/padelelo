@@ -102,7 +102,7 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
     }));
     
     setMatchups(matchupsFromQueue);
-    const success = await submitResults();
+    const success = await submitResults(matchupsFromQueue);
     if (success) {
       onClose();
     }

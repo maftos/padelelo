@@ -40,12 +40,12 @@ export function useAddResults(bookingId: string, userId: string) {
     }));
   };
 
-  const submitResults = async () => {
+  const submitResults = async (matchupsToSubmit: Matchup[]) => {
     setIsSubmitting(true);
     
     try {
       // Validate that all matchups have scores
-      for (const matchup of matchups) {
+      for (const matchup of matchupsToSubmit) {
         if (!matchup.team1Score && matchup.team1Score !== 0 || !matchup.team2Score && matchup.team2Score !== 0) {
           toast.error(`Please enter scores for all matches`);
           setIsSubmitting(false);
@@ -55,7 +55,7 @@ export function useAddResults(bookingId: string, userId: string) {
 
       // Transform matchups to the expected payload format for add_booking_scores
       const scoresPayload = {
-        sets: matchups.map((matchup, index) => ({
+        sets: matchupsToSubmit.map((matchup, index) => ({
           order: index + 1,
           team1: matchup.team1,
           team2: matchup.team2,
@@ -88,7 +88,7 @@ export function useAddResults(bookingId: string, userId: string) {
         return false;
       }
 
-      toast.success(`Successfully saved ${matchups.length} match${matchups.length > 1 ? 'es' : ''}!`);
+      toast.success(`Successfully saved ${matchupsToSubmit.length} match${matchupsToSubmit.length > 1 ? 'es' : ''}!`);
       setIsSubmitting(false);
       return true;
     } catch (error) {
