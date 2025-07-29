@@ -107,12 +107,38 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       const popup = new mapboxgl.Popup({
         offset: 25,
         closeButton: false,
-        closeOnClick: true
+        closeOnClick: true,
+        maxWidth: '280px'
       }).setHTML(`
-        <div class="p-2">
-          <h3 class="font-semibold text-sm">${club.name}</h3>
-          <p class="text-xs text-gray-600">${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}</p>
-          ${club.phone ? `<p class="text-xs">${club.phone}</p>` : ''}
+        <div class="bg-background border border-border rounded-lg overflow-hidden shadow-lg">
+          ${club.image ? `
+            <div class="h-24 w-full bg-cover bg-center" style="background-image: url('${club.image}')"></div>
+          ` : ''}
+          <div class="p-3 space-y-2">
+            <h3 class="font-semibold text-sm text-foreground">${club.name}</h3>
+            
+            <div class="flex items-center gap-2 text-xs">
+              <div class="flex items-center">
+                ${Array.from({length: 5}, (_, i) => 
+                  i < Math.floor(club.rating || 0) 
+                    ? '<span class="text-yellow-400">★</span>' 
+                    : '<span class="text-muted-foreground">☆</span>'
+                ).join('')}
+                <span class="ml-1 text-muted-foreground">${club.rating || 'N/A'}</span>
+              </div>
+            </div>
+            
+            <p class="text-xs text-muted-foreground">
+              ${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}
+            </p>
+            
+            ${club.phone ? `<p class="text-xs text-muted-foreground">${club.phone}</p>` : ''}
+            
+            <a href="/padel-courts/${club.id}" 
+               class="inline-block w-full text-center bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors">
+              View Details
+            </a>
+          </div>
         </div>
       `);
 
