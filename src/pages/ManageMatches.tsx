@@ -86,7 +86,7 @@ const ManageMatches = () => {
         <div className="w-full min-h-screen">
           <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
             <AddResultsWizard
-              matchId={selectedMatchId}
+              bookingId={selectedMatchId}
               players={getMatchPlayers()}
               onClose={handleCloseAddResults}
             />

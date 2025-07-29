@@ -26,7 +26,7 @@ interface SelectedMatchup {
 }
 
 interface AddResultsWizardProps {
-  matchId: string;
+  bookingId: string;
   players: {
     id: string;
     name: string;
@@ -35,16 +35,21 @@ interface AddResultsWizardProps {
   onClose: () => void;
 }
 
-export const AddResultsWizard = ({ matchId, players, onClose }: AddResultsWizardProps) => {
+export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWizardProps) => {
   const [currentStep, setCurrentStep] = useState<"selection" | "scoring" | "preview">("selection");
   const [selectedMatchups, setSelectedMatchups] = useState<SelectedMatchup[]>([]);
   const [queuedResults, setQueuedResults] = useState<QueuedResult[]>([]);
+  
+  // Get current user ID - assuming the first player in the list is the current user
+  // In a real implementation, this would come from auth context
+  const currentUserId = players[0]?.id || '';
+  
   const {
     matchups,
     setMatchups,
     submitResults,
     isSubmitting
-  } = useAddResults(matchId);
+  } = useAddResults(bookingId, currentUserId);
   const [currentMatchupIndex, setCurrentMatchupIndex] = useState(0);
 
   const handleMatchupSelect = (matchup: { id: string; team1: [string, string]; team2: [string, string] }) => {
