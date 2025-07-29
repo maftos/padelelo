@@ -4,6 +4,30 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { PadelClub } from '@/pages/PadelCourts';
 
+// Custom styles to override Mapbox's default popup styling
+const mapboxPopupStyles = `
+  .mapboxgl-popup-content {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  
+  .mapboxgl-popup-tip {
+    border-top-color: hsl(var(--card)) !important;
+    border-bottom-color: hsl(var(--card)) !important;
+  }
+  
+  .mapboxgl-popup {
+    z-index: 1000 !important;
+  }
+  
+  .mapboxgl-popup-close-button {
+    display: none !important;
+  }
+`;
+
 interface PadelMapProps {
   clubs: PadelClub[];
   onClubSelect?: (club: PadelClub) => void;
@@ -172,6 +196,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
 
   return (
     <div className="relative w-full h-full">
+      <style dangerouslySetInnerHTML={{ __html: mapboxPopupStyles }} />
       <div 
         ref={mapContainer} 
         className="absolute inset-0 rounded-lg"
