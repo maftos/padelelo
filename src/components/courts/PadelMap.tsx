@@ -3,6 +3,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { PadelClub } from '@/pages/PadelCourts';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerClose,
+} from '@/components/ui/drawer';
+import { Button } from '@/components/ui/button';
+import { Star, MapPin, Clock, Phone, X } from 'lucide-react';
 
 interface PadelMapProps {
   clubs: PadelClub[];
@@ -16,6 +25,8 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
+  const [selectedClub, setSelectedClub] = useState<PadelClub | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -103,61 +114,32 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         .setLngLat(club.coordinates)
         .addTo(map.current!);
 
-      // Add popup with club info
-      const popup = new mapboxgl.Popup({
-        offset: 25,
-        closeButton: false,
-        closeOnClick: true,
-        maxWidth: '300px'
-      }).setHTML(`
-        <div class="bg-card border border-border rounded-lg overflow-hidden shadow-xl">
-          <div class="flex">
-            ${club.image ? `
-              <div class="w-20 h-16 bg-cover bg-center flex-shrink-0" style="background-image: url('${club.image}')"></div>
-            ` : `
-              <div class="w-20 h-16 bg-muted flex items-center justify-center flex-shrink-0">
-                <span class="text-lg">🏓</span>
-              </div>
-            `}
-            <div class="flex-1 p-3 min-w-0">
-              <h3 class="font-semibold text-sm text-card-foreground truncate mb-1">${club.name}</h3>
-              <div class="flex items-center gap-1 mb-1">
-                ${Array.from({length: 5}, (_, i) => 
-                  i < Math.floor(club.rating || 0) 
-                    ? '<span class="text-yellow-400 text-xs leading-none">★</span>' 
-                    : '<span class="text-muted-foreground text-xs leading-none">☆</span>'
-                ).join('')}
-                <span class="text-xs text-muted-foreground ml-1">${club.rating || 'N/A'}</span>
-              </div>
-              <p class="text-xs text-muted-foreground mb-2">
-                ${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}
-              </p>
-            </div>
-          </div>
-          <div class="px-3 pb-3">
-            <a href="/padel-courts/${club.id}" 
-               class="block w-full text-center bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors">
-              View Details
-            </a>
-          </div>
-        </div>
-      `);
-
-      marker.setPopup(popup);
-
-      // Add click event if callback is provided
-      if (onClubSelect) {
-        markerElement.addEventListener('click', () => {
-          onClubSelect(club);
-          
-          // Fly to location
-          map.current?.flyTo({
-            center: club.coordinates,
-            zoom: 13,
-            duration: 1000
-          });
+      // Add click event to open drawer
+      markerElement.addEventListener('click', () => {
+        setSelectedClub(club);
+        setDrawerOpen(true);
+        
+        // Visual feedback - highlight selected marker
+        markers.current.forEach(m => {
+          const el = m.getElement();
+          el.style.transform = 'scale(1)';
+          el.style.zIndex = '1';
         });
-      }
+        markerElement.style.transform = 'scale(1.2)';
+        markerElement.style.zIndex = '10';
+        
+        // Fly to location
+        map.current?.flyTo({
+          center: club.coordinates,
+          zoom: 13,
+          duration: 1000
+        });
+        
+        // Call onClubSelect if provided
+        if (onClubSelect) {
+          onClubSelect(club);
+        }
+      });
 
       markers.current.push(marker);
     });
@@ -170,6 +152,16 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     }
   }, [clubs, onClubSelect]);
 
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+    // Reset marker scales when drawer closes
+    markers.current.forEach(m => {
+      const el = m.getElement();
+      el.style.transform = 'scale(1)';
+      el.style.zIndex = '1';
+    });
+  };
+
   return (
     <div className="relative w-full h-full">
       <div 
@@ -177,6 +169,117 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
         className="absolute inset-0 rounded-lg"
         style={{ minHeight: '400px' }}
       />
+      
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent className="max-h-[80vh]">
+          <DrawerHeader className="relative">
+            <DrawerClose asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="absolute right-4 top-4 p-2"
+                onClick={handleDrawerClose}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </DrawerClose>
+            
+            {selectedClub && (
+              <div className="pr-12">
+                <DrawerTitle className="text-left text-lg font-semibold mb-2">
+                  {selectedClub.name}
+                </DrawerTitle>
+                
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex items-center">
+                    {Array.from({length: 5}, (_, i) => (
+                      <Star 
+                        key={i} 
+                        className={`h-4 w-4 ${
+                          i < Math.floor(selectedClub.rating || 0)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-muted-foreground'
+                        }`}
+                      />
+                    ))}
+                    <span className="text-sm text-muted-foreground ml-2">
+                      {selectedClub.rating || 'N/A'}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{selectedClub.numberOfCourts} court{selectedClub.numberOfCourts !== 1 ? 's' : ''}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DrawerHeader>
+          
+          {selectedClub && (
+            <div className="px-4 pb-6 space-y-4">
+              {/* Hero Image */}
+              {selectedClub.image && (
+                <div className="w-full h-48 rounded-lg overflow-hidden bg-muted">
+                  <img 
+                    src={selectedClub.image} 
+                    alt={selectedClub.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+              
+              {/* Quick Info */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-2 text-sm">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>Open daily 8AM-10PM</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Phone className="h-4 w-4 text-muted-foreground" />
+                  <span>Call for bookings</span>
+                </div>
+              </div>
+              
+              {/* Description */}
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Professional padel facility with modern courts and equipment. 
+                  Perfect for players of all skill levels.
+                </p>
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-2">
+                <Button 
+                  asChild 
+                  className="flex-1"
+                >
+                  <a href={`/padel-courts/${selectedClub.id}`}>
+                    View Full Details
+                  </a>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => {
+                    // Get directions - could integrate with maps app
+                    const [lng, lat] = selectedClub.coordinates;
+                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
+                  }}
+                >
+                  Get Directions
+                </Button>
+              </div>
+            </div>
+          )}
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
