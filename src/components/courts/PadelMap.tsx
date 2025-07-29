@@ -152,7 +152,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       />
       
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
-        <DrawerContent className="max-h-[85vh]">
+        <DrawerContent className="absolute bottom-0 left-0 right-0 max-h-[60%] rounded-t-lg border-t">
           {selectedClub && (
             <>
               <DrawerHeader className="text-left">
