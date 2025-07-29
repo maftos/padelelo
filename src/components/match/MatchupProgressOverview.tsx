@@ -114,63 +114,81 @@ export const MatchupProgressOverview = ({
   }
 
   return (
-    <div className="mb-6">
-      <h3 className="text-sm font-medium text-muted-foreground mb-3">Match Progress</h3>
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {Object.entries(groupedMatchups).map(([key, { matchup, indices, results }]) => {
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-medium text-muted-foreground">Progress</h3>
+        <div className="text-xs text-muted-foreground">
+          Tap to jump to match
+        </div>
+      </div>
+      
+      {/* Mobile-optimized vertical layout on small screens */}
+      <div className="md:flex md:gap-2 md:overflow-x-auto md:pb-2 space-y-2 md:space-y-0">
+        {Object.entries(groupedMatchups).map(([key, { matchup, indices, results }], index) => {
           const status = getMatchupStatus(indices);
-          const playCount = indices.length;
+          const isClickable = status !== "pending" || indices.includes(currentIndex || -1);
           
           return (
             <Card
               key={key}
               className={`
                 transition-all duration-200 relative
-                min-w-fit
+                md:min-w-fit w-full
                 ${status === "current" 
-                  ? "ring-2 ring-primary bg-primary/5" 
+                  ? "ring-2 ring-primary bg-primary/10" 
                   : status === "completed" 
-                    ? "border-green-500 border-2" 
-                    : ""
+                    ? "border-green-500 bg-green-50/50" 
+                    : "opacity-60"
                 }
+                ${isClickable ? "cursor-pointer hover:shadow-md" : ""}
               `}
+              onClick={() => isClickable && onMatchupClick && onMatchupClick(indices[0])}
             >
               <CardContent className="p-3">
-                <div className="flex items-center gap-2">
-                  {/* Player photos in 2x2 grid */}
-                  <div className="flex flex-col gap-1">
-                    {/* Team 1 players (top row) */}
+                <div className="flex items-center justify-between">
+                  {/* Match number indicator */}
+                  <div className="text-xs font-medium text-muted-foreground w-8">
+                    #{index + 1}
+                  </div>
+                  
+                  {/* Compact team display for mobile */}
+                  <div className="flex items-center gap-2 flex-1 justify-center">
                     <div className="flex items-center gap-1">
                       <PlayerAvatar playerId={matchup.team1[0]} />
                       <PlayerAvatar playerId={matchup.team1[1]} />
                     </div>
                     
-                    {/* Horizontal divider */}
-                    <div className="h-px bg-border my-1" />
+                    <div className="text-xs text-muted-foreground">vs</div>
                     
-                    {/* Team 2 players (bottom row) */}
                     <div className="flex items-center gap-1">
                       <PlayerAvatar playerId={matchup.team2[0]} />
                       <PlayerAvatar playerId={matchup.team2[1]} />
                     </div>
                   </div>
                   
-                  {/* Scores aligned with teams - display horizontally */}
-                  {results.length > 0 && (
-                    <div className="flex gap-1">
-                      {results.map((result, setIndex) => (
-                        <div key={setIndex} className="flex flex-col justify-center gap-3">
-                          <div className="text-xs font-medium text-green-700">
-                            {result.team1Score}
-                          </div>
-                          <div className="text-xs font-medium text-green-700">
-                            {result.team2Score}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* Status indicator */}
+                  <div className="w-8 flex justify-end">
+                    {status === "completed" && (
+                      <div className="w-4 h-4 rounded-full bg-green-500 flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full" />
+                      </div>
+                    )}
+                    {status === "current" && (
+                      <div className="w-4 h-4 rounded-full bg-primary animate-pulse" />
+                    )}
+                  </div>
                 </div>
+                
+                {/* Scores display for completed matches */}
+                {results.length > 0 && (
+                  <div className="flex justify-center gap-2 mt-2 pt-2 border-t">
+                    {results.map((result, setIndex) => (
+                      <div key={setIndex} className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded">
+                        {result.team1Score}-{result.team2Score}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           );
