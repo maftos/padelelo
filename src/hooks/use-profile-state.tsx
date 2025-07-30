@@ -221,7 +221,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
         formData
       });
 
-      const { error } = await supabase.rpc('edit_my_profile' as any, {
+      const { data, error } = await supabase.rpc('edit_my_profile' as any, {
         user_id: profileUserId,
         new_first_name: formData.first_name,
         new_last_name: formData.last_name,
@@ -231,6 +231,8 @@ export const useProfileState = (profileUserId: string | undefined) => {
         new_preferred_side: formData.preferred_side || null,
         new_handedness: formData.handedness || null
       });
+
+      console.log('Profile update response:', { data, error });
 
       if (error) {
         console.error('Error updating profile:', error);
