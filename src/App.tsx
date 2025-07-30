@@ -26,7 +26,6 @@ import PlayerMatching from "./pages/PlayerMatching";
 import NotFound from "./pages/NotFound";
 import News from "./pages/News";
 import Settings from "./pages/Settings";
-import EditProfile from "./pages/EditProfile";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -56,7 +55,6 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:userId" element={<Profile />} />
-              <Route path="/edit-profile" element={<EditProfile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/manage-bookings" element={<ManageMatches />} />
               <Route path="/create-match" element={<CreateMatch />} />

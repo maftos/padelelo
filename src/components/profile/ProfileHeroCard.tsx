@@ -259,7 +259,7 @@ export const ProfileHeroCard = ({
                 </>
               ) : (
                 <div className="w-full space-y-2">
-                  <Button onClick={() => navigate('/edit-profile')} variant="outline" className="w-full">
+                  <Button onClick={onEdit} variant="outline" className="w-full">
                     <Edit className="w-4 h-4 mr-2" />
                     Edit Profile
                   </Button>
