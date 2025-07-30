@@ -37,7 +37,7 @@ interface ProfileFormState {
   years_playing: string;
   favorite_position: string;
   preferred_side: string;
-  instagram_handle?: string;
+  handedness?: string;
 }
 
 export const useProfileState = (profileUserId: string | undefined) => {
@@ -55,7 +55,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
     years_playing: "",
     favorite_position: "",
     preferred_side: "",
-    instagram_handle: "",
+    handedness: "",
   });
 
   const { data: profileData, isLoading, refetch } = useQuery<ViewProfileResponse | null>({
@@ -88,8 +88,15 @@ export const useProfileState = (profileUserId: string | undefined) => {
         // Return in the same format as view_profile
         return {
           profile: {
-            ...data,
-            created_at: data.created_at || new Date().toISOString()
+            id: data.id,
+            first_name: data.first_name,
+            last_name: data.last_name,
+            created_at: data.created_at || new Date().toISOString(),
+            gender: data.gender,
+            location: data.location,
+            profile_photo: data.profile_photo,
+            current_mmr: data.current_mmr,
+            nationality: data.nationality
           },
           friendship: {
             exists: false,
@@ -121,7 +128,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
         years_playing: "",
         favorite_position: "",
         preferred_side: "",
-        instagram_handle: "",
+        handedness: "",
       });
     }
   }, [profileData]);
@@ -199,6 +206,16 @@ export const useProfileState = (profileUserId: string | undefined) => {
         return;
       }
 
+      // Validate required fields
+      if (!formData.first_name || !formData.last_name || !formData.nationality || !formData.gender) {
+        toast({
+          title: "Validation Error",
+          description: "Please fill in all required fields (First Name, Last Name, Nationality, Gender).",
+          variant: "destructive",
+        });
+        return;
+      }
+
       console.log('Updating profile with data:', {
         profileUserId,
         formData
@@ -212,12 +229,12 @@ export const useProfileState = (profileUserId: string | undefined) => {
         new_display_name: displayName,
         new_gender: formData.gender,
         new_date_of_birth: null,
-        new_languages: [], // Empty array since we removed languages
+        new_languages: [],
         new_preferred_language: null,
         new_profile_photo: formData.profile_photo,
-        new_whatsapp_number: null, // Removed WhatsApp field
+        new_whatsapp_number: null,
         new_nationality: formData.nationality,
-        new_location: null // Set to null since we removed location
+        new_location: null
       });
 
       if (error) {

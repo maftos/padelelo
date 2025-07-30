@@ -351,15 +351,6 @@ export const ProfileForm = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="instagram">Instagram Handle</Label>
-            <Input
-              id="instagram"
-              value={formData.instagram_handle || ""}
-              onChange={(e) => onFormChange('instagram_handle', e.target.value)}
-              placeholder="@yourusername"
-            />
-          </div>
         </CardContent>
       </Card>
 
