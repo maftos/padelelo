@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Calendar, ChevronRight, Users, TrendingUp, TrendingDown, Star, UserPlus } from "lucide-react";
+import { Trophy, Calendar, ChevronRight, Users, TrendingUp, TrendingDown, Star, UserPlus, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SuggestedFriends } from "@/components/dashboard/SuggestedFriends";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -83,64 +83,70 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
-  const { data: upcomingTournaments } = useQuery({
-    queryKey: ['upcomingTournaments', user?.id],
+  const { data: nextGame } = useQuery({
+    queryKey: ['nextGame', user?.id],
     queryFn: async () => {
-      if (!user?.id) return [];
+      if (!user?.id) return null;
       const { data, error } = await supabase
-        .rpc('view_tournaments', {
-          p_user_a_id: user.id
+        .rpc('get_bookings_closed', {
+          p_user_id: user.id
         });
       if (error) throw error;
-      return ((data as unknown) as Tournament[])
-        .filter(t => t.status === 'UPCOMING')
-        .slice(0, 3);
+      
+      // Type assertion for the JSON array response
+      const bookings = Array.isArray(data) ? data : [];
+      const upcomingBookings = bookings
+        .filter((booking: any) => new Date(booking.start_time) > new Date())
+        .sort((a: any, b: any) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
+      
+      return upcomingBookings.length > 0 ? upcomingBookings[0] : null;
     },
     enabled: !!user?.id
   });
 
-  const { data: recentMatches } = useQuery({
-    queryKey: ['recentMatches', user?.id],
+  const { data: recentMatchSets } = useQuery({
+    queryKey: ['recentMatchSets', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase.rpc('get_my_completed_matches', {
         user_a_id: user.id,
         page_number: 1,
-        page_size: 3
+        page_size: 10
       });
       if (error) throw error;
       
       // Handle the new JSON response format with pagination and nested team structure
       const matchesData = (data as any)?.matches || [];
       
-      return matchesData.map((match: any) => {
-        const team1 = match.team1 || {};
-        const team2 = match.team2 || {};
-        
-        return {
-          match_id: match.match_id,
-          created_at: match.created_at,
-          change_type: match.change_type,
-          change_amount: match.change_amount,
-          new_mmr: match.new_mmr,
-          old_mmr: match.old_mmr,
-          team1_score: match.team1_score,
-          team2_score: match.team2_score,
-          completed_by: match.completed_by,
-          player1_id: team1.player1?.id,
-          player1_display_name: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
-          player1_profile_photo: team1.player1?.profile_photo || '',
-          player2_id: team1.player2?.id,
-          player2_display_name: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
-          player2_profile_photo: team1.player2?.profile_photo || '',
-          player3_id: team2.player1?.id,
-          player3_display_name: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
-          player3_profile_photo: team2.player1?.profile_photo || '',
-          player4_id: team2.player2?.id,
-          player4_display_name: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
-          player4_profile_photo: team2.player2?.profile_photo || '',
-        };
+      // Flatten all sets from all matches into a single list
+      const allSets: any[] = [];
+      
+      matchesData.forEach((match: any) => {
+        const sets = match.sets || [];
+        sets.forEach((set: any) => {
+          const team1 = match.team1 || {};
+          const team2 = match.team2 || {};
+          
+          allSets.push({
+            match_id: match.match_id,
+            set_number: set.set_number,
+            team1_score: set.team1_score,
+            team2_score: set.team2_score,
+            created_at: match.created_at,
+            change_type: match.change_type,
+            change_amount: match.change_amount,
+            team1_player1: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
+            team1_player2: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
+            team2_player1: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
+            team2_player2: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
+          });
+        });
       });
+      
+      // Sort by match creation date and take the latest 10 sets
+      return allSets
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 10);
     },
     enabled: !!user?.id
   });
@@ -201,48 +207,66 @@ export default function Dashboard() {
 
           {/* Content Grid - Stack on mobile, side by side on larger screens */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-            {/* Your Tournaments */}
+            {/* Next Game */}
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
+              <CardHeader className="pb-3 space-y-0">
                 <div className="flex items-center gap-2 min-w-0">
                   <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 flex-shrink-0" />
-                  <CardTitle className="text-base sm:text-lg truncate">Your Tournaments</CardTitle>
+                  <CardTitle className="text-base sm:text-lg truncate">Next Game</CardTitle>
                 </div>
-                <Link to="/tournaments">
-                  <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3 flex-shrink-0">
-                    View All
-                  </Button>
-                </Link>
               </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3">
-                {upcomingTournaments && upcomingTournaments.length > 0 ? (
-                  upcomingTournaments.map((tournament) => (
-                    <Link 
-                      key={tournament.tournament_id} 
-                      to={`/tournaments/${tournament.tournament_id}`}
-                      className="block p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors border border-accent/40 touch-manipulation"
-                    >
-                      <div className="flex justify-between items-center gap-3">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-foreground text-sm sm:text-base line-clamp-1">{tournament.name}</h4>
-                          <p className="text-xs sm:text-sm text-muted-foreground">
-                            {new Date(tournament.start_date).toLocaleDateString()}
-                          </p>
+              <CardContent>
+                 {nextGame ? (
+                  <div className="p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors border border-accent/40">
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <div className="flex items-start gap-2">
+                          <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                          <span className="font-medium text-sm sm:text-base leading-tight">
+                            {new Date((nextGame as any).start_time).toLocaleDateString('en-GB', { 
+                              weekday: 'long', 
+                              day: 'numeric', 
+                              month: 'long' 
+                            })} @ {new Date((nextGame as any).start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
                         </div>
-                        <div className="text-right flex-shrink-0">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-3 w-3 text-yellow-500" />
-                            <span className="text-xs sm:text-sm font-medium">{tournament.recommended_mmr}</span>
-                          </div>
-                          <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground mt-1 ml-auto" />
+                        
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                          <span className="text-xs sm:text-sm text-muted-foreground leading-tight">{(nextGame as any).venue_name}</span>
                         </div>
                       </div>
-                    </Link>
-                  ))
+                      
+                      {/* Players */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Users className="h-3 w-3" />
+                          <span>Players</span>
+                        </div>
+                        
+                        <div className="flex flex-wrap items-center gap-2">
+                          {((nextGame as any).participants || []).map((participant: any, index: number) => (
+                            <div key={participant.player_id} className="flex items-center gap-1.5">
+                              <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
+                                <AvatarImage src={participant.profile_photo} />
+                                <AvatarFallback className="text-xs">
+                                  {`${participant.first_name[0] || ''}${participant.last_name[0] || ''}`.toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="text-xs sm:text-sm font-medium">{participant.first_name}</span>
+                              {index < ((nextGame as any).participants || []).length - 1 && (
+                                <span className="text-muted-foreground text-xs mx-0.5">•</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
                   <div className="text-center py-6 sm:py-8">
                     <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground text-xs sm:text-sm">No upcoming tournaments</p>
+                    <p className="text-muted-foreground text-xs sm:text-sm">No upcoming games</p>
                   </div>
                 )}
               </CardContent>
@@ -280,94 +304,54 @@ export default function Dashboard() {
                 </Button>
               </Link>
             </CardHeader>
-            <CardContent className="space-y-3 sm:space-y-4">
-              {recentMatches && recentMatches.length > 0 ? (
-                recentMatches.map((match) => (
-                  <div key={match.match_id} className="p-3 sm:p-4 rounded-lg bg-accent/30 border border-accent/40">
-                    <div className="flex justify-between items-start mb-2 sm:mb-3 gap-3">
-                      <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                        <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          match.change_type === 'WIN' ? 'bg-green-100' : 'bg-red-100'
+            <CardContent>
+              {recentMatchSets && recentMatchSets.length > 0 ? (
+                <div className="space-y-2">
+                  {recentMatchSets.map((set) => (
+                    <div key={`${set.match_id}-${set.set_number}`} className="flex items-center justify-between p-3 rounded-lg bg-accent/20 hover:bg-accent/30 transition-colors border border-accent/30">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          set.change_type === 'WIN' ? 'bg-green-100' : 'bg-red-100'
                         }`}>
-                          {match.change_type === 'WIN' ? (
-                            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
+                          {set.change_type === 'WIN' ? (
+                            <TrendingUp className="h-3 w-3 text-green-600" />
                           ) : (
-                            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-red-600 rotate-180" />
+                            <TrendingUp className="h-3 w-3 text-red-600 rotate-180" />
                           )}
                         </div>
-                        <div className="min-w-0">
-                          <p className="font-medium text-foreground text-sm sm:text-base">
-                            {match.change_type === 'WIN' ? 'Victory' : 'Defeat'}
-                          </p>
-                          <p className="text-xs sm:text-sm text-muted-foreground">
-                            {new Date(match.created_at).toLocaleDateString()}
-                          </p>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">Set {set.set_number}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {set.team1_player1} & {set.team1_player2}
+                            </span>
+                            <span className="text-xs text-muted-foreground">vs</span>
+                            <span className="text-xs text-muted-foreground">
+                              {set.team2_player1} & {set.team2_player2}
+                            </span>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {new Date(set.created_at).toLocaleDateString()}
+                          </div>
                         </div>
                       </div>
-                      <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ${
-                        match.change_type === 'WIN' 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}>
-                        {match.change_type === 'WIN' ? '+' : '-'}{match.change_amount} MMR
-                      </div>
-                    </div>
-                    
-                    {/* Match Details with Player Photos - Mobile optimized */}
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 p-2 sm:p-3 bg-background/60 rounded-lg border">
-                      {/* Team 1 */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 sm:mb-2">
-                          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
-                            <AvatarImage src={match.player1_profile_photo} />
-                            <AvatarFallback className="text-xs">
-                              {match.player1_display_name?.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-xs sm:text-sm font-medium truncate">{match.player1_display_name}</span>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <div className="flex items-center gap-1 px-2 py-1 bg-background rounded-lg border">
+                          <span className="text-sm font-bold">{set.team1_score}</span>
+                          <span className="text-xs text-muted-foreground">-</span>
+                          <span className="text-sm font-bold">{set.team2_score}</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0">
-                            <AvatarImage src={match.player2_profile_photo} />
-                            <AvatarFallback className="text-xs">
-                              {match.player2_display_name?.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-xs sm:text-sm font-medium truncate">{match.player2_display_name}</span>
-                        </div>
-                      </div>
-
-                      {/* Score */}
-                      <div className="flex items-center justify-center gap-2 px-2 sm:px-3 py-1 rounded-lg bg-background border flex-shrink-0">
-                        <span className="text-base sm:text-lg font-bold">{match.team1_score}</span>
-                        <span className="text-muted-foreground text-sm">-</span>
-                        <span className="text-base sm:text-lg font-bold">{match.team2_score}</span>
-                      </div>
-
-                      {/* Team 2 */}
-                      <div className="flex-1 min-w-0 text-left sm:text-right">
-                        <div className="flex items-center gap-2 mb-1 sm:mb-2 sm:justify-end">
-                          <span className="text-xs sm:text-sm font-medium truncate order-2 sm:order-1">{match.player3_display_name}</span>
-                          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 order-1 sm:order-2">
-                            <AvatarImage src={match.player3_profile_photo} />
-                            <AvatarFallback className="text-xs">
-                              {match.player3_display_name?.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                        </div>
-                        <div className="flex items-center gap-2 sm:justify-end">
-                          <span className="text-xs sm:text-sm font-medium truncate order-2 sm:order-1">{match.player4_display_name}</span>
-                          <Avatar className="h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 order-1 sm:order-2">
-                            <AvatarImage src={match.player4_profile_photo} />
-                            <AvatarFallback className="text-xs">
-                              {match.player4_display_name?.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
+                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          set.change_type === 'WIN' 
+                            ? 'bg-green-100 text-green-700' 
+                            : 'bg-red-100 text-red-700'
+                        }`}>
+                          {set.change_type === 'WIN' ? '+' : ''}{set.change_amount}
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))}
+                </div>
               ) : (
                 <div className="text-center py-6 sm:py-8">
                   <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mx-auto mb-2" />
