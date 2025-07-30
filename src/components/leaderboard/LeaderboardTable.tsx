@@ -1,6 +1,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronRight, Crown, Award, User, UserX } from "lucide-react";
+import { countries } from "@/lib/countries";
 import {
   Table,
   TableBody,
@@ -73,6 +74,12 @@ export const LeaderboardTable = ({
     return <UserX className="w-4 h-4 text-gray-400" />;
   };
 
+  const getCountryFlag = (nationality: string | null) => {
+    if (!nationality) return '🏳️';
+    const country = countries.find(c => c.code === nationality);
+    return country?.flag || '🏳️';
+  };
+
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-xl overflow-hidden">
       <Table>
@@ -143,7 +150,7 @@ export const LeaderboardTable = ({
                       </p>
                       {isMobile && (
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span className="truncate max-w-[80px]">{player.nationality || 'Unknown'}</span>
+                          <span className="text-base">{getCountryFlag(player.nationality)}</span>
                           <span>•</span>
                           <div className="flex items-center gap-1">
                             {getGenderIcon(player.gender)}
@@ -160,7 +167,9 @@ export const LeaderboardTable = ({
                         {getGenderIcon(player.gender)}
                       </div>
                     </TableCell>
-                    <TableCell className="text-base px-4">{player.nationality || 'Unknown'}</TableCell>
+                    <TableCell className="text-center px-4">
+                      <span className="text-2xl">{getCountryFlag(player.nationality)}</span>
+                    </TableCell>
                   </>
                 )}
                 <TableCell className="text-right px-2 md:px-4">

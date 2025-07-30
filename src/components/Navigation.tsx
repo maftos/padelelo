@@ -19,6 +19,7 @@ export const Navigation = () => {
   const showOnPublicPage = publicPagesWithNav.some(path => currentPath.startsWith(path));
   
   if (user && !showOnPublicPage) return null;
+  if (!user && !showOnPublicPage) return null;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card">

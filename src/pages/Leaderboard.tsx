@@ -11,7 +11,7 @@ import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 
-import { SocialShare } from "@/components/seo/SocialShare";
+import { Navigation } from "@/components/Navigation";
 
 const Leaderboard = () => {
   const { user } = useAuth();
@@ -46,6 +46,7 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <Navigation />
       <Helmet>
         <title>Padel Rankings & Leaderboard - Mauritius | PadelELO</title>
         <meta 
@@ -75,19 +76,6 @@ const Leaderboard = () => {
       </Helmet>
       
       <main className="container py-6 md:py-12 px-4 max-w-7xl mx-auto">
-        
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Padel Leaderboard</h1>
-            <p className="text-muted-foreground">Mauritius's official padel rankings</p>
-          </div>
-          <SocialShare
-            title="Padel Leaderboard - Mauritius Rankings"
-            description={`Check out the official padel rankings for ${totalPlayers} players in Mauritius`}
-            hashtags={["padel", "mauritius", "leaderboard", "rankings"]}
-            showZapierIntegration={true}
-          />
-        </div>
         
         <div className="space-y-6 md:space-y-8 animate-fade-in">
           <LeaderboardHeader 
