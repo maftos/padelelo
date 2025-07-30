@@ -117,15 +117,6 @@ export const SideMenuContent = ({
             </Link>
           </SheetClose>
 
-          <SheetClose asChild>
-            <Link
-              to="/tournaments"
-              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
-            >
-              <Trophy className="h-5 w-5" />
-              <span className="font-medium">Tournaments</span>
-            </Link>
-          </SheetClose>
 
           <SheetClose asChild>
             <Link

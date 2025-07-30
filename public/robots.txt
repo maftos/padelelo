@@ -19,3 +19,4 @@ Disallow: /friends
 Disallow: /verify
 Disallow: /onboarding
 Disallow: /player-matching
+Disallow: /tournaments
