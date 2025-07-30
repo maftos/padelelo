@@ -20,15 +20,7 @@ const Profile = () => {
   
   const {
     isLoading,
-    isEditing,
-    uploading,
-    formData,
     profileData,
-    setIsEditing,
-    handleFormChange,
-    handleGenderSelect,
-    handlePhotoUpload,
-    handleSave,
     refetch
   } = useProfileState(targetUserId);
 
@@ -172,28 +164,27 @@ const Profile = () => {
         )}
         
         <div className="space-y-8">
-          {/* Only show ProfileHeader when editing own profile */}
-          {isEditing && isOwnProfile && (
-            <ProfileHeader 
-              title="Edit Profile"
-              description="Update your profile information"
-            />
-          )}
-
           <ProfileContent
-            isEditing={isEditing && isOwnProfile}
-            uploading={uploading}
-            formData={formData}
-            profileData={profileData}
-            onPhotoUpload={handlePhotoUpload}
-            onFormChange={handleFormChange}
-            onGenderSelect={handleGenderSelect}
-            onSave={handleSave}
-            onEdit={() => isOwnProfile && setIsEditing(true)}
-            onCancel={async () => {
-              setIsEditing(false);
-              await refetch();
+            isEditing={false}
+            uploading={false}
+            formData={{
+              first_name: '',
+              last_name: '',
+              nationality: '',
+              gender: '',
+              profile_photo: '',
+              current_mmr: 0,
+              years_playing: '',
+              favorite_position: '',
+              preferred_side: ''
             }}
+            profileData={profileData}
+            onPhotoUpload={() => {}}
+            onFormChange={() => {}}
+            onGenderSelect={() => {}}
+            onSave={() => {}}
+            onEdit={() => {}}
+            onCancel={() => {}}
             isOwnProfile={isOwnProfile}
           />
         </div>

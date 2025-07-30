@@ -222,6 +222,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
       });
 
       const { error } = await supabase.rpc('edit_my_profile' as any, {
+        user_id: profileUserId,
         new_first_name: formData.first_name,
         new_last_name: formData.last_name,
         new_nationality: formData.nationality,
