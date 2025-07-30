@@ -236,13 +236,45 @@ export const useProfileState = (profileUserId: string | undefined) => {
 
       if (error) {
         console.error('Error updating profile:', error);
-        throw error;
+        
+        // Handle specific error cases
+        if (error.message.includes('does not exist')) {
+          toast({
+            title: "User Not Found",
+            description: "Your user profile could not be found. Please try logging out and back in.",
+            variant: "destructive",
+          });
+        } else if (error.message.includes('permission')) {
+          toast({
+            title: "Permission Denied",
+            description: "You don't have permission to update this profile.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Update Failed",
+            description: error.message || "Failed to update profile. Please try again.",
+            variant: "destructive",
+          });
+        }
+        return;
       }
 
+      // Validate response data
+      if (!data) {
+        toast({
+          title: "Update Failed",
+          description: "No response received from server. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Success - refresh data and show success message
       await refetch();
 
       toast({
-        title: "Profile updated",
+        title: "Profile Updated",
         description: "Your profile has been successfully updated.",
       });
 
