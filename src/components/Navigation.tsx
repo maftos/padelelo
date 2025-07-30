@@ -6,20 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 export const Navigation = () => {
-  const { profile } = useUserProfile();
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const handleSignInClick = () => navigate('/login');
 
-  // Show navigation on public pages when user is not authenticated
-  // OR when user is on specific public pages that should show navigation
-  const currentPath = window.location.pathname;
-  const publicPagesWithNav = ['/leaderboard', '/tournaments', '/open-bookings', '/profile'];
-  const showOnPublicPage = publicPagesWithNav.some(path => currentPath.startsWith(path));
-  
-  if (user && !showOnPublicPage) return null;
-  if (!user && !showOnPublicPage) return null;
+  // Only show navigation for non-authenticated users
+  // MainLayout now controls when this component is shown
+  if (user) return null;
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-card">

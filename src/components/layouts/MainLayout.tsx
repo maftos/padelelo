@@ -3,6 +3,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { MobileHeader } from "@/components/navigation/MobileHeader";
+import { Navigation } from "@/components/Navigation";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -11,45 +13,80 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const { user } = useAuth();
   const { profile, isLoading } = useUserProfile();
+  const isMobile = useIsMobile();
 
-  if (!user) {
+  // Don't show navigation until we know onboarding status for authenticated users
+  if (user && isLoading) {
     return <div className="min-h-screen bg-background">{children}</div>;
   }
 
-  // Don't show navigation until we know onboarding status
-  if (isLoading) {
-    return <div className="min-h-screen bg-background">{children}</div>;
-  }
-
-  // Only show navigation if user has completed onboarding
-  const showNavigation = profile?.is_onboarded === true;
+  const isAuthenticated = !!user;
+  const isOnboarded = profile?.is_onboarded === true;
+  
+  // Navigation logic based on requirements:
+  // Desktop + Not logged in: Show Navigation component
+  // Desktop + Logged in: Show AppSidebar only
+  // Mobile + Not logged in: Show Navigation component  
+  // Mobile + Logged in: Show MobileHeader only
+  
+  const showDesktopNavigation = !isMobile && !isAuthenticated;
+  const showMobileNavigation = isMobile && !isAuthenticated;
+  const showDesktopSidebar = !isMobile && isAuthenticated && isOnboarded;
+  const showMobileHeader = isMobile && isAuthenticated && isOnboarded;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Only render navigation when onboarded */}
-      {showNavigation && (
+      {/* Desktop Navigation for non-authenticated users */}
+      {showDesktopNavigation && (
+        <div className="hidden lg:block">
+          <Navigation />
+        </div>
+      )}
+      
+      {/* Mobile Navigation for non-authenticated users */}
+      {showMobileNavigation && (
+        <div className="lg:hidden">
+          <Navigation />
+        </div>
+      )}
+      
+      {/* Authenticated user navigation */}
+      {isAuthenticated && isOnboarded && (
         <>
-          {/* Mobile Header */}
-          <MobileHeader />
-          
-          <div className="flex">
-            {/* Desktop Sidebar */}
-            <div className="hidden lg:block">
-              <AppSidebar />
+          {/* Mobile Header for authenticated users */}
+          {showMobileHeader && (
+            <div className="lg:hidden">
+              <MobileHeader />
             </div>
-            
-            {/* Main Content */}
-            <main className="flex-1 lg:ml-0">
-              <div className="w-full px-4 py-6">
-                {children}
-              </div>
-            </main>
-          </div>
+          )}
+          
+          {/* Desktop layout with sidebar for authenticated users */}
+          {showDesktopSidebar && (
+            <div className="hidden lg:flex">
+              <AppSidebar />
+              <main className="flex-1">
+                <div className="w-full px-4 py-6">
+                  {children}
+                </div>
+              </main>
+            </div>
+          )}
+          
+          {/* Mobile layout for authenticated users */}
+          {showMobileHeader && (
+            <div className="lg:hidden">
+              <main className="w-full">
+                <div className="px-4 py-6">
+                  {children}
+                </div>
+              </main>
+            </div>
+          )}
         </>
       )}
       
-      {/* When not onboarded, show content without navigation */}
-      {!showNavigation && (
+      {/* Content without navigation (non-authenticated or not onboarded) */}
+      {(!isAuthenticated || !isOnboarded) && (
         <div className="w-full">
           {children}
         </div>

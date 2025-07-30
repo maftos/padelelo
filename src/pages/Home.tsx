@@ -1,6 +1,6 @@
 
 import { Helmet } from "react-helmet";
-import { Navigation } from "@/components/Navigation";
+
 import { HeroSection } from "@/components/home/HeroSection";
 import { ProductShowcaseSection } from "@/components/home/ProductShowcaseSection";
 import { CommunitySection } from "@/components/home/CommunitySection";
@@ -63,7 +63,6 @@ const Home = () => {
         <link rel="canonical" href="https://padel-elo.com" />
       </Helmet>
       <LocalBusinessSchema />
-      <Navigation />
       <main className="space-y-0">
         <HeroSection />
         <ProductShowcaseSection />

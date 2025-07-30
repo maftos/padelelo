@@ -11,7 +11,7 @@ import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
 
-import { Navigation } from "@/components/Navigation";
+
 
 const Leaderboard = () => {
   const { user } = useAuth();
@@ -46,7 +46,6 @@ const Leaderboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
-      <Navigation />
       <Helmet>
         <title>Padel Rankings & Leaderboard - Mauritius | PadelELO</title>
         <meta 
