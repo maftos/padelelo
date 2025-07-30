@@ -63,6 +63,7 @@ export const ProfileHeroCard = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const [sendingRequest, setSendingRequest] = useState(false);
+  const [acceptingRequest, setAcceptingRequest] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showMutualFriendsModal, setShowMutualFriendsModal] = useState(false);
 
@@ -104,18 +105,58 @@ export const ProfileHeroCard = ({
     }
   };
 
+  const handleAcceptFriendRequest = async () => {
+    if (!user || !profileData?.profile?.id || !profileData?.friendship?.friendship_id) {
+      toast({
+        title: "Error",
+        description: "Unable to accept friend request. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setAcceptingRequest(true);
+    try {
+      const { error } = await supabase
+        .from('friendships')
+        .update({ status: 'CONFIRMED' })
+        .eq('id', profileData.friendship.friendship_id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Friend request accepted!",
+      });
+    } catch (error) {
+      console.error('Error accepting friend request:', error);
+      toast({
+        title: "Error",
+        description: "Failed to accept friend request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setAcceptingRequest(false);
+    }
+  };
+
   const getFriendshipStatus = () => {
     if (!profileData?.friendship) return null;
     
     const { exists, status } = profileData.friendship;
     
-    if (!exists) return null;
+    if (!exists || !status) return null;
     
     switch (status) {
-      case 'ACCEPTED':
+      case 'CONFIRMED':
         return 'friends';
-      case 'PENDING':
-        return 'pending';
+      case 'INVITED':
+        return 'request_sent';
+      case 'RECEIVED':
+        return 'request_received';
+      case 'DELETED':
+      case 'IGNORED':
+        return null; // Same as no friendship
       default:
         return null;
     }
@@ -239,11 +280,30 @@ export const ProfileHeroCard = ({
                   <Users className="w-4 h-4 mr-2" />
                   Friends
                 </Button>
-              ) : friendshipStatus === 'pending' ? (
+              ) : friendshipStatus === 'request_sent' ? (
                 <Button variant="outline" className="w-full" disabled>
                   <Clock className="w-4 h-4 mr-2" />
                   Request Sent
                 </Button>
+              ) : friendshipStatus === 'request_received' ? (
+                <>
+                  <Button 
+                    onClick={handleAcceptFriendRequest} 
+                    disabled={acceptingRequest}
+                    className="flex-1"
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    {acceptingRequest ? 'Accepting...' : 'Accept Friend Request'}
+                  </Button>
+                  <Button 
+                    onClick={() => setShowReportModal(true)}
+                    variant="outline"
+                    size="icon"
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    <Flag className="w-4 h-4" />
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button 
