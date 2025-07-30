@@ -23,6 +23,7 @@ interface ProfileFormState {
   years_playing: string;
   favorite_position: string;
   preferred_side: string;
+  handedness?: string;
   instagram_handle?: string;
 }
 
@@ -221,6 +222,11 @@ export const ProfileHeroCard = ({
               {formData.preferred_side && (
                 <Badge variant="outline">
                   {formData.preferred_side} side
+                </Badge>
+              )}
+              {formData.handedness && (
+                <Badge variant="outline">
+                  {formData.handedness.replace('-', ' ')}
                 </Badge>
               )}
             </div>
