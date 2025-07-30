@@ -289,7 +289,7 @@ export const ProfileForm = ({
             <Label>Gender</Label>
             <div className="grid grid-cols-2 gap-3">
               <GenderCard
-                value="male"
+                value="MALE"
                 selectedValue={formData.gender}
                 onChange={onGenderSelect}
                 icon={User}
@@ -297,7 +297,7 @@ export const ProfileForm = ({
                 <div className="font-medium text-sm">Male</div>
               </GenderCard>
               <GenderCard
-                value="female"
+                value="FEMALE"
                 selectedValue={formData.gender}
                 onChange={onGenderSelect}
                 icon={UserX}

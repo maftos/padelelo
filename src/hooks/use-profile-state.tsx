@@ -127,8 +127,8 @@ export const useProfileState = (profileUserId: string | undefined) => {
         current_mmr: profileData.profile.current_mmr || 0,
         years_playing: "",
         favorite_position: "",
-        preferred_side: "",
-        handedness: "",
+        preferred_side: (profileData.profile as any).preferred_side || "",
+        handedness: (profileData.profile as any).handedness || "",
       });
     }
   }, [profileData]);
