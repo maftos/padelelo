@@ -29,26 +29,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   // Mobile + Not logged in: Show Navigation component  
   // Mobile + Logged in: Show MobileHeader only
   
-  const showDesktopNavigation = !isMobile && !isAuthenticated;
-  const showMobileNavigation = isMobile && !isAuthenticated;
+  const showNavigation = !isAuthenticated;
   const showDesktopSidebar = !isMobile && isAuthenticated && isOnboarded;
   const showMobileHeader = isMobile && isAuthenticated && isOnboarded;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Desktop Navigation for non-authenticated users */}
-      {showDesktopNavigation && (
-        <div className="hidden lg:block">
-          <Navigation />
-        </div>
-      )}
-      
-      {/* Mobile Navigation for non-authenticated users */}
-      {showMobileNavigation && (
-        <div className="lg:hidden">
-          <Navigation />
-        </div>
-      )}
+      {/* Navigation for non-authenticated users (both mobile and desktop) */}
+      {showNavigation && <Navigation />}
       
       {/* Authenticated user navigation */}
       {isAuthenticated && isOnboarded && (
