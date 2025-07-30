@@ -24,6 +24,7 @@ interface ViewProfileResponse {
     created_at: string | null;
     friendship_id: number | null;
   };
+  mutual_friends_count?: number;
 }
 
 interface ProfileFormState {
@@ -64,7 +65,7 @@ export const useProfileState = (profileUserId: string | undefined) => {
       
       // If user is authenticated, use view_profile function for friendship data
       if (user?.id) {
-        const { data, error } = await supabase.rpc('view_profile', {
+        const { data, error } = await supabase.rpc('view_profile' as any, {
           user_a_id: user.id,
           user_b_id: profileUserId
         });
@@ -95,7 +96,8 @@ export const useProfileState = (profileUserId: string | undefined) => {
             status: null,
             created_at: null,
             friendship_id: null
-          }
+          },
+          mutual_friends_count: 0
         } as ViewProfileResponse;
       }
     },

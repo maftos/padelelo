@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { Badge } from "@/components/ui/badge";
 import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Instagram, Flag, ExternalLink, Settings } from "lucide-react";
+import { MutualFriendsModal } from "./MutualFriendsModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -43,6 +44,7 @@ interface ProfileHeroCardProps {
   onSave: () => void;
   onCancel: () => void;
   isOwnProfile?: boolean;
+  mutualFriendsCount?: number;
 }
 
 export const ProfileHeroCard = ({
@@ -54,13 +56,15 @@ export const ProfileHeroCard = ({
   onEdit,
   onSave,
   onCancel,
-  isOwnProfile = true
+  isOwnProfile = true,
+  mutualFriendsCount = 0
 }: ProfileHeroCardProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [sendingRequest, setSendingRequest] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
+  const [showMutualFriendsModal, setShowMutualFriendsModal] = useState(false);
 
   const handleSendFriendRequest = async () => {
     if (!user || !profileData?.profile?.id) {
@@ -125,9 +129,6 @@ export const ProfileHeroCard = ({
   
   // Mock weekly MMR change for now
   const weeklyChange = 25; // Will be replaced with real data later
-
-  // Mock mutual friends count (will be replaced with real data)
-  const mutualFriendsCount = !isOwnProfile ? 5 : 0;
   
   return (
     <Card>
@@ -145,7 +146,10 @@ export const ProfileHeroCard = ({
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">{displayName}</h1>
             {!isOwnProfile && mutualFriendsCount > 0 && (
-              <p className="text-sm text-muted-foreground flex items-center gap-1">
+              <p 
+                className="text-sm text-muted-foreground flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors"
+                onClick={() => setShowMutualFriendsModal(true)}
+              >
                 <Users className="w-3 h-3" />
                 {mutualFriendsCount} mutual friend{mutualFriendsCount > 1 ? 's' : ''}
               </p>
@@ -268,6 +272,13 @@ export const ProfileHeroCard = ({
             onClose={() => setShowReportModal(false)}
             playerName={displayName}
             playerId={profileData?.profile?.id || ""}
+          />
+          
+          <MutualFriendsModal
+            open={showMutualFriendsModal}
+            onOpenChange={setShowMutualFriendsModal}
+            profileUserId={profileData?.profile?.id || ""}
+            currentUserId={user?.id || ""}
           />
         </div>
       </CardContent>

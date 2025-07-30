@@ -77,6 +77,7 @@ export const ProfileContent = ({
             onSave={onSave}
             onCancel={onCancel}
             isOwnProfile={isOwnProfile}
+            mutualFriendsCount={(profileData as any)?.mutual_friends_count || 0}
           />
         </div>
       </div>
