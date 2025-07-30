@@ -306,51 +306,60 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               {recentMatchSets && recentMatchSets.length > 0 ? (
-                <div className="space-y-2">
-                  {recentMatchSets.map((set) => (
-                    <div key={`${set.match_id}-${set.set_number}`} className="flex items-center justify-between p-3 rounded-lg bg-accent/20 hover:bg-accent/30 transition-colors border border-accent/30">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          set.change_type === 'WIN' ? 'bg-green-100' : 'bg-red-100'
-                        }`}>
-                          {set.change_type === 'WIN' ? (
-                            <TrendingUp className="h-3 w-3 text-green-600" />
-                          ) : (
-                            <TrendingUp className="h-3 w-3 text-red-600 rotate-180" />
-                          )}
+                <div className="space-y-1">
+                  {/* Header */}
+                  <div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs font-medium text-muted-foreground border-b">
+                    <div>Partner</div>
+                    <div>Date/Time</div>
+                    <div className="text-right">Result</div>
+                  </div>
+                  
+                  {/* Matches List */}
+                  {recentMatchSets.map((set) => {
+                    // Find the user's partner (the other player on their team)
+                    const isUserOnTeam1 = set.team1_player1.includes(profileData?.first_name || '') || set.team1_player2.includes(profileData?.first_name || '');
+                    const partnerName = isUserOnTeam1 
+                      ? (set.team1_player1.includes(profileData?.first_name || '') ? set.team1_player2 : set.team1_player1)
+                      : (set.team2_player1.includes(profileData?.first_name || '') ? set.team2_player2 : set.team2_player1);
+                    
+                    // Format date as dd/mmm
+                    const matchDate = new Date(set.created_at);
+                    const formattedDate = matchDate.toLocaleDateString('en-GB', { 
+                      day: '2-digit', 
+                      month: 'short' 
+                    });
+                    
+                    return (
+                      <div key={`${set.match_id}-${set.set_number}`} className="grid grid-cols-3 gap-3 px-3 py-3 rounded-lg hover:bg-accent/20 transition-colors items-center">
+                        {/* Partner */}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Avatar className="h-6 w-6 flex-shrink-0">
+                            <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                              {partnerName.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm font-medium truncate">{partnerName.split(' ')[0]}</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium">Set {set.set_number}</span>
-                            <span className="text-xs text-muted-foreground">
-                              {set.team1_player1} & {set.team1_player2}
-                            </span>
-                            <span className="text-xs text-muted-foreground">vs</span>
-                            <span className="text-xs text-muted-foreground">
-                              {set.team2_player1} & {set.team2_player2}
-                            </span>
+                        
+                        {/* Date/Time */}
+                        <div className="text-sm text-muted-foreground">
+                          {formattedDate}
+                        </div>
+                        
+                        {/* Result */}
+                        <div className="flex items-center justify-end gap-2">
+                          <div className="flex items-center gap-1 px-2 py-1 bg-background rounded border text-xs">
+                            <span className="font-bold">{set.team1_score}</span>
+                            <span className="text-muted-foreground">-</span>
+                            <span className="font-bold">{set.team2_score}</span>
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            {new Date(set.created_at).toLocaleDateString()}
-                          </div>
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                            set.change_type === 'WIN' ? 'bg-green-500' : 'bg-red-500'
+                          }`} />
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 flex-shrink-0">
-                        <div className="flex items-center gap-1 px-2 py-1 bg-background rounded-lg border">
-                          <span className="text-sm font-bold">{set.team1_score}</span>
-                          <span className="text-xs text-muted-foreground">-</span>
-                          <span className="text-sm font-bold">{set.team2_score}</span>
-                        </div>
-                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          set.change_type === 'WIN' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}>
-                          {set.change_type === 'WIN' ? '+' : ''}{set.change_amount}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="text-center py-6 sm:py-8">
