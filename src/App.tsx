@@ -7,6 +7,7 @@ import Profile from "./pages/Profile";
 import ManageMatches from "./pages/ManageMatches";
 import CreateMatch from "./pages/CreateMatch";
 import EditMatch from "./pages/EditMatch";
+import EditProfile from "./pages/EditProfile";
 import Matches from "./pages/Matches";
 import Friends from "./pages/Friends";
 import Leaderboard from "./pages/Leaderboard";
@@ -53,8 +54,9 @@ function App() {
               <Route path="/home" element={<Navigate to="/" replace />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/:userId" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/manage-bookings" element={<ManageMatches />} />
               <Route path="/create-match" element={<CreateMatch />} />
