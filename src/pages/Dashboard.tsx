@@ -308,9 +308,10 @@ export default function Dashboard() {
               {recentMatchSets && recentMatchSets.length > 0 ? (
                 <div className="space-y-1">
                   {/* Header */}
-                  <div className="grid grid-cols-3 gap-3 px-3 py-2 text-xs font-medium text-muted-foreground border-b">
+                  <div className="grid grid-cols-4 gap-3 px-3 py-2 text-xs font-medium text-muted-foreground border-b">
                     <div>Partner</div>
                     <div>Date/Time</div>
+                    <div className="text-center">Score</div>
                     <div className="text-right">Result</div>
                   </div>
                   
@@ -330,7 +331,7 @@ export default function Dashboard() {
                     });
                     
                     return (
-                      <div key={`${set.match_id}-${set.set_number}`} className="grid grid-cols-3 gap-3 px-3 py-3 rounded-lg hover:bg-accent/20 transition-colors items-center">
+                      <div key={`${set.match_id}-${set.set_number}`} className="grid grid-cols-4 gap-3 px-3 py-3 rounded-lg hover:bg-accent/20 transition-colors items-center">
                         {/* Partner */}
                         <div className="flex items-center gap-2 min-w-0">
                           <Avatar className="h-6 w-6 flex-shrink-0">
@@ -346,16 +347,22 @@ export default function Dashboard() {
                           {formattedDate}
                         </div>
                         
-                        {/* Result */}
-                        <div className="flex items-center justify-end gap-2">
+                        {/* Score */}
+                        <div className="flex items-center justify-center">
                           <div className="flex items-center gap-1 px-2 py-1 bg-background rounded border text-xs">
                             <span className="font-bold">{set.team1_score}</span>
                             <span className="text-muted-foreground">-</span>
                             <span className="font-bold">{set.team2_score}</span>
                           </div>
-                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                            set.change_type === 'WIN' ? 'bg-green-500' : 'bg-red-500'
-                          }`} />
+                        </div>
+                        
+                        {/* Result */}
+                        <div className="flex items-center justify-end gap-2">
+                          <span className={`text-sm font-medium ${
+                            set.change_type === 'WIN' ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {set.change_type === 'WIN' ? 'Won' : 'Lost'} ({set.change_type === 'WIN' ? '+' : ''}{set.change_amount})
+                          </span>
                         </div>
                       </div>
                     );
