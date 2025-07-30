@@ -1,4 +1,4 @@
-import { Navigation } from "@/components/Navigation";
+
 import { Card } from "@/components/ui/card";
 import { ClipboardList } from "lucide-react";
 import { Helmet } from "react-helmet";
@@ -36,7 +36,6 @@ const Roadmap = () => {
         <title>Feature Updates - PadelELO</title>
         <meta name="description" content="Check out our latest updates and upcoming features for PadelELO, the premier padel matchmaking platform in Mauritius." />
       </Helmet>
-      <Navigation />
       <main className="container py-8 px-4">
         <div className="max-w-3xl mx-auto space-y-12">
           <section className="space-y-6">

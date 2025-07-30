@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useReferrer } from "@/hooks/use-referrer";
-import { Navigation } from "@/components/Navigation";
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSignUp } from "@/components/auth/useSignUp";
@@ -17,7 +17,6 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
       <div className="flex items-center justify-center p-4 pt-20">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           <div className="text-center space-y-2">

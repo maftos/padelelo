@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet";
-import { Navigation } from "@/components/Navigation";
+
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +44,7 @@ const MatchmakingMath = () => {
         
         <link rel="canonical" href="https://padel-elo.com/matchmaking-math" />
       </Helmet>
-      <Navigation />
+      
       <PageContainer>
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}

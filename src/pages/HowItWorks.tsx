@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet";
-import { Navigation } from "@/components/Navigation";
+
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Link } from "react-router-dom";
 import { BookOpen, Users, Shield, Clock, HelpCircle, CheckCircle, UserPlus, Trophy } from "lucide-react";
@@ -51,7 +51,7 @@ const HowItWorks = () => {
         
         <link rel="canonical" href="https://padel-elo.com/how-it-works" />
       </Helmet>
-      <Navigation />
+      
       <PageContainer>
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}

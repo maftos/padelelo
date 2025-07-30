@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
-import { Navigation } from "@/components/Navigation";
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +12,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
       <div className="flex items-center justify-center p-4 pt-20">
         <div className="w-full max-w-md space-y-8 animate-fade-in">
           <div className="text-center space-y-2">
