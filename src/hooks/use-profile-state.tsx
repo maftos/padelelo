@@ -221,20 +221,14 @@ export const useProfileState = (profileUserId: string | undefined) => {
         formData
       });
 
-      // Create display_name from first_name and last_name
-      const displayName = `${formData.first_name} ${formData.last_name}`.trim();
-
-      const { error } = await supabase.rpc('edit_user_profile', {
-        user_a_id: profileUserId,
-        new_display_name: displayName,
-        new_gender: formData.gender,
-        new_date_of_birth: null,
-        new_languages: [],
-        new_preferred_language: null,
-        new_profile_photo: formData.profile_photo,
-        new_whatsapp_number: null,
+      const { error } = await supabase.rpc('edit_my_profile' as any, {
+        new_first_name: formData.first_name,
+        new_last_name: formData.last_name,
         new_nationality: formData.nationality,
-        new_location: null
+        new_gender: formData.gender,
+        new_profile_photo: formData.profile_photo,
+        new_preferred_side: formData.preferred_side || null,
+        new_handedness: formData.handedness || null
       });
 
       if (error) {
