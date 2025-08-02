@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Clock, MapPin, Users, Calendar, DollarSign, Bell, ArrowUpDown } from "lucide-react";
+import { Clock, MapPin, Users, Calendar, DollarSign, Bell, ArrowUpDown, Share2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { usePublicOpenGames } from "@/hooks/use-public-open-games";
 import { transformPublicOpenGameToUIFormat, formatGameDateTime, formatTimeAgo, calculateAverageMMR } from "@/utils/gameDataTransform";
 import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 
 export default function PlayerMatching() {
@@ -36,6 +37,35 @@ export default function PlayerMatching() {
     if (gamePost) {
       setSelectedGamePost(gamePost);
       setJoinGameModalOpen(true);
+    }
+  };
+
+  const handleShare = async (bookingId: string, title: string) => {
+    const shareUrl = `${window.location.origin}/open-bookings/${bookingId}`;
+    
+    if (navigator.share && isMobile) {
+      try {
+        await navigator.share({
+          title: title || 'Open Booking',
+          text: `Join this Padel game: ${title}`,
+          url: shareUrl,
+        });
+        toast.success("Shared successfully!");
+      } catch (error) {
+        // Fallback to clipboard copy if share fails
+        await copyToClipboard(shareUrl);
+      }
+    } else {
+      await copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success("Link copied to clipboard!");
+    } catch (error) {
+      toast.error("Unable to copy link");
     }
   };
 
@@ -122,9 +152,22 @@ export default function PlayerMatching() {
                       <CardTitle className="text-base sm:text-lg leading-tight">
                         {post.title}
                       </CardTitle>
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
-                        {formatTimeAgo(post.publishedAt)}
-                      </span>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShare(post.id, post.title);
+                          }}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Share2 className="h-3 w-3" />
+                        </Button>
+                        <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap">
+                          {formatTimeAgo(post.publishedAt)}
+                        </span>
+                      </div>
                     </div>
                     
                     {/* First row: Start Time and Fee */}
