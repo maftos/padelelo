@@ -119,7 +119,7 @@ export default function OpenBookingDetail() {
   }
 
   // Check if booking is no longer open
-  if (booking.status !== 'open') {
+  if (booking.status.toLowerCase() !== 'open') {
     return (
       <div className="w-full min-h-screen">
         <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
