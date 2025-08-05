@@ -105,7 +105,7 @@ export const MatchCard = ({
       {/* Sets */}
       <div className="space-y-2">
         {sets.map((set) => (
-          <SetCard key={set.set_number} {...set} />
+          <SetCard key={set.set_number} {...set} status="MMR_CALCULATED" />
         ))}
       </div>
     </div>

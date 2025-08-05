@@ -1,6 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { MatchCard } from "./MatchCard";
-import { TrendingUp } from "lucide-react";
+import { SetCard } from "./SetCard";
+import { TrendingUp, Clock } from "lucide-react";
 
 interface SetData {
   set_number: number;
@@ -70,7 +71,8 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
             </div>
           ) : (
             <div className="flex items-center gap-2 justify-end">
-              <span className="text-sm text-muted-foreground">MMR:</span>
+              <span className="text-sm font-medium">1842</span>
+              <Clock className="w-4 h-4 text-amber-600" />
               <span className="text-sm font-medium text-amber-600">Pending</span>
             </div>
           )}
@@ -80,7 +82,68 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
       {/* Matches */}
       <div className="space-y-4">
         {matches.map((match) => (
-          <MatchCard key={match.match_id} {...match} />
+          <div key={match.match_id} className="bg-accent/5 rounded-xl border border-accent/20 p-4 space-y-4">
+            {/* Match Header with Teams and Total Score */}
+            <div className="flex items-center justify-between">
+              {/* Team 1 */}
+              <div className="flex items-center space-x-3 flex-1">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-xs font-medium">
+                      {match.team1_player1_display_name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-xs font-medium">
+                      {match.team1_player2_display_name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-sm">
+                  <p className="font-medium text-foreground">{match.team1_player1_display_name}</p>
+                  <p className="font-medium text-foreground">{match.team1_player2_display_name}</p>
+                </div>
+              </div>
+
+              {/* Total Score */}
+              <div className="flex items-center space-x-4">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-foreground">{match.total_team1_score}</p>
+                </div>
+                <div className="text-muted-foreground">:</div>
+                <div className="text-center">
+                  <p className="text-lg font-bold text-foreground">{match.total_team2_score}</p>
+                </div>
+              </div>
+
+              {/* Team 2 */}
+              <div className="flex items-center space-x-3 flex-1 justify-end">
+                <div className="text-sm text-right">
+                  <p className="font-medium text-foreground">{match.team2_player1_display_name}</p>
+                  <p className="font-medium text-foreground">{match.team2_player2_display_name}</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-xs font-medium">
+                      {match.team2_player1_display_name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <span className="text-xs font-medium">
+                      {match.team2_player2_display_name.split(' ').map(n => n[0]).join('')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Sets */}
+            <div className="space-y-2">
+              {match.sets.map((set) => (
+                <SetCard key={set.set_number} {...set} status={status} />
+              ))}
+            </div>
+          </div>
         ))}
       </div>
     </div>

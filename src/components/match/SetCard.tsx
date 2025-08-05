@@ -6,6 +6,7 @@ interface SetCardProps {
   team2_score: number;
   result: "WIN" | "LOSS" | null;
   change_amount: number | null;
+  status?: "MMR_CALCULATED" | "SCORE_RECORDED";
 }
 
 export const SetCard = ({
@@ -13,8 +14,11 @@ export const SetCard = ({
   team1_score,
   team2_score,
   result,
-  change_amount
+  change_amount,
+  status
 }: SetCardProps) => {
+  const isTeam1Winner = team1_score > team2_score;
+  const isTeam2Winner = team2_score > team1_score;
 
   return (
     <div className="flex items-center p-3 rounded-lg bg-background/50 border border-border/30">
@@ -27,14 +31,18 @@ export const SetCard = ({
       
       {/* Set Score - Center */}
       <div className="flex items-center justify-center space-x-2 min-w-[80px]">
-        <span className="text-sm font-medium">{team1_score}</span>
-        <span className="text-muted-foreground text-sm">:</span>
-        <span className="text-sm font-medium">{team2_score}</span>
+        <span className={`text-sm ${isTeam1Winner ? 'font-bold' : 'font-medium'}`}>
+          {team1_score}
+        </span>
+        <span className="text-muted-foreground text-sm">-</span>
+        <span className={`text-sm ${isTeam2Winner ? 'font-bold' : 'font-medium'}`}>
+          {team2_score}
+        </span>
       </div>
 
       {/* Result Badge - Right Side */}
       <div className="flex-1 flex justify-end">
-        {result && change_amount !== null ? (
+        {status === "MMR_CALCULATED" && result && change_amount !== null ? (
           <Badge 
             variant={result === "WIN" ? "default" : "destructive"}
             className={`text-xs ${
@@ -45,11 +53,7 @@ export const SetCard = ({
           >
             {result === "WIN" ? "+" : "-"}{change_amount}
           </Badge>
-        ) : (
-          <Badge variant="outline" className="text-xs">
-            Pending
-          </Badge>
-        )}
+        ) : null}
       </div>
     </div>
   );
