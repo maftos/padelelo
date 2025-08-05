@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
 import { MatchCard } from "./MatchCard";
+import { TrendingUp } from "lucide-react";
 
 interface SetData {
   set_number: number;
@@ -47,31 +48,28 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
       {/* Booking Header */}
       <div className="flex items-center justify-between pb-4 border-b border-border/30">
         <div className="space-y-1">
-          <h3 className="text-lg font-semibold text-foreground">{location}</h3>
-          <p className="text-sm text-muted-foreground">
+          <h3 className="text-lg font-semibold text-foreground">
             {formatDistanceToNow(new Date(date), { addSuffix: true })}
-          </p>
+          </h3>
+          <p className="text-sm text-muted-foreground">{location}</p>
         </div>
         <div className="text-right space-y-1">
           {status === "MMR_CALCULATED" && totalMmrChange !== null ? (
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Before:</span>
-                <span className="text-sm font-medium">1842</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">After:</span>
-                <span className={`text-sm font-bold ${
-                  totalMmrChange >= 0 
-                    ? "text-green-600" 
-                    : "text-red-600"
-                }`}>
-                  {1842 + totalMmrChange} ({totalMmrChange >= 0 ? "+" : ""}{totalMmrChange})
-                </span>
-              </div>
+            <div className="flex items-center gap-2 justify-end">
+              <span className="text-sm font-medium">1842</span>
+              <TrendingUp className={`w-4 h-4 ${
+                totalMmrChange >= 0 ? "text-green-600" : "text-red-600 rotate-180"
+              }`} />
+              <span className={`text-sm font-bold ${
+                totalMmrChange >= 0 
+                  ? "text-green-600" 
+                  : "text-red-600"
+              }`}>
+                {1842 + totalMmrChange}
+              </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 justify-end">
               <span className="text-sm text-muted-foreground">MMR:</span>
               <span className="text-sm font-medium text-amber-600">Pending</span>
             </div>

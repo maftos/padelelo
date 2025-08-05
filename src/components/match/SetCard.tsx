@@ -17,38 +17,40 @@ export const SetCard = ({
 }: SetCardProps) => {
 
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-border/30">
-      {/* Set Info */}
-      <div className="flex items-center space-x-4">
+    <div className="flex items-center p-3 rounded-lg bg-background/50 border border-border/30">
+      {/* Set Info - Left Side */}
+      <div className="flex items-center space-x-4 flex-1">
         <div className="text-sm">
           <span className="text-muted-foreground">Set {set_number}</span>
         </div>
-        
-        {/* Set Score */}
-        <div className="flex items-center justify-center space-x-2 min-w-[60px]">
-          <span className="text-sm font-medium">{team1_score}</span>
-          <span className="text-muted-foreground text-sm">:</span>
-          <span className="text-sm font-medium">{team2_score}</span>
-        </div>
+      </div>
+      
+      {/* Set Score - Center */}
+      <div className="flex items-center justify-center space-x-2 min-w-[80px]">
+        <span className="text-sm font-medium">{team1_score}</span>
+        <span className="text-muted-foreground text-sm">:</span>
+        <span className="text-sm font-medium">{team2_score}</span>
       </div>
 
-      {/* Result Badge */}
-      {result && change_amount !== null ? (
-        <Badge 
-          variant={result === "WIN" ? "default" : "destructive"}
-          className={`text-xs ${
-            result === "WIN" 
-              ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
-              : ""
-          }`}
-        >
-          {result === "WIN" ? "+" : "-"}{change_amount}
-        </Badge>
-      ) : (
-        <Badge variant="outline" className="text-xs">
-          Pending
-        </Badge>
-      )}
+      {/* Result Badge - Right Side */}
+      <div className="flex-1 flex justify-end">
+        {result && change_amount !== null ? (
+          <Badge 
+            variant={result === "WIN" ? "default" : "destructive"}
+            className={`text-xs ${
+              result === "WIN" 
+                ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
+                : ""
+            }`}
+          >
+            {result === "WIN" ? "+" : "-"}{change_amount}
+          </Badge>
+        ) : (
+          <Badge variant="outline" className="text-xs">
+            Pending
+          </Badge>
+        )}
+      </div>
     </div>
   );
 };
