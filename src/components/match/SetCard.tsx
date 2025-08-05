@@ -4,8 +4,8 @@ interface SetCardProps {
   set_number: number;
   team1_score: number;
   team2_score: number;
-  result: "WIN" | "LOSS";
-  change_amount: number;
+  result: "WIN" | "LOSS" | null;
+  change_amount: number | null;
 }
 
 export const SetCard = ({
@@ -25,7 +25,7 @@ export const SetCard = ({
         </div>
         
         {/* Set Score */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center justify-center space-x-2 min-w-[60px]">
           <span className="text-sm font-medium">{team1_score}</span>
           <span className="text-muted-foreground text-sm">-</span>
           <span className="text-sm font-medium">{team2_score}</span>
@@ -33,16 +33,22 @@ export const SetCard = ({
       </div>
 
       {/* Result Badge */}
-      <Badge 
-        variant={result === "WIN" ? "default" : "destructive"}
-        className={`text-xs ${
-          result === "WIN" 
-            ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
-            : ""
-        }`}
-      >
-        {result === "WIN" ? "+" : "-"}{change_amount} MMR
-      </Badge>
+      {result && change_amount !== null ? (
+        <Badge 
+          variant={result === "WIN" ? "default" : "destructive"}
+          className={`text-xs ${
+            result === "WIN" 
+              ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
+              : ""
+          }`}
+        >
+          {result === "WIN" ? "+" : "-"}{change_amount} MMR
+        </Badge>
+      ) : (
+        <Badge variant="outline" className="text-xs">
+          Pending MMR
+        </Badge>
+      )}
     </div>
   );
 };

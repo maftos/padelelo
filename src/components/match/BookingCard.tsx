@@ -29,15 +29,19 @@ interface BookingCardProps {
   date: string;
   location: string;
   matches: MatchData[];
+  status: "MMR_CALCULATED" | "SCORE_RECORDED";
 }
 
-export const BookingCard = ({ booking_id, date, location, matches }: BookingCardProps) => {
+export const BookingCard = ({ booking_id, date, location, matches, status }: BookingCardProps) => {
   // Calculate total MMR change for this booking
-  const totalMmrChange = matches.reduce((bookingTotal, match) => {
+  const totalMmrChange = status === "MMR_CALCULATED" ? matches.reduce((bookingTotal, match) => {
     return bookingTotal + match.sets.reduce((matchTotal, set) => {
-      return matchTotal + (set.result === "WIN" ? set.change_amount : -set.change_amount);
+      if (set.result && set.change_amount !== null) {
+        return matchTotal + (set.result === "WIN" ? set.change_amount : -set.change_amount);
+      }
+      return matchTotal;
     }, 0);
-  }, 0);
+  }, 0) : null;
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg p-6 space-y-6">
       {/* Booking Header */}
@@ -49,17 +53,23 @@ export const BookingCard = ({ booking_id, date, location, matches }: BookingCard
           </p>
         </div>
         <div className="text-right space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Total MMR:</span>
-            <span className={`text-sm font-bold ${
-              totalMmrChange >= 0 
-                ? "text-green-600" 
-                : "text-red-600"
-            }`}>
-              {totalMmrChange >= 0 ? "+" : ""}{totalMmrChange}
-            </span>
-          </div>
-          <p className="text-xs text-muted-foreground">{booking_id}</p>
+          {status === "MMR_CALCULATED" && totalMmrChange !== null ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Total MMR:</span>
+              <span className={`text-sm font-bold ${
+                totalMmrChange >= 0 
+                  ? "text-green-600" 
+                  : "text-red-600"
+              }`}>
+                {totalMmrChange >= 0 ? "+" : ""}{totalMmrChange}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">MMR:</span>
+              <span className="text-sm font-medium text-amber-600">Pending</span>
+            </div>
+          )}
         </div>
       </div>
 

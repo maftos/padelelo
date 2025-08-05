@@ -5,8 +5,8 @@ interface SetData {
   set_number: number;
   team1_score: number;
   team2_score: number;
-  result: "WIN" | "LOSS";
-  change_amount: number;
+  result: "WIN" | "LOSS" | null;
+  change_amount: number | null;
 }
 
 interface MatchCardProps {

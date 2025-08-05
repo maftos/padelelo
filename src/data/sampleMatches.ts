@@ -1,8 +1,9 @@
 export const sampleBookings = [
   {
     booking_id: "booking-001",
-    date: "2024-08-04T18:30:00Z",
+    date: "2025-01-15T18:30:00Z",
     location: "Padel Central Tournament",
+    status: "MMR_CALCULATED" as const,
     matches: [
       {
         match_id: "match-001",
@@ -102,8 +103,9 @@ export const sampleBookings = [
   },
   {
     booking_id: "booking-003",
-    date: "2024-08-02T14:45:00Z",
+    date: "2025-01-10T14:45:00Z",
     location: "Mauritius Padel Academy",
+    status: "SCORE_RECORDED" as const,
     matches: [
       {
         match_id: "match-004",
@@ -122,15 +124,15 @@ export const sampleBookings = [
             set_number: 1, 
             team1_score: 6, 
             team2_score: 2,
-            result: "WIN" as const,
-            change_amount: 15
+            result: null,
+            change_amount: null
           },
           { 
             set_number: 2, 
             team1_score: 6, 
             team2_score: 4,
-            result: "WIN" as const,
-            change_amount: 17
+            result: null,
+            change_amount: null
           }
         ]
       }
