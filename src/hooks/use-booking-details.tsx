@@ -64,32 +64,31 @@ export const useBookingDetails = (bookingId: string | undefined) => {
       if (bookingError) throw bookingError;
       if (!bookingResponse) throw new Error('Booking not found');
 
-      // The function returns JSON with a specific structure
+      // The function returns a flat JSON structure
       const response = bookingResponse as any;
       
       console.log('useBookingDetails: Full response from view_open_booking:', response);
-      console.log('useBookingDetails: Booking data:', response.booking);
       
-      if (!response.success || !response.booking) {
+      if (!response || !response.booking_id) {
         throw new Error('Booking not found');
       }
 
       // Transform the response to match our BookingDetails interface
       const bookingDetails: BookingDetails = {
-        booking_id: response.booking.booking_id,
-        venue_id: response.booking.venue_id,
-        venue_name: response.booking.venue_name,
-        start_time: response.booking.start_time,
-        title: response.booking.title || '',
-        description: response.booking.description || '',
-        status: response.booking.status,
-        player_count: response.player_count || response.players?.length || 0,
-        created_at: response.booking.created_at,
-        created_by: response.booking.created_by,
-        is_creator: response.user_context?.is_creator || false,
-        booking_fee_per_player: response.booking.booking_fee_per_player,
-        participants: response.players?.map((player: any) => ({
-          player_id: player.user_id,
+        booking_id: response.booking_id,
+        venue_id: response.venue_id,
+        venue_name: response.venue_name,
+        start_time: response.start_time,
+        title: response.title || '',
+        description: response.description || '',
+        status: response.status,
+        player_count: response.player_count || response.participants?.length || 0,
+        created_at: response.created_at,
+        created_by: response.created_by,
+        is_creator: user?.id === response.created_by,
+        booking_fee_per_player: response.booking_fee_per_player,
+        participants: response.participants?.map((player: any) => ({
+          player_id: player.player_id,
           first_name: player.first_name || '',
           last_name: player.last_name || '',
           profile_photo: player.profile_photo || '',
