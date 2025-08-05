@@ -72,7 +72,7 @@ const CreateBookingWizard = () => {
         }
         return true; // For complete matches, details are optional
       case 3:
-        return wizardData.gameTitle.trim().length > 0;
+        return true; // Description is optional, so always allow proceeding
       default:
         return false;
     }

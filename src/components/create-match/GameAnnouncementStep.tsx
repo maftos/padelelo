@@ -26,20 +26,6 @@ export const GameAnnouncementStep = ({ data, onDataChange }: GameAnnouncementSte
         showOpenGameBadge={true}
       />
 
-      {/* Game Title */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <FileText className="h-4 w-4" />
-          Game Title <span className="text-destructive">*</span>
-        </div>
-        <Input
-          value={data.gameTitle}
-          onChange={(e) => onDataChange({ gameTitle: e.target.value })}
-          placeholder="e.g., Friday Evening Padel - Need 2 More Players"
-          required
-        />
-      </div>
-
       {/* Game Description */}
       <div className="space-y-3">
         <Label htmlFor="description">
