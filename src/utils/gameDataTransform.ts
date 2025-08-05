@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, addHours, isSameDay, addDays } from "date-fns";
 import { PublicOpenGame } from "@/hooks/use-public-open-games";
 
 export const formatGameDate = (date: Date) => {
@@ -19,12 +19,29 @@ export const formatGameDate = (date: Date) => {
 };
 
 export const formatGameDateTime = (date: Date) => {
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const dayName = dayNames[date.getDay()];
-  const time = format(date, "HH:mm");
-  const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+  // Convert UTC timestamp to UTC+4 (Mauritius timezone)
+  const localDate = addHours(date, 4);
+  const currentDate = addHours(new Date(), 4);
   
-  return `${dayName}, ${monthName} ${date.getDate()} @ ${time}`;
+  const time = format(localDate, "HH:mm");
+  
+  // Check if it's today
+  if (isSameDay(localDate, currentDate)) {
+    return `Today @ ${time}`;
+  }
+  
+  // Check if it's tomorrow
+  const tomorrow = addDays(currentDate, 1);
+  if (isSameDay(localDate, tomorrow)) {
+    return `Tomorrow @ ${time}`;
+  }
+  
+  // Otherwise show day name and date
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const dayName = dayNames[localDate.getDay()];
+  const monthName = localDate.toLocaleDateString('en-US', { month: 'short' });
+  
+  return `${dayName}, ${monthName} ${localDate.getDate()} @ ${time}`;
 };
 
 export const getOrdinalSuffix = (day: number) => {

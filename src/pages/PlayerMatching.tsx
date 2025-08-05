@@ -150,7 +150,6 @@ export default function PlayerMatching() {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-2 gap-2">
                       <div className="flex items-center gap-1">
-                        <Clock className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
                         <span className="text-base sm:text-lg bg-primary/10 text-primary px-2 py-1 rounded-md font-semibold">{formatGameDateTime(post.gameDate)}</span>
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
