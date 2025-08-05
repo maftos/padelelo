@@ -27,7 +27,11 @@ import PlayerMatching from "./pages/PlayerMatching";
 import OpenBookingDetail from "./pages/OpenBookingDetail";
 import NotFound from "./pages/NotFound";
 import News from "./pages/News";
-import Settings from "./pages/Settings";
+import SettingsLayout from "./pages/settings/SettingsLayout";
+import SecuritySettings from "./pages/settings/SecuritySettings";
+import NotificationSettings from "./pages/settings/NotificationSettings";
+import LanguageSettings from "./pages/settings/LanguageSettings";
+import PrivacySettings from "./pages/settings/PrivacySettings";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -58,7 +62,13 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/edit-profile" element={<EditProfile />} />
-              <Route path="/settings" element={<Settings />} />
+              <Route path="/settings" element={<Navigate to="/settings/security" replace />} />
+              <Route path="/settings/*" element={<SettingsLayout />}>
+                <Route path="security" element={<SecuritySettings />} />
+                <Route path="notifications" element={<NotificationSettings />} />
+                <Route path="language" element={<LanguageSettings />} />
+                <Route path="privacy" element={<PrivacySettings />} />
+              </Route>
               <Route path="/manage-bookings" element={<ManageMatches />} />
               <Route path="/create-match" element={<CreateMatch />} />
               <Route path="/edit-booking/:bookingId" element={<EditMatch />} />
