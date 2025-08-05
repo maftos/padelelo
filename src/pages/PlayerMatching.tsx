@@ -71,19 +71,19 @@ export default function PlayerMatching() {
         <div className="flex flex-col gap-3 sm:gap-4 mb-4 sm:mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
             <div className="min-w-0 flex-1">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Open Bookings</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">Notifications</h1>
               <p className="text-sm sm:text-base text-muted-foreground">Join players who have booked a court already</p>
             </div>
             
-            {/* Action buttons - Only notifications button now */}
+            {/* Action buttons - Bell icon for notifications */}
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button 
                 variant="outline" 
-                className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 px-3"
-                onClick={() => setNotificationModalOpen(true)}
+                size="icon"
+                className="h-9 w-9 sm:h-10 sm:w-10"
+                onClick={() => navigate('/settings/notifications')}
               >
-                <Bell className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">Notify Me</span>
+                <Bell className="h-4 w-4" />
               </Button>
             </div>
           </div>
