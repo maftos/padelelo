@@ -46,7 +46,7 @@ const SecuritySettings = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Key className="w-5 h-5" />
-          Password & Security
+          Password
         </CardTitle>
         <CardDescription>
           Update your password and manage security settings

@@ -12,7 +12,7 @@ const LanguageSettings = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Globe className="w-5 h-5" />
-          Language & Regional
+          Language
         </CardTitle>
         <CardDescription>
           Set your language and regional preferences
@@ -21,7 +21,7 @@ const LanguageSettings = () => {
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="language">Language</Label>
-          <Select value={language} onValueChange={setLanguage}>
+          <Select value={language} onValueChange={setLanguage} disabled>
             <SelectTrigger>
               <SelectValue placeholder="Select language" />
             </SelectTrigger>

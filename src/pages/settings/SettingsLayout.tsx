@@ -9,23 +9,23 @@ const SettingsLayout = () => {
 
   const settingsNav = [
     {
-      to: "/settings/security",
-      label: "Password & Security",
-      icon: Key,
-    },
-    {
       to: "/settings/notifications",
       label: "Notifications",
       icon: Bell,
     },
     {
+      to: "/settings/security",
+      label: "Password",
+      icon: Key,
+    },
+    {
       to: "/settings/language",
-      label: "Language & Regional",
+      label: "Language",
       icon: Globe,
     },
     {
       to: "/settings/privacy",
-      label: "Privacy & Account",
+      label: "Privacy",
       icon: Shield,
     },
   ];
