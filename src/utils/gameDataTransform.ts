@@ -113,7 +113,7 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
     venueId: game.venue_id,
     gameDate,
     spotsAvailable: remainingSpots,
-    description: game.description || "Join this open booking and play with other players",
+    description: game.description,
     publishedAt: createdAt,
     existingPlayers,
     createdBy: game.created_by,
