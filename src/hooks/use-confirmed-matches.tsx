@@ -40,8 +40,13 @@ export const useConfirmedMatches = () => {
       // Handle the case where data might be null
       if (!data) return [];
 
-      // Assert the type since we know the structure from the function
-      return (data as unknown) as ConfirmedMatch[];
+      // Extract bookings from the response structure
+      const responseData = data as any;
+      if (responseData?.bookings && Array.isArray(responseData.bookings)) {
+        return responseData.bookings;
+      }
+
+      return [];
     },
     enabled: !!user?.id
   });
