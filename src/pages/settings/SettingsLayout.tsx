@@ -43,7 +43,7 @@ const SettingsLayout = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/profile')}
             className="shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -74,7 +74,7 @@ const SettingsLayout = () => {
                       }
                     >
                       <Icon className="w-4 h-4" />
-                      <span className="hidden sm:inline">{item.label}</span>
+                      <span>{item.label}</span>
                     </NavLink>
                   );
                 })}

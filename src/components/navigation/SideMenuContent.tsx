@@ -67,21 +67,23 @@ export const SideMenuContent = ({
 
       {/* User Profile Section */}
       <div className="space-y-4 p-4 border-b border-border">
-        <div className="flex items-center gap-3">
-          <Avatar className="h-12 w-12">
-            <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
-            <AvatarFallback>{profile?.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-medium">{profile?.display_name || 'Player'} (#{ranking})</span>
-              <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
-                {rankingChange > 0 ? '+' : ''}{rankingChange}
-              </Badge>
+        <SheetClose asChild>
+          <Link to="/profile" className="flex items-center gap-3 hover:bg-accent/50 p-2 rounded-lg transition-colors">
+            <Avatar className="h-12 w-12">
+              <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
+              <AvatarFallback>{profile?.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-medium">{profile?.display_name || 'Player'} (#{ranking})</span>
+                <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
+                  {rankingChange > 0 ? '+' : ''}{rankingChange}
+                </Badge>
+              </div>
+              <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
             </div>
-            <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
-          </div>
-        </div>
+          </Link>
+        </SheetClose>
       </div>
 
       {/* Navigation Menu */}

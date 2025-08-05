@@ -29,7 +29,7 @@ export const AppSidebar = () => {
   return (
     <div className="w-64 h-screen bg-card border-r border-border flex flex-col sticky top-0">
       {/* User Profile Section */}
-      <div className="p-4 border-b border-border">
+      <Link to="/profile" className="block p-4 border-b border-border hover:bg-accent/50 transition-colors">
         <div className="flex items-center gap-3 mb-4">
           <Avatar className="h-10 w-10">
             <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
@@ -51,7 +51,7 @@ export const AppSidebar = () => {
             </span>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Navigation Items */}
       <nav className="flex-1 p-2">
