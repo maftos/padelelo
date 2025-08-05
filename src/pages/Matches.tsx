@@ -3,10 +3,10 @@ import { useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { sampleMatches } from "@/data/sampleMatches";
+import { sampleBookings } from "@/data/sampleMatches";
 import { Navigation } from "@/components/Navigation";
 import { Loading } from "@/components/ui/loading";
-import { MatchesList } from "@/components/match/MatchesList";
+import { BookingCard } from "@/components/match/BookingCard";
 
 interface MatchDetails {
   match_id: string;
@@ -44,16 +44,13 @@ const Matches = () => {
   const { session, loading } = useAuth();
   // Temporarily using sample data for UI testing
   const isLoading = false;
-  const confirmedMatches = sampleMatches;
+  const bookings = sampleBookings;
 
   useEffect(() => {
     if (!loading && !session) {
       navigate('/login');
     }
   }, [session, loading, navigate]);
-
-  // Using sample data directly - already in the correct format
-  const matches: MatchDetails[] = confirmedMatches;
 
   if (loading) {
     return <Loading />;
@@ -82,8 +79,18 @@ const Matches = () => {
             </div>
           </div>
 
-          <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-xl p-6">
-            <MatchesList matches={matches} isLoading={isLoading} />
+          <div className="space-y-6">
+            {isLoading ? (
+              <Loading />
+            ) : bookings.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">No matches found</p>
+              </div>
+            ) : (
+              bookings.map((booking) => (
+                <BookingCard key={booking.booking_id} {...booking} />
+              ))
+            )}
           </div>
         </div>
       </main>
