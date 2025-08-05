@@ -3,8 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 
 const NotificationSettings = () => {
@@ -52,6 +51,30 @@ const NotificationSettings = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Push Notifications */}
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-lg font-medium">Push Notifications</h3>
+            <p className="text-sm text-muted-foreground">Receive notifications via WhatsApp and on your device</p>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="push-notifications-main">Enable Push Notifications</Label>
+              <p className="text-sm text-muted-foreground">Turn on to receive all notification types</p>
+            </div>
+            <Switch
+              id="push-notifications-main"
+              checked={notifications.pushNotifications}
+              onCheckedChange={(checked) => 
+                setNotifications(prev => ({ ...prev, pushNotifications: checked }))
+              }
+            />
+          </div>
+        </div>
+
+        <Separator />
+
         {/* Open Bookings Section */}
         <div className="space-y-4">
           <div>
@@ -59,57 +82,43 @@ const NotificationSettings = () => {
             <p className="text-sm text-muted-foreground">Get notified about new open booking opportunities</p>
           </div>
 
-          {/* General Open Bookings Toggle */}
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="open-bookings">Open Bookings</Label>
-              <p className="text-sm text-muted-foreground">Receive notifications for new open bookings</p>
-            </div>
-            <Switch
-              id="open-bookings"
-              checked={openBookings.enabled}
-              onCheckedChange={(checked) => 
-                setOpenBookings(prev => ({ ...prev, enabled: checked }))
-              }
-            />
-          </div>
-
           {/* Games From */}
           <div className="space-y-3">
             <Label>Games from</Label>
-            <RadioGroup
-              value={openBookings.gamesFrom}
-              onValueChange={(value) => 
-                setOpenBookings(prev => ({ ...prev, gamesFrom: value }))
-              }
-              className="space-y-2"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="anyone" id="anyone" />
-                <Label htmlFor="anyone">Anyone</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="friends" id="friends" />
-                <Label htmlFor="friends">Friends only</Label>
-              </div>
-            </RadioGroup>
+            <div className="flex gap-2">
+              <Button
+                variant={openBookings.gamesFrom === "anyone" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setOpenBookings(prev => ({ ...prev, gamesFrom: "anyone" }))}
+                className="flex-1"
+              >
+                Anyone
+              </Button>
+              <Button
+                variant={openBookings.gamesFrom === "friends" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setOpenBookings(prev => ({ ...prev, gamesFrom: "friends" }))}
+                className="flex-1"
+              >
+                Friends only
+              </Button>
+            </div>
           </div>
 
           {/* Regions */}
           <div className="space-y-3">
             <Label>Regions</Label>
-            <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
               {regions.map((region) => (
-                <div key={region.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={region.id}
-                    checked={openBookings.regions.includes(region.id)}
-                    onCheckedChange={(checked) => 
-                      handleRegionChange(region.id, checked === true)
-                    }
-                  />
-                  <Label htmlFor={region.id}>{region.label}</Label>
-                </div>
+                <Button
+                  key={region.id}
+                  variant={openBookings.regions.includes(region.id) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleRegionChange(region.id, !openBookings.regions.includes(region.id))}
+                  className="px-4 py-2"
+                >
+                  {region.label}
+                </Button>
               ))}
             </div>
           </div>
@@ -121,24 +130,6 @@ const NotificationSettings = () => {
           </div>
         </div>
 
-        <Separator />
-
-        {/* Push Notifications */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="push-notifications">Push Notifications</Label>
-              <p className="text-sm text-muted-foreground">Receive notifications via WhatsApp and on your device</p>
-            </div>
-            <Switch
-              id="push-notifications"
-              checked={notifications.pushNotifications}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, pushNotifications: checked }))
-              }
-            />
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
