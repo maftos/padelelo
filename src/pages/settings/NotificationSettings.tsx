@@ -75,30 +75,30 @@ const NotificationSettings = () => {
           </div>
 
           {/* Games From */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label>Games from</Label>
-            <RadioGroup
-              value={openBookings.gamesFrom}
-              onValueChange={(value) => 
-                setOpenBookings(prev => ({ ...prev, gamesFrom: value }))
-              }
-              className="flex flex-col space-y-2"
-            >
+            <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="anyone" id="anyone" />
+                <RadioGroupItem value="anyone" id="anyone" 
+                  checked={openBookings.gamesFrom === "anyone"}
+                  onClick={() => setOpenBookings(prev => ({ ...prev, gamesFrom: "anyone" }))}
+                />
                 <Label htmlFor="anyone">Anyone</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="friends" id="friends" />
+                <RadioGroupItem value="friends" id="friends"
+                  checked={openBookings.gamesFrom === "friends"}
+                  onClick={() => setOpenBookings(prev => ({ ...prev, gamesFrom: "friends" }))}
+                />
                 <Label htmlFor="friends">Friends only</Label>
               </div>
-            </RadioGroup>
+            </div>
           </div>
 
           {/* Regions */}
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label>Regions</Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-2">
               {regions.map((region) => (
                 <div key={region.id} className="flex items-center space-x-2">
                   <Checkbox
@@ -123,84 +123,12 @@ const NotificationSettings = () => {
 
         <Separator />
 
-        {/* Other Notifications */}
+        {/* Push Notifications */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <Label htmlFor="match-invites">Match Invitations</Label>
-              <p className="text-sm text-muted-foreground">Get notified when someone invites you to a match</p>
-            </div>
-            <Switch
-              id="match-invites"
-              checked={notifications.matchInvites}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, matchInvites: checked }))
-              }
-            />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="friend-requests">Friend Requests</Label>
-              <p className="text-sm text-muted-foreground">Get notified when someone sends you a friend request</p>
-            </div>
-            <Switch
-              id="friend-requests"
-              checked={notifications.friendRequests}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, friendRequests: checked }))
-              }
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="tournament-updates">Tournament Updates</Label>
-              <p className="text-sm text-muted-foreground">Get notified about tournament results and updates</p>
-            </div>
-            <Switch
-              id="tournament-updates"
-              checked={notifications.tournamentUpdates}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, tournamentUpdates: checked }))
-              }
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="weekly-digest">Weekly Digest</Label>
-              <p className="text-sm text-muted-foreground">Receive a summary of your weekly activity</p>
-            </div>
-            <Switch
-              id="weekly-digest"
-              checked={notifications.weeklyDigest}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, weeklyDigest: checked }))
-              }
-            />
-          </div>
-
-          <Separator />
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="email-notifications">Email Notifications</Label>
-              <p className="text-sm text-muted-foreground">Receive notifications via email</p>
-            </div>
-            <Switch
-              id="email-notifications"
-              checked={notifications.emailNotifications}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, emailNotifications: checked }))
-              }
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
               <Label htmlFor="push-notifications">Push Notifications</Label>
-              <p className="text-sm text-muted-foreground">Receive notifications on your device</p>
+              <p className="text-sm text-muted-foreground">Receive notifications via WhatsApp and on your device</p>
             </div>
             <Switch
               id="push-notifications"
