@@ -52,34 +52,36 @@ const NotificationSettings = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Push Notifications */}
-        <div className="space-y-4">
+        <div className="flex items-center justify-between">
           <div>
             <h3 className="text-lg font-medium">Push Notifications</h3>
             <p className="text-sm text-muted-foreground">Receive notifications via WhatsApp and on your device</p>
           </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <Label htmlFor="push-notifications-main">Enable Push Notifications</Label>
-              <p className="text-sm text-muted-foreground">Turn on to receive all notification types</p>
-            </div>
-            <Switch
-              id="push-notifications-main"
-              checked={notifications.pushNotifications}
-              onCheckedChange={(checked) => 
-                setNotifications(prev => ({ ...prev, pushNotifications: checked }))
-              }
-            />
-          </div>
+          <Switch
+            id="push-notifications-main"
+            checked={notifications.pushNotifications}
+            onCheckedChange={(checked) => 
+              setNotifications(prev => ({ ...prev, pushNotifications: checked }))
+            }
+          />
         </div>
 
         <Separator />
 
         {/* Open Bookings Section */}
         <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-medium">Open Bookings</h3>
-            <p className="text-sm text-muted-foreground">Get notified about new open booking opportunities</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-medium">Open Bookings</h3>
+              <p className="text-sm text-muted-foreground">Get notified about new open booking opportunities</p>
+            </div>
+            <Switch
+              id="open-bookings"
+              checked={openBookings.enabled}
+              onCheckedChange={(checked) => 
+                setOpenBookings(prev => ({ ...prev, enabled: checked }))
+              }
+            />
           </div>
 
           {/* Games From */}
