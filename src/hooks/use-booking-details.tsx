@@ -51,14 +51,13 @@ export const useBookingDetails = (bookingId: string | undefined) => {
   }, [bookingId, user?.id, queryClient]);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['booking-details', bookingId, user?.id],
+    queryKey: ['booking-details', bookingId],
     queryFn: async () => {
-      if (!user?.id || !bookingId) throw new Error('User not authenticated or booking ID missing');
+      if (!bookingId) throw new Error('Booking ID missing');
 
-      // Use the public.view_booking function
+      // Use the new view_open_booking function that works regardless of auth status
       const { data: bookingResponse, error: bookingError } = await supabase
-        .rpc('view_booking' as any, { 
-          p_user_id: user.id, 
+        .rpc('view_open_booking' as any, { 
           p_booking_id: bookingId 
         });
 
@@ -68,7 +67,7 @@ export const useBookingDetails = (bookingId: string | undefined) => {
       // The function returns JSON with a specific structure
       const response = bookingResponse as any;
       
-      console.log('useBookingDetails: Full response from view_booking:', response);
+      console.log('useBookingDetails: Full response from view_open_booking:', response);
       console.log('useBookingDetails: Booking data:', response.booking);
       
       if (!response.success || !response.booking) {
@@ -100,7 +99,7 @@ export const useBookingDetails = (bookingId: string | undefined) => {
 
       return bookingDetails;
     },
-    enabled: !!user?.id && !!bookingId,
+    enabled: !!bookingId,
     staleTime: 0, // Always fetch fresh data
     gcTime: 0, // Don't cache the result (renamed from cacheTime)
     refetchOnMount: true, // Always refetch when component mounts
