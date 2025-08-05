@@ -54,15 +54,21 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
         </div>
         <div className="text-right space-y-1">
           {status === "MMR_CALCULATED" && totalMmrChange !== null ? (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Total MMR:</span>
-              <span className={`text-sm font-bold ${
-                totalMmrChange >= 0 
-                  ? "text-green-600" 
-                  : "text-red-600"
-              }`}>
-                {totalMmrChange >= 0 ? "+" : ""}{totalMmrChange}
-              </span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Before:</span>
+                <span className="text-sm font-medium">1842</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">After:</span>
+                <span className={`text-sm font-bold ${
+                  totalMmrChange >= 0 
+                    ? "text-green-600" 
+                    : "text-red-600"
+                }`}>
+                  {1842 + totalMmrChange} ({totalMmrChange >= 0 ? "+" : ""}{totalMmrChange})
+                </span>
+              </div>
             </div>
           ) : (
             <div className="flex items-center gap-2">
