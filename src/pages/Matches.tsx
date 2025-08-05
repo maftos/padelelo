@@ -1,13 +1,13 @@
 
-import { useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { sampleBookings } from "@/data/sampleMatches";
+import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 import { Navigation } from "@/components/Navigation";
 import { Loading } from "@/components/ui/loading";
 import { BookingCard } from "@/components/match/BookingCard";
 import { Button } from "@/components/ui/button";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 
 interface MatchDetails {
   match_id: string;
@@ -43,9 +43,10 @@ interface MatchDetails {
 const Matches = () => {
   const navigate = useNavigate();
   const { session, loading } = useAuth();
-  // Temporarily using sample data for UI testing
-  const isLoading = false;
-  const bookings = sampleBookings;
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
+  
+  const { confirmedMatches: bookings, pagination, isLoading, error } = useConfirmedMatches(currentPage, pageSize);
 
   useEffect(() => {
     if (!loading && !session) {
@@ -79,6 +80,10 @@ const Matches = () => {
           <div className="space-y-6">
             {isLoading ? (
               <Loading />
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Error loading matches: {error.message}</p>
+              </div>
             ) : bookings.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-muted-foreground">No matches found</p>
@@ -86,15 +91,48 @@ const Matches = () => {
             ) : (
               <>
                 {bookings.map((booking) => (
-                  <BookingCard key={booking.booking_id} {...booking} />
+                  <BookingCard 
+                    key={booking.booking_id}
+                    booking_id={booking.booking_id}
+                    date={booking.start_time}
+                    location={booking.venue_name}
+                    status={booking.status}
+                    matches={booking.matches}
+                  />
                 ))}
                 
                 {/* Pagination */}
-                <div className="flex justify-center mt-8">
-                  <Button variant="outline" className="px-8">
-                    See More
-                  </Button>
-                </div>
+                {pagination && pagination.total_pages > 1 && (
+                  <Pagination className="mt-8">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                      
+                      {Array.from({ length: pagination.total_pages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => setCurrentPage(page)}
+                            isActive={currentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={() => setCurrentPage(prev => Math.min(pagination.total_pages, prev + 1))}
+                          className={currentPage === pagination.total_pages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                )}
               </>
             )}
           </div>
