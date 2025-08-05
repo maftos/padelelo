@@ -108,7 +108,7 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
   
   return {
     id: game.booking_id,
-    title: game.title || `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open booking`,
+    title: `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open booking`,
     courtName: game.venue_name,
     venueId: game.venue_id,
     gameDate,

@@ -6,7 +6,6 @@ import { FileText } from "lucide-react";
 import { StepHeader } from "./StepHeader";
 
 interface GameAnnouncementData {
-  gameTitle: string;
   gameDescription: string;
 }
 

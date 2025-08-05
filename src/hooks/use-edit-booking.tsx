@@ -4,7 +4,6 @@ interface EditBookingParams {
   p_user_id: string;
   p_booking_id: string;
   p_player_ids: string[];
-  p_title?: string | null;
   p_description?: string | null;
   p_venue_id?: string | null;
   p_start_time?: string | null;

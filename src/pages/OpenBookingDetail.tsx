@@ -27,7 +27,7 @@ export default function OpenBookingDetail() {
     // Transform booking to match expected format for JoinGameResponsive
     const gamePost = {
       id: booking.booking_id,
-      title: booking.title,
+      title: `Looking for ${4 - booking.player_count} player${4 - booking.player_count !== 1 ? 's' : ''} - open booking`,
       courtName: booking.venue_name,
       venueId: booking.venue_id,
       gameDate: new Date(booking.start_time),
@@ -58,8 +58,8 @@ export default function OpenBookingDetail() {
     if (navigator.share && isMobile) {
       try {
         await navigator.share({
-          title: booking?.title || 'Open Booking',
-          text: `Join this Padel game: ${booking?.title}`,
+          title: 'Open Booking',
+          text: `Join this Padel game at ${booking?.venue_name}`,
           url: shareUrl,
         });
         toast.success("Shared successfully!");
@@ -178,7 +178,7 @@ export default function OpenBookingDetail() {
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start mb-2 gap-2">
                   <CardTitle className="text-base sm:text-lg leading-tight">
-                    {booking.title}
+                    Looking for {spotsAvailable} player{spotsAvailable !== 1 ? 's' : ''} - open booking
                   </CardTitle>
                   <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap flex-shrink-0">
                     {formatTimeAgo(publishedAt)}

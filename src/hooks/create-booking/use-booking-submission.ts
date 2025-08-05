@@ -13,7 +13,6 @@ interface WizardData {
   matchDate: string;
   matchTime: string;
   feePerPlayer: string;
-  gameTitle: string;
   gameDescription: string;
 }
 
@@ -38,13 +37,12 @@ export function useBookingSubmission() {
         // Use create_booking_open for incomplete bookings
         const startDateTime = new Date(`${wizardData.matchDate}T${wizardData.matchTime}`);
         
-        const { data, error } = await supabase.rpc('create_booking_open', {
+        const { data, error } = await supabase.rpc('create_booking_open' as any, {
           p_user_a_id: profile.id,
           p_user_ids: wizardData.selectedPlayers,
           p_venue_id: wizardData.venueId,
           p_start_time: startDateTime.toISOString(),
           p_fee: parseFloat(wizardData.feePerPlayer) || 0,
-          p_title: wizardData.gameTitle,
           p_description: wizardData.gameDescription || null
         });
 
@@ -61,13 +59,12 @@ export function useBookingSubmission() {
         // Use create_booking_closed for complete bookings (closed games)
         const startDateTime = new Date(`${wizardData.matchDate}T${wizardData.matchTime}`);
         
-        const { data, error } = await supabase.rpc('create_booking_closed', {
+        const { data, error } = await supabase.rpc('create_booking_closed' as any, {
           p_user_a_id: profile.id,
           p_user_ids: wizardData.selectedPlayers,
           p_venue_id: wizardData.venueId,
           p_start_time: startDateTime.toISOString(),
           p_fee: parseFloat(wizardData.feePerPlayer) || 0,
-          p_title: wizardData.gameTitle,
           p_description: wizardData.gameDescription || null
         });
 

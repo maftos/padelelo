@@ -116,7 +116,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
     
     return {
       id: game.booking_id,
-      title: game.title || `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
+      title: `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
       courtName: game.venue_name,
       gameDate,
       spotsAvailable: remainingSpots,

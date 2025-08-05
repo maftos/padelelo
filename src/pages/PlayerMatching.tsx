@@ -46,8 +46,8 @@ export default function PlayerMatching() {
     if (navigator.share && isMobile) {
       try {
         await navigator.share({
-          title: title || 'Open Booking',
-          text: `Join this Padel game: ${title}`,
+          title: 'Open Booking',
+          text: `Join this Padel game`,
           url: shareUrl,
         });
         toast.success("Shared successfully!");

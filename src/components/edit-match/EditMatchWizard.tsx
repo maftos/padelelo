@@ -20,7 +20,6 @@ interface WizardData {
   matchDate: string;
   matchTime: string;
   feePerPlayer: string;
-  gameTitle: string;
   gameDescription: string;
 }
 
@@ -41,7 +40,6 @@ const EditMatchWizard = () => {
     matchDate: "",
     matchTime: "",
     feePerPlayer: "",
-    gameTitle: "",
     gameDescription: ""
   });
 
@@ -71,7 +69,6 @@ const EditMatchWizard = () => {
         matchDate: date || '',
         matchTime: time || '',
         feePerPlayer: booking.booking_fee_per_player?.toString() || "",
-        gameTitle: booking.title || "",
         gameDescription: booking.description || ""
       };
       
@@ -114,7 +111,6 @@ const EditMatchWizard = () => {
         p_user_id: user.id,
         p_booking_id: bookingId,
         p_player_ids: wizardData.selectedPlayers,
-        p_title: wizardData.gameTitle || null,
         p_description: wizardData.gameDescription || null,
         p_venue_id: wizardData.location || null,
         p_start_time: utcDate.toISOString(),
@@ -158,7 +154,7 @@ const EditMatchWizard = () => {
         }
         return true; // For complete matches, details are optional
       case 3:
-        return wizardData.gameTitle.trim().length > 0;
+        return true; // Description is optional
       default:
         return false;
     }
@@ -191,7 +187,6 @@ const EditMatchWizard = () => {
         return (
           <GameAnnouncementStep
             data={{
-              gameTitle: wizardData.gameTitle,
               gameDescription: wizardData.gameDescription
             }}
             onDataChange={(data) => updateWizardData(data)}

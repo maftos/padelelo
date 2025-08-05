@@ -8,7 +8,6 @@ export interface BookingDetails {
   venue_id: string;
   venue_name: string;
   start_time: string;
-  title: string;
   description: string;
   status: string;
   player_count: number;
@@ -79,7 +78,6 @@ export const useBookingDetails = (bookingId: string | undefined) => {
         venue_id: response.venue_id,
         venue_name: response.venue_name,
         start_time: response.start_time,
-        title: response.title || '',
         description: response.description || '',
         status: response.status,
         player_count: response.player_count || response.participants?.length || 0,

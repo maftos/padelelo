@@ -8,7 +8,6 @@ export interface OpenGame {
   venue_id: string;
   venue_name: string;
   start_time: string;
-  title: string;
   description: string;
   status: string;
   player_count: number;

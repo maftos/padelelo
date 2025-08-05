@@ -16,7 +16,6 @@ interface WizardData {
   matchDate: string;
   matchTime: string;
   feePerPlayer: string;
-  gameTitle: string;
   gameDescription: string;
 }
 
@@ -31,7 +30,6 @@ const CreateBookingWizard = () => {
     matchDate: "",
     matchTime: "",
     feePerPlayer: "",
-    gameTitle: "",
     gameDescription: ""
   });
 
@@ -105,7 +103,6 @@ const CreateBookingWizard = () => {
         return (
           <GameAnnouncementStep
             data={{
-              gameTitle: wizardData.gameTitle,
               gameDescription: wizardData.gameDescription
             }}
             onDataChange={(data) => updateWizardData(data)}
