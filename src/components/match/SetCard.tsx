@@ -25,10 +25,14 @@ export const SetCard = ({
         </div>
         
         {/* Set Score */}
-        <div className="flex items-center justify-center space-x-2 min-w-[60px]">
-          <span className="text-sm font-medium">{team1_score}</span>
-          <span className="text-muted-foreground text-sm">-</span>
-          <span className="text-sm font-medium">{team2_score}</span>
+        <div className="flex items-center space-x-4">
+          <div className="text-center">
+            <p className="text-sm font-medium">{team1_score}</p>
+          </div>
+          <div className="text-muted-foreground text-sm">:</div>
+          <div className="text-center">
+            <p className="text-sm font-medium">{team2_score}</p>
+          </div>
         </div>
       </div>
 
@@ -42,11 +46,11 @@ export const SetCard = ({
               : ""
           }`}
         >
-          {result === "WIN" ? "+" : "-"}{change_amount} MMR
+          {result === "WIN" ? "+" : "-"}{change_amount}
         </Badge>
       ) : (
         <Badge variant="outline" className="text-xs">
-          Pending MMR
+          Pending
         </Badge>
       )}
     </div>

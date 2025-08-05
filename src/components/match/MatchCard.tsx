@@ -73,7 +73,7 @@ export const MatchCard = ({
           <div className="text-center">
             <p className="text-lg font-bold text-foreground">{total_team1_score}</p>
           </div>
-          <div className="text-muted-foreground">vs</div>
+          <div className="text-muted-foreground">:</div>
           <div className="text-center">
             <p className="text-lg font-bold text-foreground">{total_team2_score}</p>
           </div>

@@ -7,6 +7,7 @@ import { sampleBookings } from "@/data/sampleMatches";
 import { Navigation } from "@/components/Navigation";
 import { Loading } from "@/components/ui/loading";
 import { BookingCard } from "@/components/match/BookingCard";
+import { Button } from "@/components/ui/button";
 
 interface MatchDetails {
   match_id: string;
@@ -73,10 +74,6 @@ const Matches = () => {
               <p className="text-muted-foreground text-lg">Track your padel journey and performance</p>
             </div>
             
-            <div className="flex items-center gap-3">
-              <div className="h-1 w-12 bg-gradient-to-r from-primary to-secondary rounded-full"></div>
-              <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Recent Matches</span>
-            </div>
           </div>
 
           <div className="space-y-6">
@@ -87,9 +84,18 @@ const Matches = () => {
                 <p className="text-muted-foreground">No matches found</p>
               </div>
             ) : (
-              bookings.map((booking) => (
-                <BookingCard key={booking.booking_id} {...booking} />
-              ))
+              <>
+                {bookings.map((booking) => (
+                  <BookingCard key={booking.booking_id} {...booking} />
+                ))}
+                
+                {/* Pagination */}
+                <div className="flex justify-center mt-8">
+                  <Button variant="outline" className="px-8">
+                    See More
+                  </Button>
+                </div>
+              </>
             )}
           </div>
         </div>
