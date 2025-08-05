@@ -50,7 +50,7 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
       <div className="flex items-center justify-between pb-4 border-b border-border/30">
         <div className="space-y-1">
           <h3 className="text-lg font-semibold text-foreground">
-            {formatDistanceToNow(new Date(date), { addSuffix: true })}
+            {date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : 'Invalid date'}
           </h3>
           <p className="text-sm text-muted-foreground">{location}</p>
         </div>
