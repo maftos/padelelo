@@ -77,22 +77,22 @@ const NotificationSettings = () => {
           {/* Games From */}
           <div className="space-y-3">
             <Label>Games from</Label>
-            <div className="space-y-2">
+            <RadioGroup
+              value={openBookings.gamesFrom}
+              onValueChange={(value) => 
+                setOpenBookings(prev => ({ ...prev, gamesFrom: value }))
+              }
+              className="space-y-2"
+            >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="anyone" id="anyone" 
-                  checked={openBookings.gamesFrom === "anyone"}
-                  onClick={() => setOpenBookings(prev => ({ ...prev, gamesFrom: "anyone" }))}
-                />
+                <RadioGroupItem value="anyone" id="anyone" />
                 <Label htmlFor="anyone">Anyone</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="friends" id="friends"
-                  checked={openBookings.gamesFrom === "friends"}
-                  onClick={() => setOpenBookings(prev => ({ ...prev, gamesFrom: "friends" }))}
-                />
+                <RadioGroupItem value="friends" id="friends" />
                 <Label htmlFor="friends">Friends only</Label>
               </div>
-            </div>
+            </RadioGroup>
           </div>
 
           {/* Regions */}
