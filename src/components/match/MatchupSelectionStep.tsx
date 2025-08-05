@@ -43,6 +43,11 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
 
   // Generate all possible matchup combinations
   const generatePossibleMatchups = () => {
+    // Ensure we have exactly 4 players before generating matchups
+    if (players.length !== 4 || players.some(p => !p || !p.id)) {
+      return [];
+    }
+    
     const [p1, p2, p3, p4] = players;
     return [
       {
