@@ -23,39 +23,27 @@ export const useConfirmedBookings = () => {
     queryFn: async () => {
       if (!user?.id) throw new Error('User not authenticated');
 
-      const { data, error } = await supabase
-        .from('bookings')
-        .select(`
-          booking_id,
-          start_time,
-          venues!inner(name),
-          status,
-          booking_players!inner(
-            player_id,
-            users!inner(
-              id,
-              first_name,
-              last_name,
-              profile_photo
-            )
-          )
-        `)
-        .eq('booking_players.player_id', user.id)
-        .eq('status', 'CLOSED');
+      // Use the get_bookings_closed function to get proper data
+      const { data, error } = await supabase.rpc('get_bookings_closed', {
+        p_user_id: user.id
+      });
 
       if (error) throw error;
 
+      // Type assertion for the JSON array response
+      const bookings = Array.isArray(data) ? data : [];
+      
       // Transform the data to match ConfirmedBooking interface
-      return (data || []).map((booking: any) => ({
+      return bookings.map((booking: any) => ({
         booking_id: booking.booking_id,
         start_time: booking.start_time,
-        venue_name: booking.venues?.name || 'Unknown Venue',
+        venue_name: booking.venue_name || 'Unknown Venue',
         status: booking.status,
-        participants: booking.booking_players?.map((bp: any) => ({
-          player_id: bp.users.id,
-          first_name: bp.users.first_name,
-          last_name: bp.users.last_name,
-          profile_photo: bp.users.profile_photo
+        participants: booking.participants?.map((participant: any) => ({
+          player_id: participant.player_id,
+          first_name: participant.first_name,
+          last_name: participant.last_name,
+          profile_photo: participant.profile_photo
         })) || []
       })) as ConfirmedBooking[];
     },
