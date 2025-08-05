@@ -140,11 +140,7 @@ const JoinGameContent = ({ gamePost, onJoinRequest, isSubmitting, onClose }: {
           </div>
           <div className="flex items-start gap-3">
             <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0"></div>
-            <span>Your request is <strong>valid for 24 hours</strong></span>
-          </div>
-          <div className="flex items-start gap-3">
-            <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0"></div>
-            <span>You'll be notified of the decision <strong>as soon as possible</strong></span>
+            <span>The booking fee per player is <strong>{gamePost.price}</strong></span>
           </div>
         </div>
       </div>
