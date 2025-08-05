@@ -8,7 +8,7 @@ import { UserOpenGamesList } from "@/components/match/UserOpenGamesList";
 import { ViewApplicantsResponsive } from "@/components/match/ViewApplicantsResponsive";
 import { useState } from "react";
 import { AddResultsWizard } from "@/components/match/AddResultsWizard";
-import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
+import { useConfirmedBookings } from "@/hooks/use-confirmed-bookings";
 import { useOpenGames } from "@/hooks/use-open-games";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -19,7 +19,7 @@ const ManageMatches = () => {
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
   const [showAddResults, setShowAddResults] = useState(false);
-  const { confirmedMatches } = useConfirmedMatches();
+  const { confirmedBookings } = useConfirmedBookings();
   const { openGames } = useOpenGames();
 
   const handleSelectMatch = (matchId: string) => {
@@ -66,12 +66,12 @@ const ManageMatches = () => {
   const getMatchPlayers = () => {
     if (!selectedMatchId) return [];
     
-    // Find the selected match from confirmed matches
-    const selectedMatch = confirmedMatches.find(match => match.booking_id === selectedMatchId);
-    if (!selectedMatch) return [];
+    // Find the selected booking from confirmed bookings
+    const selectedBooking = confirmedBookings.find(booking => booking.booking_id === selectedMatchId);
+    if (!selectedBooking) return [];
     
     // Convert participants to the expected format with first names only
-    return selectedMatch.participants.map(participant => ({
+    return selectedBooking.participants.map(participant => ({
       id: participant.player_id,
       name: participant.first_name, // Use only first name
       photo: participant.profile_photo
