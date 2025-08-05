@@ -22,8 +22,9 @@ export const formatGameDateTime = (date: Date) => {
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const dayName = dayNames[date.getDay()];
   const time = format(date, "HH:mm");
+  const monthName = date.toLocaleDateString('en-US', { month: 'short' });
   
-  return `${dayName} ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
+  return `${dayName}, ${monthName} ${date.getDate()} @ ${time}`;
 };
 
 export const getOrdinalSuffix = (day: number) => {
@@ -86,7 +87,7 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
   // Get price from first participant's payment amount
   const priceAmount = game.participants[0]?.payment_amount || 400;
   const priceCurrency = game.participants[0]?.payment_currency || 'MUR';
-  const formattedPrice = priceCurrency === 'MUR' ? `Rs ${priceAmount}` : `${priceCurrency} ${priceAmount}`;
+  const formattedPrice = `Rs ${priceAmount}`;
   
   return {
     id: game.booking_id,

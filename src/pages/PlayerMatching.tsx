@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Clock, MapPin, Users, Calendar, DollarSign, Bell, ArrowUpDown, Share2 } from "lucide-react";
+import { Clock, MapPin, Users, Calendar, Bell, ArrowUpDown, Share2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -149,9 +149,10 @@ export default function PlayerMatching() {
                 <div className="flex justify-between items-start gap-2 sm:gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start mb-2 gap-2">
-                      <CardTitle className="text-base sm:text-lg leading-tight">
-                        {post.title}
-                      </CardTitle>
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                        <span className="text-base sm:text-lg bg-primary/10 text-primary px-2 py-1 rounded-md font-semibold">{formatGameDateTime(post.gameDate)}</span>
+                      </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         <Button
                           variant="ghost"
@@ -170,14 +171,9 @@ export default function PlayerMatching() {
                       </div>
                     </div>
                     
-                    {/* First row: Start Time and Fee */}
+                    {/* First row: Fee and Location */}
                     <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-xs sm:text-sm mb-2">
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                        <span className="text-xs sm:text-sm bg-primary/10 text-primary px-2 py-1 rounded-md font-medium">{formatGameDateTime(post.gameDate)}</span>
-                      </div>
                       <div className="flex items-center gap-1 text-muted-foreground">
-                        <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                         <span>{post.price}</span>
                       </div>
                     </div>
@@ -197,17 +193,14 @@ export default function PlayerMatching() {
               </CardHeader>
               
               <CardContent className="pt-0 px-3 sm:px-6">
-                <CardDescription className="mb-3 sm:mb-4 text-sm leading-relaxed">
-                  {post.description}
-                </CardDescription>
+                {post.description && (
+                  <CardDescription className="mb-3 sm:mb-4 text-sm leading-relaxed">
+                    {post.description}
+                  </CardDescription>
+                )}
                 
                 {/* Current Players - Mobile optimized grid */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-medium text-sm">
-                      Current Players (avg: {calculateAverageMMR(post.existingPlayers)} MMR)
-                    </h4>
-                  </div>
                   
                   {/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
                   <div className="grid grid-cols-2 gap-2 sm:gap-3">
