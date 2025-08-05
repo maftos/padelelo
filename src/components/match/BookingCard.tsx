@@ -6,9 +6,7 @@ interface SetData {
   team1_score: number;
   team2_score: number;
   result: "WIN" | "LOSS";
-  old_mmr: number;
   change_amount: number;
-  new_mmr: number;
 }
 
 interface MatchData {
@@ -34,6 +32,12 @@ interface BookingCardProps {
 }
 
 export const BookingCard = ({ booking_id, date, location, matches }: BookingCardProps) => {
+  // Calculate total MMR change for this booking
+  const totalMmrChange = matches.reduce((bookingTotal, match) => {
+    return bookingTotal + match.sets.reduce((matchTotal, set) => {
+      return matchTotal + (set.result === "WIN" ? set.change_amount : -set.change_amount);
+    }, 0);
+  }, 0);
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg p-6 space-y-6">
       {/* Booking Header */}
@@ -44,8 +48,17 @@ export const BookingCard = ({ booking_id, date, location, matches }: BookingCard
             {formatDistanceToNow(new Date(date), { addSuffix: true })}
           </p>
         </div>
-        <div className="text-right">
-          <p className="text-sm text-muted-foreground">Booking</p>
+        <div className="text-right space-y-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Total MMR:</span>
+            <span className={`text-sm font-bold ${
+              totalMmrChange >= 0 
+                ? "text-green-600" 
+                : "text-red-600"
+            }`}>
+              {totalMmrChange >= 0 ? "+" : ""}{totalMmrChange}
+            </span>
+          </div>
           <p className="text-xs text-muted-foreground">{booking_id}</p>
         </div>
       </div>

@@ -6,9 +6,7 @@ interface SetData {
   team1_score: number;
   team2_score: number;
   result: "WIN" | "LOSS";
-  old_mmr: number;
   change_amount: number;
-  new_mmr: number;
 }
 
 interface MatchCardProps {
