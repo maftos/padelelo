@@ -43,22 +43,31 @@ export const usePublicOpenGames = (sortBy: string = 'created_at_desc') => {
   };
 
   const { data: publicOpenGames = [], isLoading, error } = useQuery({
-    queryKey: ['public-open-games', sortBy],
+    queryKey: ['public-open-games', sortBy, user?.id],
     queryFn: async () => {
       const sortParameter = getSortParameter(sortBy);
       
-      const { data, error } = await supabase
-        .rpc('view_open_bookings', {
-          p_user_id: user?.id || '00000000-0000-0000-0000-000000000000',
-          p_sort_by: sortParameter
-        });
+      // Use different functions based on authentication status
+      if (user?.id) {
+        // User is authenticated - use the auth version
+        const { data, error } = await supabase
+          .rpc('view_open_bookings_auth' as any, {
+            p_user_id: user.id,
+            p_sort_by: sortParameter
+          });
 
-      if (error) throw error;
+        if (error) throw error;
+        return (data as unknown) as PublicOpenGame[] || [];
+      } else {
+        // User is not authenticated - use the unauth version
+        const { data, error } = await supabase
+          .rpc('view_open_bookings_unauth' as any, {
+            p_sort_by: sortParameter
+          });
 
-      // Handle the case where data might be null
-      if (!data) return [];
-
-      return (data as unknown) as PublicOpenGame[];
+        if (error) throw error;
+        return (data as unknown) as PublicOpenGame[] || [];
+      }
     }
   });
 
