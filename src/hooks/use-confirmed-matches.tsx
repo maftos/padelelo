@@ -4,33 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export interface ConfirmedMatch {
-  match_id: string;
-  match_date: string;
+  booking_id: string;
+  start_time: string;
   venue_name: string;
   status: string;
-  team1_player1_id: string;
-  team1_player1_name: string;
-  team1_player1_photo: string;
-  team1_player2_id: string;
-  team1_player2_name: string;
-  team1_player2_photo: string;
-  team2_player1_id: string;
-  team2_player1_name: string;
-  team2_player1_photo: string;
-  team2_player2_id: string;
-  team2_player2_name: string;
-  team2_player2_photo: string;
-  team1_total_score: number;
-  team2_total_score: number;
-  sets: Array<{
-    set_number: number;
-    team1_score: number;
-    team2_score: number;
+  participants: Array<{
+    player_id: string;
+    first_name: string;
+    last_name: string;
+    profile_photo: string;
   }>;
-  user_mmr_change: number;
-  user_old_mmr: number;
-  user_new_mmr: number;
-  change_type: string;
 }
 
 export const useConfirmedMatches = () => {
@@ -42,19 +25,40 @@ export const useConfirmedMatches = () => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
-        .rpc('get_my_completed_matches', {
-          user_a_id: user.id,
-          page_number: 1,
-          page_size: 50
-        });
+        .from('bookings')
+        .select(`
+          booking_id,
+          start_time,
+          venues!inner(name),
+          status,
+          booking_players!inner(
+            player_id,
+            users!inner(
+              id,
+              first_name,
+              last_name,
+              profile_photo
+            )
+          )
+        `)
+        .eq('booking_players.player_id', user.id)
+        .eq('status', 'CLOSED');
 
       if (error) throw error;
 
-      // Handle the case where data might be null
-      if (!data) return [];
-
-      // get_my_completed_matches returns the matches directly
-      return Array.isArray(data) ? data as unknown as ConfirmedMatch[] : [];
+      // Transform the data to match ConfirmedMatch interface
+      return (data || []).map((booking: any) => ({
+        booking_id: booking.booking_id,
+        start_time: booking.start_time,
+        venue_name: booking.venues?.name || 'Unknown Venue',
+        status: booking.status,
+        participants: booking.booking_players?.map((bp: any) => ({
+          player_id: bp.users.id,
+          first_name: bp.users.first_name,
+          last_name: bp.users.last_name,
+          profile_photo: bp.users.profile_photo
+        })) || []
+      })) as ConfirmedMatch[];
     },
     enabled: !!user?.id
   });
