@@ -4,22 +4,33 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
 export interface ConfirmedMatch {
-  booking_id: string;
-  venue_id: string;
+  match_id: string;
+  match_date: string;
   venue_name: string;
-  start_time: string;
-  description: string;
   status: string;
-  player_count: number;
-  created_at: string;
-  created_by: string;
-  is_creator: boolean;
-  participants: Array<{
-    player_id: string;
-    first_name: string;
-    last_name: string;
-    profile_photo: string;
+  team1_player1_id: string;
+  team1_player1_name: string;
+  team1_player1_photo: string;
+  team1_player2_id: string;
+  team1_player2_name: string;
+  team1_player2_photo: string;
+  team2_player1_id: string;
+  team2_player1_name: string;
+  team2_player1_photo: string;
+  team2_player2_id: string;
+  team2_player2_name: string;
+  team2_player2_photo: string;
+  team1_total_score: number;
+  team2_total_score: number;
+  sets: Array<{
+    set_number: number;
+    team1_score: number;
+    team2_score: number;
   }>;
+  user_mmr_change: number;
+  user_old_mmr: number;
+  user_new_mmr: number;
+  change_type: string;
 }
 
 export const useConfirmedMatches = () => {
@@ -31,8 +42,10 @@ export const useConfirmedMatches = () => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
-        .rpc('get_bookings_closed', {
-          p_user_id: user.id
+        .rpc('get_my_completed_matches', {
+          user_a_id: user.id,
+          page_number: 1,
+          page_size: 50
         });
 
       if (error) throw error;
@@ -40,13 +53,8 @@ export const useConfirmedMatches = () => {
       // Handle the case where data might be null
       if (!data) return [];
 
-      // Extract bookings from the response structure
-      const responseData = data as any;
-      if (responseData?.bookings && Array.isArray(responseData.bookings)) {
-        return responseData.bookings;
-      }
-
-      return [];
+      // get_my_completed_matches returns the matches directly
+      return Array.isArray(data) ? data as unknown as ConfirmedMatch[] : [];
     },
     enabled: !!user?.id
   });

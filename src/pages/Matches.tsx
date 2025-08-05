@@ -51,58 +51,35 @@ const Matches = () => {
   }, [session, loading, navigate]);
 
   // Transform confirmed matches to match the expected MatchDetails interface
-  const matches: MatchDetails[] = confirmedMatches.flatMap((booking) => {
-    const allMatches: MatchDetails[] = [];
+  const matches: MatchDetails[] = confirmedMatches.map((match) => {
+    const matchData = match as any;
     
-    // Since confirmed matches now contain the booking data with nested matches
-    // We need to extract matches from the booking structure
-    if (booking && typeof booking === 'object' && 'matches' in booking) {
-      const bookingData = booking as any;
-      if (bookingData.matches && Array.isArray(bookingData.matches)) {
-        bookingData.matches.forEach((match: any) => {
-          const team1 = match.team1 || {};
-          const team2 = match.team2 || {};
-          const sets = match.sets || [];
-          
-          // Calculate total scores from sets won
-          const team1_score = match.team1_sets_won || 0;
-          const team2_score = match.team2_sets_won || 0;
-          
-          allMatches.push({
-            match_id: match.match_id,
-            old_mmr: 0,
-            change_amount: 0,
-            change_type: '',
-            created_at: bookingData.start_time,
-            partner_id: "",
-            new_mmr: 0,
-            status: "COMPLETED",
-            team1_score,
-            team2_score,
-            team1_player1_display_name: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
-            team1_player1_profile_photo: team1.player1?.profile_photo || '',
-            team1_player2_display_name: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
-            team1_player2_profile_photo: team1.player2?.profile_photo || '',
-            team2_player1_display_name: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
-            team2_player1_profile_photo: team2.player1?.profile_photo || '',
-            team2_player2_display_name: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
-            team2_player2_profile_photo: team2.player2?.profile_photo || '',
-            completed_by: undefined,
-            player1_id: team1.player1?.id,
-            player2_id: team1.player2?.id,
-            player3_id: team2.player1?.id,
-            player4_id: team2.player2?.id,
-            sets: sets.map((set: any) => ({
-              set_number: set.set_number,
-              team1_score: set.team1_score,
-              team2_score: set.team2_score,
-            })),
-          });
-        });
-      }
-    }
-    
-    return allMatches;
+    return {
+      match_id: matchData.match_id || '',
+      old_mmr: matchData.user_old_mmr || 0,
+      change_amount: Math.abs(matchData.user_mmr_change || 0),
+      change_type: matchData.change_type || (matchData.user_mmr_change > 0 ? 'WIN' : 'LOSS'),
+      created_at: matchData.match_date || '',
+      partner_id: "",
+      new_mmr: matchData.user_new_mmr || 0,
+      status: "COMPLETED",
+      team1_score: matchData.team1_total_score || 0,
+      team2_score: matchData.team2_total_score || 0,
+      team1_player1_display_name: matchData.team1_player1_name || '',
+      team1_player1_profile_photo: matchData.team1_player1_photo || '',
+      team1_player2_display_name: matchData.team1_player2_name || '',
+      team1_player2_profile_photo: matchData.team1_player2_photo || '',
+      team2_player1_display_name: matchData.team2_player1_name || '',
+      team2_player1_profile_photo: matchData.team2_player1_photo || '',
+      team2_player2_display_name: matchData.team2_player2_name || '',
+      team2_player2_profile_photo: matchData.team2_player2_photo || '',
+      completed_by: undefined,
+      player1_id: matchData.team1_player1_id,
+      player2_id: matchData.team1_player2_id,
+      player3_id: matchData.team2_player1_id,
+      player4_id: matchData.team2_player2_id,
+      sets: matchData.sets || [],
+    };
   });
 
   if (loading) {
