@@ -47,7 +47,6 @@ export function useMMRCalculation(userId: string | undefined) {
         p_venue_id: '', // Will need to be provided or made optional
         p_start_time: new Date(date).toISOString(),
         p_fee: 0,
-        p_title: 'Match Preview',
         p_description: 'MMR calculation preview'
       });
 
