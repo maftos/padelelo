@@ -1,11 +1,14 @@
 
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserProfile } from "@/hooks/use-user-profile";
 import { Navigation } from "@/components/Navigation";
 import { Loading } from "@/components/ui/loading";
 import { MatchesList } from "@/components/match/MatchesList";
-import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 
 interface MatchDetails {
   match_id: string;
@@ -39,9 +42,10 @@ interface MatchDetails {
 }
 
 const Matches = () => {
+  const { toast } = useToast();
+  const { userId } = useUserProfile();
   const navigate = useNavigate();
   const { session, loading } = useAuth();
-  const { confirmedMatches, isLoading } = useConfirmedMatches();
 
   useEffect(() => {
     if (!loading && !session) {
@@ -49,33 +53,79 @@ const Matches = () => {
     }
   }, [session, loading, navigate]);
 
-  // Transform confirmed matches to match the expected MatchDetails format
-  const matches = confirmedMatches.map((match) => ({
-    match_id: match.booking_id, // Using booking_id as match_id for now
-    old_mmr: 0, // Not available in confirmed matches
-    change_amount: 0, // Not available in confirmed matches
-    change_type: '', // Not available in confirmed matches
-    created_at: match.created_at,
-    partner_id: '',
-    new_mmr: 0, // Not available in confirmed matches
-    status: match.status,
-    team1_score: 0, // Not available in confirmed matches
-    team2_score: 0, // Not available in confirmed matches
-    team1_player1_display_name: match.participants[0]?.first_name + ' ' + match.participants[0]?.last_name || '',
-    team1_player1_profile_photo: match.participants[0]?.profile_photo || '',
-    team1_player2_display_name: match.participants[1]?.first_name + ' ' + match.participants[1]?.last_name || '',
-    team1_player2_profile_photo: match.participants[1]?.profile_photo || '',
-    team2_player1_display_name: match.participants[2]?.first_name + ' ' + match.participants[2]?.last_name || '',
-    team2_player1_profile_photo: match.participants[2]?.profile_photo || '',
-    team2_player2_display_name: match.participants[3]?.first_name + ' ' + match.participants[3]?.last_name || '',
-    team2_player2_profile_photo: match.participants[3]?.profile_photo || '',
-    completed_by: match.created_by,
-    player1_id: match.participants[0]?.player_id,
-    player2_id: match.participants[1]?.player_id,
-    player3_id: match.participants[2]?.player_id,
-    player4_id: match.participants[3]?.player_id,
-    sets: [], // Not available in confirmed matches
-  }));
+  const { data: matches = [], isLoading } = useQuery({
+    queryKey: ["myMatches", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+
+      const { data, error } = await supabase.rpc("get_bookings_closed", {
+        p_user_id: userId
+      });
+
+      if (error) {
+        toast({
+          title: "Error fetching matches",
+          description: error.message,
+          variant: "destructive",
+        });
+        throw error;
+      }
+
+      // Handle the new structure: response -> bookings -> matches -> sets
+      const allMatches: MatchDetails[] = [];
+      const responseData = data as any;
+      
+      if (responseData?.bookings && Array.isArray(responseData.bookings)) {
+        responseData.bookings.forEach((booking: any) => {
+          if (booking.matches && Array.isArray(booking.matches)) {
+            booking.matches.forEach((match: any) => {
+              const team1 = match.team1 || {};
+              const team2 = match.team2 || {};
+              const sets = match.sets || [];
+              
+              // Calculate total scores from sets won
+              const team1_score = match.team1_sets_won || 0;
+              const team2_score = match.team2_sets_won || 0;
+              
+              allMatches.push({
+                match_id: match.match_id,
+                old_mmr: 0, // Not available in this structure
+                change_amount: 0, // Not available in this structure
+                change_type: '', // Not available in this structure
+                created_at: booking.start_time, // Using booking start time
+                partner_id: "",
+                new_mmr: 0, // Not available in this structure
+                status: "COMPLETED",
+                team1_score,
+                team2_score,
+                team1_player1_display_name: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
+                team1_player1_profile_photo: team1.player1?.profile_photo || '',
+                team1_player2_display_name: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
+                team1_player2_profile_photo: team1.player2?.profile_photo || '',
+                team2_player1_display_name: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
+                team2_player1_profile_photo: team2.player1?.profile_photo || '',
+                team2_player2_display_name: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
+                team2_player2_profile_photo: team2.player2?.profile_photo || '',
+                completed_by: undefined, // Not available in this structure
+                player1_id: team1.player1?.id,
+                player2_id: team1.player2?.id,
+                player3_id: team2.player1?.id,
+                player4_id: team2.player2?.id,
+                sets: sets.map((set: any) => ({
+                  set_number: set.set_number,
+                  team1_score: set.team1_score,
+                  team2_score: set.team2_score,
+                })),
+              });
+            });
+          }
+        });
+      }
+      
+      return allMatches;
+    },
+    enabled: !!userId && !!session,
+  });
 
   if (loading) {
     return <Loading />;
