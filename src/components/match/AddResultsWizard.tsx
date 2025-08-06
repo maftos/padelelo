@@ -8,6 +8,7 @@ import { ScoreEntryStep } from "./ScoreEntryStep";
 import { ResultsCart } from "./ResultsCart";
 import { MatchupProgressOverview } from "./MatchupProgressOverview";
 import { useAddResults } from "@/hooks/match/use-add-results";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface QueuedResult {
   id: string;
@@ -39,10 +40,10 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
   const [currentStep, setCurrentStep] = useState<"selection" | "scoring" | "preview">("selection");
   const [selectedMatchups, setSelectedMatchups] = useState<SelectedMatchup[]>([]);
   const [queuedResults, setQueuedResults] = useState<QueuedResult[]>([]);
+  const { user } = useAuth();
   
-  // Get current user ID - assuming the first player in the list is the current user
-  // In a real implementation, this would come from auth context
-  const currentUserId = players[0]?.id || '';
+  // Get current user ID from auth context
+  const currentUserId = user?.id || '';
   
   const {
     matchups,

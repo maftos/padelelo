@@ -28,9 +28,10 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
     const player = players.find(p => p.id === playerId);
     if (!player) return "Unknown";
     
-    // Extract only the first name
+    // If the name is already "You", return it as is, otherwise extract first name
+    if (player.name === "You") return "You";
     const firstName = player.name.split(' ')[0];
-    return firstName === "Me" ? "You" : firstName;
+    return firstName;
   };
 
   const getPlayerPhoto = (playerId: string) => {

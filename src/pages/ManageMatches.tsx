@@ -11,10 +11,12 @@ import { AddResultsWizard } from "@/components/match/AddResultsWizard";
 import { useConfirmedBookings } from "@/hooks/use-confirmed-bookings";
 import { useOpenGames } from "@/hooks/use-open-games";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/AuthContext";
 
 const ManageMatches = () => {
   const isMobile = useIsMobile();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   const [selectedMatchId, setSelectedMatchId] = useState<string>();
   const [applicantsDialogOpen, setApplicantsDialogOpen] = useState(false);
   const [selectedGameId, setSelectedGameId] = useState<string>();
@@ -71,11 +73,18 @@ const ManageMatches = () => {
     if (!selectedBooking) return [];
     
     // Convert participants to the expected format with first names only
-    return selectedBooking.participants.map(participant => ({
+    const players = selectedBooking.participants.map(participant => ({
       id: participant.player_id,
-      name: participant.first_name, // Use only first name
+      name: participant.player_id === user?.id ? "You" : participant.first_name, // Show "You" for current user
       photo: participant.profile_photo
     }));
+    
+    // Sort players to ensure current user is always first
+    return players.sort((a, b) => {
+      if (a.id === user?.id) return -1;
+      if (b.id === user?.id) return 1;
+      return 0;
+    });
   };
 
   // Show Add Results wizard if a match is selected
