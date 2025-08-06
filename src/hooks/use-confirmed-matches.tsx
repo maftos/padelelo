@@ -51,10 +51,9 @@ export const useConfirmedMatches = (page: number = 1, pageSize: number = 10) => 
       const bookingsData = result.bookings || [];
       
       const bookings: ConfirmedBooking[] = bookingsData.map((booking: any) => {
-        // Determine status based on whether MMR has been calculated
-        const hasMMRCalculated = booking.matches?.some((match: any) => 
-          match.sets?.some((set: any) => set.rating_change?.change_amount !== null)
-        );
+        // Use the actual status from the API response, mapping API statuses to our interface
+        const apiStatus = booking.status;
+        const status = apiStatus === 'COMPLETED' ? 'MMR_CALCULATED' : 'SCORE_RECORDED';
         
         const transformedMatches = (booking.matches || []).map((match: any) => {
           // Count wins per team
@@ -93,7 +92,7 @@ export const useConfirmedMatches = (page: number = 1, pageSize: number = 10) => 
           booking_id: booking.booking_id,
           start_time: booking.start_time,
           venue_name: booking.venue_name || 'Unknown Venue',
-          status: hasMMRCalculated ? 'MMR_CALCULATED' : 'SCORE_RECORDED',
+          status,
           matches: transformedMatches
         };
       });
