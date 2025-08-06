@@ -113,7 +113,7 @@ export default function Dashboard() {
     <>
       <Navigation />
       <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-4xl">
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-3 sm:space-y-6">
           {/* Profile Card - Mobile optimized */}
           <Link to="/profile" className="block">
             <Card className="hover:shadow-lg transition-all duration-200 hover:scale-[1.01] group touch-manipulation">
@@ -127,24 +127,24 @@ export default function Dashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
+                      <div className="flex flex-col gap-1">
                         <CardTitle className="text-lg sm:text-xl truncate">{`${profileData?.first_name || ''} ${profileData?.last_name || ''}`.trim() || 'User'}</CardTitle>
-                        <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="flex items-center gap-2 flex-wrap">
                           <span className="text-sm text-muted-foreground">#{ranking}</span>
                           <Badge 
                             variant="secondary" 
-                            className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1 py-0 h-4`}
+                            className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1.5 py-0.5 h-5`}
                           >
                             {rankingChange < 0 ? (
-                              <TrendingDown className="h-2 w-2" />
+                              <TrendingDown className="h-2.5 w-2.5" />
                             ) : (
-                              <TrendingUp className="h-2 w-2" />
+                              <TrendingUp className="h-2.5 w-2.5" />
                             )}
                             {rankingChange > 0 ? '+' : ''}{rankingChange}
                           </Badge>
                         </div>
                       </div>
-                      <CardDescription className="mt-1 text-xs sm:text-sm">View and edit your profile</CardDescription>
+                      <CardDescription className="mt-1 text-xs sm:text-sm hidden sm:block">View and edit your profile</CardDescription>
                       <div className="flex items-center gap-2 mt-2 bg-background/60 backdrop-blur rounded-lg px-2 sm:px-3 py-1 border w-fit">
                         <Trophy className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500 flex-shrink-0" />
                         <div className="text-xs sm:text-sm">
@@ -161,7 +161,7 @@ export default function Dashboard() {
           </Link>
 
           {/* Content Grid - Stack on mobile, side by side on larger screens */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-6">
             {/* Next Game */}
             <Card>
               <CardHeader className="pb-3 space-y-0">
@@ -170,50 +170,54 @@ export default function Dashboard() {
                   <CardTitle className="text-base sm:text-lg truncate">Next Game</CardTitle>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                  {nextGame ? (
                   <div className="p-3 rounded-lg bg-accent/30 hover:bg-accent/50 transition-colors border border-accent/40">
                     <div className="space-y-3">
                       <div className="space-y-2">
                         <div className="flex items-start gap-2">
                           <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span className="font-medium text-sm sm:text-base leading-tight">
-                            {new Date((nextGame as any).start_time).toLocaleDateString('en-GB', { 
-                              weekday: 'long', 
-                              day: 'numeric', 
-                              month: 'long' 
-                            })} @ {new Date((nextGame as any).start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="font-medium text-sm leading-tight">
+                              {new Date((nextGame as any).start_time).toLocaleDateString('en-GB', { 
+                                weekday: 'short', 
+                                day: 'numeric', 
+                                month: 'short' 
+                              })}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date((nextGame as any).start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
                         </div>
                         
                         <div className="flex items-start gap-2">
                           <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                          <span className="text-xs sm:text-sm text-muted-foreground leading-tight">{(nextGame as any).venue_name}</span>
+                          <span className="text-xs text-muted-foreground leading-tight truncate">{(nextGame as any).venue_name}</span>
                         </div>
                       </div>
                       
-                      {/* Players */}
+                      {/* Players - Simplified for mobile */}
                       <div className="space-y-2">
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Users className="h-3 w-3" />
-                          <span>Players</span>
+                          <span>{((nextGame as any).participants || []).length} players</span>
                         </div>
                         
-                        <div className="flex flex-wrap items-center gap-2">
-                          {((nextGame as any).participants || []).map((participant: any, index: number) => (
-                            <div key={participant.player_id} className="flex items-center gap-1.5">
-                              <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                                <AvatarImage src={participant.profile_photo} />
-                                <AvatarFallback className="text-xs">
-                                  {`${participant.first_name[0] || ''}${participant.last_name[0] || ''}`.toUpperCase()}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-xs sm:text-sm font-medium">{participant.first_name}</span>
-                              {index < ((nextGame as any).participants || []).length - 1 && (
-                                <span className="text-muted-foreground text-xs mx-0.5">•</span>
-                              )}
-                            </div>
+                        <div className="flex items-center -space-x-1">
+                          {((nextGame as any).participants || []).slice(0, 4).map((participant: any) => (
+                            <Avatar key={participant.player_id} className="h-6 w-6 border-2 border-background">
+                              <AvatarImage src={participant.profile_photo} />
+                              <AvatarFallback className="text-xs">
+                                {`${participant.first_name[0] || ''}${participant.last_name[0] || ''}`.toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
                           ))}
+                          {((nextGame as any).participants || []).length > 4 && (
+                            <div className="h-6 w-6 rounded-full bg-muted border-2 border-background flex items-center justify-center text-xs font-medium">
+                              +{((nextGame as any).participants || []).length - 4}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -222,6 +226,11 @@ export default function Dashboard() {
                   <div className="text-center py-6 sm:py-8">
                     <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mx-auto mb-2" />
                     <p className="text-muted-foreground text-xs sm:text-sm">No upcoming games</p>
+                    <Link to="/create-match" className="mt-2 inline-block">
+                      <Button size="sm" className="text-xs h-8">
+                        Create Match
+                      </Button>
+                    </Link>
                   </div>
                 )}
               </CardContent>
@@ -240,7 +249,7 @@ export default function Dashboard() {
                   </Button>
                 </Link>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-0">
                 <SuggestedFriends userId={user?.id} />
               </CardContent>
             </Card>
@@ -259,7 +268,7 @@ export default function Dashboard() {
                 </Button>
               </Link>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <RecentMatches />
             </CardContent>
           </Card>
