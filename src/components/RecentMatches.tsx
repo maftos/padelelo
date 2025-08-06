@@ -51,7 +51,8 @@ export const RecentMatches = () => {
             team2_score: set.team2_score,
             // Determine if user won this specific set (assuming user is on team1)
             set_won: set.team1_score > set.team2_score,
-            change_amount: booking.mmr_after - booking.mmr_before,
+            // Use set-level change amount if available, otherwise fall back to booking level
+            change_amount: set.mmr_change || (booking.mmr_after - booking.mmr_before),
             // Opponents (team2 players)
             opponent1_name: match.team2_player1_display_name,
             opponent1_photo: match.team2_player1_profile_photo,
@@ -89,7 +90,14 @@ export const RecentMatches = () => {
               </div>
 
               <div className="flex items-center gap-3">
-                {/* 2. Won/Lost */}
+                {/* 2. Timestamp */}
+                <div className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(set.created_at), {
+                    addSuffix: true,
+                  })}
+                </div>
+
+                {/* 3. Won/Lost */}
                 <Badge 
                   variant={set.set_won ? "default" : "secondary"}
                   className={`px-2 py-0.5 text-xs font-semibold ${
@@ -101,18 +109,11 @@ export const RecentMatches = () => {
                   {set.set_won ? "WON" : "LOST"}
                 </Badge>
 
-                {/* 3. Score */}
+                {/* 4. Score */}
                 <div className="flex items-center gap-0.5 px-2 py-1 bg-background rounded border text-sm">
                   <span className="font-medium">{set.team1_score}</span>
                   <span className="text-muted-foreground">-</span>
                   <span className="font-medium">{set.team2_score}</span>
-                </div>
-
-                {/* 4. Timestamp */}
-                <div className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(set.created_at), {
-                    addSuffix: true,
-                  })}
                 </div>
 
                 {/* 5. Change amount */}
