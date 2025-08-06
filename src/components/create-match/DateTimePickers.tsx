@@ -76,9 +76,13 @@ export const DateTimePickers = ({
               mode="single"
               selected={date ? new Date(date) : undefined}
               onSelect={handleDateSelect}
-              disabled={(selectedDate) =>
-                selectedDate < new Date()
-              }
+              disabled={(selectedDate) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const selected = new Date(selectedDate);
+                selected.setHours(0, 0, 0, 0);
+                return selected < today;
+              }}
               initialFocus
               className="p-3 pointer-events-auto"
             />
@@ -113,7 +117,14 @@ export const DateTimePickers = ({
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-52 p-2" align="start">
-            <div className="flex flex-col gap-1 max-h-52 overflow-y-auto">
+            <div className="flex flex-col gap-1 max-h-52 overflow-y-auto" ref={(el) => {
+              if (el && !time) {
+                // Scroll to noon (48th option: 12:00) when opening
+                const noonIndex = 48;
+                const buttonHeight = 32; // Approximate button height
+                el.scrollTop = Math.max(0, (noonIndex - 3) * buttonHeight);
+              }
+            }}>
               {timeOptions.map((timeOption) => (
                 <Button
                   key={timeOption}
