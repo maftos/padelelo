@@ -51,9 +51,9 @@ export const RecentMatches = () => {
             team2_score: set.team2_score,
             // Determine if user won this specific set (assuming user is on team1)
             set_won: set.team1_score > set.team2_score,
-            // Use individual set rating change
-            change_amount: set.rating_change?.change_amount || 0,
-            change_type: set.rating_change?.change_type || 'LOSS',
+            // Use individual set rating change (already flattened by useConfirmedMatches)
+            change_amount: set.change_amount || 0,
+            change_type: set.result || 'LOSS',
             // Opponents (team2 players)
             opponent1_name: match.team2_player1_display_name,
             opponent1_photo: match.team2_player1_profile_photo,
