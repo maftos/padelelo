@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .optimistic-blink {
+    border: 2px solid hsl(var(--primary) / 0.3);
+    animation: optimistic-blink 2s ease-in-out infinite;
+  }
+}
+
+@keyframes optimistic-blink {
+  0%, 100% {
+    border-color: hsl(var(--primary) / 0.3);
+  }
+  50% {
+    border-color: hsl(var(--primary) / 0.7);
+  }
+}
+
 @layer base {
   :root {
     --background: 210 11% 15%;

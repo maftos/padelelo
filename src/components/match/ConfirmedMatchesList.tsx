@@ -76,7 +76,7 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
               selectedMatchId === booking.booking_id 
                 ? "ring-2 ring-primary bg-primary/5" 
                 : "hover:shadow-md"
-            } ${(booking as any)._isOptimistic ? "opacity-75 animate-pulse border-dashed border-primary" : ""}`}
+            } ${(booking as any)._isOptimistic ? "optimistic-blink bg-primary/5" : ""}`}
             onClick={() => onSelectMatch(booking.booking_id)}
           >
             <CardContent className="p-3 sm:p-4">
