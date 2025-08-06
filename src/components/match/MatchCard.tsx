@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SetCard } from "./SetCard";
+
 interface SetData {
   set_number: number;
   team1_score: number;
@@ -7,6 +8,7 @@ interface SetData {
   result: "WIN" | "LOSS" | null;
   change_amount: number | null;
 }
+
 interface MatchCardProps {
   match_id: string;
   team1_player1_display_name: string;
@@ -21,9 +23,11 @@ interface MatchCardProps {
   total_team2_score: number;
   sets: SetData[];
 }
+
 const getInitials = (name: string) => {
   return name.split(' ').map(n => n[0]).join('').toUpperCase();
 };
+
 export const MatchCard = ({
   match_id,
   team1_player1_display_name,
@@ -38,7 +42,8 @@ export const MatchCard = ({
   total_team2_score,
   sets
 }: MatchCardProps) => {
-  return <div className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3 sm:space-y-4">
+  return (
+    <div className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3 sm:space-y-4">
       {/* Match Header with Teams - Mobile Optimized */}
       <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         {/* Team 1 */}
@@ -64,7 +69,15 @@ export const MatchCard = ({
         </div>
 
         {/* VS and Score - Mobile Centered */}
-        
+        <div className="flex items-center justify-center space-x-2 sm:space-x-4 order-last sm:order-none">
+          <div className="text-center">
+            <p className="text-base sm:text-lg font-bold text-foreground">{total_team1_score}</p>
+          </div>
+          <div className="text-muted-foreground text-sm sm:text-base">:</div>
+          <div className="text-center">
+            <p className="text-base sm:text-lg font-bold text-foreground">{total_team2_score}</p>
+          </div>
+        </div>
 
         {/* Team 2 */}
         <div className="flex items-center space-x-2 sm:space-x-3 flex-1 sm:justify-end">
@@ -91,7 +104,10 @@ export const MatchCard = ({
 
       {/* Sets */}
       <div className="space-y-2">
-        {sets.map(set => <SetCard key={set.set_number} {...set} status="MMR_CALCULATED" />)}
+        {sets.map((set) => (
+          <SetCard key={set.set_number} {...set} status="MMR_CALCULATED" />
+        ))}
       </div>
-    </div>;
+    </div>
+  );
 };
