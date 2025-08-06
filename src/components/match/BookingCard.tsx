@@ -33,9 +33,11 @@ interface BookingCardProps {
   location: string;
   matches: MatchData[];
   status: "MMR_CALCULATED" | "SCORE_RECORDED";
+  mmr_before?: number;
+  mmr_after?: number;
 }
 
-export const BookingCard = ({ booking_id, date, location, matches, status }: BookingCardProps) => {
+export const BookingCard = ({ booking_id, date, location, matches, status, mmr_before, mmr_after }: BookingCardProps) => {
   // Calculate total MMR change for this booking
   const totalMmrChange = status === "MMR_CALCULATED" ? matches.reduce((bookingTotal, match) => {
     return bookingTotal + match.sets.reduce((matchTotal, set) => {
@@ -60,23 +62,23 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
             <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
               PROCESSING
             </Badge>
-          ) : status === "MMR_CALCULATED" && totalMmrChange !== null ? (
+          ) : status === "MMR_CALCULATED" && mmr_before !== undefined && mmr_after !== undefined ? (
             <div className="flex items-center gap-2 justify-end">
-              <span className="text-sm font-medium">1842</span>
+              <span className="text-sm font-medium">{mmr_before}</span>
               <TrendingUp className={`w-4 h-4 ${
-                totalMmrChange >= 0 ? "text-green-600" : "text-red-600 rotate-180"
+                mmr_after >= mmr_before ? "text-green-600" : "text-red-600 rotate-180"
               }`} />
               <span className={`text-sm font-bold ${
-                totalMmrChange >= 0 
+                mmr_after >= mmr_before 
                   ? "text-green-600" 
                   : "text-red-600"
               }`}>
-                {1842 + totalMmrChange}
+                {mmr_after}
               </span>
             </div>
           ) : (
             <div className="flex items-center gap-2 justify-end">
-              <span className="text-sm font-medium">1842</span>
+              <span className="text-sm font-medium">{mmr_before || "N/A"}</span>
               <Clock className="w-4 h-4 text-amber-600" />
               <span className="text-sm font-medium text-amber-600">Pending</span>
             </div>

@@ -98,6 +98,8 @@ const Matches = () => {
                     location={booking.venue_name}
                     status={booking.status}
                     matches={booking.matches}
+                    mmr_before={booking.mmr_before}
+                    mmr_after={booking.mmr_after}
                   />
                 ))}
                 

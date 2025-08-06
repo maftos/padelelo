@@ -8,6 +8,8 @@ export interface ConfirmedBooking {
   start_time: string;
   venue_name: string;
   status: "MMR_CALCULATED" | "SCORE_RECORDED";
+  mmr_before?: number;
+  mmr_after?: number;
   matches: Array<{
     match_id: string;
     team1_player1_display_name: string;
@@ -93,6 +95,8 @@ export const useConfirmedMatches = (page: number = 1, pageSize: number = 10) => 
           start_time: booking.start_time,
           venue_name: booking.venue_name || 'Unknown Venue',
           status,
+          mmr_before: booking.mmr_before,
+          mmr_after: booking.mmr_after,
           matches: transformedMatches
         };
       });
