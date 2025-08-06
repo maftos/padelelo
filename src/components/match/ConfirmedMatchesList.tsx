@@ -4,6 +4,7 @@ import { useConfirmedBookings } from "@/hooks/use-confirmed-bookings";
 import { Clock, Users, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ConfirmedMatchesListProps {
   onSelectMatch: (bookingId: string) => void;
@@ -13,6 +14,7 @@ interface ConfirmedMatchesListProps {
 export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: ConfirmedMatchesListProps) => {
   const { confirmedBookings, isLoading } = useConfirmedBookings();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -102,20 +104,31 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
                   
                   {booking.participants.length > 0 && (
                     <div className="flex flex-wrap items-center gap-2">
-                      {booking.participants.slice(0, 3).map((participant, index) => (
-                        <div key={participant.player_id} className="flex items-center gap-1.5">
-                          <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
-                            <AvatarImage src={participant.profile_photo} />
-                            <AvatarFallback className="text-xs">
-                              {getInitials(participant.first_name, participant.last_name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-xs sm:text-sm font-medium">{participant.first_name}</span>
-                          {index < booking.participants.length - 1 && (
-                            <span className="text-muted-foreground text-xs mx-0.5">•</span>
-                          )}
-                        </div>
-                      ))}
+                      {(() => {
+                        // Sort participants to put current user first
+                        const sortedParticipants = [...booking.participants].sort((a, b) => {
+                          if (a.player_id === user?.id) return -1;
+                          if (b.player_id === user?.id) return 1;
+                          return 0;
+                        });
+                        
+                        return sortedParticipants.map((participant, index) => (
+                          <div key={participant.player_id} className="flex items-center gap-1.5">
+                            <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
+                              <AvatarImage src={participant.profile_photo} />
+                              <AvatarFallback className="text-xs">
+                                {getInitials(participant.first_name, participant.last_name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-xs sm:text-sm font-medium">
+                              {participant.player_id === user?.id ? "You" : participant.first_name}
+                            </span>
+                            {index < sortedParticipants.length - 1 && (
+                              <span className="text-muted-foreground text-xs mx-0.5">•</span>
+                            )}
+                          </div>
+                        ));
+                      })()}
                     </div>
                   )}
                 </div>
