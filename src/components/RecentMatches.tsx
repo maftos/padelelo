@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useConfirmedMatches } from "@/hooks/use-confirmed-matches";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,6 +11,14 @@ export const RecentMatches = () => {
   const { user } = useAuth();
   
   const { confirmedMatches, isLoading } = useConfirmedMatches(1, 5);
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
+  };
 
   if (isLoading) {
     return (
@@ -29,20 +38,29 @@ export const RecentMatches = () => {
   const recentSets = confirmedMatches
     ?.flatMap(booking => 
       booking.matches.flatMap(match => 
-        match.sets?.map((set: any) => ({
-          match_id: match.match_id,
-          set_id: `${match.match_id}-${set.set_number}`,
-          booking_id: booking.booking_id,
-          venue_name: booking.venue_name,
-          start_time: booking.start_time,
-          created_at: booking.start_time,
-          set_number: set.set_number,
-          team1_score: set.team1_score,
-          team2_score: set.team2_score,
-          // Determine if user won this specific set
-          set_won: set.team1_score > set.team2_score, // Assuming user is always on team1 for now
-          change_amount: booking.mmr_after - booking.mmr_before,
-        })) || []
+        match.sets?.map((set: any) => {
+          // Determine user's partner - for now assume user is on team1 and show team1_player2 as partner
+          // This could be enhanced to actually check which team the user is on
+          const partnerName = match.team1_player2_display_name;
+          const partnerPhoto = match.team1_player2_profile_photo;
+          
+          return {
+            match_id: match.match_id,
+            set_id: `${match.match_id}-${set.set_number}`,
+            booking_id: booking.booking_id,
+            venue_name: booking.venue_name,
+            start_time: booking.start_time,
+            created_at: booking.start_time,
+            set_number: set.set_number,
+            team1_score: set.team1_score,
+            team2_score: set.team2_score,
+            // Determine if user won this specific set (assuming user is on team1)
+            set_won: set.team1_score > set.team2_score,
+            change_amount: booking.mmr_after - booking.mmr_before,
+            partner_name: partnerName,
+            partner_photo: partnerPhoto,
+          };
+        }) || []
       )
     )
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -64,16 +82,13 @@ export const RecentMatches = () => {
                   })}
                 </div>
                 
-                <Badge 
-                  variant={set.set_won ? "default" : "destructive"}
-                  className={`px-2 py-0.5 text-xs font-semibold ${
-                    set.set_won 
-                      ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
-                      : ""
-                  }`}
-                >
-                  {set.set_won ? "WON" : "LOST"}
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-6 w-6 shrink-0">
+                    <AvatarImage src={set.partner_photo} />
+                    <AvatarFallback className="text-xs">{getInitials(set.partner_name)}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">{set.partner_name.split(" ")[0]}</span>
+                </div>
               </div>
 
               <div className="flex items-center gap-2">
@@ -82,6 +97,17 @@ export const RecentMatches = () => {
                   <span className="text-muted-foreground">-</span>
                   <span className="font-medium">{set.team2_score}</span>
                 </div>
+                
+                <Badge 
+                  variant={set.set_won ? "default" : "destructive"}
+                  className={`px-2 py-0.5 text-xs font-semibold ${
+                    set.set_won 
+                      ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
+                      : ""
+                  }`}
+                >
+                  {set.set_won ? "+" : ""}{set.change_amount}
+                </Badge>
               </div>
             </div>
           </Card>
