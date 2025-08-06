@@ -5,7 +5,7 @@ import { Clock, Users, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { format, addHours, isSameDay, addDays } from "date-fns";
+import { format, isSameDay, addDays } from "date-fns";
 
 interface ConfirmedMatchesListProps {
   onSelectMatch: (bookingId: string) => void;
@@ -20,8 +20,8 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
     // Convert UTC timestamp to UTC+4 (Mauritius timezone)
-    const localDate = addHours(date, 4);
-    const currentDate = addHours(new Date(), 4);
+    const localDate = new Date(date.getTime() + (4 * 60 * 60 * 1000));
+    const currentDate = new Date(Date.now() + (4 * 60 * 60 * 1000));
     
     const time = format(localDate, "HH:mm");
     
