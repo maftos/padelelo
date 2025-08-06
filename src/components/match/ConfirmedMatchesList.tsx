@@ -19,29 +19,53 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    // Convert UTC timestamp to UTC+4 (Mauritius timezone)
-    const localDate = new Date(date.getTime() + (4 * 60 * 60 * 1000));
-    const currentDate = new Date(Date.now() + (4 * 60 * 60 * 1000));
     
-    const time = format(localDate, "HH:mm");
+    // Use Intl.DateTimeFormat to properly handle Mauritius timezone
+    const mauritiusTime = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Indian/Mauritius',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).format(date);
+    
+    // Get current date in Mauritius timezone for comparison
+    const nowInMauritius = new Date().toLocaleDateString('en-CA', {
+      timeZone: 'Indian/Mauritius'
+    });
+    
+    const eventDateInMauritius = date.toLocaleDateString('en-CA', {
+      timeZone: 'Indian/Mauritius'
+    });
     
     // Check if it's today
-    if (isSameDay(localDate, currentDate)) {
-      return `Today @ ${time}`;
+    if (eventDateInMauritius === nowInMauritius) {
+      return `Today @ ${mauritiusTime}`;
     }
     
     // Check if it's tomorrow
-    const tomorrow = addDays(currentDate, 1);
-    if (isSameDay(localDate, tomorrow)) {
-      return `Tomorrow @ ${time}`;
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowInMauritius = tomorrow.toLocaleDateString('en-CA', {
+      timeZone: 'Indian/Mauritius'
+    });
+    
+    if (eventDateInMauritius === tomorrowInMauritius) {
+      return `Tomorrow @ ${mauritiusTime}`;
     }
     
     // Otherwise show day name and date
-    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const dayName = dayNames[localDate.getDay()];
-    const monthName = localDate.toLocaleDateString('en-US', { month: 'short' });
+    const dayName = date.toLocaleDateString('en-US', {
+      timeZone: 'Indian/Mauritius',
+      weekday: 'long'
+    });
     
-    return `${dayName}, ${monthName} ${localDate.getDate()} @ ${time}`;
+    const monthDay = date.toLocaleDateString('en-US', {
+      timeZone: 'Indian/Mauritius',
+      month: 'short',
+      day: 'numeric'
+    });
+    
+    return `${dayName}, ${monthDay} @ ${mauritiusTime}`;
   };
 
   const getInitials = (firstName: string, lastName: string) => {

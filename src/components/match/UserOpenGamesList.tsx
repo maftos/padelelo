@@ -13,20 +13,48 @@ interface UserOpenGamesListProps {
 
 // Helper functions from PlayerMatching page
 const formatGameDateTime = (date: Date) => {
+  // Use proper timezone handling for Mauritius
+  const mauritiusTime = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Indian/Mauritius',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(date);
+  
+  // Get current date and target date in Mauritius timezone for comparison
+  const nowInMauritius = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'Indian/Mauritius'
+  });
+  
+  const eventDateInMauritius = date.toLocaleDateString('en-CA', {
+    timeZone: 'Indian/Mauritius'
+  });
+  
+  // Calculate days difference using proper timezone
   const now = new Date();
-  const diffTime = date.getTime() - now.getTime();
+  const nowMauritiusDate = new Date(now.toLocaleString('en-US', { timeZone: 'Indian/Mauritius' }));
+  const eventMauritiusDate = new Date(date.toLocaleString('en-US', { timeZone: 'Indian/Mauritius' }));
+  
+  const diffTime = eventMauritiusDate.getTime() - nowMauritiusDate.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const dayName = dayNames[date.getDay()];
-  const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const dayName = date.toLocaleDateString('en-US', {
+    timeZone: 'Indian/Mauritius',
+    weekday: 'long'
+  });
+  
+  const monthDay = date.toLocaleDateString('en-US', {
+    timeZone: 'Indian/Mauritius',
+    month: 'short',
+    day: 'numeric'
+  });
   
   if (diffDays === 1) {
-    return `Tomorrow, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
+    return `Tomorrow, ${monthDay} @ ${mauritiusTime}`;
   } else if (diffDays <= 7) {
-    return `Next ${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
+    return `Next ${dayName}, ${monthDay} @ ${mauritiusTime}`;
   } else {
-    return `${dayName}, ${date.getDate()}${getOrdinalSuffix(date.getDate())} ${date.toLocaleDateString('en-US', { month: 'short' })} @ ${time}`;
+    return `${dayName}, ${monthDay} @ ${mauritiusTime}`;
   }
 };
 
