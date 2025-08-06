@@ -5,6 +5,7 @@ import { Clock, Users, MapPin } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { format, addHours, isSameDay, addDays } from "date-fns";
 
 interface ConfirmedMatchesListProps {
   onSelectMatch: (bookingId: string) => void;
@@ -18,21 +19,29 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
 
   const formatDateTime = (dateString: string) => {
     const date = new Date(dateString);
-    const options: Intl.DateTimeFormatOptions = { 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
-    };
-    const formattedDate = date.toLocaleDateString('en-GB', options);
-    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Convert UTC timestamp to UTC+4 (Mauritius timezone)
+    const localDate = addHours(date, 4);
+    const currentDate = addHours(new Date(), 4);
     
-    // Add ordinal suffix to day
-    const day = date.getDate();
-    const suffix = day % 10 === 1 && day !== 11 ? 'st' : 
-                   day % 10 === 2 && day !== 12 ? 'nd' : 
-                   day % 10 === 3 && day !== 13 ? 'rd' : 'th';
+    const time = format(localDate, "HH:mm");
     
-    return formattedDate.replace(`${day}`, `${day}${suffix}`) + ` @ ${time}`;
+    // Check if it's today
+    if (isSameDay(localDate, currentDate)) {
+      return `Today @ ${time}`;
+    }
+    
+    // Check if it's tomorrow
+    const tomorrow = addDays(currentDate, 1);
+    if (isSameDay(localDate, tomorrow)) {
+      return `Tomorrow @ ${time}`;
+    }
+    
+    // Otherwise show day name and date
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayName = dayNames[localDate.getDay()];
+    const monthName = localDate.toLocaleDateString('en-US', { month: 'short' });
+    
+    return `${dayName}, ${monthName} ${localDate.getDate()} @ ${time}`;
   };
 
   const getInitials = (firstName: string, lastName: string) => {
