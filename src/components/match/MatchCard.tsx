@@ -43,56 +43,56 @@ export const MatchCard = ({
   sets
 }: MatchCardProps) => {
   return (
-    <div className="bg-accent/5 rounded-xl border border-accent/20 p-4 space-y-4">
-      {/* Match Header with Teams and Total Score */}
-      <div className="flex items-center justify-between">
+    <div className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3 sm:space-y-4">
+      {/* Match Header with Teams - Mobile Optimized */}
+      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         {/* Team 1 */}
-        <div className="flex items-center space-x-3 flex-1">
-          <div className="flex items-center space-x-2">
-            <Avatar className="w-8 h-8">
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-1">
+          <div className="flex items-center space-x-1 sm:space-x-2">
+            <Avatar className="w-6 h-6 sm:w-8 sm:h-8">
               <AvatarImage src={team1_player1_profile_photo} />
               <AvatarFallback className="text-xs">
                 {getInitials(team1_player1_display_name)}
               </AvatarFallback>
             </Avatar>
-            <Avatar className="w-8 h-8">
+            <Avatar className="w-6 h-6 sm:w-8 sm:h-8">
               <AvatarImage src={team1_player2_profile_photo} />
               <AvatarFallback className="text-xs">
                 {getInitials(team1_player2_display_name)}
               </AvatarFallback>
             </Avatar>
           </div>
-          <div className="text-sm">
-            <p className="font-medium text-foreground">{team1_player1_display_name}</p>
-            <p className="font-medium text-foreground">{team1_player2_display_name}</p>
+          <div className="text-xs sm:text-sm min-w-0 flex-1">
+            <p className="font-medium text-foreground truncate">{team1_player1_display_name}</p>
+            <p className="font-medium text-foreground truncate">{team1_player2_display_name}</p>
           </div>
         </div>
 
-        {/* Total Score */}
-        <div className="flex items-center space-x-4">
+        {/* VS and Score - Mobile Centered */}
+        <div className="flex items-center justify-center space-x-2 sm:space-x-4 order-last sm:order-none">
           <div className="text-center">
-            <p className="text-lg font-bold text-foreground">{total_team1_score}</p>
+            <p className="text-base sm:text-lg font-bold text-foreground">{total_team1_score}</p>
           </div>
-          <div className="text-muted-foreground">:</div>
+          <div className="text-muted-foreground text-sm sm:text-base">:</div>
           <div className="text-center">
-            <p className="text-lg font-bold text-foreground">{total_team2_score}</p>
+            <p className="text-base sm:text-lg font-bold text-foreground">{total_team2_score}</p>
           </div>
         </div>
 
         {/* Team 2 */}
-        <div className="flex items-center space-x-3 flex-1 justify-end">
-          <div className="text-sm text-right">
-            <p className="font-medium text-foreground">{team2_player1_display_name}</p>
-            <p className="font-medium text-foreground">{team2_player2_display_name}</p>
+        <div className="flex items-center space-x-2 sm:space-x-3 flex-1 sm:justify-end">
+          <div className="text-xs sm:text-sm text-left sm:text-right min-w-0 flex-1 sm:flex-none order-2 sm:order-1">
+            <p className="font-medium text-foreground truncate">{team2_player1_display_name}</p>
+            <p className="font-medium text-foreground truncate">{team2_player2_display_name}</p>
           </div>
-          <div className="flex items-center space-x-2">
-            <Avatar className="w-8 h-8">
+          <div className="flex items-center space-x-1 sm:space-x-2 order-1 sm:order-2">
+            <Avatar className="w-6 h-6 sm:w-8 sm:h-8">
               <AvatarImage src={team2_player1_profile_photo} />
               <AvatarFallback className="text-xs">
                 {getInitials(team2_player1_display_name)}
               </AvatarFallback>
             </Avatar>
-            <Avatar className="w-8 h-8">
+            <Avatar className="w-6 h-6 sm:w-8 sm:h-8">
               <AvatarImage src={team2_player2_profile_photo} />
               <AvatarFallback className="text-xs">
                 {getInitials(team2_player2_display_name)}

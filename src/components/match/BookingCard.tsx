@@ -45,16 +45,16 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
     }, 0);
   }, 0) : null;
   return (
-    <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg p-6 space-y-6">
+    <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border/50 shadow-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Booking Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-border/30">
-        <div className="space-y-1">
-          <h3 className="text-lg font-semibold text-foreground">
+      <div className="flex flex-col space-y-3 pb-4 border-b border-border/30 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="space-y-1 min-w-0 flex-1">
+          <h3 className="text-base sm:text-lg font-semibold text-foreground">
             {date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : 'Invalid date'}
           </h3>
-          <p className="text-sm text-muted-foreground">{location}</p>
+          <p className="text-sm text-muted-foreground truncate">{location}</p>
         </div>
-        <div className="text-right space-y-1">
+        <div className="text-left sm:text-right space-y-1 flex-shrink-0">
           {status === "MMR_CALCULATED" && totalMmrChange !== null ? (
             <div className="flex items-center gap-2 justify-end">
               <span className="text-sm font-medium">1842</span>

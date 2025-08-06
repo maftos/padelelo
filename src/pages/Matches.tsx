@@ -65,14 +65,14 @@ const Matches = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       <Navigation />
-      <main className="container py-12 px-4 max-w-4xl mx-auto">
+      <main className="container py-6 sm:py-12 px-3 sm:px-4 max-w-4xl mx-auto">
         <div className="space-y-8 animate-fade-in">
           <div className="space-y-6">
-            <div className="text-center space-y-3">
-              <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-secondary bg-clip-text text-transparent leading-tight">
+            <div className="text-center space-y-2 sm:space-y-3">
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-secondary bg-clip-text text-transparent leading-tight">
                 Match History
               </h1>
-              <p className="text-muted-foreground text-lg">Track your padel journey and performance</p>
+              <p className="text-muted-foreground text-base sm:text-lg">Track your padel journey and performance</p>
             </div>
             
           </div>
