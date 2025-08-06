@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Calendar, ChevronRight, Users, TrendingUp, TrendingDown, Star, UserPlus, Clock, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SuggestedFriends } from "@/components/dashboard/SuggestedFriends";
+import { RecentMatches } from "@/components/RecentMatches";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface UserProfile {
@@ -104,52 +105,6 @@ export default function Dashboard() {
     enabled: !!user?.id
   });
 
-  const { data: recentMatchSets } = useQuery({
-    queryKey: ['recentMatchSets', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return [];
-      const { data, error } = await supabase.rpc('get_my_completed_matches', {
-        user_a_id: user.id,
-        page_number: 1,
-        page_size: 10
-      });
-      if (error) throw error;
-      
-      // Handle the new JSON response format with pagination and nested team structure
-      const matchesData = (data as any)?.matches || [];
-      
-      // Flatten all sets from all matches into a single list
-      const allSets: any[] = [];
-      
-      matchesData.forEach((match: any) => {
-        const sets = match.sets || [];
-        sets.forEach((set: any) => {
-          const team1 = match.team1 || {};
-          const team2 = match.team2 || {};
-          
-          allSets.push({
-            match_id: match.match_id,
-            set_number: set.set_number,
-            team1_score: set.team1_score,
-            team2_score: set.team2_score,
-            created_at: match.created_at,
-            change_type: match.change_type,
-            change_amount: match.change_amount,
-            team1_player1: team1.player1 ? `${team1.player1.first_name || ''} ${team1.player1.last_name || ''}`.trim() : '',
-            team1_player2: team1.player2 ? `${team1.player2.first_name || ''} ${team1.player2.last_name || ''}`.trim() : '',
-            team2_player1: team2.player1 ? `${team2.player1.first_name || ''} ${team2.player1.last_name || ''}`.trim() : '',
-            team2_player2: team2.player2 ? `${team2.player2.first_name || ''} ${team2.player2.last_name || ''}`.trim() : '',
-          });
-        });
-      });
-      
-      // Sort by match creation date and take the latest 10 sets
-      return allSets
-        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        .slice(0, 10);
-    },
-    enabled: !!user?.id
-  });
 
   if (loading) return <div>Loading...</div>;
   if (!user) return null;
@@ -305,75 +260,7 @@ export default function Dashboard() {
               </Link>
             </CardHeader>
             <CardContent>
-              {recentMatchSets && recentMatchSets.length > 0 ? (
-                <div className="space-y-1">
-                  {/* Header */}
-                  <div className="grid grid-cols-4 gap-3 px-3 py-2 text-xs font-medium text-muted-foreground border-b">
-                    <div>Partner</div>
-                    <div>Date/Time</div>
-                    <div className="text-center">Score</div>
-                    <div className="text-right">Result</div>
-                  </div>
-                  
-                  {/* Matches List */}
-                  {recentMatchSets.map((set) => {
-                    // Find the user's partner (the other player on their team)
-                    const isUserOnTeam1 = set.team1_player1.includes(profileData?.first_name || '') || set.team1_player2.includes(profileData?.first_name || '');
-                    const partnerName = isUserOnTeam1 
-                      ? (set.team1_player1.includes(profileData?.first_name || '') ? set.team1_player2 : set.team1_player1)
-                      : (set.team2_player1.includes(profileData?.first_name || '') ? set.team2_player2 : set.team2_player1);
-                    
-                    // Format date as dd/mmm
-                    const matchDate = new Date(set.created_at);
-                    const formattedDate = matchDate.toLocaleDateString('en-GB', { 
-                      day: '2-digit', 
-                      month: 'short' 
-                    });
-                    
-                    return (
-                      <div key={`${set.match_id}-${set.set_number}`} className="grid grid-cols-4 gap-3 px-3 py-3 rounded-lg hover:bg-accent/20 transition-colors items-center">
-                        {/* Partner */}
-                        <div className="flex items-center gap-2 min-w-0">
-                          <Avatar className="h-6 w-6 flex-shrink-0">
-                            <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                              {partnerName.substring(0, 2).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm font-medium truncate">{partnerName.split(' ')[0]}</span>
-                        </div>
-                        
-                        {/* Date/Time */}
-                        <div className="text-sm text-muted-foreground">
-                          {formattedDate}
-                        </div>
-                        
-                        {/* Score */}
-                        <div className="flex items-center justify-center">
-                          <div className="flex items-center gap-1 px-2 py-1 bg-background rounded border text-xs">
-                            <span className="font-bold">{set.team1_score}</span>
-                            <span className="text-muted-foreground">-</span>
-                            <span className="font-bold">{set.team2_score}</span>
-                          </div>
-                        </div>
-                        
-                        {/* Result */}
-                        <div className="flex items-center justify-end gap-2">
-                          <span className={`text-sm font-medium ${
-                            set.change_type === 'WIN' ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {set.change_type === 'WIN' ? 'Won' : 'Lost'} ({set.change_type === 'WIN' ? '+' : ''}{set.change_amount})
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-6 sm:py-8">
-                  <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground text-xs sm:text-sm">No recent matches</p>
-                </div>
-              )}
+              <RecentMatches />
             </CardContent>
           </Card>
         </div>
