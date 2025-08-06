@@ -59,6 +59,26 @@ export function useBookingSubmission() {
         // Use create_booking_closed for complete bookings (closed games)
         const startDateTime = new Date(`${wizardData.matchDate}T${wizardData.matchTime}`);
         
+        // Create optimistic booking for immediate UI feedback
+        const optimisticBooking = {
+          booking_id: `optimistic-${Date.now()}`,
+          venue_name: wizardData.location,
+          start_time: startDateTime.toISOString(),
+          status: 'CLOSED',
+          participants: wizardData.selectedPlayers.map((playerId) => ({
+            player_id: playerId,
+            first_name: 'Loading...',
+            last_name: '',
+            profile_photo: ''
+          })),
+          _isOptimistic: true
+        };
+
+        // Optimistically update the query cache
+        queryClient.setQueryData(['confirmed-bookings', profile.id], (oldData: any) => {
+          return oldData ? [optimisticBooking, ...oldData] : [optimisticBooking];
+        });
+
         const { data, error } = await supabase.rpc('create_booking_closed' as any, {
           p_user_a_id: profile.id,
           p_user_ids: wizardData.selectedPlayers,
@@ -70,14 +90,18 @@ export function useBookingSubmission() {
 
         if (error) {
           console.error('Error creating closed booking:', error);
+          // Remove optimistic update on error
+          queryClient.setQueryData(['confirmed-bookings', profile.id], (oldData: any) => {
+            return oldData ? oldData.filter((booking: any) => booking.booking_id !== optimisticBooking.booking_id) : [];
+          });
           toast.error("Failed to create booking");
           return false;
         }
 
         toast.success("Booking created successfully!");
         
-        // Optimistically update the confirmed matches list
-        queryClient.invalidateQueries({ queryKey: ['confirmed-matches'] });
+        // Invalidate to get real data from server
+        queryClient.invalidateQueries({ queryKey: ['confirmed-bookings'] });
         
         navigate("/manage-bookings");
         return true;

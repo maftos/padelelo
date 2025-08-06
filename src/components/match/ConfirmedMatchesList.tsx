@@ -76,7 +76,7 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
               selectedMatchId === booking.booking_id 
                 ? "ring-2 ring-primary bg-primary/5" 
                 : "hover:shadow-md"
-            }`}
+            } ${(booking as any)._isOptimistic ? "opacity-75 animate-pulse border-dashed border-primary" : ""}`}
             onClick={() => onSelectMatch(booking.booking_id)}
           >
             <CardContent className="p-3 sm:p-4">
@@ -122,21 +122,29 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
 
                 {/* CTAs - Side by side on mobile */}
                 <div className="flex gap-2 pt-2 border-t">
-                  <Button 
-                    onClick={(e) => handleAddResults(booking.booking_id, e)}
-                    className="flex-1 h-8 sm:h-9"
-                    size="sm"
-                  >
-                    <span className="text-xs sm:text-sm">Add Scores</span>
-                  </Button>
-                  <Button 
-                    onClick={(e) => handleEdit(booking.booking_id, e)}
-                    variant="outline"
-                    className="flex-1 h-8 sm:h-9"
-                    size="sm"
-                  >
-                    <span className="text-xs sm:text-sm">Edit</span>
-                  </Button>
+                  {(booking as any)._isOptimistic ? (
+                    <div className="flex-1 flex items-center justify-center py-2">
+                      <span className="text-xs text-muted-foreground">Creating booking...</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Button 
+                        onClick={(e) => handleAddResults(booking.booking_id, e)}
+                        className="flex-1 h-8 sm:h-9"
+                        size="sm"
+                      >
+                        <span className="text-xs sm:text-sm">Add Scores</span>
+                      </Button>
+                      <Button 
+                        onClick={(e) => handleEdit(booking.booking_id, e)}
+                        variant="outline"
+                        className="flex-1 h-8 sm:h-9"
+                        size="sm"
+                      >
+                        <span className="text-xs sm:text-sm">Edit</span>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </CardContent>
