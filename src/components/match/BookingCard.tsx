@@ -56,7 +56,11 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
           <p className="text-sm text-muted-foreground truncate">{location}</p>
         </div>
         <div className="text-left sm:text-right space-y-1 flex-shrink-0">
-          {status === "MMR_CALCULATED" && totalMmrChange !== null ? (
+          {status === "SCORE_RECORDED" ? (
+            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+              PROCESSING
+            </Badge>
+          ) : status === "MMR_CALCULATED" && totalMmrChange !== null ? (
             <div className="flex items-center gap-2 justify-end">
               <span className="text-sm font-medium">1842</span>
               <TrendingUp className={`w-4 h-4 ${
@@ -70,10 +74,6 @@ export const BookingCard = ({ booking_id, date, location, matches, status }: Boo
                 {1842 + totalMmrChange}
               </span>
             </div>
-          ) : status === "SCORE_RECORDED" ? (
-            <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
-              PROCESSING
-            </Badge>
           ) : (
             <div className="flex items-center gap-2 justify-end">
               <span className="text-sm font-medium">1842</span>
