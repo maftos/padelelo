@@ -51,8 +51,9 @@ export const RecentMatches = () => {
             team2_score: set.team2_score,
             // Determine if user won this specific set (assuming user is on team1)
             set_won: set.team1_score > set.team2_score,
-            // Use individual set MMR change
-            change_amount: set.mmr_change,
+            // Use individual set rating change
+            change_amount: set.rating_change?.change_amount || 0,
+            change_type: set.rating_change?.change_type || 'LOSS',
             // Opponents (team2 players)
             opponent1_name: match.team2_player1_display_name,
             opponent1_photo: match.team2_player1_profile_photo,
@@ -106,14 +107,14 @@ export const RecentMatches = () => {
 
                 {/* 4. Change amount */}
                 <Badge 
-                  variant={set.change_amount > 0 ? "default" : "destructive"}
+                  variant={set.change_type === 'WIN' ? "default" : "destructive"}
                   className={`px-2 py-0.5 text-xs font-semibold ${
-                    set.change_amount > 0 
+                    set.change_type === 'WIN' 
                       ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
                       : ""
                   }`}
                 >
-                  {set.change_amount > 0 ? "+" : ""}{set.change_amount}
+                  {set.change_type === 'WIN' ? "+" : ""}{set.change_amount}
                 </Badge>
               </div>
             </div>
