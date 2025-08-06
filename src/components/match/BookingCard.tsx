@@ -1,7 +1,7 @@
 import { formatDistanceToNow } from "date-fns";
 import { MatchCard } from "./MatchCard";
 import { SetCard } from "./SetCard";
-import { TrendingUp, Clock } from "lucide-react";
+import { TrendingUp, TrendingDown, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface SetData {
@@ -65,9 +65,11 @@ export const BookingCard = ({ booking_id, date, location, matches, status, mmr_b
           ) : status === "MMR_CALCULATED" && mmr_before !== undefined && mmr_after !== undefined ? (
             <div className="flex items-center gap-2 justify-end">
               <span className="text-sm font-medium">{mmr_before}</span>
-              <TrendingUp className={`w-4 h-4 ${
-                mmr_after >= mmr_before ? "text-green-600" : "text-red-600 rotate-180"
-              }`} />
+              {mmr_after >= mmr_before ? (
+                <TrendingUp className="w-4 h-4 text-green-600" />
+              ) : (
+                <TrendingDown className="w-4 h-4 text-red-600" />
+              )}
               <span className={`text-sm font-bold ${
                 mmr_after >= mmr_before 
                   ? "text-green-600" 
