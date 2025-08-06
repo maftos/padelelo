@@ -118,23 +118,16 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
               <div className="space-y-3">
                 <div className="space-y-2">
                   <div className="flex items-start gap-2">
-                    <Clock className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span className="font-medium text-sm sm:text-base leading-tight">{formattedDateTime}</span>
                   </div>
                   
                   <div className="flex items-start gap-2">
-                    <MapPin className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                     <span className="text-xs sm:text-sm text-muted-foreground leading-tight">{booking.venue_name}</span>
                   </div>
                 </div>
                 
                 {/* Players - Mobile optimized */}
                 <div className="space-y-2">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Users className="h-3 w-3" />
-                    <span>Players</span>
-                  </div>
-                  
                   {booking.participants.length > 0 && (
                     <div className="flex flex-wrap items-center gap-2">
                       {(() => {

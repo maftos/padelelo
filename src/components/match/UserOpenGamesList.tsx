@@ -144,12 +144,12 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
     
     return {
       id: game.booking_id,
-      title: `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''} - open game`,
+      title: `Looking for ${remainingSpots} player${remainingSpots !== 1 ? 's' : ''}`,
       courtName: game.venue_name,
       gameDate,
       spotsAvailable: remainingSpots,
       applicantsCount,
-      description: game.description || "Your open game waiting for more players to join",
+      description: game.description,
       publishedAt: createdAt,
       existingPlayers: [
         // Use actual participant data with dynamic MMR
@@ -208,9 +208,11 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
           </CardHeader>
           
           <CardContent className="pt-0 px-3 sm:px-6">
-            <CardDescription className="mb-3 sm:mb-4 text-sm leading-relaxed">
-              {post.description}
-            </CardDescription>
+            {post.description && (
+              <CardDescription className="mb-3 sm:mb-4 text-sm leading-relaxed">
+                {post.description}
+              </CardDescription>
+            )}
             
             {/* Current Players - Mobile optimized grid */}
               <div className="space-y-3">
