@@ -39,11 +39,6 @@ export const RecentMatches = () => {
     ?.flatMap(booking => 
       booking.matches.flatMap(match => 
         match.sets?.map((set: any) => {
-          // Determine user's partner - for now assume user is on team1 and show team1_player2 as partner
-          // This could be enhanced to actually check which team the user is on
-          const partnerName = match.team1_player2_display_name;
-          const partnerPhoto = match.team1_player2_profile_photo;
-          
           return {
             match_id: match.match_id,
             set_id: `${match.match_id}-${set.set_number}`,
@@ -57,8 +52,11 @@ export const RecentMatches = () => {
             // Determine if user won this specific set (assuming user is on team1)
             set_won: set.team1_score > set.team2_score,
             change_amount: booking.mmr_after - booking.mmr_before,
-            partner_name: partnerName,
-            partner_photo: partnerPhoto,
+            // Opponents (team2 players)
+            opponent1_name: match.team2_player1_display_name,
+            opponent1_photo: match.team2_player1_profile_photo,
+            opponent2_name: match.team2_player2_display_name,
+            opponent2_photo: match.team2_player2_profile_photo,
           };
         }) || []
       )
@@ -74,39 +72,59 @@ export const RecentMatches = () => {
             key={set.set_id} 
             className="p-3 hover:bg-muted/50 transition-colors"
           >
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
-                <div className="text-xs text-muted-foreground">
-                  {formatDistanceToNow(new Date(set.created_at), {
-                    addSuffix: true,
-                  })}
-                </div>
-                
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-6 w-6 shrink-0">
-                    <AvatarImage src={set.partner_photo} />
-                    <AvatarFallback className="text-xs">{getInitials(set.partner_name)}</AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm font-medium">{set.partner_name.split(" ")[0]}</span>
-                </div>
+            <div className="flex items-center justify-between gap-3">
+              {/* 1. Opponents */}
+              <div className="flex items-center gap-2">
+                <Avatar className="h-5 w-5 shrink-0">
+                  <AvatarImage src={set.opponent1_photo} />
+                  <AvatarFallback className="text-xs">{getInitials(set.opponent1_name)}</AvatarFallback>
+                </Avatar>
+                <Avatar className="h-5 w-5 shrink-0">
+                  <AvatarImage src={set.opponent2_photo} />
+                  <AvatarFallback className="text-xs">{getInitials(set.opponent2_name)}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">
+                  {set.opponent1_name.split(" ")[0]} & {set.opponent2_name.split(" ")[0]}
+                </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
+                {/* 2. Won/Lost */}
+                <Badge 
+                  variant={set.set_won ? "default" : "secondary"}
+                  className={`px-2 py-0.5 text-xs font-semibold ${
+                    set.set_won 
+                      ? "bg-green-500 hover:bg-green-600 text-white" 
+                      : "bg-red-500 hover:bg-red-600 text-white"
+                  }`}
+                >
+                  {set.set_won ? "WON" : "LOST"}
+                </Badge>
+
+                {/* 3. Score */}
                 <div className="flex items-center gap-0.5 px-2 py-1 bg-background rounded border text-sm">
                   <span className="font-medium">{set.team1_score}</span>
                   <span className="text-muted-foreground">-</span>
                   <span className="font-medium">{set.team2_score}</span>
                 </div>
-                
+
+                {/* 4. Timestamp */}
+                <div className="text-xs text-muted-foreground">
+                  {formatDistanceToNow(new Date(set.created_at), {
+                    addSuffix: true,
+                  })}
+                </div>
+
+                {/* 5. Change amount */}
                 <Badge 
-                  variant={set.set_won ? "default" : "destructive"}
+                  variant={set.change_amount > 0 ? "default" : "destructive"}
                   className={`px-2 py-0.5 text-xs font-semibold ${
-                    set.set_won 
+                    set.change_amount > 0 
                       ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
                       : ""
                   }`}
                 >
-                  {set.set_won ? "+" : ""}{set.change_amount}
+                  {set.change_amount > 0 ? "+" : ""}{set.change_amount}
                 </Badge>
               </div>
             </div>
