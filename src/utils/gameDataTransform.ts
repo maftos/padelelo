@@ -19,12 +19,15 @@ export const formatGameDate = (date: Date) => {
 };
 
 export const formatGameDateTime = (date: Date) => {
-  // Convert UTC timestamp to UTC+4 (Mauritius timezone)
-  const mauritiusDate = addHours(date, 4);
+  // Ensure we treat the input as UTC and convert to Mauritius time (UTC+4)
+  // Create a new date that represents the same UTC moment
+  const utcTime = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+  const mauritiusDate = addHours(utcTime, 4);
   
-  // Get current time in Mauritius timezone (UTC+4)
+  // Get current time in UTC, then convert to Mauritius timezone
   const nowUtc = new Date();
-  const nowMauritius = addHours(nowUtc, 4);
+  const nowUtcAdjusted = new Date(nowUtc.getTime() + (nowUtc.getTimezoneOffset() * 60000));
+  const nowMauritius = addHours(nowUtcAdjusted, 4);
   
   const time = format(mauritiusDate, "HH:mm");
   
@@ -58,10 +61,13 @@ export const getOrdinalSuffix = (day: number) => {
 };
 
 export const formatTimeAgo = (date: Date) => {
-  // Convert both dates to Mauritius timezone (UTC+4) for consistent comparison
-  const createdAtMauritius = addHours(date, 4);
+  // Convert both dates to UTC first, then to Mauritius timezone for consistent comparison
+  const createdAtUtc = new Date(date.getTime() + (date.getTimezoneOffset() * 60000));
+  const createdAtMauritius = addHours(createdAtUtc, 4);
+  
   const nowUtc = new Date();
-  const nowMauritius = addHours(nowUtc, 4);
+  const nowUtcAdjusted = new Date(nowUtc.getTime() + (nowUtc.getTimezoneOffset() * 60000));
+  const nowMauritius = addHours(nowUtcAdjusted, 4);
   
   const diffMs = nowMauritius.getTime() - createdAtMauritius.getTime();
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
