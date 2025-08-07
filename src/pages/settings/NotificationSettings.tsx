@@ -88,39 +88,47 @@ const NotificationSettings = () => {
           Choose what notifications you want to receive
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Booking Applications */}
-        <div className="flex items-center justify-between">
+      <CardContent className="space-y-8">
+        {/* Bookings Section */}
+        <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium">Booking Applications</h3>
-            <p className="text-sm text-muted-foreground">Get notified when someone applies to join your games</p>
+            <h3 className="text-lg font-medium mb-1">Bookings</h3>
+            <p className="text-sm text-muted-foreground">Manage notifications for your booking activities</p>
           </div>
-          <Switch
-            id="booking-applications"
-            checked={preferences.booking_applications}
-            onCheckedChange={(checked) => 
-              updatePreferences({ booking_applications: checked })
-            }
-            disabled={saving}
-          />
-        </div>
+          
+          <div className="space-y-4 pl-4 border-l-2 border-muted">
+            {/* Receiving Applications */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Receiving Applications</h4>
+                <p className="text-sm text-muted-foreground">Get notified when someone applies to join your games</p>
+              </div>
+              <Switch
+                id="booking-applications"
+                checked={preferences.booking_applications}
+                onCheckedChange={(checked) => 
+                  updatePreferences({ booking_applications: checked })
+                }
+                disabled={saving}
+              />
+            </div>
 
-        <Separator />
-
-        {/* Booking Confirmations */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-medium">Booking Confirmations</h3>
-            <p className="text-sm text-muted-foreground">Get notified about booking confirmations and updates</p>
+            {/* Confirmations */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-medium">Confirmations</h4>
+                <p className="text-sm text-muted-foreground">Get notified about booking confirmations and updates</p>
+              </div>
+              <Switch
+                id="booking-confirmations"
+                checked={preferences.booking_confirmations}
+                onCheckedChange={(checked) => 
+                  updatePreferences({ booking_confirmations: checked })
+                }
+                disabled={saving}
+              />
+            </div>
           </div>
-          <Switch
-            id="booking-confirmations"
-            checked={preferences.booking_confirmations}
-            onCheckedChange={(checked) => 
-              updatePreferences({ booking_confirmations: checked })
-            }
-            disabled={saving}
-          />
         </div>
 
         <Separator />
@@ -143,7 +151,7 @@ const NotificationSettings = () => {
           </div>
 
           {preferences.open_bookings && (
-            <>
+            <div className="space-y-6 pl-4 border-l-2 border-muted">
               {/* Regions */}
               <div className="space-y-3">
                 <Label>Regions</Label>
@@ -167,7 +175,7 @@ const NotificationSettings = () => {
               <div className="space-y-3">
                 <Label>Schedule</Label>
                 <p className="text-sm text-muted-foreground">
-                  Set your preferred times to receive open booking notifications
+                  Set your preferred times to receive notifications. Remove all time ranges for days you don't want notifications.
                 </p>
                 <ScheduleManager
                   schedule={preferences.schedule}
@@ -175,7 +183,7 @@ const NotificationSettings = () => {
                   disabled={saving}
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
 

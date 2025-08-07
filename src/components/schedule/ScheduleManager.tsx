@@ -56,12 +56,13 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }
   };
 
   const addTimeRange = (day: string) => {
+    const currentRanges = schedule[day]?.ranges || [];
     const newSchedule = {
       ...schedule,
       [day]: {
-        ...schedule[day],
+        enabled: true, // Enable the day when adding a range
         ranges: [
-          ...schedule[day].ranges,
+          ...currentRanges,
           { start: "07:00", end: "21:00" },
         ],
       },
@@ -70,22 +71,26 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }
   };
 
   const removeTimeRange = (day: string, rangeIndex: number) => {
+    const currentRanges = schedule[day]?.ranges || [];
+    const newRanges = currentRanges.filter((_, index) => index !== rangeIndex);
+    
     const newSchedule = {
       ...schedule,
       [day]: {
-        ...schedule[day],
-        ranges: schedule[day].ranges.filter((_, index) => index !== rangeIndex),
+        enabled: newRanges.length > 0, // Disable the day if no ranges left
+        ranges: newRanges,
       },
     };
     onScheduleChange(newSchedule);
   };
 
   const updateTimeRange = (day: string, rangeIndex: number, field: 'start' | 'end', value: string) => {
+    const currentRanges = schedule[day]?.ranges || [];
     const newSchedule = {
       ...schedule,
       [day]: {
-        ...schedule[day],
-        ranges: schedule[day].ranges.map((range, index) =>
+        enabled: true,
+        ranges: currentRanges.map((range, index) =>
           index === rangeIndex ? { ...range, [field]: value } : range
         ),
       },
@@ -97,23 +102,30 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }
     <div className="space-y-4">
       {Object.entries(dayLabels).map(([day, label]) => {
         const daySchedule = schedule[day];
+        const hasRanges = daySchedule?.ranges && daySchedule.ranges.length > 0;
         
         return (
           <Card key={day} className="p-4">
             <div className="space-y-3">
-              {/* Day Toggle */}
+              {/* Day Header */}
               <div className="flex items-center justify-between">
                 <Label className="text-base font-medium">{label}</Label>
-                <Switch
-                  checked={daySchedule?.enabled || false}
-                  onCheckedChange={(enabled) => updateDayEnabled(day, enabled)}
-                  disabled={disabled}
-                />
+                {!hasRanges && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addTimeRange(day)}
+                    disabled={disabled}
+                    className="text-xs"
+                  >
+                    Add time range
+                  </Button>
+                )}
               </div>
 
               {/* Time Ranges */}
-              {daySchedule?.enabled && (
-                <div className="space-y-2 ml-4">
+              {hasRanges && (
+                <div className="space-y-2">
                   {daySchedule.ranges.map((range, rangeIndex) => (
                     <div key={rangeIndex} className="flex items-center gap-2">
                       <Select
