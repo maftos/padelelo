@@ -148,9 +148,7 @@ const NotificationSettings = () => {
               variant={editMode ? "secondary" : "outline"} 
               size="sm" 
               onClick={() => {
-                if (editMode && hasChanges) {
-                  saveChanges();
-                } else if (editMode) {
+                if (editMode) {
                   // Cancel changes - reset local preferences
                   setLocalPreferences({ ...preferences });
                   setEditMode(false);
@@ -160,7 +158,7 @@ const NotificationSettings = () => {
               }}
               disabled={saving}
             >
-              {editMode ? (hasChanges ? "Save & Exit" : "Cancel") : "Edit"}
+              {editMode ? "Cancel" : "Edit"}
             </Button>
           </div>
         </div>

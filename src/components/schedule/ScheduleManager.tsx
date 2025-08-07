@@ -87,12 +87,32 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false, 
 
   const updateTimeRange = (day: string, rangeIndex: number, field: 'start' | 'end', value: string) => {
     const currentRanges = schedule[day]?.ranges || [];
+    const currentRange = currentRanges[rangeIndex];
+    
+    // Create the updated range
+    const updatedRange = { ...currentRange, [field]: value };
+    
+    // Validation
+    const startTime = new Date(`2000-01-01T${updatedRange.start}:00`);
+    const endTime = new Date(`2000-01-01T${updatedRange.end}:00`);
+    
+    // Check if start time is after end time
+    if (startTime >= endTime) {
+      return; // Don't update if validation fails
+    }
+    
+    // Check if end time is before midnight (23:59)
+    const midnight = new Date(`2000-01-01T23:59:00`);
+    if (endTime > midnight) {
+      return; // Don't update if end time is after 23:59
+    }
+    
     const newSchedule = {
       ...schedule,
       [day]: {
         enabled: true,
         ranges: currentRanges.map((range, index) =>
-          index === rangeIndex ? { ...range, [field]: value } : range
+          index === rangeIndex ? updatedRange : range
         ),
       },
     };
@@ -125,55 +145,72 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false, 
 
                 {hasRanges && (
                   <div className="space-y-2">
-                    {daySchedule.ranges.map((range, rangeIndex) => (
-                      <div key={rangeIndex} className="flex items-center gap-2 text-sm">
-                        {editMode ? (
-                          <Select
-                            value={range.start}
-                            onValueChange={(value) => updateTimeRange(day, rangeIndex, 'start', value)}
-                            disabled={disabled}
-                          >
-                            <SelectTrigger className="w-20 h-8">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {timeOptions.map((time) => (
-                                <SelectItem key={time} value={time}>
-                                  {time}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <span className="w-20 h-8 px-3 py-1 text-sm border rounded-md bg-muted/50 flex items-center">
-                            {range.start}
-                          </span>
-                        )}
-                        
-                        <span className="text-xs text-muted-foreground">to</span>
-                        
-                        {editMode ? (
-                          <Select
-                            value={range.end}
-                            onValueChange={(value) => updateTimeRange(day, rangeIndex, 'end', value)}
-                            disabled={disabled}
-                          >
-                            <SelectTrigger className="w-20 h-8">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {timeOptions.map((time) => (
-                                <SelectItem key={time} value={time}>
-                                  {time}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <span className="w-20 h-8 px-3 py-1 text-sm border rounded-md bg-muted/50 flex items-center">
-                            {range.end}
-                          </span>
-                        )}
+                    {daySchedule.ranges.map((range, rangeIndex) => {
+                      // Calculate available time options based on current range
+                      const startTime = new Date(`2000-01-01T${range.start}:00`);
+                      const endTime = new Date(`2000-01-01T${range.end}:00`);
+                      
+                      // Filter end time options to only show times after start time
+                      const availableEndTimes = timeOptions.filter(time => {
+                        const optionTime = new Date(`2000-01-01T${time}:00`);
+                        return optionTime > startTime && optionTime <= new Date(`2000-01-01T23:59:00`);
+                      });
+                      
+                      // Filter start time options to only show times before end time  
+                      const availableStartTimes = timeOptions.filter(time => {
+                        const optionTime = new Date(`2000-01-01T${time}:00`);
+                        return optionTime < endTime;
+                      });
+                      
+                      return (
+                        <div key={rangeIndex} className="flex items-center gap-2 text-sm">
+                          {editMode ? (
+                            <Select
+                              value={range.start}
+                              onValueChange={(value) => updateTimeRange(day, rangeIndex, 'start', value)}
+                              disabled={disabled}
+                            >
+                              <SelectTrigger className="w-20 h-8">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {availableStartTimes.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className="w-20 h-8 px-3 py-1 text-sm border rounded-md bg-muted/50 flex items-center">
+                              {range.start}
+                            </span>
+                          )}
+                          
+                          <span className="text-xs text-muted-foreground">to</span>
+                          
+                          {editMode ? (
+                            <Select
+                              value={range.end}
+                              onValueChange={(value) => updateTimeRange(day, rangeIndex, 'end', value)}
+                              disabled={disabled}
+                            >
+                              <SelectTrigger className="w-20 h-8">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {availableEndTimes.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <span className="w-20 h-8 px-3 py-1 text-sm border rounded-md bg-muted/50 flex items-center">
+                              {range.end}
+                            </span>
+                          )}
                         {editMode && (
                           <Button
                             variant="ghost"
@@ -185,8 +222,9 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false, 
                             <Trash2 className="h-3 w-3 text-muted-foreground" />
                           </Button>
                         )}
-                      </div>
-                    ))}
+                        </div>
+                      );
+                    })}
 
                     {editMode && (
                       <Button
