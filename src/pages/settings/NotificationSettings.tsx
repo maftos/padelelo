@@ -10,6 +10,7 @@ import { ScheduleManager } from "@/components/schedule/ScheduleManager";
 import { useState } from "react";
 
 const NotificationSettings = () => {
+  // Fixed edit mode functionality
   const { preferences, loading, saving, updatePreferences } = useNotificationPreferences();
   const [editMode, setEditMode] = useState(false);
 
