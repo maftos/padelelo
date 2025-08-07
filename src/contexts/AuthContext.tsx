@@ -109,7 +109,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       navigate('/login');
       
       toast.error("You have been signed out, but there was an error communicating with the server");
-      });
     }
   };
 
