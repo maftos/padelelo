@@ -4,12 +4,16 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bell } from "lucide-react";
+import { Bell, Save } from "lucide-react";
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 import { ScheduleManager } from "@/components/schedule/ScheduleManager";
+import { useState, useEffect } from "react";
 
 const NotificationSettings = () => {
   const { preferences, loading, saving, updatePreferences } = useNotificationPreferences();
+  const [editMode, setEditMode] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState<any>({});
+  const [hasChanges, setHasChanges] = useState(false);
 
   const regions = [
     { id: "CENTER", label: "Center" },
@@ -19,6 +23,19 @@ const NotificationSettings = () => {
     { id: "SOUTH", label: "South" },
   ];
 
+  // Update pending changes when preferences change
+  useEffect(() => {
+    setHasChanges(Object.keys(pendingChanges).length > 0);
+  }, [pendingChanges]);
+
+  const updateLocalPreference = (updates: any) => {
+    if (editMode) {
+      setPendingChanges(prev => ({ ...prev, ...updates }));
+    } else {
+      updatePreferences(updates);
+    }
+  };
+
   const handleRegionChange = (regionId: string, checked: boolean) => {
     if (!preferences) return;
     
@@ -26,7 +43,27 @@ const NotificationSettings = () => {
       ? [...preferences.regions, regionId]
       : preferences.regions.filter(r => r !== regionId);
     
-    updatePreferences({ regions: newRegions });
+    updateLocalPreference({ regions: newRegions });
+  };
+
+  const saveChanges = async () => {
+    if (Object.keys(pendingChanges).length > 0) {
+      await updatePreferences(pendingChanges);
+      setPendingChanges({});
+      setEditMode(false);
+    }
+  };
+
+  const toggleEditMode = () => {
+    if (editMode && hasChanges) {
+      // Save changes when exiting edit mode
+      saveChanges();
+    } else {
+      setEditMode(!editMode);
+      if (!editMode) {
+        setPendingChanges({});
+      }
+    }
   };
 
   if (loading) {
@@ -80,20 +117,45 @@ const NotificationSettings = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Bell className="w-5 h-5" />
-          Notifications
-        </CardTitle>
-        <CardDescription>
-          Choose what notifications you want to receive
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Bell className="w-5 h-5" />
+              Notifications
+            </CardTitle>
+            <CardDescription>
+              Choose what notifications you want to receive via WhatsApp
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2">
+            {editMode && hasChanges && (
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={saveChanges}
+                disabled={saving}
+                className="flex items-center gap-1"
+              >
+                <Save className="w-4 h-4" />
+                Save Changes
+              </Button>
+            )}
+            <Button 
+              variant={editMode ? "secondary" : "outline"} 
+              size="sm" 
+              onClick={toggleEditMode}
+              disabled={saving}
+            >
+              {editMode ? "Cancel" : "Edit"}
+            </Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent className="space-y-8">
         {/* Bookings Section */}
         <div className="space-y-4">
           <div>
             <h3 className="text-lg font-semibold mb-1">Bookings</h3>
-            <p className="text-sm text-muted-foreground">Manage notifications for your booking activities</p>
           </div>
           
           <div className="space-y-4 pl-4 border-l-2 border-muted">
@@ -107,7 +169,7 @@ const NotificationSettings = () => {
                 id="booking-applications"
                 checked={preferences.booking_applications}
                 onCheckedChange={(checked) => 
-                  updatePreferences({ booking_applications: checked })
+                  updateLocalPreference({ booking_applications: checked })
                 }
                 disabled={saving}
               />
@@ -123,7 +185,7 @@ const NotificationSettings = () => {
                 id="booking-confirmations"
                 checked={preferences.booking_confirmations}
                 onCheckedChange={(checked) => 
-                  updatePreferences({ booking_confirmations: checked })
+                  updateLocalPreference({ booking_confirmations: checked })
                 }
                 disabled={saving}
               />
@@ -144,7 +206,7 @@ const NotificationSettings = () => {
               id="open-bookings"
               checked={preferences.open_bookings}
               onCheckedChange={(checked) => 
-                updatePreferences({ open_bookings: checked })
+                updateLocalPreference({ open_bookings: checked })
               }
               disabled={saving}
             />
@@ -175,11 +237,11 @@ const NotificationSettings = () => {
               <div className="space-y-2">
                 <h4 className="text-sm font-medium">Schedule</h4>
                 <p className="text-xs text-muted-foreground">
-                  Set your preferred times to receive notifications. Remove all time ranges for days you don't want notifications.
+                  Set your preferred booking times to receive notifications about open games. Remove all time ranges for days you don't want notifications.
                 </p>
                 <ScheduleManager
                   schedule={preferences.schedule}
-                  onScheduleChange={(schedule) => updatePreferences({ schedule })}
+                  onScheduleChange={(schedule) => updateLocalPreference({ schedule })}
                   disabled={saving}
                 />
               </div>
