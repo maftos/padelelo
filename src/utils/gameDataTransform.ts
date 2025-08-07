@@ -20,18 +20,20 @@ export const formatGameDate = (date: Date) => {
 
 export const formatGameDateTime = (date: Date) => {
   // Convert UTC timestamp to UTC+4 (Mauritius timezone)
+  // Note: date parameter is already in UTC from database
   const localDate = addHours(date, 4);
-  const currentDate = addHours(new Date(), 4);
+  const currentDate = new Date(); // Keep current date in local browser timezone
   
   const time = format(localDate, "HH:mm");
   
-  // Check if it's today
-  if (isSameDay(localDate, currentDate)) {
+  // Check if it's today (compare dates in same timezone)
+  const localCurrentDate = addHours(currentDate, 4);
+  if (isSameDay(localDate, localCurrentDate)) {
     return `Today @ ${time}`;
   }
   
   // Check if it's tomorrow
-  const tomorrow = addDays(currentDate, 1);
+  const tomorrow = addDays(localCurrentDate, 1);
   if (isSameDay(localDate, tomorrow)) {
     return `Tomorrow @ ${time}`;
   }
