@@ -32,19 +32,15 @@ export const useNotificationPreferences = () => {
     if (!user?.id) return;
 
     try {
-      // Direct query to notification_preferences table
-      const { data: directData, error: directError } = await supabase
-        .from("notification_preferences" as any)
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      // Use the new database function
+      const { data, error } = await supabase.rpc('view_my_notification_preferences' as any);
 
-      if (directError) throw directError;
+      if (error) throw error;
       
-      if (directData) {
-        setPreferences(directData as unknown as NotificationPreferences);
+      if (data && typeof data === 'object' && !(data as any).message) {
+        setPreferences(data as unknown as NotificationPreferences);
       } else {
-        // Create default preferences
+        // Create default preferences if none found
         await createDefaultPreferences();
       }
     } catch (error) {
