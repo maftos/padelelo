@@ -92,7 +92,7 @@ const NotificationSettings = () => {
         {/* Bookings Section */}
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-medium mb-1">Bookings</h3>
+            <h3 className="text-lg font-semibold mb-1">Bookings</h3>
             <p className="text-sm text-muted-foreground">Manage notifications for your booking activities</p>
           </div>
           
@@ -100,8 +100,8 @@ const NotificationSettings = () => {
             {/* Receiving Applications */}
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium">Receiving Applications</h4>
-                <p className="text-sm text-muted-foreground">Get notified when someone applies to join your games</p>
+                <h4 className="text-sm font-medium">Receiving Applications</h4>
+                <p className="text-xs text-muted-foreground">Get notified when someone applies to join your games</p>
               </div>
               <Switch
                 id="booking-applications"
@@ -116,8 +116,8 @@ const NotificationSettings = () => {
             {/* Confirmations */}
             <div className="flex items-center justify-between">
               <div>
-                <h4 className="font-medium">Confirmations</h4>
-                <p className="text-sm text-muted-foreground">Get notified about booking confirmations and updates</p>
+                <h4 className="text-sm font-medium">Confirmations</h4>
+                <p className="text-xs text-muted-foreground">Get notified about booking confirmations and updates</p>
               </div>
               <Switch
                 id="booking-confirmations"
@@ -137,7 +137,7 @@ const NotificationSettings = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-medium">Open Bookings</h3>
+              <h3 className="text-lg font-semibold">Open Bookings</h3>
               <p className="text-sm text-muted-foreground">Get notified about new open booking opportunities</p>
             </div>
             <Switch
@@ -154,7 +154,7 @@ const NotificationSettings = () => {
             <div className="space-y-6 pl-4 border-l-2 border-muted">
               {/* Regions */}
               <div className="space-y-3">
-                <Label>Regions</Label>
+                <h4 className="text-sm font-medium">Regions</h4>
                 <div className="flex flex-wrap gap-2">
                   {regions.map((region) => (
                     <Button
@@ -173,8 +173,8 @@ const NotificationSettings = () => {
 
               {/* Schedule */}
               <div className="space-y-3">
-                <Label>Schedule</Label>
-                <p className="text-sm text-muted-foreground">
+                <h4 className="text-sm font-medium">Schedule</h4>
+                <p className="text-xs text-muted-foreground">
                   Set your preferred times to receive notifications. Remove all time ranges for days you don't want notifications.
                 </p>
                 <ScheduleManager
