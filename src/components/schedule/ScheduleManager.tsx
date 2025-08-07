@@ -123,73 +123,85 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false, 
               )}
             </div>
 
-            {/* Time Ranges */}
-            {hasRanges && (
-              <div className="space-y-2">
-                {daySchedule.ranges.map((range, rangeIndex) => (
-                  <div key={rangeIndex} className="flex items-center gap-2 text-sm">
-                    <Select
-                      value={range.start}
-                      onValueChange={(value) => updateTimeRange(day, rangeIndex, 'start', value)}
-                      disabled={disabled}
-                    >
-                      <SelectTrigger className="w-20 h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timeOptions.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    
-                    <span className="text-xs text-muted-foreground">to</span>
-                    
-                    <Select
-                      value={range.end}
-                      onValueChange={(value) => updateTimeRange(day, rangeIndex, 'end', value)}
-                      disabled={disabled}
-                    >
-                      <SelectTrigger className="w-20 h-8">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {timeOptions.map((time) => (
-                          <SelectItem key={time} value={time}>
-                            {time}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                {hasRanges && (
+                  <div className="space-y-2">
+                    {daySchedule.ranges.map((range, rangeIndex) => (
+                      <div key={rangeIndex} className="flex items-center gap-2 text-sm">
+                        {editMode ? (
+                          <Select
+                            value={range.start}
+                            onValueChange={(value) => updateTimeRange(day, rangeIndex, 'start', value)}
+                            disabled={disabled}
+                          >
+                            <SelectTrigger className="w-20 h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timeOptions.map((time) => (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span className="w-20 h-8 px-3 py-1 text-sm border rounded-md bg-muted/50 flex items-center">
+                            {range.start}
+                          </span>
+                        )}
+                        
+                        <span className="text-xs text-muted-foreground">to</span>
+                        
+                        {editMode ? (
+                          <Select
+                            value={range.end}
+                            onValueChange={(value) => updateTimeRange(day, rangeIndex, 'end', value)}
+                            disabled={disabled}
+                          >
+                            <SelectTrigger className="w-20 h-8">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timeOptions.map((time) => (
+                                <SelectItem key={time} value={time}>
+                                  {time}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <span className="w-20 h-8 px-3 py-1 text-sm border rounded-md bg-muted/50 flex items-center">
+                            {range.end}
+                          </span>
+                        )}
+                        {editMode && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeTimeRange(day, rangeIndex)}
+                            disabled={disabled}
+                            className="h-7 w-7 p-0"
+                          >
+                            <Trash2 className="h-3 w-3 text-muted-foreground" />
+                          </Button>
+                        )}
+                      </div>
+                    ))}
 
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeTimeRange(day, rangeIndex)}
-                      disabled={disabled}
-                      className="h-7 w-7 p-0"
-                    >
-                      <Trash2 className="h-3 w-3 text-muted-foreground" />
-                    </Button>
+                    {editMode && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => addTimeRange(day)}
+                        disabled={disabled}
+                        className="h-7 text-xs px-2 flex items-center gap-1"
+                      >
+                        <Plus className="h-3 w-3" />
+                        Add time range
+                      </Button>
+                    )}
                   </div>
-                ))}
-
-                {editMode && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addTimeRange(day)}
-                    disabled={disabled}
-                    className="h-7 text-xs px-2 flex items-center gap-1"
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add time range
-                  </Button>
                 )}
-              </div>
-            )}
           </div>
         );
       })}

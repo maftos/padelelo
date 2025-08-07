@@ -125,7 +125,7 @@ const NotificationSettings = () => {
                 onCheckedChange={(checked) => 
                   updatePreferences({ booking_applications: checked })
                 }
-                disabled={saving}
+                disabled={saving || !editMode}
               />
             </div>
 
@@ -141,7 +141,7 @@ const NotificationSettings = () => {
                 onCheckedChange={(checked) => 
                   updatePreferences({ booking_confirmations: checked })
                 }
-                disabled={saving}
+                disabled={saving || !editMode}
               />
             </div>
           </div>
@@ -162,7 +162,7 @@ const NotificationSettings = () => {
               onCheckedChange={(checked) => 
                 updatePreferences({ open_bookings: checked })
               }
-              disabled={saving}
+              disabled={saving || !editMode}
             />
           </div>
 
@@ -179,7 +179,7 @@ const NotificationSettings = () => {
                       size="sm"
                       onClick={() => handleRegionChange(region.id, !preferences.regions.includes(region.id))}
                       className="px-4 py-2"
-                      disabled={saving}
+                      disabled={saving || !editMode}
                     >
                       {region.label}
                     </Button>
@@ -196,7 +196,7 @@ const NotificationSettings = () => {
                 <ScheduleManager
                   schedule={preferences.schedule}
                   onScheduleChange={(schedule) => updatePreferences({ schedule })}
-                  disabled={saving}
+                  disabled={saving || !editMode}
                   editMode={editMode}
                 />
               </div>
