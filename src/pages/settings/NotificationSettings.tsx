@@ -4,16 +4,14 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bell, Save } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 import { ScheduleManager } from "@/components/schedule/ScheduleManager";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const NotificationSettings = () => {
   const { preferences, loading, saving, updatePreferences } = useNotificationPreferences();
   const [editMode, setEditMode] = useState(false);
-  const [pendingChanges, setPendingChanges] = useState<any>({});
-  const [hasChanges, setHasChanges] = useState(false);
 
   const regions = [
     { id: "CENTER", label: "Center" },
@@ -23,19 +21,6 @@ const NotificationSettings = () => {
     { id: "SOUTH", label: "South" },
   ];
 
-  // Update pending changes when preferences change
-  useEffect(() => {
-    setHasChanges(Object.keys(pendingChanges).length > 0);
-  }, [pendingChanges]);
-
-  const updateLocalPreference = (updates: any) => {
-    if (editMode) {
-      setPendingChanges(prev => ({ ...prev, ...updates }));
-    } else {
-      updatePreferences(updates);
-    }
-  };
-
   const handleRegionChange = (regionId: string, checked: boolean) => {
     if (!preferences) return;
     
@@ -43,27 +28,7 @@ const NotificationSettings = () => {
       ? [...preferences.regions, regionId]
       : preferences.regions.filter(r => r !== regionId);
     
-    updateLocalPreference({ regions: newRegions });
-  };
-
-  const saveChanges = async () => {
-    if (Object.keys(pendingChanges).length > 0) {
-      await updatePreferences(pendingChanges);
-      setPendingChanges({});
-      setEditMode(false);
-    }
-  };
-
-  const toggleEditMode = () => {
-    if (editMode && hasChanges) {
-      // Save changes when exiting edit mode
-      saveChanges();
-    } else {
-      setEditMode(!editMode);
-      if (!editMode) {
-        setPendingChanges({});
-      }
-    }
+    updatePreferences({ regions: newRegions });
   };
 
   if (loading) {
@@ -128,25 +93,13 @@ const NotificationSettings = () => {
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
-            {editMode && hasChanges && (
-              <Button 
-                variant="default" 
-                size="sm" 
-                onClick={saveChanges}
-                disabled={saving}
-                className="flex items-center gap-1"
-              >
-                <Save className="w-4 h-4" />
-                Save Changes
-              </Button>
-            )}
             <Button 
               variant={editMode ? "secondary" : "outline"} 
               size="sm" 
-              onClick={toggleEditMode}
+              onClick={() => setEditMode(!editMode)}
               disabled={saving}
             >
-              {editMode ? "Cancel" : "Edit"}
+              {editMode ? "Done" : "Edit"}
             </Button>
           </div>
         </div>
@@ -169,7 +122,7 @@ const NotificationSettings = () => {
                 id="booking-applications"
                 checked={preferences.booking_applications}
                 onCheckedChange={(checked) => 
-                  updateLocalPreference({ booking_applications: checked })
+                  updatePreferences({ booking_applications: checked })
                 }
                 disabled={saving}
               />
@@ -185,7 +138,7 @@ const NotificationSettings = () => {
                 id="booking-confirmations"
                 checked={preferences.booking_confirmations}
                 onCheckedChange={(checked) => 
-                  updateLocalPreference({ booking_confirmations: checked })
+                  updatePreferences({ booking_confirmations: checked })
                 }
                 disabled={saving}
               />
@@ -206,7 +159,7 @@ const NotificationSettings = () => {
               id="open-bookings"
               checked={preferences.open_bookings}
               onCheckedChange={(checked) => 
-                updateLocalPreference({ open_bookings: checked })
+                updatePreferences({ open_bookings: checked })
               }
               disabled={saving}
             />
@@ -241,8 +194,9 @@ const NotificationSettings = () => {
                 </p>
                 <ScheduleManager
                   schedule={preferences.schedule}
-                  onScheduleChange={(schedule) => updateLocalPreference({ schedule })}
+                  onScheduleChange={(schedule) => updatePreferences({ schedule })}
                   disabled={saving}
+                  editMode={editMode}
                 />
               </div>
             </div>

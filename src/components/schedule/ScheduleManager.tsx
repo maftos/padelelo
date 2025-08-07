@@ -26,6 +26,7 @@ interface ScheduleManagerProps {
   schedule: Record<string, DaySchedule>;
   onScheduleChange: (schedule: Record<string, DaySchedule>) => void;
   disabled?: boolean;
+  editMode?: boolean;
 }
 
 const timeOptions = Array.from({ length: 24 }, (_, i) => {
@@ -43,7 +44,7 @@ const dayLabels = {
   sunday: "Sunday",
 };
 
-export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }: ScheduleManagerProps) => {
+export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false, editMode = true }: ScheduleManagerProps) => {
   const updateDayEnabled = (day: string, enabled: boolean) => {
     const newSchedule = {
       ...schedule,
@@ -109,7 +110,7 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }
             {/* Day Header */}
             <div className="flex items-center justify-between mb-2">
               <Label className="text-sm font-medium">{label}</Label>
-              {!hasRanges && (
+              {!hasRanges && editMode && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -175,16 +176,18 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }
                   </div>
                 ))}
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => addTimeRange(day)}
-                  disabled={disabled}
-                  className="h-7 text-xs px-2 flex items-center gap-1"
-                >
-                  <Plus className="h-3 w-3" />
-                  Add time range
-                </Button>
+                {editMode && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addTimeRange(day)}
+                    disabled={disabled}
+                    className="h-7 text-xs px-2 flex items-center gap-1"
+                  >
+                    <Plus className="h-3 w-3" />
+                    Add time range
+                  </Button>
+                )}
               </div>
             )}
           </div>
