@@ -87,15 +87,21 @@ export const useNotificationPreferences = () => {
 
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("notification_preferences" as any)
-        .update(updates)
-        .eq("user_id", user.id);
+      // Filter out non-editable fields and prepare parameters for the function
+      const { booking_applications, booking_confirmations, id, user_id, friends_only, ...editableUpdates } = updates;
+      
+      const { data, error } = await supabase.rpc('edit_my_notification_preferences' as any, {
+        p_open_bookings: editableUpdates.open_bookings ?? null,
+        p_regions: editableUpdates.regions ?? null,
+        p_schedule: editableUpdates.schedule ?? null
+      });
 
       if (error) throw error;
 
-      setPreferences(prev => prev ? { ...prev, ...updates } : null);
-      toast.success("Notification preferences updated");
+      if (data && typeof data === 'object') {
+        setPreferences(data as unknown as NotificationPreferences);
+        toast.success("Notification preferences updated");
+      }
     } catch (error) {
       console.error("Error updating notification preferences:", error);
       toast.error("Failed to update notification preferences");
@@ -113,16 +119,23 @@ export const useNotificationPreferences = () => {
 
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from("notification_preferences" as any)
-        .update(updates)
-        .eq("user_id", user.id);
+      // Filter out non-editable fields and prepare parameters for the function
+      const { booking_applications, booking_confirmations, id, user_id, friends_only, ...editableUpdates } = updates;
+      
+      const { data, error } = await supabase.rpc('edit_my_notification_preferences' as any, {
+        p_open_bookings: editableUpdates.open_bookings ?? null,
+        p_regions: editableUpdates.regions ?? null,
+        p_schedule: editableUpdates.schedule ?? null
+      });
 
       if (error) throw error;
 
-      setPreferences(prev => prev ? { ...prev, ...updates } : null);
-      toast.success("Notification preferences updated");
-      return true;
+      if (data && typeof data === 'object') {
+        setPreferences(data as unknown as NotificationPreferences);
+        toast.success("Notification preferences updated");
+        return true;
+      }
+      return false;
     } catch (error) {
       console.error("Error updating notification preferences:", error);
       toast.error("Failed to update notification preferences");

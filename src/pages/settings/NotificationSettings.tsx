@@ -171,35 +171,29 @@ const NotificationSettings = () => {
           </div>
           
           <div className="space-y-4 pl-4 border-l-2 border-muted">
-            {/* Receiving Applications */}
-            <div className="flex items-center justify-between">
+            {/* Receiving Applications - Always enabled, not editable */}
+            <div className="flex items-center justify-between opacity-75">
               <div>
                 <h4 className="text-sm font-medium">Receiving Applications</h4>
-                <p className="text-xs text-muted-foreground">Get notified when someone applies to join your games</p>
+                <p className="text-xs text-muted-foreground">Get notified when someone applies to join your games (always enabled)</p>
               </div>
               <Switch
                 id="booking-applications"
-                checked={localPreferences?.booking_applications ?? false}
-                onCheckedChange={(checked) => 
-                  updateLocalPreference({ booking_applications: checked })
-                }
-                disabled={saving || !editMode}
+                checked={true}
+                disabled={true}
               />
             </div>
 
-            {/* Confirmations */}
-            <div className="flex items-center justify-between">
+            {/* Confirmations - Always enabled, not editable */}
+            <div className="flex items-center justify-between opacity-75">
               <div>
                 <h4 className="text-sm font-medium">Confirmations</h4>
-                <p className="text-xs text-muted-foreground">Get notified about booking confirmations and updates</p>
+                <p className="text-xs text-muted-foreground">Get notified about booking confirmations and updates (always enabled)</p>
               </div>
               <Switch
                 id="booking-confirmations"
-                checked={localPreferences?.booking_confirmations ?? false}
-                onCheckedChange={(checked) => 
-                  updateLocalPreference({ booking_confirmations: checked })
-                }
-                disabled={saving || !editMode}
+                checked={true}
+                disabled={true}
               />
             </div>
           </div>
