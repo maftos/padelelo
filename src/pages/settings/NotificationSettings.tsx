@@ -7,12 +7,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Bell } from "lucide-react";
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
 import { ScheduleManager } from "@/components/schedule/ScheduleManager";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const NotificationSettings = () => {
   // Fixed edit mode functionality
-  const { preferences, loading, saving, updatePreferences } = useNotificationPreferences();
+  const { preferences, loading, saving, batchUpdatePreferences } = useNotificationPreferences();
   const [editMode, setEditMode] = useState(false);
+  const [localPreferences, setLocalPreferences] = useState<any>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const regions = [
     { id: "CENTER", label: "Center" },
@@ -22,14 +24,51 @@ const NotificationSettings = () => {
     { id: "SOUTH", label: "South" },
   ];
 
+  // Initialize local preferences when preferences change
+  useEffect(() => {
+    if (preferences && !localPreferences) {
+      setLocalPreferences({ ...preferences });
+    }
+  }, [preferences]);
+
+  // Check if there are unsaved changes
+  useEffect(() => {
+    if (preferences && localPreferences) {
+      const hasChanges = JSON.stringify(preferences) !== JSON.stringify(localPreferences);
+      setHasChanges(hasChanges);
+    }
+  }, [preferences, localPreferences]);
+
+  const updateLocalPreference = (updates: any) => {
+    if (!localPreferences) return;
+    setLocalPreferences(prev => ({ ...prev, ...updates }));
+  };
+
   const handleRegionChange = (regionId: string, checked: boolean) => {
-    if (!preferences) return;
+    if (!localPreferences) return;
     
     const newRegions = checked 
-      ? [...preferences.regions, regionId]
-      : preferences.regions.filter(r => r !== regionId);
+      ? [...localPreferences.regions, regionId]
+      : localPreferences.regions.filter(r => r !== regionId);
     
-    updatePreferences({ regions: newRegions });
+    updateLocalPreference({ regions: newRegions });
+  };
+
+  const saveChanges = async () => {
+    if (!hasChanges || !localPreferences || !preferences) return;
+    
+    // Create an object with only the changed fields
+    const changes: any = {};
+    Object.keys(localPreferences).forEach(key => {
+      if (JSON.stringify(localPreferences[key]) !== JSON.stringify(preferences[key])) {
+        changes[key] = localPreferences[key];
+      }
+    });
+
+    const success = await batchUpdatePreferences(changes);
+    if (success) {
+      setEditMode(false);
+    }
   };
 
   if (loading) {
@@ -94,13 +133,34 @@ const NotificationSettings = () => {
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">
+            {editMode && hasChanges && (
+              <Button 
+                variant="default" 
+                size="sm" 
+                onClick={saveChanges}
+                disabled={saving}
+                className="flex items-center gap-1"
+              >
+                Save Changes
+              </Button>
+            )}
             <Button 
               variant={editMode ? "secondary" : "outline"} 
               size="sm" 
-              onClick={() => setEditMode(!editMode)}
+              onClick={() => {
+                if (editMode && hasChanges) {
+                  saveChanges();
+                } else if (editMode) {
+                  // Cancel changes - reset local preferences
+                  setLocalPreferences({ ...preferences });
+                  setEditMode(false);
+                } else {
+                  setEditMode(true);
+                }
+              }}
               disabled={saving}
             >
-              {editMode ? "Done" : "Edit"}
+              {editMode ? (hasChanges ? "Save & Exit" : "Cancel") : "Edit"}
             </Button>
           </div>
         </div>
@@ -121,9 +181,9 @@ const NotificationSettings = () => {
               </div>
               <Switch
                 id="booking-applications"
-                checked={preferences.booking_applications}
+                checked={localPreferences?.booking_applications ?? false}
                 onCheckedChange={(checked) => 
-                  updatePreferences({ booking_applications: checked })
+                  updateLocalPreference({ booking_applications: checked })
                 }
                 disabled={saving || !editMode}
               />
@@ -137,9 +197,9 @@ const NotificationSettings = () => {
               </div>
               <Switch
                 id="booking-confirmations"
-                checked={preferences.booking_confirmations}
+                checked={localPreferences?.booking_confirmations ?? false}
                 onCheckedChange={(checked) => 
-                  updatePreferences({ booking_confirmations: checked })
+                  updateLocalPreference({ booking_confirmations: checked })
                 }
                 disabled={saving || !editMode}
               />
@@ -158,15 +218,15 @@ const NotificationSettings = () => {
             </div>
             <Switch
               id="open-bookings"
-              checked={preferences.open_bookings}
+              checked={localPreferences?.open_bookings ?? false}
               onCheckedChange={(checked) => 
-                updatePreferences({ open_bookings: checked })
+                updateLocalPreference({ open_bookings: checked })
               }
               disabled={saving || !editMode}
             />
           </div>
 
-          {preferences.open_bookings && (
+          {(localPreferences?.open_bookings) && (
             <div className="space-y-6 pl-4 border-l-2 border-muted">
               {/* Regions */}
               <div className="space-y-3">
@@ -175,9 +235,9 @@ const NotificationSettings = () => {
                   {regions.map((region) => (
                     <Button
                       key={region.id}
-                      variant={preferences.regions.includes(region.id) ? "default" : "outline"}
+                      variant={(localPreferences?.regions || []).includes(region.id) ? "default" : "outline"}
                       size="sm"
-                      onClick={() => handleRegionChange(region.id, !preferences.regions.includes(region.id))}
+                      onClick={() => handleRegionChange(region.id, !(localPreferences?.regions || []).includes(region.id))}
                       className="px-4 py-2"
                       disabled={saving || !editMode}
                     >
@@ -194,8 +254,8 @@ const NotificationSettings = () => {
                   Set your preferred booking times to receive notifications about open games. Remove all time ranges for days you don't want notifications.
                 </p>
                 <ScheduleManager
-                  schedule={preferences.schedule}
-                  onScheduleChange={(schedule) => updatePreferences({ schedule })}
+                  schedule={localPreferences?.schedule || {}}
+                  onScheduleChange={(schedule) => updateLocalPreference({ schedule })}
                   disabled={saving || !editMode}
                   editMode={editMode}
                 />

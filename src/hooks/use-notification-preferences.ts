@@ -112,10 +112,35 @@ export const useNotificationPreferences = () => {
     fetchPreferences();
   }, [user?.id]);
 
+  const batchUpdatePreferences = async (updates: Partial<NotificationPreferences>) => {
+    if (!user?.id || !preferences) return false;
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from("notification_preferences" as any)
+        .update(updates)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
+
+      setPreferences(prev => prev ? { ...prev, ...updates } : null);
+      toast.success("Notification preferences updated");
+      return true;
+    } catch (error) {
+      console.error("Error updating notification preferences:", error);
+      toast.error("Failed to update notification preferences");
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return {
     preferences,
     loading,
     saving,
     updatePreferences,
+    batchUpdatePreferences,
   };
 };
