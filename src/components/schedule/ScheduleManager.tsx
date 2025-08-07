@@ -99,97 +99,95 @@ export const ScheduleManager = ({ schedule, onScheduleChange, disabled = false }
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {Object.entries(dayLabels).map(([day, label]) => {
         const daySchedule = schedule[day];
         const hasRanges = daySchedule?.ranges && daySchedule.ranges.length > 0;
         
         return (
-          <Card key={day} className="p-4">
-            <div className="space-y-3">
-              {/* Day Header */}
-              <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">{label}</Label>
-                {!hasRanges && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addTimeRange(day)}
-                    disabled={disabled}
-                    className="text-xs"
-                  >
-                    Add time range
-                  </Button>
-                )}
-              </div>
-
-              {/* Time Ranges */}
-              {hasRanges && (
-                <div className="space-y-2">
-                  {daySchedule.ranges.map((range, rangeIndex) => (
-                    <div key={rangeIndex} className="flex items-center gap-2">
-                      <Select
-                        value={range.start}
-                        onValueChange={(value) => updateTimeRange(day, rangeIndex, 'start', value)}
-                        disabled={disabled}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {timeOptions.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <span className="text-muted-foreground">to</span>
-                      
-                      <Select
-                        value={range.end}
-                        onValueChange={(value) => updateTimeRange(day, rangeIndex, 'end', value)}
-                        disabled={disabled}
-                      >
-                        <SelectTrigger className="w-24">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {timeOptions.map((time) => (
-                            <SelectItem key={time} value={time}>
-                              {time}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => removeTimeRange(day, rangeIndex)}
-                        disabled={disabled || daySchedule.ranges.length <= 1}
-                        className="p-1"
-                      >
-                        <Trash2 className="h-4 w-4 text-muted-foreground" />
-                      </Button>
-                    </div>
-                  ))}
-
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addTimeRange(day)}
-                    disabled={disabled}
-                    className="flex items-center gap-1"
-                  >
-                    <Plus className="h-3 w-3" />
-                    Add time range
-                  </Button>
-                </div>
+          <div key={day} className="border rounded-lg p-3 bg-muted/20">
+            {/* Day Header */}
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-sm font-medium">{label}</Label>
+              {!hasRanges && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addTimeRange(day)}
+                  disabled={disabled}
+                  className="h-7 text-xs px-2"
+                >
+                  Add time range
+                </Button>
               )}
             </div>
-          </Card>
+
+            {/* Time Ranges */}
+            {hasRanges && (
+              <div className="space-y-2">
+                {daySchedule.ranges.map((range, rangeIndex) => (
+                  <div key={rangeIndex} className="flex items-center gap-2 text-sm">
+                    <Select
+                      value={range.start}
+                      onValueChange={(value) => updateTimeRange(day, rangeIndex, 'start', value)}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger className="w-20 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeOptions.map((time) => (
+                          <SelectItem key={time} value={time}>
+                            {time}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    
+                    <span className="text-xs text-muted-foreground">to</span>
+                    
+                    <Select
+                      value={range.end}
+                      onValueChange={(value) => updateTimeRange(day, rangeIndex, 'end', value)}
+                      disabled={disabled}
+                    >
+                      <SelectTrigger className="w-20 h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {timeOptions.map((time) => (
+                          <SelectItem key={time} value={time}>
+                            {time}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeTimeRange(day, rangeIndex)}
+                      disabled={disabled}
+                      className="h-7 w-7 p-0"
+                    >
+                      <Trash2 className="h-3 w-3 text-muted-foreground" />
+                    </Button>
+                  </div>
+                ))}
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addTimeRange(day)}
+                  disabled={disabled}
+                  className="h-7 text-xs px-2 flex items-center gap-1"
+                >
+                  <Plus className="h-3 w-3" />
+                  Add time range
+                </Button>
+              </div>
+            )}
+          </div>
         );
       })}
     </div>

@@ -172,7 +172,7 @@ const NotificationSettings = () => {
               </div>
 
               {/* Schedule */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <h4 className="text-sm font-medium">Schedule</h4>
                 <p className="text-xs text-muted-foreground">
                   Set your preferred times to receive notifications. Remove all time ranges for days you don't want notifications.
