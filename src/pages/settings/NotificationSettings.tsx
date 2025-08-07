@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bell } from "lucide-react";
 import { useNotificationPreferences } from "@/hooks/use-notification-preferences";
+import { ScheduleManager } from "@/components/schedule/ScheduleManager";
 
 const NotificationSettings = () => {
   const { preferences, loading, saving, updatePreferences } = useNotificationPreferences();
@@ -143,31 +144,6 @@ const NotificationSettings = () => {
 
           {preferences.open_bookings && (
             <>
-              {/* Games From */}
-              <div className="space-y-3">
-                <Label>Games from</Label>
-                <div className="flex gap-2">
-                  <Button
-                    variant={!preferences.friends_only ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => updatePreferences({ friends_only: false })}
-                    className="flex-1"
-                    disabled={saving}
-                  >
-                    Anyone
-                  </Button>
-                  <Button
-                    variant={preferences.friends_only ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => updatePreferences({ friends_only: true })}
-                    className="flex-1"
-                    disabled={saving}
-                  >
-                    Friends only
-                  </Button>
-                </div>
-              </div>
-
               {/* Regions */}
               <div className="space-y-3">
                 <Label>Regions</Label>
@@ -185,6 +161,19 @@ const NotificationSettings = () => {
                     </Button>
                   ))}
                 </div>
+              </div>
+
+              {/* Schedule */}
+              <div className="space-y-3">
+                <Label>Schedule</Label>
+                <p className="text-sm text-muted-foreground">
+                  Set your preferred times to receive open booking notifications
+                </p>
+                <ScheduleManager
+                  schedule={preferences.schedule}
+                  onScheduleChange={(schedule) => updatePreferences({ schedule })}
+                  disabled={saving}
+                />
               </div>
             </>
           )}
