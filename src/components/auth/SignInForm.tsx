@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,7 +27,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
   const [error, setError] = useState<string | null>(null);
   const [isVerificationStep, setIsVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  const { toast } = useToast();
+  
   const navigate = useNavigate();
   const { validatePhoneNumber, validatePassword, validateVerificationCode } = useFormValidation();
 
@@ -138,10 +138,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
         // Cache the successful login phone number and country code
         saveToCache(phoneNumber, countryCode);
         
-        toast({
-          title: "Success!",
-          description: "You have been successfully signed in",
-        });
+        toast.success("You have been successfully signed in");
         navigate('/');
       }
     } catch (err: any) {
@@ -185,10 +182,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
       // Cache the phone number and country code for future logins
       saveToCache(phoneNumber, countryCode);
 
-      toast({
-        title: "WhatsApp Message Sent!",
-        description: "Please check your WhatsApp for the verification code",
-      });
+      toast.success("WhatsApp message sent! Please check your WhatsApp for the verification code");
       
       setIsVerificationStep(true);
 
@@ -204,11 +198,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
     const cleanCode = verificationCode.trim();
     
     if (!validateVerificationCode(cleanCode)) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid 6-digit code",
-        variant: "destructive",
-      });
+      toast.error("Please enter a valid 6-digit code");
       return;
     }
 
@@ -231,11 +221,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
         console.error('Verification error:', verifyError);
         
         if (verifyError.message.toLowerCase().includes('expired')) {
-          toast({
-            title: "Code Expired",
-            description: "The verification code has expired. Please request a new one.",
-            variant: "destructive",
-          });
+          toast.error("The verification code has expired. Please request a new one.");
           setIsVerificationStep(false);
           return;
         }
@@ -246,21 +232,14 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
       // Clear stored data
       sessionStorage.removeItem('loginPhone');
 
-      toast({
-        title: "Success!",
-        description: "You have been successfully signed in",
-      });
+      toast.success("You have been successfully signed in");
 
       navigate('/');
       
     } catch (error: any) {
       console.error('Verification process error:', error);
       setError(error.message);
-      toast({
-        title: "Verification Failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast.error(`Verification Failed: ${error.message}`);
     } finally {
       setPasswordlessLoading(false);
     }

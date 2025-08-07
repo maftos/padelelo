@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserProfile } from "./use-user-profile";
 
@@ -42,7 +42,7 @@ interface ProfileFormState {
 
 export const useProfileState = (profileUserId: string | undefined) => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  
   const [isEditing, setIsEditing] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [formData, setFormData] = useState<ProfileFormState>({
@@ -179,17 +179,10 @@ export const useProfileState = (profileUserId: string | undefined) => {
         profile_photo: publicUrl
       }));
 
-      toast({
-        title: "Photo uploaded",
-        description: "Your profile photo has been updated successfully.",
-      });
+      toast.success("Your profile photo has been updated successfully.");
     } catch (error) {
       console.error('Error uploading photo:', error);
-      toast({
-        title: "Upload failed",
-        description: "There was an error uploading your photo. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("There was an error uploading your photo. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -198,21 +191,13 @@ export const useProfileState = (profileUserId: string | undefined) => {
   const handleSave = async () => {
     try {
       if (!profileUserId) {
-        toast({
-          title: "Error",
-          description: "User ID not found. Please try logging in again.",
-          variant: "destructive",
-        });
+        toast.error("User ID not found. Please try logging in again.");
         return;
       }
 
       // Validate required fields
       if (!formData.first_name || !formData.last_name || !formData.nationality || !formData.gender) {
-        toast({
-          title: "Validation Error",
-          description: "Please fill in all required fields (First Name, Last Name, Nationality, Gender).",
-          variant: "destructive",
-        });
+        toast.error("Please fill in all required fields (First Name, Last Name, Nationality, Gender).");
         return;
       }
 
@@ -239,53 +224,30 @@ export const useProfileState = (profileUserId: string | undefined) => {
         
         // Handle specific error cases
         if (error.message.includes('does not exist')) {
-          toast({
-            title: "User Not Found",
-            description: "Your user profile could not be found. Please try logging out and back in.",
-            variant: "destructive",
-          });
+          toast.error("Your user profile could not be found. Please try logging out and back in.");
         } else if (error.message.includes('permission')) {
-          toast({
-            title: "Permission Denied",
-            description: "You don't have permission to update this profile.",
-            variant: "destructive",
-          });
+          toast.error("You don't have permission to update this profile.");
         } else {
-          toast({
-            title: "Update Failed",
-            description: error.message || "Failed to update profile. Please try again.",
-            variant: "destructive",
-          });
+          toast.error(error.message || "Failed to update profile. Please try again.");
         }
         return;
       }
 
       // Validate response data
       if (!data) {
-        toast({
-          title: "Update Failed",
-          description: "No response received from server. Please try again.",
-          variant: "destructive",
-        });
+        toast.error("No response received from server. Please try again.");
         return;
       }
 
       // Success - refresh data and show success message
       await refetch();
 
-      toast({
-        title: "Profile Updated",
-        description: "Your profile has been successfully updated.",
-      });
+      toast.success("Your profile has been successfully updated.");
 
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to update profile. Please try again.");
     }
   };
 

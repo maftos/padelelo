@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useState } from "react";
 
 interface LeaderboardPlayer {
@@ -62,9 +62,7 @@ export const AddFriendDialog = ({
         setError('An error occurred while sending the friend request');
       }
     } else {
-      toast({
-        description: "Friend request sent successfully!",
-      });
+      toast.success("Friend request sent successfully!");
       handleClose();
     }
   };

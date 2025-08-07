@@ -7,7 +7,7 @@ import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Insta
 import { MutualFriendsModal } from "./MutualFriendsModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useState } from "react";
 import { countries } from "@/lib/countries";
 import { ReportPlayerModal } from "./ReportPlayerModal";
@@ -61,7 +61,7 @@ export const ProfileHeroCard = ({
   mutualFriendsCount = 0
 }: ProfileHeroCardProps) => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  
   const navigate = useNavigate();
   const [sendingRequest, setSendingRequest] = useState(false);
   const [acceptingRequest, setAcceptingRequest] = useState(false);
@@ -70,11 +70,7 @@ export const ProfileHeroCard = ({
 
   const handleSendFriendRequest = async () => {
     if (!user || !profileData?.profile?.id) {
-      toast({
-        title: "Error",
-        description: "Unable to send friend request. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Unable to send friend request. Please try again.");
       return;
     }
 
@@ -90,17 +86,10 @@ export const ProfileHeroCard = ({
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Friend request sent successfully!",
-      });
+      toast.success("Friend request sent successfully!");
     } catch (error) {
       console.error('Error sending friend request:', error);
-      toast({
-        title: "Error",
-        description: "Failed to send friend request. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to send friend request. Please try again.");
     } finally {
       setSendingRequest(false);
     }
@@ -108,11 +97,7 @@ export const ProfileHeroCard = ({
 
   const handleAcceptFriendRequest = async () => {
     if (!user || !profileData?.profile?.id || !profileData?.friendship?.friendship_id) {
-      toast({
-        title: "Error",
-        description: "Unable to accept friend request. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Unable to accept friend request. Please try again.");
       return;
     }
 
@@ -125,17 +110,10 @@ export const ProfileHeroCard = ({
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Friend request accepted!",
-      });
+      toast.success("Friend request accepted!");
     } catch (error) {
       console.error('Error accepting friend request:', error);
-      toast({
-        title: "Error",
-        description: "Failed to accept friend request. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to accept friend request. Please try again.");
     } finally {
       setAcceptingRequest(false);
     }

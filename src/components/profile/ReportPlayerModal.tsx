@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { AlertTriangle } from "lucide-react";
 
 interface ReportPlayerModalProps {
@@ -32,15 +32,11 @@ export const ReportPlayerModal = ({
   const [selectedReason, setSelectedReason] = useState("");
   const [additionalDetails, setAdditionalDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+  
 
   const handleSubmit = async () => {
     if (!selectedReason) {
-      toast({
-        title: "Error",
-        description: "Please select a reason for reporting.",
-        variant: "destructive",
-      });
+      toast.error("Please select a reason for reporting.");
       return;
     }
 
@@ -50,18 +46,11 @@ export const ReportPlayerModal = ({
       // Mock submission for now - will be replaced with actual API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      toast({
-        title: "Report submitted",
-        description: `Your report about ${playerName} has been submitted successfully. Our team will review it within 24 hours.`,
-      });
+      toast.success(`Your report about ${playerName} has been submitted successfully. Our team will review it within 24 hours.`);
       
       handleClose();
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to submit report. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to submit report. Please try again.");
     } finally {
       setIsSubmitting(false);
     }

@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export const useFriendRequest = (userId: string | undefined) => {
   const [pendingRequests, setPendingRequests] = useState<Set<string>>(new Set());
@@ -22,24 +22,13 @@ export const useFriendRequest = (userId: string | undefined) => {
 
       if (error) {
         console.error('Error sending friend request:', error);
-        toast({
-          title: "Error",
-          description: "Failed to send friend request. Please try again.",
-          variant: "destructive"
-        });
+        toast.error("Failed to send friend request. Please try again.");
       } else {
-        toast({
-          title: "Success",
-          description: "Friend request sent successfully!"
-        });
+        toast.success("Friend request sent successfully!");
       }
     } catch (err) {
       console.error('Error sending friend request:', err);
-      toast({
-        title: "Error",
-        description: "Failed to send friend request. Please try again.",
-        variant: "destructive"
-      });
+      toast.error("Failed to send friend request. Please try again.");
     } finally {
       setPendingRequests(prev => {
         const newSet = new Set(prev);

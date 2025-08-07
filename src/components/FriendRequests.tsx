@@ -4,7 +4,7 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { UserPlus, Check, X } from "lucide-react";
 
 interface FriendRequest {
@@ -18,7 +18,7 @@ interface FriendRequest {
 
 export const FriendRequests = () => {
   const { userId } = useUserProfile();
-  const { toast } = useToast();
+  
   const queryClient = useQueryClient();
 
   const { data: requests, isLoading, error } = useQuery({
@@ -63,21 +63,14 @@ export const FriendRequests = () => {
         throw error;
       }
 
-      toast({
-        title: accept ? "Friend Request Accepted" : "Friend Request Declined",
-        description: accept ? "You are now friends!" : "Friend request has been declined",
-      });
+      toast.success(accept ? "Friend request accepted! You are now friends!" : "Friend request declined");
 
       // Invalidate both friend requests and friends lists
       queryClient.invalidateQueries({ queryKey: ['friendRequests'] });
       queryClient.invalidateQueries({ queryKey: ['friends'] });
     } catch (error: any) {
       console.error('Error in handleRequestResponse:', error);
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast.error(`Error: ${error.message}`);
     }
   };
 

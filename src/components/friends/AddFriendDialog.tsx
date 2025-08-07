@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { UserPlus } from "lucide-react";
 
 interface AddFriendDialogProps {
@@ -16,7 +16,7 @@ interface AddFriendDialogProps {
 export const AddFriendDialog = ({ userId, onFriendAdded }: AddFriendDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [friendEmail, setFriendEmail] = useState("");
-  const { toast } = useToast();
+  
 
   const handleAddFriend = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,11 +31,7 @@ export const AddFriendDialog = ({ userId, onFriendAdded }: AddFriendDialogProps)
         .single();
 
       if (userError || !userData) {
-        toast({
-          title: "Error",
-          description: "User not found with this email",
-          variant: "destructive",
-        });
+        toast.error("User not found with this email");
         return;
       }
 
@@ -50,39 +46,22 @@ export const AddFriendDialog = ({ userId, onFriendAdded }: AddFriendDialogProps)
 
       if (error) {
         if (error.message.includes("best friends")) {
-          toast({
-            title: "Already Friends",
-            description: error.message,
-          });
+          toast.info(`Already Friends: ${error.message}`);
         } else if (error.message.includes("Invitation sent already")) {
-          toast({
-            title: "Request Pending",
-            description: `You have already sent a friend request to this user`,
-          });
+          toast.info("You have already sent a friend request to this user");
         } else if (error.message.includes("Please complete your profile")) {
-          toast({
-            title: "Profile Incomplete",
-            description: "Please update your profile information before sending friend requests",
-            variant: "destructive",
-          });
+          toast.error("Please update your profile information before sending friend requests");
         } else {
           throw error;
         }
       } else {
-        toast({
-          title: "Friend Request Sent",
-          description: `A friend request has been sent to ${friendEmail}`,
-        });
+        toast.success(`Friend request sent to ${friendEmail}`);
         setFriendEmail("");
         setIsOpen(false);
         onFriendAdded();
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast.error(`Error: ${error.message}`);
     }
   };
 

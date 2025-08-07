@@ -3,7 +3,7 @@ import { Share2, Facebook, Twitter, Linkedin, Copy, ExternalLink } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -48,16 +48,9 @@ export const SocialShare = ({
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      toast({
-        title: "Link copied!",
-        description: "The link has been copied to your clipboard.",
-      });
+      toast.success("Link copied to clipboard!");
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to copy link to clipboard.",
-        variant: "destructive",
-      });
+      toast.error("Failed to copy link to clipboard.");
     }
   };
 
@@ -69,11 +62,7 @@ export const SocialShare = ({
     e.preventDefault();
     
     if (!webhookUrl) {
-      toast({
-        title: "Error",
-        description: "Please enter your Zapier webhook URL",
-        variant: "destructive",
-      });
+      toast.error("Please enter your Zapier webhook URL");
       return;
     }
 
@@ -100,19 +89,12 @@ export const SocialShare = ({
         }),
       });
 
-      toast({
-        title: "Request Sent",
-        description: "The request was sent to Zapier. Please check your Zap's history to confirm it was triggered.",
-      });
+      toast.success("Request sent to Zapier. Please check your Zap's history to confirm it was triggered.");
       
       setWebhookUrl("");
     } catch (error) {
       console.error("Error triggering webhook:", error);
-      toast({
-        title: "Error",
-        description: "Failed to trigger the Zapier webhook. Please check the URL and try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to trigger the Zapier webhook. Please check the URL and try again.");
     } finally {
       setIsLoading(false);
     }

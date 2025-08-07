@@ -33,7 +33,7 @@ import NotificationSettings from "./pages/settings/NotificationSettings";
 import LanguageSettings from "./pages/settings/LanguageSettings";
 import PrivacySettings from "./pages/settings/PrivacySettings";
 import { Navigate } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "./contexts/AuthContext";
 import { MainLayout } from "./components/layouts/MainLayout";

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
@@ -17,7 +17,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  
   const navigate = useNavigate();
 
   // Handle auth state changes and token refresh
@@ -58,10 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (event === 'SIGNED_OUT') {
         handleAuthError();
-        toast({
-          title: "Signed out",
-          description: "You have been signed out of your account",
-        });
+        toast.info("You have been signed out of your account");
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         if (session) {
           setSession(session);
@@ -100,10 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       
       // Show success message
-      toast({
-        title: "Signed out successfully",
-        description: "You have been logged out of your account",
-      });
+      toast.success("You have been logged out of your account");
       
       // Navigate to login page
       navigate('/login');
@@ -114,10 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       navigate('/login');
       
-      toast({
-        title: "Signed out",
-        description: "You have been signed out, but there was an error communicating with the server",
-        variant: "destructive",
+      toast.error("You have been signed out, but there was an error communicating with the server");
       });
     }
   };

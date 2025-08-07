@@ -12,7 +12,7 @@ import { Star, Check, MapPin, Users, Calendar, Plus, ArrowUpDown, Bell } from "l
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { TournamentStatusBadge } from "@/components/tournament/TournamentStatusBadge";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -111,18 +111,11 @@ export default function Tournaments() {
         });
       });
 
-      toast({
-        title: "Success",
-        description: `You are ${data.newStatus === 'INTERESTED' ? 'now' : 'no longer'} interested in this tournament.`,
-      });
+      toast.success(`You are ${data.newStatus === 'INTERESTED' ? 'now' : 'no longer'} interested in this tournament.`);
     },
     onError: (error) => {
       console.error('Error toggling interest:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update your interest. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to update your interest. Please try again.");
     }
   });
 

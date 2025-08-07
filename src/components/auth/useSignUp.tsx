@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { handleAuthError } from "@/utils/auth-error-handler";
@@ -13,7 +13,7 @@ export const useSignUp = () => {
   const [error, setError] = useState<string | null>(null);
   const [isVerificationStep, setIsVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
-  const { toast } = useToast();
+  
   const navigate = useNavigate();
   
   const {
@@ -68,10 +68,7 @@ export const useSignUp = () => {
       // Store the phone number for verification
       sessionStorage.setItem('signupPhone', fullPhoneNumber);
 
-      toast({
-        title: "Verification code sent!",
-        description: "Please check your WhatsApp for the verification code",
-      });
+      toast.success("Verification code sent! Please check your WhatsApp");
       
       setIsVerificationStep(true);
     } catch (err: any) {
@@ -99,11 +96,7 @@ export const useSignUp = () => {
     const cleanCode = verificationCode.trim();
     
     if (!validateVerificationCode(cleanCode)) {
-      toast({
-        title: "Error",
-        description: "Please enter a valid 6-digit code",
-        variant: "destructive",
-      });
+      toast.error("Please enter a valid 6-digit code");
       return;
     }
 
@@ -126,11 +119,7 @@ export const useSignUp = () => {
         console.error('Verification error:', verifyError);
         
         if (verifyError.message.toLowerCase().includes('expired')) {
-          toast({
-            title: "Code Expired",
-            description: "The verification code has expired. Please request a new one.",
-            variant: "destructive",
-          });
+          toast.error("The verification code has expired. Please request a new one.");
           setIsVerificationStep(false);
           return;
         }
@@ -150,10 +139,7 @@ export const useSignUp = () => {
       sessionStorage.removeItem('signupPhone');
       sessionStorage.removeItem('referrerId');
 
-      toast({
-        title: "Success!",
-        description: "Your phone number has been verified. Welcome!",
-      });
+      toast.success("Your phone number has been verified. Welcome!");
 
       // Only navigate after confirming we have a valid session
       navigate('/');
@@ -161,11 +147,7 @@ export const useSignUp = () => {
     } catch (error: any) {
       console.error('Verification process error:', error);
       setError(error.message);
-      toast({
-        title: "Verification Failed",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast.error(`Verification Failed: ${error.message}`);
     } finally {
       setLoading(false);
     }
