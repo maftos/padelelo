@@ -20,30 +20,31 @@ export const formatGameDate = (date: Date) => {
 
 export const formatGameDateTime = (date: Date) => {
   // Convert UTC timestamp to UTC+4 (Mauritius timezone)
-  // Note: date parameter is already in UTC from database
-  const localDate = addHours(date, 4);
-  const currentDate = new Date(); // Keep current date in local browser timezone
+  const mauritiusDate = addHours(date, 4);
   
-  const time = format(localDate, "HH:mm");
+  // Get current time in Mauritius timezone (UTC+4)
+  const nowUtc = new Date();
+  const nowMauritius = addHours(nowUtc, 4);
   
-  // Check if it's today (compare dates in same timezone)
-  const localCurrentDate = addHours(currentDate, 4);
-  if (isSameDay(localDate, localCurrentDate)) {
+  const time = format(mauritiusDate, "HH:mm");
+  
+  // Check if it's today in Mauritius timezone
+  if (isSameDay(mauritiusDate, nowMauritius)) {
     return `Today @ ${time}`;
   }
   
-  // Check if it's tomorrow
-  const tomorrow = addDays(localCurrentDate, 1);
-  if (isSameDay(localDate, tomorrow)) {
+  // Check if it's tomorrow in Mauritius timezone
+  const tomorrowMauritius = addDays(nowMauritius, 1);
+  if (isSameDay(mauritiusDate, tomorrowMauritius)) {
     return `Tomorrow @ ${time}`;
   }
   
   // Otherwise show day name and date
   const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const dayName = dayNames[localDate.getDay()];
-  const monthName = localDate.toLocaleDateString('en-US', { month: 'short' });
+  const dayName = dayNames[mauritiusDate.getDay()];
+  const monthName = mauritiusDate.toLocaleDateString('en-US', { month: 'short' });
   
-  return `${dayName}, ${monthName} ${localDate.getDate()} @ ${time}`;
+  return `${dayName}, ${monthName} ${mauritiusDate.getDate()} @ ${time}`;
 };
 
 export const getOrdinalSuffix = (day: number) => {
@@ -57,8 +58,12 @@ export const getOrdinalSuffix = (day: number) => {
 };
 
 export const formatTimeAgo = (date: Date) => {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+  // Convert both dates to Mauritius timezone (UTC+4) for consistent comparison
+  const createdAtMauritius = addHours(date, 4);
+  const nowUtc = new Date();
+  const nowMauritius = addHours(nowUtc, 4);
+  
+  const diffMs = nowMauritius.getTime() - createdAtMauritius.getTime();
   const diffMinutes = Math.floor(diffMs / (1000 * 60));
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
