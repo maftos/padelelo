@@ -43,14 +43,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         <>
           {/* Mobile Header for authenticated users */}
           {showMobileHeader && (
-            <div className="lg:hidden">
+            <div className="md:hidden">
               <MobileHeader />
             </div>
           )}
           
           {/* Desktop layout with sidebar for authenticated users */}
           {showDesktopSidebar && (
-            <div className="hidden lg:flex">
+            <div className="hidden md:flex">
               <AppSidebar />
               <main className="flex-1">
                 <div className="w-full px-4 py-6">
@@ -62,7 +62,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           
           {/* Mobile layout for authenticated users */}
           {showMobileHeader && (
-            <div className="lg:hidden">
+            <div className="md:hidden">
               <main className="w-full">
                 <div className="px-4 py-6">
                   {children}
