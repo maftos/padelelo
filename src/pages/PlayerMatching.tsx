@@ -31,14 +31,23 @@ export default function PlayerMatching() {
     { value: "soonest", label: "Soonest" }
   ];
 
-  const handleJoinGame = (postId: string) => {
-    console.log("Opening join modal for game:", postId);
-    const gamePost = transformedGames.find(post => post.id === postId);
-    if (gamePost) {
-      setSelectedGamePost(gamePost);
-      setJoinGameModalOpen(true);
+const handleJoinGame = (postId: string) => {
+  console.log("Opening join modal for game:", postId);
+  const gamePost = transformedGames.find(post => post.id === postId);
+  if (gamePost) {
+    // Prevent attempt if already applied or already a participant
+    if (gamePost.isParticipant) {
+      toast.info("You're already in this game");
+      return;
     }
-  };
+    if (gamePost.hasApplied) {
+      toast.info("You've already applied to this game");
+      return;
+    }
+    setSelectedGamePost(gamePost);
+    setJoinGameModalOpen(true);
+  }
+};
 
 
   // Transform real data to UI format
@@ -155,51 +164,63 @@ export default function PlayerMatching() {
                 {/* Current Players - Mobile optimized grid */}
                 <div className="space-y-3">
                   
-                  {/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
-                  <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                    {[0, 1, 2, 3].map((index) => {
-                      const player = post.existingPlayers[index];
-                      
-                      if (player === null) {
-                        return (
-                          <div 
-                            key={index} 
-                            className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50 transition-all duration-200 min-h-[50px] sm:min-h-[60px] touch-manipulation"
-                            onClick={() => handleJoinGame(post.id)}
-                          >
-                            <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                              <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium text-primary text-xs sm:text-sm">Join Game</div>
-                              <div className="text-xs text-muted-foreground hidden sm:block">Tap to join</div>
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      return (
-                        <div 
-                          key={player.id} 
-                          className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] cursor-pointer hover:bg-muted/80 hover:shadow-sm transition-all duration-200"
-                          onClick={() => navigate(`/profile/${player.id}`)}
-                        >
-                          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                            <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
-                            <AvatarFallback className="text-xs">
-                              {player.name ? player.name[0] : 'P'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="text-xs sm:text-sm flex-1 min-w-0">
-                            <div className="font-medium truncate">
-                              {player.name || 'Player'}
-                            </div>
-                            <div className="text-xs text-muted-foreground">{player.current_mmr} MMR</div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+{/* Players grid - 2x2 on mobile, 2 columns on larger screens */}
+<div className="grid grid-cols-2 gap-2 sm:gap-3">
+  {[0, 1, 2, 3].map((index) => {
+    const player = post.existingPlayers[index];
+
+    if (player === null) {
+      const lockedLabel = post.isParticipant
+        ? "You’re in"
+        : post.hasApplied
+        ? "Applied"
+        : null;
+      const isLocked = Boolean(lockedLabel);
+      return (
+        <div 
+          key={index} 
+          className={`flex items-center gap-2 sm:gap-3 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] border-2 transition-all duration-200 ${isLocked ? 'bg-muted/50 border-muted cursor-not-allowed' : 'bg-muted/30 border-dashed border-primary/30 cursor-pointer hover:bg-primary/5 hover:border-primary/50'}`}
+          onClick={() => {
+            if (!isLocked) handleJoinGame(post.id);
+          }}
+        >
+          <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+            <AvatarFallback className={`text-xs ${isLocked ? '' : 'bg-primary/10 text-primary'}`}>{isLocked ? '•' : '+'}</AvatarFallback>
+          </Avatar>
+          <div className="flex-1 min-w-0">
+            <div className={`font-medium text-xs sm:text-sm ${isLocked ? 'text-muted-foreground' : 'text-primary'}`}>
+              {lockedLabel || 'Join Game'}
+            </div>
+            {!isLocked && (
+              <div className="text-xs text-muted-foreground hidden sm:block">Tap to join</div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div 
+        key={player.id} 
+        className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px] cursor-pointer hover:bg-muted/80 hover:shadow-sm transition-all duration-200"
+        onClick={() => navigate(`/profile/${player.id}`)}
+      >
+        <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+          <AvatarImage src={player.avatar || ''} alt={player.name || 'Player'} />
+          <AvatarFallback className="text-xs">
+            {player.name ? player.name[0] : 'P'}
+          </AvatarFallback>
+        </Avatar>
+        <div className="text-xs sm:text-sm flex-1 min-w-0">
+          <div className="font-medium truncate">
+            {player.name || 'Player'}
+          </div>
+          <div className="text-xs text-muted-foreground">{player.current_mmr} MMR</div>
+        </div>
+      </div>
+    );
+  })}
+</div>
                 </div>
               </CardContent>
             </Card>

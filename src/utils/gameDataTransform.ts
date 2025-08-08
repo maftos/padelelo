@@ -132,6 +132,9 @@ export const transformPublicOpenGameToUIFormat = (game: PublicOpenGame, currentU
     createdBy: game.created_by,
     price: formattedPrice,
     startTime: format(gameDate, "HH:mm"),
+    // Flags (only present when authenticated query returns them)
+    hasApplied: Boolean((game as any).has_applied),
+    isParticipant: Boolean((game as any).is_participant),
     createdAt
   };
 };

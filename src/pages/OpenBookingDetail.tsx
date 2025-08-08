@@ -21,36 +21,46 @@ export default function OpenBookingDetail() {
 
   const { booking, isLoading, error } = useBookingDetails(bookingId);
 
-  const handleJoinGame = () => {
-    if (!booking) return;
-    
-    // Transform booking to match expected format for JoinGameResponsive
-    const gamePost = {
-      id: booking.booking_id,
-      title: `Looking for ${4 - booking.player_count} player${4 - booking.player_count !== 1 ? 's' : ''} - open booking`,
-      courtName: booking.venue_name,
-      venueId: booking.venue_id,
-      gameDate: new Date(booking.start_time),
-      startTime: new Date(booking.start_time).toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
-        minute: '2-digit', 
-        hour12: true 
-      }),
-      price: booking.booking_fee_per_player ? `£${booking.booking_fee_per_player}` : 'Free',
-      description: booking.description,
-      existingPlayers: booking.participants.map(p => ({
-        id: p.player_id,
-        name: `${p.first_name} ${p.last_name}`.trim(),
-        current_mmr: p.current_mmr || 0,
-        avatar: p.profile_photo
-      })),
-      spotsAvailable: 4 - booking.player_count,
-      createdBy: booking.created_by
-    };
-    
-    setSelectedGamePost(gamePost);
-    setJoinGameModalOpen(true);
+const handleJoinGame = () => {
+  if (!booking) return;
+  
+  // Determine if current user is already a participant
+  const isParticipant = !!user && booking.participants.some(p => p.player_id === user.id);
+  
+  // Transform booking to match expected format for JoinGameResponsive
+  const gamePost = {
+    id: booking.booking_id,
+    title: `Looking for ${4 - booking.player_count} player${4 - booking.player_count !== 1 ? 's' : ''} - open booking`,
+    courtName: booking.venue_name,
+    venueId: booking.venue_id,
+    gameDate: new Date(booking.start_time),
+    startTime: new Date(booking.start_time).toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit', 
+      hour12: true 
+    }),
+    price: booking.booking_fee_per_player ? `£${booking.booking_fee_per_player}` : 'Free',
+    description: booking.description,
+    existingPlayers: booking.participants.map(p => ({
+      id: p.player_id,
+      name: `${p.first_name} ${p.last_name}`.trim(),
+      current_mmr: p.current_mmr || 0,
+      avatar: p.profile_photo
+    })),
+    spotsAvailable: 4 - booking.player_count,
+    createdBy: booking.created_by,
+    isParticipant
   };
+  
+  // Prevent opening join if already a participant
+  if (isParticipant) {
+    toast.info("You're already in this game");
+    return;
+  }
+  
+  setSelectedGamePost(gamePost);
+  setJoinGameModalOpen(true);
+};
 
   const handleShare = async () => {
     const shareUrl = window.location.href;

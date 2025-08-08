@@ -42,6 +42,9 @@ interface JoinGameResponsiveProps {
     } | null>;
     spotsAvailable: number;
     createdBy: string;
+    // Flags
+    hasApplied?: boolean;
+    isParticipant?: boolean;
   } | null;
 }
 
@@ -145,24 +148,26 @@ const JoinGameContent = ({ gamePost, onJoinRequest, isSubmitting, onClose }: {
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-2 pt-2">
-        <Button 
-          onClick={onJoinRequest} 
-          disabled={isSubmitting}
-          className="flex-1"
-        >
-          {isSubmitting ? "Sending Request..." : "Send Join Request"}
-        </Button>
-        <Button 
-          variant="outline" 
-          onClick={onClose}
-          disabled={isSubmitting}
-          className="flex-1 sm:flex-none sm:min-w-[100px]"
-        >
-          Cancel
-        </Button>
-      </div>
+{/* Action Buttons */}
+<div className="flex flex-col sm:flex-row gap-2 pt-2">
+  <Button 
+    onClick={onJoinRequest} 
+    disabled={isSubmitting || (gamePost?.isParticipant || gamePost?.hasApplied)}
+    className="flex-1"
+  >
+    {(gamePost?.isParticipant || gamePost?.hasApplied)
+      ? (gamePost?.isParticipant ? "You're already in this game" : "You've already applied")
+      : (isSubmitting ? "Sending Request..." : "Send Join Request")}
+  </Button>
+  <Button 
+    variant="outline" 
+    onClick={onClose}
+    disabled={isSubmitting}
+    className="flex-1 sm:flex-none sm:min-w-[100px]"
+  >
+    Cancel
+  </Button>
+</div>
     </div>
   );
 };
@@ -172,17 +177,27 @@ export const JoinGameResponsive = ({ open, onOpenChange, gamePost }: JoinGameRes
   const isMobile = useIsMobile();
   const { user } = useAuth();
 
-  const handleJoinRequest = async () => {
-    if (!gamePost || !user) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const { data, error } = await supabase
-        .rpc('apply_open_booking' as any, {
-          p_user_id: user.id,
-          p_booking_id: gamePost.id
-        });
+const handleJoinRequest = async () => {
+  if (!gamePost || !user) return;
+
+  // Block if already applied or already participant
+  if (gamePost.isParticipant) {
+    toast.info("You're already in this game");
+    return;
+  }
+  if (gamePost.hasApplied) {
+    toast.info("You've already applied to this game");
+    return;
+  }
+  
+  setIsSubmitting(true);
+  
+  try {
+    const { data, error } = await supabase
+      .rpc('apply_open_booking' as any, {
+        p_user_id: user.id,
+        p_booking_id: gamePost.id
+      });
 
       if (error) {
         throw error;

@@ -13,6 +13,9 @@ export interface PublicOpenGame {
   player_count: number;
   created_at: string;
   created_by: string;
+  // New flags returned for authenticated users
+  has_applied?: boolean;
+  is_participant?: boolean;
   participants: Array<{
     player_id: string;
     first_name: string;
