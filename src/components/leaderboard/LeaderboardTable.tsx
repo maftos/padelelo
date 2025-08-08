@@ -1,6 +1,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronRight, Crown, Award, User, UserX } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { countries } from "@/lib/countries";
 import {
   Table,
@@ -11,6 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 interface LeaderboardPlayer {
   id: string;
@@ -52,12 +53,6 @@ export const LeaderboardTable = ({
       .toUpperCase() || 'U';
   };
 
-  const getRankIcon = (index: number) => {
-    if (index === 0) return <Crown className="w-4 h-4 text-yellow-500" />;
-    if (index === 1) return <Award className="w-4 h-4 text-gray-400" />;
-    if (index === 2) return <Award className="w-4 h-4 text-amber-600" />;
-    return null;
-  };
 
   const getRankStyling = (index: number) => {
     if (index < 3) return "bg-gradient-to-r from-primary/10 to-secondary/10 text-primary font-bold";
@@ -65,13 +60,14 @@ export const LeaderboardTable = ({
     return "text-muted-foreground";
   };
 
-  const getGenderIcon = (gender: string | null) => {
-    if (gender?.toLowerCase() === 'male') {
-      return <User className="w-4 h-4 text-blue-500" />;
-    } else if (gender?.toLowerCase() === 'female') {
-      return <User className="w-4 h-4 text-pink-500" />;
+  const getCountryName = (nationality: string | null) => {
+    if (!nationality) return 'Unknown country';
+    try {
+      const displayNames = new Intl.DisplayNames([navigator?.language || 'en'], { type: 'region' });
+      return displayNames.of(nationality) || nationality;
+    } catch {
+      return nationality || 'Unknown country';
     }
-    return <UserX className="w-4 h-4 text-gray-400" />;
   };
 
   const getCountryFlag = (nationality: string | null) => {
@@ -87,12 +83,6 @@ export const LeaderboardTable = ({
           <TableRow className="hover:bg-transparent border-b border-border/30 bg-muted/20">
             <TableHead className="w-[80px] md:w-[120px] font-bold text-foreground text-sm md:text-base h-12 md:h-16 px-2 md:px-4">Rank</TableHead>
             <TableHead className="font-bold text-foreground text-sm md:text-base flex-1 px-2 md:px-4">Player</TableHead>
-            {!isMobile && (
-              <>
-                <TableHead className="font-bold text-foreground text-base w-[60px] px-4">Gender</TableHead>
-                <TableHead className="font-bold text-foreground text-base px-4">Country</TableHead>
-              </>
-            )}
             <TableHead className="text-right font-bold text-foreground text-sm md:text-base w-[70px] md:w-[80px] px-2 md:px-4">MMR</TableHead>
             <TableHead className="w-[30px] md:w-[40px] px-1 md:px-4"></TableHead>
           </TableRow>
@@ -100,7 +90,7 @@ export const LeaderboardTable = ({
         <TableBody>
           {isLoading ? (
             <TableRow>
-              <TableCell colSpan={isMobile ? 4 : 6} className="text-center py-16">
+              <TableCell colSpan={4} className="text-center py-16">
                 <div className="flex items-center justify-center space-x-3">
                   <div className="w-3 h-3 rounded-full bg-primary/30 animate-pulse"></div>
                   <div className="w-3 h-3 rounded-full bg-primary/30 animate-pulse delay-100"></div>
@@ -141,36 +131,24 @@ export const LeaderboardTable = ({
                     </Avatar>
                     <div className="space-y-1 min-w-0 flex-1">
                       <p className="font-semibold text-foreground text-xs md:text-base leading-none truncate flex items-center gap-1">
-                        <span className="text-base">{getCountryFlag(player.nationality)}</span>
                         <span className="truncate">{`${player.first_name || ''} ${player.last_name || ''}`.trim() || 'User'}</span>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="text-base cursor-help">{getCountryFlag(player.nationality)}</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {getCountryName(player.nationality)}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                         {userId === player.id && (
                           <span className="ml-1 md:ml-2 text-xs bg-primary/10 text-primary px-1 md:px-2 py-1 rounded-full">You</span>
                         )}
                       </p>
-                      {isMobile && (
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                          <span className="text-base">{getCountryFlag(player.nationality)}</span>
-                          <span>•</span>
-                          <div className="flex items-center gap-1">
-                            {getGenderIcon(player.gender)}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </TableCell>
-                {!isMobile && (
-                  <>
-                    <TableCell className="text-center px-4">
-                      <div className="flex justify-center">
-                        {getGenderIcon(player.gender)}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-center px-4">
-                      <span className="text-2xl">{getCountryFlag(player.nationality)}</span>
-                    </TableCell>
-                  </>
-                )}
                 <TableCell className="text-right px-2 md:px-4">
                   <div className="inline-flex items-center justify-center">
                     <span className="font-semibold text-xs md:text-lg text-muted-foreground px-1 md:px-2 py-0.5 md:py-1">
