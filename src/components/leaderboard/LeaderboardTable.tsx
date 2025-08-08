@@ -121,10 +121,8 @@ export const LeaderboardTable = ({
               >
                 <TableCell className="font-medium px-2 md:px-4">
                   <div className="flex items-center gap-2">
-                    <div className={`inline-flex items-center justify-center w-8 h-8 md:w-12 md:h-12 rounded-xl transition-all duration-200 ${getRankStyling(index)}`}>
-                      {getRankIcon(index) || (
-                        <span className="text-xs md:text-sm">#{index + 1}</span>
-                      )}
+                    <div className="inline-flex items-center justify-center w-8 h-8 md:w-12 md:h-12 rounded-xl bg-muted text-foreground">
+                      <span className="text-xs md:text-sm">#{index + 1}</span>
                     </div>
                     {rankChange !== 0 && (
                       <span className={`text-xs px-1 py-0.5 rounded ${rankChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -142,8 +140,9 @@ export const LeaderboardTable = ({
                       </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1 min-w-0 flex-1">
-                      <p className="font-semibold text-foreground text-xs md:text-base leading-none truncate">
-                        {`${player.first_name || ''} ${player.last_name || ''}`.trim() || 'User'}
+                      <p className="font-semibold text-foreground text-xs md:text-base leading-none truncate flex items-center gap-1">
+                        <span className="text-base">{getCountryFlag(player.nationality)}</span>
+                        <span className="truncate">{`${player.first_name || ''} ${player.last_name || ''}`.trim() || 'User'}</span>
                         {userId === player.id && (
                           <span className="ml-1 md:ml-2 text-xs bg-primary/10 text-primary px-1 md:px-2 py-1 rounded-full">You</span>
                         )}
@@ -174,7 +173,7 @@ export const LeaderboardTable = ({
                 )}
                 <TableCell className="text-right px-2 md:px-4">
                   <div className="inline-flex items-center justify-center">
-                    <span className="font-bold text-xs md:text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent px-1 md:px-4 py-1 md:py-2 rounded-xl bg-accent/20 border border-accent/30">
+                    <span className="font-semibold text-xs md:text-lg text-muted-foreground px-1 md:px-2 py-0.5 md:py-1">
                       {player.current_mmr || 0}
                     </span>
                   </div>
