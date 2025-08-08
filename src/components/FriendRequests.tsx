@@ -63,6 +63,13 @@ export const FriendRequests = () => {
         throw error;
       }
 
+      const result = data as any;
+      if (result && typeof result === 'object' && 'success' in result && result.success === false) {
+        console.warn('Friend request response returned failure:', result);
+        toast.error(result.message || 'Failed to respond to friend request');
+        return;
+      }
+
       toast.success(accept ? "Friend request accepted! You are now friends!" : "Friend request declined");
 
       // Invalidate both friend requests and friends lists
