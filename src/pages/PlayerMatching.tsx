@@ -84,17 +84,6 @@ const handleJoinGame = (postId: string) => {
               <p className="text-sm sm:text-base text-muted-foreground">Join players who have booked a court already</p>
             </div>
             
-            {/* Action buttons - Bell icon for notifications */}
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <Button 
-                variant="outline" 
-                size="icon"
-                className="h-9 w-9 sm:h-10 sm:w-10"
-                onClick={() => navigate('/settings/notifications')}
-              >
-                <Bell className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -106,7 +95,7 @@ const handleJoinGame = (postId: string) => {
               <ArrowUpDown className="h-4 w-4 flex-shrink-0" />
               <span className="text-sm font-medium">Sort by:</span>
             </div>
-            <div className="flex gap-1">
+            <div className="flex items-center gap-1">
               {sortOptions.map((option) => (
                 <Button
                   key={option.value}
@@ -118,6 +107,15 @@ const handleJoinGame = (postId: string) => {
                   {option.label}
                 </Button>
               ))}
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8 sm:h-9 sm:w-9"
+                aria-label="Notification preferences"
+                onClick={() => navigate('/settings/notifications')}
+              >
+                <Bell className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
