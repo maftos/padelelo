@@ -98,11 +98,17 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  const playedWithUsers = playedWithData?.users_played_with || [];
+  const normalizeName = (u: any) => {
+    const display = (typeof u.display_name === 'string' ? u.display_name : '')?.trim?.() ||
+      [u.first_name, u.last_name].filter(Boolean).join(' ').trim();
+    return { ...u, display_name: display || 'Player' };
+  };
+
+  const playedWithUsers = (playedWithData?.users_played_with || []).map(normalizeName);
   const playedWithIds = new Set(playedWithUsers.map(user => user.id));
-  const suggestedUsers = mutualFriendsData?.top_mutual_friends.filter(
-    user => !playedWithIds.has(user.id)
-  ) || [];
+  const suggestedUsers = (mutualFriendsData?.top_mutual_friends || [])
+    .map(normalizeName)
+    .filter(user => !playedWithIds.has(user.id));
 
   if (playedWithUsers.length === 0 && suggestedUsers.length === 0) {
     return null;

@@ -100,8 +100,14 @@ export const SuggestedFriends = ({ userId }: SuggestedFriendsProps) => {
     );
   }
 
-  const playedWithUsers = playedWithData?.users_played_with || [];
-  const mutualFriends = mutualFriendsData?.top_mutual_friends || [];
+  const normalizeName = (u: any) => {
+    const display = (typeof u.display_name === 'string' ? u.display_name : '')?.trim?.() ||
+      [u.first_name, u.last_name].filter(Boolean).join(' ').trim();
+    return { ...u, display_name: display || 'Player' };
+  };
+
+  const playedWithUsers = (playedWithData?.users_played_with || []).map(normalizeName);
+  const mutualFriends = (mutualFriendsData?.top_mutual_friends || []).map(normalizeName);
   
   // Combine and limit total suggestions for dashboard
   const allSuggestions = [...playedWithUsers, ...mutualFriends].slice(0, 3);
