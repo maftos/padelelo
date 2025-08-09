@@ -1,11 +1,15 @@
-import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowLeft, Key, Bell, Globe, Shield } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SettingsLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMobile = useIsMobile();
+  const atRoot = location.pathname === "/settings";
 
   const settingsNav = [
     {
@@ -43,7 +47,7 @@ const SettingsLayout = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate('/profile')}
+            onClick={() => (isMobile && !atRoot ? navigate('/settings') : navigate('/profile'))}
             className="shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -55,35 +59,37 @@ const SettingsLayout = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Navigation Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="p-4">
-              <nav className="space-y-2">
-                {settingsNav.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <NavLink
-                      key={item.to}
-                      to={item.to}
-                      className={({ isActive }) =>
-                        `flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                          isActive
-                            ? "bg-primary text-primary-foreground"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        }`
-                      }
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{item.label}</span>
-                    </NavLink>
-                  );
-                })}
-              </nav>
-            </Card>
-          </div>
+          {/* Navigation Sidebar (hidden on mobile for 2-step flow) */}
+          {!isMobile && (
+            <div className="lg:col-span-1">
+              <Card className="p-4">
+                <nav className="space-y-2">
+                  {settingsNav.map((item) => {
+                    const Icon = item.icon;
+                    return (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                            isActive
+                              ? "bg-primary text-primary-foreground"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          }`
+                        }
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </NavLink>
+                    );
+                  })}
+                </nav>
+              </Card>
+            </div>
+          )}
 
           {/* Content Area */}
-          <div className="lg:col-span-3">
+          <div className={isMobile ? "" : "lg:col-span-3"}>
             <Outlet />
           </div>
         </div>

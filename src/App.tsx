@@ -32,6 +32,7 @@ import SecuritySettings from "./pages/settings/SecuritySettings";
 import NotificationSettings from "./pages/settings/NotificationSettings";
 import LanguageSettings from "./pages/settings/LanguageSettings";
 import PrivacySettings from "./pages/settings/PrivacySettings";
+import SettingsLanding from "./pages/settings/SettingsLanding";
 import { Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -62,8 +63,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/profile/:userId" element={<Profile />} />
             <Route path="/edit-profile" element={<EditProfile />} />
-              <Route path="/settings" element={<Navigate to="/settings/security" replace />} />
               <Route path="/settings/*" element={<SettingsLayout />}>
+                <Route index element={<SettingsLanding />} />
                 <Route path="security" element={<SecuritySettings />} />
                 <Route path="notifications" element={<NotificationSettings />} />
                 <Route path="language" element={<LanguageSettings />} />
