@@ -6,36 +6,39 @@ import { Label } from "@/components/ui/label";
 import { Key } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useFormValidation } from "@/hooks/use-form-validation";
+import { handleAuthError } from "@/utils/auth-error-handler";
 
 const SecuritySettings = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const { validatePassword } = useFormValidation();
+  const isValidNew = validatePassword(newPassword);
+  const passwordsMatch = newPassword === confirmPassword;
+
   const handlePasswordChange = async () => {
-    if (newPassword !== confirmPassword) {
-      toast.error("New passwords don't match");
+    if (!isValidNew) {
+      toast.error("Password must be at least 6 characters long");
       return;
     }
-
-    if (newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+    if (!passwordsMatch) {
+      toast.error("New passwords don't match");
       return;
     }
 
     setIsChangingPassword(true);
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
-
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
 
       toast.success("Password updated successfully");
       setNewPassword("");
       setConfirmPassword("");
     } catch (error: any) {
-      toast.error(error.message || "Failed to update password");
+      const message = handleAuthError?.(error) ?? error?.message ?? "Failed to update password";
+      toast.error(message);
     } finally {
       setIsChangingPassword(false);
     }
@@ -59,24 +62,32 @@ const SecuritySettings = () => {
             <Input
               id="new-password"
               type="password"
+              autoComplete="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
             />
+            <p className={`text-xs ${newPassword && !isValidNew ? 'text-destructive' : 'text-muted-foreground'}`}>
+              Minimum 6 characters
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm-password">Confirm New Password</Label>
             <Input
               id="confirm-password"
               type="password"
+              autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm new password"
             />
+            {confirmPassword && !passwordsMatch && (
+              <p className="text-xs text-destructive">Passwords do not match</p>
+            )}
           </div>
           <Button 
             onClick={handlePasswordChange}
-            disabled={isChangingPassword || !newPassword || !confirmPassword}
+            disabled={isChangingPassword || !isValidNew || !passwordsMatch}
             className="w-fit"
           >
             {isChangingPassword ? "Updating..." : "Update Password"}
