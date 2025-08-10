@@ -109,7 +109,7 @@ const ManageMatches = () => {
     <>
       <Navigation />
       <div className="w-full min-h-screen bg-background">
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 max-w-full sm:max-w-4xl">
+        <div className="container mx-auto px-3 sm:px-4 pt-4 sm:pt-6 pb-24 sm:pb-6 max-w-full sm:max-w-4xl">
           {/* Header - Mobile optimized */}
           <div className="mb-6">
             <div className="flex flex-col gap-3 sm:gap-4">
@@ -120,8 +120,8 @@ const ManageMatches = () => {
                 </div>
                 
                 {/* Create Booking Button */}
-                <Link to="/create-match" className="w-full sm:w-auto">
-                  <Button className="flex items-center justify-center gap-2 text-sm h-9 sm:h-10 w-full sm:w-auto px-4">
+                <Link to="/create-match" className="hidden sm:block">
+                  <Button className="flex items-center justify-center gap-2 text-sm h-10 px-4">
                     <Plus className="h-4 w-4" />
                     <span>Create Booking</span>
                   </Button>
@@ -153,6 +153,18 @@ const ManageMatches = () => {
               <UserOpenGamesList onViewApplicants={handleViewApplicants} />
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile sticky Create Booking CTA */}
+      <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
+        <div className="container mx-auto max-w-4xl px-3 py-3">
+          <Link to="/create-match">
+            <Button className="w-full h-12 text-base">
+              <Plus className="h-5 w-5 mr-2" />
+              Create Booking
+            </Button>
+          </Link>
         </div>
       </div>
 

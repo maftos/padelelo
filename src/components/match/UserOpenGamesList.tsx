@@ -125,13 +125,15 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
 
   if (openGames.length === 0) {
     return (
-      <div className="text-center py-8">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-          <Clock className="w-8 h-8 text-primary/60" />
-        </div>
-        <h3 className="text-lg font-semibold text-foreground mb-2">No Open Games</h3>
-        <p className="text-muted-foreground">You don't have any open games waiting for players</p>
-      </div>
+      <Card className="border-dashed">
+        <CardContent className="py-8 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+            <Clock className="w-8 h-8 text-primary/60" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">No Open Games</h3>
+          <p className="text-muted-foreground">You don't have any open games waiting for players</p>
+        </CardContent>
+      </Card>
     );
   }
 

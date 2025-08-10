@@ -92,10 +92,12 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
 
   if (confirmedBookings.length === 0) {
     return (
-      <div className="text-center py-8">
-        <div className="text-muted-foreground">No confirmed matches</div>
-        <p className="text-sm text-muted-foreground mt-1">Create a match to get started</p>
-      </div>
+      <Card className="border-dashed">
+        <CardContent className="py-8 text-center">
+          <div className="text-muted-foreground">No confirmed matches</div>
+          <p className="text-sm text-muted-foreground mt-1">Create a match to get started</p>
+        </CardContent>
+      </Card>
     );
   }
 
