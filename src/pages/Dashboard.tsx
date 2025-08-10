@@ -222,11 +222,6 @@ export default function Dashboard() {
                   <div className="text-center py-6 sm:py-8">
                     <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground mx-auto mb-2" />
                     <p className="text-muted-foreground text-xs sm:text-sm">No upcoming games</p>
-                    <Link to="/create-match" className="mt-2 inline-block">
-                      <Button size="sm" className="text-xs h-8">
-                        Create Match
-                      </Button>
-                    </Link>
                   </div>
                 )}
               </CardContent>

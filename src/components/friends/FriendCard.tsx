@@ -14,20 +14,20 @@ interface FriendCardProps {
 export const FriendCard = ({ user, onSendRequest, isPending }: FriendCardProps) => {
   return (
     <Card className="p-4 hover:shadow-lg transition-all duration-200 hover:scale-[1.01] bg-background border border-border">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Avatar className="h-12 w-12 border-2 border-primary/20">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <Avatar className="h-12 w-12 border-2 border-primary/20 flex-shrink-0">
             <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
               {user.display_name?.substring(0, 2).toUpperCase() || 'UN'}
             </AvatarFallback>
           </Avatar>
-          <div className="space-y-1">
-            <p className="font-medium text-foreground">{user.display_name || 'Unknown User'}</p>
+          <div className="space-y-1 min-w-0">
+            <p className="font-medium text-foreground text-sm sm:text-base truncate">{user.display_name || 'Unknown User'}</p>
             {(user.mutual_count !== undefined || user.mutual_friends_count !== undefined) && (
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Users className="h-3.5 w-3.5 mr-1" />
-                <span>
+              <div className="flex items-center text-xs sm:text-sm text-muted-foreground">
+                <Users className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+                <span className="truncate">
                   {user.mutual_count || user.mutual_friends_count} mutual {(user.mutual_count || user.mutual_friends_count) === 1 ? 'friend' : 'friends'}
                 </span>
               </div>
@@ -39,7 +39,7 @@ export const FriendCard = ({ user, onSendRequest, isPending }: FriendCardProps) 
           size="sm"
           onClick={() => onSendRequest(user.id)}
           disabled={isPending}
-          className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          className="hover:bg-primary hover:text-primary-foreground transition-colors w-full sm:w-auto whitespace-nowrap"
         >
           {isPending ? (
             "Sending..."

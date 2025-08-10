@@ -123,7 +123,7 @@ export const RecentMatches = () => {
                       : ""
                   }`}
                 >
-                  {set.change_type === 'WIN' ? "+" : ""}{set.change_amount}
+                  {set.change_type === 'WIN' ? `+${Math.abs(set.change_amount)}` : `-${Math.abs(set.change_amount)}`}
                 </Badge>
               </div>
             </div>
