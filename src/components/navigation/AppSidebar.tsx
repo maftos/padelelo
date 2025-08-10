@@ -26,7 +26,6 @@ export const AppSidebar = () => {
   
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
-  const rankingChange = -3;
 
   if (!user) return null;
 
@@ -36,19 +35,16 @@ export const AppSidebar = () => {
       <Link to="/profile" className="block p-4 border-b border-border hover:bg-accent/50 transition-colors">
         <div className="flex items-center gap-3 mb-4">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
+            <AvatarImage src={profile?.profile_photo || ''} alt={(profile?.first_name || profile?.display_name) || undefined} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-              {profile?.display_name?.[0]?.toUpperCase() || '?'}
+              {(profile?.first_name || profile?.display_name)?.[0]?.toUpperCase() || '?'}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold text-foreground text-sm">
-                {profile?.display_name || 'Player'} (#{ranking})
+                {(profile?.first_name || profile?.display_name || 'Player')} (#{ranking})
               </span>
-              <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
-                {rankingChange > 0 ? '+' : ''}{rankingChange}
-              </Badge>
             </div>
             <span className="text-xs text-muted-foreground">
               {profile?.current_mmr || 3000} MMR
@@ -65,24 +61,30 @@ export const AppSidebar = () => {
             const Icon = item.icon;
             
             return (
-              <NavLink
-                key={item.title}
-                to={item.url}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative ${
-                  isActive
-                    ? 'bg-primary/10 text-primary'
-                    : 'text-foreground hover:bg-accent hover:text-accent-foreground'
-                }`}
-              >
-                <Icon className="h-5 w-5 flex-shrink-0" />
-                <span className="flex-1">{item.title}</span>
-                {item.title === 'My Bookings' && activeBookingsCount > 0 && (
-                  <Badge variant="secondary" className="ml-auto">{activeBookingsCount}</Badge>
+              <div key={item.title}>
+                <NavLink
+                  to={item.url}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative ${
+                    isActive
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-foreground hover:bg-accent hover:text-accent-foreground'
+                  }`}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  <span className="flex-1">{item.title}</span>
+                  {item.title === 'My Bookings' && activeBookingsCount > 0 && (
+                    <Badge variant="destructive" className="ml-auto">{activeBookingsCount}</Badge>
+                  )}
+                  {item.title === 'Open Bookings' && openBookingsCount > 0 && (
+                    <Badge variant="destructive" className="ml-auto">{openBookingsCount}</Badge>
+                  )}
+                </NavLink>
+                {item.title === 'Open Bookings' && (
+                  <div className="px-2">
+                    <Separator className="my-2" />
+                  </div>
                 )}
-                {item.title === 'Open Bookings' && openBookingsCount > 0 && (
-                  <Badge variant="secondary" className="ml-auto">{openBookingsCount}</Badge>
-                )}
-              </NavLink>
+              </div>
             );
           })}
         </div>

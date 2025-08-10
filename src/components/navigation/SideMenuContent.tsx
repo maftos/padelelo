@@ -23,6 +23,7 @@ interface SideMenuContentProps {
   onSignOut: () => void;
   onClose: () => void;
   profile?: {
+    first_name?: string | null;
     display_name?: string | null;
     profile_photo?: string | null;
     current_mmr?: number | null;
@@ -38,7 +39,6 @@ export const SideMenuContent = ({
 }: SideMenuContentProps) => {
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
-  const rankingChange = -3;
   const { count: activeBookingsCount } = useActiveBookingsCount();
   const { count: openBookingsCount } = useOpenBookingsCount();
 
@@ -60,10 +60,9 @@ export const SideMenuContent = ({
   return (
     <div className="flex flex-col h-full">
       {/* Header with Close Button */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
-        <h2 className="text-lg font-semibold">Menu</h2>
+      <div className="flex items-center justify-end p-4 border-b border-border">
         <SheetClose asChild>
-          <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+          <button className="p-2 hover:bg-accent rounded-lg transition-colors" aria-label="Close menu">
             <X className="h-5 w-5" />
           </button>
         </SheetClose>
@@ -74,15 +73,12 @@ export const SideMenuContent = ({
         <SheetClose asChild>
           <Link to="/profile" className="flex items-center gap-3 hover:bg-accent/50 p-2 rounded-lg transition-colors">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={profile?.profile_photo || ''} alt={profile?.display_name || undefined} />
-              <AvatarFallback>{profile?.display_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+              <AvatarImage src={profile?.profile_photo || ''} alt={(profile?.first_name || profile?.display_name) || undefined} />
+              <AvatarFallback>{(profile?.first_name || profile?.display_name)?.[0]?.toUpperCase() || '?'}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-medium">{profile?.display_name || 'Player'} (#{ranking})</span>
-                <Badge variant={rankingChange < 0 ? "destructive" : "secondary"} className={`text-xs ${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"}`}>
-                  {rankingChange > 0 ? '+' : ''}{rankingChange}
-                </Badge>
+                <span className="font-medium">{(profile?.first_name || profile?.display_name || 'Player')} (#{ranking})</span>
               </div>
               <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
             </div>
@@ -106,12 +102,12 @@ export const SideMenuContent = ({
           <SheetClose asChild>
             <Link
               to="/manage-bookings"
-              className="flex items-center gap-3 p-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors min-h-[44px]"
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors min-h-[44px]"
             >
               <ClipboardEdit className="h-5 w-5" />
               <span className="font-medium">My Bookings</span>
               {activeBookingsCount > 0 && (
-                <Badge variant="secondary" className="ml-auto">{activeBookingsCount}</Badge>
+                <Badge variant="destructive" className="ml-auto">{activeBookingsCount}</Badge>
               )}
             </Link>
           </SheetClose>
@@ -124,10 +120,14 @@ export const SideMenuContent = ({
               <Users className="h-5 w-5" />
               <span className="font-medium">Open Bookings</span>
               {openBookingsCount > 0 && (
-                <Badge variant="secondary" className="ml-auto">{openBookingsCount}</Badge>
+                <Badge variant="destructive" className="ml-auto">{openBookingsCount}</Badge>
               )}
             </Link>
           </SheetClose>
+
+          <div className="px-4">
+            <Separator className="my-2" />
+          </div>
 
 
           <SheetClose asChild>
