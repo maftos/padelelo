@@ -115,7 +115,7 @@ export const LeaderboardTable = ({
                       <span className="text-xs md:text-sm">#{index + 1}</span>
                     </div>
                     {rankChange !== 0 && (
-                      <span className={`text-xs px-1 py-0.5 rounded ${rankChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      <span className={`hidden md:inline-block text-xs px-1 py-0.5 rounded ${rankChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
                         ({rankChange > 0 ? '+' : ''}{rankChange})
                       </span>
                     )}
@@ -142,9 +142,6 @@ export const LeaderboardTable = ({
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-                        {userId === player.id && (
-                          <span className="ml-1 md:ml-2 text-xs bg-primary/10 text-primary px-1 md:px-2 py-1 rounded-full">You</span>
-                        )}
                       </p>
                     </div>
                   </div>
