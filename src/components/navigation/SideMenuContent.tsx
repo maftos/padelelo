@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
+import { useActiveBookingsCount } from "@/hooks/use-active-bookings-count";
 import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -37,6 +38,7 @@ export const SideMenuContent = ({
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
   const rankingChange = -3;
+  const { count: activeBookingsCount } = useActiveBookingsCount();
 
   if (!user) {
     return (
@@ -106,6 +108,9 @@ export const SideMenuContent = ({
             >
               <ClipboardEdit className="h-5 w-5" />
               <span className="font-medium">My Bookings</span>
+              {activeBookingsCount > 0 && (
+                <Badge variant="secondary" className="ml-auto">{activeBookingsCount}</Badge>
+              )}
             </Link>
           </SheetClose>
 

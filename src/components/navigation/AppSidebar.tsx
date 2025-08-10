@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useActiveBookingsCount } from "@/hooks/use-active-bookings-count";
 
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
@@ -19,7 +20,8 @@ export const AppSidebar = () => {
   const { user, signOut } = useAuth();
   const { profile } = useUserProfile();
   const location = useLocation();
-
+  const { count: activeBookingsCount } = useActiveBookingsCount();
+  
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
   const rankingChange = -3;
@@ -72,6 +74,9 @@ export const AppSidebar = () => {
               >
                 <Icon className="h-5 w-5 flex-shrink-0" />
                 <span className="flex-1">{item.title}</span>
+                {item.title === 'My Bookings' && activeBookingsCount > 0 && (
+                  <Badge variant="secondary" className="ml-auto">{activeBookingsCount}</Badge>
+                )}
               </NavLink>
             );
           })}
