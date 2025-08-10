@@ -3,6 +3,7 @@ import { UserPlus2, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Link } from "react-router-dom";
 import { SuggestedUser } from "./types/friend-types";
 
 interface FriendCardProps {
@@ -15,7 +16,7 @@ export const FriendCard = ({ user, onSendRequest, isPending }: FriendCardProps) 
   return (
     <Card className="p-4 hover:shadow-lg transition-all duration-200 hover:scale-[1.01] bg-background border border-border">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+        <Link to={`/profile/${user.id}`} className="flex items-center gap-3 sm:gap-4 min-w-0 focus:outline-none focus:ring-2 focus:ring-ring rounded-md">
           <Avatar className="h-12 w-12 border-2 border-primary/20 flex-shrink-0">
             <AvatarImage src={user.profile_photo || ''} alt={user.display_name} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
@@ -33,7 +34,7 @@ export const FriendCard = ({ user, onSendRequest, isPending }: FriendCardProps) 
               </div>
             )}
           </div>
-        </div>
+        </Link>
         <Button
           variant="outline"
           size="sm"
