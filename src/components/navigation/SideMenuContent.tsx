@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useActiveBookingsCount } from "@/hooks/use-active-bookings-count";
+import { useOpenBookingsCount } from "@/hooks/use-open-bookings-count";
 import { InviteFriendDialog } from "./InviteFriendDialog";
 import { SheetClose } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,6 +40,7 @@ export const SideMenuContent = ({
   const ranking = 45;
   const rankingChange = -3;
   const { count: activeBookingsCount } = useActiveBookingsCount();
+  const { count: openBookingsCount } = useOpenBookingsCount();
 
   if (!user) {
     return (
@@ -121,6 +123,9 @@ export const SideMenuContent = ({
             >
               <Users className="h-5 w-5" />
               <span className="font-medium">Open Bookings</span>
+              {openBookingsCount > 0 && (
+                <Badge variant="secondary" className="ml-auto">{openBookingsCount}</Badge>
+              )}
             </Link>
           </SheetClose>
 

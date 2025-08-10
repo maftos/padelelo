@@ -54,6 +54,7 @@ export function useBookingSubmission() {
 
         toast.success("Open game published successfully!");
         queryClient.invalidateQueries({ queryKey: ['active-bookings-count'] });
+        queryClient.invalidateQueries({ queryKey: ['open-bookings-count'] });
         navigate("/manage-bookings");
         return true;
       } else {

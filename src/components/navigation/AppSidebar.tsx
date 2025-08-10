@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useActiveBookingsCount } from "@/hooks/use-active-bookings-count";
+import { useOpenBookingsCount } from "@/hooks/use-open-bookings-count";
 
 const navigationItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
@@ -21,6 +22,7 @@ export const AppSidebar = () => {
   const { profile } = useUserProfile();
   const location = useLocation();
   const { count: activeBookingsCount } = useActiveBookingsCount();
+  const { count: openBookingsCount } = useOpenBookingsCount();
   
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
@@ -76,6 +78,9 @@ export const AppSidebar = () => {
                 <span className="flex-1">{item.title}</span>
                 {item.title === 'My Bookings' && activeBookingsCount > 0 && (
                   <Badge variant="secondary" className="ml-auto">{activeBookingsCount}</Badge>
+                )}
+                {item.title === 'Open Bookings' && openBookingsCount > 0 && (
+                  <Badge variant="secondary" className="ml-auto">{openBookingsCount}</Badge>
                 )}
               </NavLink>
             );
