@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
+import { Link } from "react-router-dom";
 
 interface ProfileRecentActivityProps {
   latestMatches: any[] | undefined;
@@ -85,15 +86,15 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                           {getInitials(it.team1[0]?.first_name, it.team1[0]?.last_name)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs sm:text-sm font-medium truncate">
+                      <Link to={`/profile/${it.team1[0]?.player_id || ''}`} className="text-xs sm:text-sm font-medium truncate">
                         {it.team1[0]?.first_name || 'Player'}
-                      </span>
+                      </Link>
                     </div>
                     {/* Team 2 Player 1 (right) */}
                     <div className="flex items-center gap-1.5 min-w-0 justify-end">
-                      <span className="text-xs sm:text-sm font-medium truncate text-right">
+                      <Link to={`/profile/${it.team2[0]?.player_id || ''}`} className="text-xs sm:text-sm font-medium truncate text-right">
                         {it.team2[0]?.first_name || 'Player'}
-                      </span>
+                      </Link>
                       <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
                         <AvatarImage src={it.team2[0]?.profile_photo || undefined} />
                         <AvatarFallback className="text-[10px]">
@@ -113,15 +114,15 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                           {getInitials(it.team1[1]?.first_name, it.team1[1]?.last_name)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="text-xs sm:text-sm font-medium truncate">
+                      <Link to={`/profile/${it.team1[1]?.player_id || ''}`} className="text-xs sm:text-sm font-medium truncate">
                         {it.team1[1]?.first_name || 'Player'}
-                      </span>
+                      </Link>
                     </div>
                     {/* Team 2 Player 2 (right) */}
                     <div className="flex items-center gap-1.5 min-w-0 justify-end">
-                      <span className="text-xs sm:text-sm font-medium truncate text-right">
+                      <Link to={`/profile/${it.team2[1]?.player_id || ''}`} className="text-xs sm:text-sm font-medium truncate text-right">
                         {it.team2[1]?.first_name || 'Player'}
-                      </span>
+                      </Link>
                       <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
                         <AvatarImage src={it.team2[1]?.profile_photo || undefined} />
                         <AvatarFallback className="text-[10px]">

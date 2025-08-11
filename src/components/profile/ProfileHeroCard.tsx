@@ -12,6 +12,7 @@ import { useState } from "react";
 import { countries } from "@/lib/countries";
 import { ReportPlayerModal } from "./ReportPlayerModal";
 import { useNavigate } from "react-router-dom";
+import { SocialShare } from "@/components/seo/SocialShare";
 
 interface ProfileFormState {
   first_name: string;
@@ -163,7 +164,7 @@ export const ProfileHeroCard = ({
           
           <div className="space-y-2">
             <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
-              {firstNameOnly}
+              {displayName}
               {countryData && (
                 <Badge variant="outline" className="flex items-center gap-1">
                   <span>{countryData.flag}</span>
@@ -224,6 +225,16 @@ export const ProfileHeroCard = ({
                 </a>
               </div>
             )}
+          </div>
+
+          {/* Share inside hero container */}
+          <div className="flex justify-center">
+            <SocialShare
+              title={`${displayName} - Padel Player Profile`}
+              description={`Check out ${displayName}'s padel stats and match history in the Mauritius community`}
+              hashtags={["padel", "mauritius", "player", "profile"]}
+              showZapierIntegration={false}
+            />
           </div>
 
           {/* Action Controls */}
