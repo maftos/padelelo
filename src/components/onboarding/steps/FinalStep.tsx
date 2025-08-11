@@ -19,12 +19,16 @@ export const FinalStep = () => {
     setIsSubmitting(true);
     try {
       // Complete onboarding with all user data
+      const nationality = localStorage.getItem('onboarding_nationality') || 'MU';
+      if (!localStorage.getItem('onboarding_nationality')) {
+        localStorage.setItem('onboarding_nationality', nationality);
+      }
       const { error: completeError } = await supabase.rpc('complete_onboarding', {
         p_user_a_id: user.id,
         p_first_name: localStorage.getItem('onboarding_first_name') || '',
         p_last_name: localStorage.getItem('onboarding_last_name') || '',
         p_gender: localStorage.getItem('onboarding_gender') || '',
-        p_nationality: localStorage.getItem('onboarding_nationality') || '',
+        p_nationality: nationality,
         p_profile_photo: localStorage.getItem('onboarding_photo') || ''
       });
 

@@ -17,27 +17,28 @@ const countryData = countries.map(country => ({
 }));
 
 export const NationalityStep = () => {
-  const [value, setValue] = useState("Mauritius"); // Preset to Mauritius
+  const [value, setValue] = useState("MU"); // Preset to Mauritius (ISO code)
   const navigate = useNavigate();
 
   // Load cached data on mount
   useEffect(() => {
     const cachedNationality = localStorage.getItem("onboarding_nationality");
     if (cachedNationality) {
-      const country = countryData.find(c => c.code === cachedNationality);
-      if (country) setValue(country.name);
+      setValue(cachedNationality);
+    } else {
+      setValue("MU");
+      localStorage.setItem("onboarding_nationality", "MU");
     }
   }, []);
 
-  const handleValueChange = (newValue: string) => {
-    setValue(newValue);
-    const country = countryData.find(country => country.name === newValue);
-    if (country) {
-      localStorage.setItem("onboarding_nationality", country.code);
-    }
+  const handleValueChange = (newCode: string) => {
+    setValue(newCode);
+    localStorage.setItem("onboarding_nationality", newCode);
   };
 
   const handleNext = () => {
+    // Ensure nationality is saved before proceeding
+    localStorage.setItem("onboarding_nationality", value);
     navigate("/onboarding/step-4");
   };
 
@@ -61,9 +62,9 @@ export const NationalityStep = () => {
                 <SelectTrigger className="h-10">
                   <SelectValue placeholder="Select your country..." />
                 </SelectTrigger>
-                <SelectContent className="max-h-60">
+                <SelectContent className="max-h-60 z-50 bg-background">
                   {countryData.map((country) => (
-                    <SelectItem key={country.code} value={country.name}>
+                    <SelectItem key={country.code} value={country.code}>
                       <span className="flex items-center gap-2">
                         <span className="text-lg">{country.flag}</span>
                         <span>{country.name}</span>
