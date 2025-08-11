@@ -65,6 +65,8 @@ const PadelCourts = () => {
     image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   })) : [];
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -142,82 +144,50 @@ const PadelCourts = () => {
       </Helmet>
 
       <div className="min-h-screen bg-background">
-        
-        <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-8">
-          {/* Header Section */}
-          <div className="flex items-center justify-between mb-6">
+        <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
+          {/* Header */}
+          <header className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold">Padel Courts</h1>
               <p className="text-muted-foreground">Find your perfect court across Mauritius</p>
             </div>
-          </div>
+          </header>
 
-          {/* Interactive Map Section */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Find Courts Near You</h2>
-            <Card className="h-[400px]">
-              <CardContent className="p-2 h-full">
-                <PadelMap clubs={clubs} onClubSelect={() => {}} />
-              </CardContent>
-            </Card>
-          </div>
+          {/* Desktop: Resizable split view (list 40% / map 60%) */}
+          <section aria-label="Padel courts map and list" className="hidden md:block">
+            <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-12rem)] w-full rounded-lg border overflow-hidden">
+              <ResizablePanel defaultSize={40} minSize={28} className="bg-background">
+                <PadelCourtsList
+                  clubs={clubs}
+                  selectedClubId={selectedId}
+                  onSelectClub={(id) => setSelectedId(id)}
+                />
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={60} minSize={40} className="bg-muted/20">
+                <div className="h-full">
+                  <PadelMap
+                    clubs={clubs}
+                    selectedClubId={selectedId}
+                    onClubSelect={(club) => setSelectedId(club.id)}
+                  />
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </section>
 
-          {/* Court Directory */}
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold mb-2">All Padel Courts</h2>
-              <p className="text-muted-foreground">
-                Browse available padel courts across Mauritius
-              </p>
+          {/* Mobile: temporary simple layout (map first, list below) */}
+          <section className="md:hidden space-y-4">
+            <div className="h-80 rounded-lg overflow-hidden border">
+              <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} />
             </div>
-
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {clubs.map((club) => (
-                <Link key={club.id} to={`/padel-courts/${club.id}`}>
-                  <Card className="hover:shadow-lg hover:scale-[1.02] transition-all duration-200 cursor-pointer overflow-hidden">
-                    <div className="aspect-video overflow-hidden">
-                      <img 
-                        src={club.image} 
-                        alt={club.name}
-                        className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
-                      />
-                    </div>
-                    <CardHeader className="pb-3">
-                      <div className="space-y-2">
-                        <CardTitle className="flex items-center justify-between text-lg">
-                          {club.name}
-                          <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                            <span className="text-sm font-medium">{club.rating}</span>
-                          </div>
-                        </CardTitle>
-                        <CardDescription className="flex items-center gap-1">
-                          <MapPin className="h-4 w-4" />
-                          {club.region}
-                        </CardDescription>
-                      </div>
-                    </CardHeader>
-                    
-                    <CardContent className="space-y-3 pt-0">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
-                          <Users className="h-4 w-4" />
-                          {club.numberOfCourts} court{club.numberOfCourts !== 1 ? 's' : ''}
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <CreditCard className="h-4 w-4" />
-                          {club.estimatedFeePerPerson}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+            <div className="rounded-lg border">
+              <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} />
             </div>
-          </div>
+          </section>
 
           {/* Additional SEO Content */}
-          <div className="space-y-6 bg-muted/50 rounded-lg p-6">
+          <section className="space-y-6 bg-muted/50 rounded-lg p-6">
             <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
             <div className="prose max-w-none">
               <p className="text-muted-foreground leading-relaxed">
@@ -233,7 +203,7 @@ const PadelCourts = () => {
                 padel community!
               </p>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </>
