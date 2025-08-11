@@ -42,6 +42,7 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const markersMap = useRef<Record<string, { marker: mapboxgl.Marker; el: HTMLDivElement }>>({});
+  const geolocateControl = useRef<mapboxgl.GeolocateControl | null>(null);
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -62,6 +63,14 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
+    // Add geolocation control (shows user location and allows re-centering)
+    geolocateControl.current = new mapboxgl.GeolocateControl({
+      positionOptions: { enableHighAccuracy: true },
+      trackUserLocation: true,
+      showUserHeading: true
+    });
+    map.current.addControl(geolocateControl.current, 'top-left');
+
     // Add markers when map loads
     map.current.on('load', () => {
       addMarkers();
@@ -72,6 +81,9 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
         clubs.forEach((c) => bounds.extend(c.coordinates as [number, number]));
         map.current?.fitBounds(bounds, { padding: 60, animate: true, duration: 800 });
       }
+
+      // Attempt to get and center to user's current location
+      geolocateControl.current?.trigger();
     });
 
     return () => {

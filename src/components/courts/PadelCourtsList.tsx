@@ -37,8 +37,8 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                 }}
                 className={`overflow-hidden transition-shadow cursor-pointer ${isActive ? "ring-2 ring-primary" : "hover:shadow-md"}`}
               >
-                <div className="flex gap-3 p-3">
-                  <div className="h-16 w-24 rounded-md overflow-hidden shrink-0">
+                <div className="flex">
+                  <div className="h-20 w-[7.5rem] md:h-24 md:w-[9rem] overflow-hidden shrink-0">
                     <img
                       src={club.image}
                       alt={`${club.name} padel club in ${club.region}`}
@@ -46,7 +46,7 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                       className="h-full w-full object-cover"
                     />
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0 p-3">
                     <div className="flex items-start justify-between">
                       <span className="text-sm font-medium" title={club.name}>{club.name}</span>
                       <div className="ml-2 flex items-center gap-1 shrink-0">
