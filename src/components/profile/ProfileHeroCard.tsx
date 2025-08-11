@@ -164,7 +164,7 @@ export const ProfileHeroCard = ({
           
           <div className="space-y-2">
             <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
-              {displayName}
+              {firstNameOnly}
               {countryData && (
                 <Badge variant="outline" className="flex items-center gap-1">
                   <span>{countryData.flag}</span>
