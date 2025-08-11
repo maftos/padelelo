@@ -66,6 +66,7 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
       <CardContent>
         <div className="space-y-4">
           {items.length > 0 ? (
+            items.map((it) => (
               <div key={it.id} className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3">
                 {/* Header: time + result */}
                 <div className="flex items-center justify-between">
