@@ -231,6 +231,12 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
       sel.el.style.transform = 'scale(1.15)';
       sel.el.style.boxShadow = '0 0 0 3px hsl(var(--primary)), 0 6px 14px rgba(0,0,0,0.3)';
       map.current.flyTo({ center: club.coordinates, zoom: 13, duration: 800 });
+
+      // Open the popup for the selected marker programmatically
+      const popup = (sel.marker as any).getPopup ? (sel.marker as any).getPopup() : null;
+      if (popup && map.current) {
+        popup.setLngLat(club.coordinates as [number, number]).addTo(map.current);
+      }
     }
   }, [selectedClubId, clubs]);
 

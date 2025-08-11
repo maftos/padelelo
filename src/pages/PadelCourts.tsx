@@ -148,23 +148,23 @@ const PadelCourts = () => {
         <section aria-label="Padel courts map and list" className="hidden md:block">
           <div className="h-[calc(100vh-3rem)] overflow-hidden">
             <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-              <ResizablePanel defaultSize={38} minSize={28} className="bg-background min-h-0 overflow-hidden">
-                <PadelCourtsList
-                  clubs={clubs}
-                  selectedClubId={selectedId}
-                  onSelectClub={(id) => setSelectedId(id)}
-                />
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={62} minSize={40} className="bg-muted/20 min-h-0 overflow-hidden">
-                <div className="h-full">
-                  <PadelMap
+                <ResizablePanel defaultSize={68} minSize={40} className="bg-muted/20 min-h-0 overflow-hidden">
+                  <div className="h-full">
+                    <PadelMap
+                      clubs={clubs}
+                      selectedClubId={selectedId}
+                      onClubSelect={(club) => setSelectedId(club.id)}
+                    />
+                  </div>
+                </ResizablePanel>
+                <ResizableHandle withHandle />
+                <ResizablePanel defaultSize={32} minSize={28} className="bg-background min-h-0 overflow-hidden">
+                  <PadelCourtsList
                     clubs={clubs}
                     selectedClubId={selectedId}
-                    onClubSelect={(club) => setSelectedId(club.id)}
+                    onSelectClub={(id) => setSelectedId(id)}
                   />
-                </div>
-              </ResizablePanel>
+                </ResizablePanel>
             </ResizablePanelGroup>
           </div>
         </section>
