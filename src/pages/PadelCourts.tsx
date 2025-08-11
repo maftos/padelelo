@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { MapPin } from "lucide-react";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+
 import { PadelCourtsList } from "@/components/courts/PadelCourtsList";
 
 export interface PadelClub {
@@ -143,29 +143,24 @@ const PadelCourts = () => {
         </script>
       </Helmet>
       <h1 className="sr-only">Padel Courts in Mauritius</h1>
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         {/* Desktop: Full-height split view (no page scroll) */}
         <section aria-label="Padel courts map and list" className="hidden md:block">
-          <div className="h-[calc(100vh-3rem)] overflow-hidden">
-            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
-                <ResizablePanel defaultSize={68} minSize={40} className="bg-muted/20 min-h-0 overflow-hidden">
-                  <div className="h-full">
-                    <PadelMap
-                      clubs={clubs}
-                      selectedClubId={selectedId}
-                      onClubSelect={(club) => setSelectedId(club.id)}
-                    />
-                  </div>
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={32} minSize={28} className="bg-background min-h-0 overflow-hidden">
-                  <PadelCourtsList
-                    clubs={clubs}
-                    selectedClubId={selectedId}
-                    onSelectClub={(id) => setSelectedId(id)}
-                  />
-                </ResizablePanel>
-            </ResizablePanelGroup>
+          <div className="h-[calc(100vh-3rem)] overflow-hidden flex">
+            <div className="w-3/4 min-h-0 overflow-hidden">
+              <PadelMap
+                clubs={clubs}
+                selectedClubId={selectedId}
+                onClubSelect={(club) => setSelectedId(club.id)}
+              />
+            </div>
+            <div className="w-1/4 min-h-0 overflow-hidden border-l">
+              <PadelCourtsList
+                clubs={clubs}
+                selectedClubId={selectedId}
+                onSelectClub={(id) => setSelectedId(id)}
+              />
+            </div>
           </div>
         </section>
 
