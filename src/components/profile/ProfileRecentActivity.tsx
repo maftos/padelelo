@@ -73,36 +73,61 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                   </span>
                 </div>
 
-                {/* Teams - compact layout like /matches */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                    <div className="flex -space-x-1">
-                      {it.team1.slice(0,2).map((p) => (
-                        <Avatar key={p.player_id} className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
-                          <AvatarImage src={p.profile_photo || undefined} />
-                          <AvatarFallback className="text-[10px]">
-                            {getInitials(p.first_name, p.last_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
+                {/* Teams - two rows per team on larger screens; on mobile, teams stacked and members side-by-side */}
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-6">
+                  {/* Team 1 */}
+                  <div className="flex flex-row sm:flex-col flex-1 min-w-0 items-center sm:items-start gap-3">
+                    {/* Player 1 */}
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                        <AvatarImage src={it.team1[0]?.profile_photo || undefined} />
+                        <AvatarFallback className="text-[10px]">
+                          {getInitials(it.team1[0]?.first_name, it.team1[0]?.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs sm:text-sm font-medium truncate">
+                        {it.team1[0]?.first_name || 'Player'}
+                      </span>
                     </div>
-                    <span className="text-xs sm:text-sm font-medium truncate">
-                      {`${(it.team1[0]?.first_name || 'Player')} & ${(it.team1[1]?.first_name || 'Player')}`}
-                    </span>
+                    {/* Player 2 */}
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                        <AvatarImage src={it.team1[1]?.profile_photo || undefined} />
+                        <AvatarFallback className="text-[10px]">
+                          {getInitials(it.team1[1]?.first_name, it.team1[1]?.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-xs sm:text-sm font-medium truncate">
+                        {it.team1[1]?.first_name || 'Player'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
-                    <span className="text-xs sm:text-sm font-medium truncate text-right">
-                      {`${(it.team2[0]?.first_name || 'Player')} & ${(it.team2[1]?.first_name || 'Player')}`}
-                    </span>
-                    <div className="flex -space-x-1">
-                      {it.team2.slice(0,2).map((p) => (
-                        <Avatar key={p.player_id} className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
-                          <AvatarImage src={p.profile_photo || undefined} />
-                          <AvatarFallback className="text-[10px]">
-                            {getInitials(p.first_name, p.last_name)}
-                          </AvatarFallback>
-                        </Avatar>
-                      ))}
+
+                  {/* Team 2 */}
+                  <div className="flex flex-row sm:flex-col flex-1 min-w-0 items-center sm:items-end gap-3">
+                    {/* Player 1 */}
+                    <div className="flex items-center gap-1.5 min-w-0 justify-end sm:justify-end">
+                      <span className="text-xs sm:text-sm font-medium truncate text-right sm:text-inherit">
+                        {it.team2[0]?.first_name || 'Player'}
+                      </span>
+                      <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                        <AvatarImage src={it.team2[0]?.profile_photo || undefined} />
+                        <AvatarFallback className="text-[10px]">
+                          {getInitials(it.team2[0]?.first_name, it.team2[0]?.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    {/* Player 2 */}
+                    <div className="flex items-center gap-1.5 min-w-0 justify-end sm:justify-end">
+                      <span className="text-xs sm:text-sm font-medium truncate text-right sm:text-inherit">
+                        {it.team2[1]?.first_name || 'Player'}
+                      </span>
+                      <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                        <AvatarImage src={it.team2[1]?.profile_photo || undefined} />
+                        <AvatarFallback className="text-[10px]">
+                          {getInitials(it.team2[1]?.first_name, it.team2[1]?.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
                     </div>
                   </div>
                 </div>
