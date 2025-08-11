@@ -61,7 +61,7 @@ const PadelCourts = () => {
     amenities: ['Equipment Rental', 'Professional Coaching', 'Parking Available', 'Changing Rooms'],
     priceRange: 'Contact for pricing',
     region: venue.region || 'CENTRAL',
-    estimatedFeePerPerson: 'Rs 800-1200',
+    estimatedFeePerPerson: 'Rs 800',
     image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   })) : [];
 
@@ -147,14 +147,14 @@ const PadelCourts = () => {
         {/* Desktop: Full-height split view (no page scroll) */}
         <section aria-label="Padel courts map and list" className="hidden md:block">
           <div className="h-[calc(100vh-3rem)] overflow-hidden flex">
-            <div className="w-3/4 min-h-0 overflow-hidden">
+            <div className="w-[70%] min-h-0 overflow-hidden">
               <PadelMap
                 clubs={clubs}
                 selectedClubId={selectedId}
                 onClubSelect={(club) => setSelectedId(club.id)}
               />
             </div>
-            <div className="w-1/4 min-h-0 overflow-hidden border-l">
+            <div className="w-[30%] min-h-0 overflow-hidden border-l">
               <PadelCourtsList
                 clubs={clubs}
                 selectedClubId={selectedId}

@@ -48,7 +48,7 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
-                      <span className="truncate text-sm font-medium" title={club.name}>{club.name}</span>
+                      <span className="text-sm font-medium" title={club.name}>{club.name}</span>
                       <div className="ml-2 flex items-center gap-1 shrink-0">
                         <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                         <span className="text-xs font-medium">{club.rating}</span>
@@ -56,7 +56,7 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                     </div>
                     <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="h-3.5 w-3.5" />
-                      <span className="truncate">{club.region}</span>
+                      <span>{club.region}</span>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-1.5 text-[10px] md:text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
