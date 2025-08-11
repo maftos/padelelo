@@ -30,16 +30,18 @@ const mapboxPopupStyles = `
 
 interface PadelMapProps {
   clubs: PadelClub[];
+  selectedClubId?: string | null;
   onClubSelect?: (club: PadelClub) => void;
 }
 
 // Mapbox public token
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFmbWFhZm1hYWFmIiwiYSI6ImNtY29wN3V2ZTBjOHMybXIyYTF6MzlqYm4ifQ.8ijZH3a-tm0juZeb_PW7ig';
 
-export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
+export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
+  const markersMap = useRef<Record<string, { marker: mapboxgl.Marker; el: HTMLDivElement }>>({});
 
   useEffect(() => {
     if (!mapContainer.current) return;
@@ -63,6 +65,13 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     // Add markers when map loads
     map.current.on('load', () => {
       addMarkers();
+
+      // Fit bounds to all clubs
+      if (clubs.length > 0) {
+        const bounds = new mapboxgl.LngLatBounds();
+        clubs.forEach((c) => bounds.extend(c.coordinates as [number, number]));
+        map.current?.fitBounds(bounds, { padding: 60, animate: true, duration: 800 });
+      }
     });
 
     return () => {
@@ -78,6 +87,7 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     // Clear existing markers
     markers.current.forEach(marker => marker.remove());
     markers.current = [];
+    markersMap.current = {};
 
     // Add new markers
     clubs.forEach((club) => {
@@ -126,6 +136,15 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
       const marker = new mapboxgl.Marker(markerElement)
         .setLngLat(club.coordinates)
         .addTo(map.current!);
+
+      // track in map for selection styling
+      markersMap.current[club.id] = { marker, el: markerElement };
+
+      // selected styling
+      if (selectedClubId === club.id) {
+        markerElement.style.transform = 'scale(1.15)';
+        markerElement.style.boxShadow = '0 0 0 3px hsl(var(--primary)), 0 6px 14px rgba(0,0,0,0.3)';
+      }
 
       // Add popup with club info
       const popup = new mapboxgl.Popup({
@@ -192,7 +211,38 @@ export const PadelMap = ({ clubs, onClubSelect }: PadelMapProps) => {
     if (map.current) {
       addMarkers();
     }
-  }, [clubs, onClubSelect]);
+  }, [clubs, onClubSelect, selectedClubId]);
+
+  // Update selection styling and fly to
+  useEffect(() => {
+    if (!map.current) return;
+
+    // reset all markers
+    Object.values(markersMap.current).forEach(({ el }) => {
+      el.style.transform = 'scale(1)';
+      el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+    });
+
+    if (!selectedClubId) return;
+
+    const sel = markersMap.current[selectedClubId];
+    const club = clubs.find((c) => c.id === selectedClubId);
+    if (sel && club) {
+      sel.el.style.transform = 'scale(1.15)';
+      sel.el.style.boxShadow = '0 0 0 3px hsl(var(--primary)), 0 6px 14px rgba(0,0,0,0.3)';
+      map.current.flyTo({ center: club.coordinates, zoom: 13, duration: 800 });
+    }
+  }, [selectedClubId, clubs]);
+
+  // Resize observer to keep map responsive in resizable panels
+  useEffect(() => {
+    if (!mapContainer.current || !map.current) return;
+    const ro = new ResizeObserver(() => {
+      map.current?.resize();
+    });
+    ro.observe(mapContainer.current);
+    return () => ro.disconnect();
+  }, []);
 
   return (
     <div className="relative w-full h-full">

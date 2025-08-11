@@ -1,14 +1,13 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { MapPin, Star, Users, ExternalLink, CreditCard } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
-import { Link } from "react-router-dom";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { PadelCourtsList } from "@/components/courts/PadelCourtsList";
 
 export interface PadelClub {
   id: string;
