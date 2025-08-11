@@ -66,7 +66,6 @@ export const useProfileState = (profileUserId: string | undefined) => {
       // If user is authenticated, use view_profile function for friendship data
       if (user?.id) {
         const { data, error } = await supabase.rpc('view_profile' as any, {
-          user_a_id: user.id,
           user_b_id: profileUserId
         });
         
