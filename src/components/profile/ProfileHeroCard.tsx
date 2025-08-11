@@ -143,10 +143,8 @@ export const ProfileHeroCard = ({
 
   const friendshipStatus = getFriendshipStatus();
   const displayName = `${formData.first_name} ${formData.last_name}`.trim() || "User Name";
-  
-  // Get country details
+  const firstNameOnly = (formData.first_name || "User").trim();
   const countryData = countries.find(c => c.code === formData.nationality);
-  
   // Mock weekly MMR change for now
   const weeklyChange = 25; // Will be replaced with real data later
   
@@ -164,10 +162,18 @@ export const ProfileHeroCard = ({
           />
           
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">{displayName}</h1>
+            <h1 className="text-2xl font-bold flex items-center justify-center gap-2">
+              {firstNameOnly}
+              {countryData && (
+                <Badge variant="outline" className="flex items-center gap-1">
+                  <span>{countryData.flag}</span>
+                  {countryData.code}
+                </Badge>
+              )}
+            </h1>
             {!isOwnProfile && mutualFriendsCount > 0 && (
               <p 
-                className="text-sm text-muted-foreground flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors"
+                className="text-sm text-muted-foreground flex items-center justify-center gap-1 cursor-pointer hover:text-foreground transition-colors"
                 onClick={() => setShowMutualFriendsModal(true)}
               >
                 <Users className="w-3 h-3" />
@@ -186,12 +192,6 @@ export const ProfileHeroCard = ({
                   {weeklyChange > 0 ? '+' : ''}{weeklyChange}
                 </span>
               </Badge>
-              {countryData && (
-                <Badge variant="outline" className="flex items-center gap-1">
-                  <span>{countryData.flag}</span>
-                  {countryData.code}
-                </Badge>
-              )}
               {formData.gender && (
                 <Badge variant="outline">
                   {formData.gender}

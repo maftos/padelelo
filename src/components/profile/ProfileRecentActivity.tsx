@@ -73,40 +73,37 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                   </span>
                 </div>
 
-                {/* Teams - same structure as /matches */}
-                <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-                  {/* Team 1 */}
-                  <div className="flex flex-col space-y-1 flex-1">
-                    {it.team1.map((p) => (
-                      <div key={p.player_id} className="flex items-center space-x-2">
-                        <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+                {/* Teams - compact layout like /matches */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                    <div className="flex -space-x-1">
+                      {it.team1.slice(0,2).map((p) => (
+                        <Avatar key={p.player_id} className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
                           <AvatarImage src={p.profile_photo || undefined} />
-                          <AvatarFallback className="text-xs">
+                          <AvatarFallback className="text-[10px]">
                             {getInitials(p.first_name, p.last_name)}
                           </AvatarFallback>
                         </Avatar>
-                        <p className="font-medium text-foreground truncate text-xs sm:text-sm">
-                          {`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Player"}
-                        </p>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
+                    <span className="text-xs sm:text-sm font-medium truncate">
+                      {`${(it.team1[0]?.first_name || 'Player')} & ${(it.team1[1]?.first_name || 'Player')}`}
+                    </span>
                   </div>
-
-                  {/* Team 2 */}
-                  <div className="flex flex-col space-y-1 flex-1">
-                    {it.team2.map((p) => (
-                      <div key={p.player_id} className="flex items-center justify-end space-x-2">
-                        <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">
-                          {`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Player"}
-                        </p>
-                        <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+                  <div className="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
+                    <span className="text-xs sm:text-sm font-medium truncate text-right">
+                      {`${(it.team2[0]?.first_name || 'Player')} & ${(it.team2[1]?.first_name || 'Player')}`}
+                    </span>
+                    <div className="flex -space-x-1">
+                      {it.team2.slice(0,2).map((p) => (
+                        <Avatar key={p.player_id} className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
                           <AvatarImage src={p.profile_photo || undefined} />
-                          <AvatarFallback className="text-xs">
+                          <AvatarFallback className="text-[10px]">
                             {getInitials(p.first_name, p.last_name)}
                           </AvatarFallback>
                         </Avatar>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -116,14 +113,15 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                     const result = (s as any).change_type as 'WIN' | 'LOSS' | undefined;
                     const won = result ? result === 'WIN' : (it.profileTeam === 1 ? s.team1_score > s.team2_score : s.team2_score > s.team1_score);
                     return (
-                      <div key={idx} className="flex items-center p-3 rounded-lg bg-background/50 border border-border/30">
-                        <div className="flex items-center justify-center space-x-2 min-w-[80px]">
+                      <div key={idx} className="grid grid-cols-3 items-center p-3 rounded-lg bg-background/50 border border-border/30">
+                        <div />
+                        <div className="flex items-center justify-center space-x-2">
                           <span className={`text-sm ${s.team1_score > s.team2_score ? 'font-bold' : 'font-medium'}`}>{s.team1_score}</span>
                           <span className="text-muted-foreground text-sm">-</span>
                           <span className={`text-sm ${s.team2_score > s.team1_score ? 'font-bold' : 'font-medium'}`}>{s.team2_score}</span>
                         </div>
-                        <div className="flex-1 flex justify-end">
-                          <Badge variant={won ? 'default' : 'destructive'}>{won ? 'Won' : 'Lost'}</Badge>
+                        <div className="flex justify-end">
+                          <Badge variant={won ? 'default' : 'destructive'} className={won ? 'px-2 py-0.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white' : ''}>{won ? 'Won' : 'Lost'}</Badge>
                         </div>
                       </div>
                     );
