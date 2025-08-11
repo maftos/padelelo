@@ -33,12 +33,13 @@ interface PadelMapProps {
   clubs: PadelClub[];
   selectedClubId?: string | null;
   onClubSelect?: (club: PadelClub) => void;
+  onUserLocation?: (lngLat: [number, number]) => void;
 }
 
 // Mapbox public token
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFmbWFhZm1hYWFmIiwiYSI6ImNtY29wN3V2ZTBjOHMybXIyYTF6MzlqYm4ifQ.8ijZH3a-tm0juZeb_PW7ig';
 
-export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps) => {
+export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
@@ -64,13 +65,16 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    // Add geolocation control (shows user location and allows re-centering)
     geolocateControl.current = new mapboxgl.GeolocateControl({
       positionOptions: { enableHighAccuracy: true },
       trackUserLocation: true,
       showUserHeading: true
     });
     map.current.addControl(geolocateControl.current, 'top-left');
+    geolocateControl.current.on('geolocate', (position: GeolocationPosition) => {
+      const { longitude, latitude } = position.coords;
+      onUserLocation?.([longitude, latitude]);
+    });
 
     // Add markers when map loads
     map.current.on('load', () => {
