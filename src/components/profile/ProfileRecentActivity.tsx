@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-import { SetCard } from "@/components/match/SetCard";
+
 interface ProfileRecentActivityProps {
   latestMatches: any[] | undefined;
   profileId?: string;
@@ -31,7 +31,7 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
     const profileTeam = players.find((p) => p.player_id === profileId)?.team_number ?? 1;
 
     const sets = (m.sets || []) as Array<{ team1_score: number; team2_score: number; set_number: number }>;
-    const setScores = sets.map((s) => `${s.team1_score}-${s.team2_score}`);
+    
 
     const { won: setsWon, lost: setsLost } = sets.reduce(
       (acc, s) => {
@@ -52,9 +52,7 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
       team1,
       team2,
       sets,
-      setsWon,
-      setsLost,
-      matchWon,
+      profileTeam,
     };
   });
 
@@ -73,9 +71,6 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                   <span className="text-xs text-muted-foreground">
                     {it.date ? formatDistanceToNow(new Date(it.date), { addSuffix: true }) : ""}
                   </span>
-                  <Badge variant={it.matchWon ? "default" : "destructive"}>
-                    {it.matchWon ? "Won" : "Lost"}
-                  </Badge>
                 </div>
 
                 {/* Teams - same structure as /matches */}
@@ -117,17 +112,22 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
 
                 {/* Sets - hide MMR change like /matches when not needed */}
                 <div className="space-y-2">
-                  {it.sets.map((s) => (
-                    <SetCard
-                      key={s.set_number}
-                      set_number={s.set_number}
-                      team1_score={s.team1_score}
-                      team2_score={s.team2_score}
-                      result={null}
-                      change_amount={null}
-                      status="SCORE_RECORDED"
-                    />
-                  ))}
+                  {it.sets.map((s, idx) => {
+                    const result = (s as any).change_type as 'WIN' | 'LOSS' | undefined;
+                    const won = result ? result === 'WIN' : (it.profileTeam === 1 ? s.team1_score > s.team2_score : s.team2_score > s.team1_score);
+                    return (
+                      <div key={idx} className="flex items-center p-3 rounded-lg bg-background/50 border border-border/30">
+                        <div className="flex items-center justify-center space-x-2 min-w-[80px]">
+                          <span className={`text-sm ${s.team1_score > s.team2_score ? 'font-bold' : 'font-medium'}`}>{s.team1_score}</span>
+                          <span className="text-muted-foreground text-sm">-</span>
+                          <span className={`text-sm ${s.team2_score > s.team1_score ? 'font-bold' : 'font-medium'}`}>{s.team2_score}</span>
+                        </div>
+                        <div className="flex-1 flex justify-end">
+                          <Badge variant={won ? 'default' : 'destructive'}>{won ? 'Won' : 'Lost'}</Badge>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))
