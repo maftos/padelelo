@@ -73,11 +73,11 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                   </span>
                 </div>
 
-                {/* Teams - two rows per team on larger screens; on mobile, teams stacked and members side-by-side */}
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-6">
-                  {/* Team 1 */}
-                  <div className="flex flex-row sm:flex-col flex-1 min-w-0 items-center sm:items-start gap-3">
-                    {/* Player 1 */}
+                {/* Teams - two rows with opponents right-aligned on the same row (applies to mobile too) */}
+                <div className="flex flex-col gap-2">
+                  {/* Row 1: First players */}
+                  <div className="flex items-center justify-between gap-2">
+                    {/* Team 1 Player 1 (left) */}
                     <div className="flex items-center gap-1.5 min-w-0">
                       <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
                         <AvatarImage src={it.team1[0]?.profile_photo || undefined} />
@@ -89,7 +89,23 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                         {it.team1[0]?.first_name || 'Player'}
                       </span>
                     </div>
-                    {/* Player 2 */}
+                    {/* Team 2 Player 1 (right) */}
+                    <div className="flex items-center gap-1.5 min-w-0 justify-end">
+                      <span className="text-xs sm:text-sm font-medium truncate text-right">
+                        {it.team2[0]?.first_name || 'Player'}
+                      </span>
+                      <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                        <AvatarImage src={it.team2[0]?.profile_photo || undefined} />
+                        <AvatarFallback className="text-[10px]">
+                          {getInitials(it.team2[0]?.first_name, it.team2[0]?.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Second players */}
+                  <div className="flex items-center justify-between gap-2">
+                    {/* Team 1 Player 2 (left) */}
                     <div className="flex items-center gap-1.5 min-w-0">
                       <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
                         <AvatarImage src={it.team1[1]?.profile_photo || undefined} />
@@ -101,25 +117,9 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
                         {it.team1[1]?.first_name || 'Player'}
                       </span>
                     </div>
-                  </div>
-
-                  {/* Team 2 */}
-                  <div className="flex flex-row sm:flex-col flex-1 min-w-0 items-center sm:items-end gap-3">
-                    {/* Player 1 */}
-                    <div className="flex items-center gap-1.5 min-w-0 justify-end sm:justify-end">
-                      <span className="text-xs sm:text-sm font-medium truncate text-right sm:text-inherit">
-                        {it.team2[0]?.first_name || 'Player'}
-                      </span>
-                      <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
-                        <AvatarImage src={it.team2[0]?.profile_photo || undefined} />
-                        <AvatarFallback className="text-[10px]">
-                          {getInitials(it.team2[0]?.first_name, it.team2[0]?.last_name)}
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-                    {/* Player 2 */}
-                    <div className="flex items-center gap-1.5 min-w-0 justify-end sm:justify-end">
-                      <span className="text-xs sm:text-sm font-medium truncate text-right sm:text-inherit">
+                    {/* Team 2 Player 2 (right) */}
+                    <div className="flex items-center gap-1.5 min-w-0 justify-end">
+                      <span className="text-xs sm:text-sm font-medium truncate text-right">
                         {it.team2[1]?.first_name || 'Player'}
                       </span>
                       <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
