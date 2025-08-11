@@ -26,8 +26,6 @@ export interface PadelClub {
   region: string;
   estimatedFeePerPerson: string;
   image?: string;
-  comingSoon?: boolean;
-  createdAt?: string;
 }
 
 const PadelCourts = () => {
@@ -64,41 +62,17 @@ const PadelCourts = () => {
     priceRange: 'Contact for pricing',
     region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800',
-    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    createdAt: venue.created_at || undefined
+    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   })) : [];
 
-  // Add sample club "La Croisette Padel"
-  const sampleClub: PadelClub = {
-    id: 'sample-la-croisette',
-    name: 'La Croisette Padel',
-    address: 'Grand Baie, Mauritius',
-    coordinates: [57.6116, -20.0137],
-    rating: 4.7,
-    numberOfCourts: 4,
-    openingHours: 'Coming soon',
-    description: 'Premium padel facility opening soon at La Croisette, Grand Baie.',
-    amenities: ['Pro Shop', 'Coaching', 'Parking', 'Cafe'],
-    priceRange: 'TBA',
-    region: 'NORTH',
-    estimatedFeePerPerson: 'Rs 900',
-    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=1200&auto=format&fit=crop',
-    comingSoon: true,
-    createdAt: '2025-01-01'
-  };
-
-  const clubsWithSample = [...clubs, sampleClub];
-
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [sortBy, setSortBy] = useState<'nearest' | 'popular' | 'newest'>('popular');
 
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     "name": "Padel Courts in Mauritius",
     "description": "Complete directory of padel courts and clubs across Mauritius",
-    "itemListElement": clubsWithSample.map((club, index) => ({
+    "itemListElement": clubs.map((club, index) => ({
       "@type": "SportsClub",
       "position": index + 1,
       "name": club.name,
@@ -138,35 +112,7 @@ const PadelCourts = () => {
       </div>
     );
   }
-  // Sorting helpers
-  const haversineKm = (a: [number, number], b: [number, number]) => {
-    const toRad = (v: number) => (v * Math.PI) / 180;
-    const [lon1, lat1] = a;
-    const [lon2, lat2] = b;
-    const R = 6371;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const s1 = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(s1), Math.sqrt(1 - s1));
-    return R * c;
-  };
 
-  const sortedClubs = [...clubsWithSample].sort((a, b) => {
-    if (sortBy === 'popular') {
-      return (b.rating || 0) - (a.rating || 0);
-    }
-    if (sortBy === 'newest') {
-      const ad = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const bd = b.createdAt ? new Date(b.createdAt).getTime() : 0;
-      return bd - ad;
-    }
-    if (sortBy === 'nearest' && userLocation) {
-      const da = haversineKm(userLocation, a.coordinates);
-      const db = haversineKm(userLocation, b.coordinates);
-      return da - db;
-    }
-    return 0;
-  });
   if (error) {
     return (
       <div className="min-h-screen bg-background">
@@ -203,20 +149,16 @@ const PadelCourts = () => {
           <div className="h-[calc(100dvh-3rem)] overflow-hidden flex">
             <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
               <PadelMap
-                clubs={sortedClubs}
+                clubs={clubs}
                 selectedClubId={selectedId}
                 onClubSelect={(club) => setSelectedId(club.id)}
-                onUserLocation={setUserLocation}
               />
             </div>
             <div className="w-[clamp(360px,30%,520px)] shrink-0 min-h-0 overflow-hidden border-l">
               <PadelCourtsList
-                clubs={sortedClubs}
+                clubs={clubs}
                 selectedClubId={selectedId}
                 onSelectClub={(id) => setSelectedId(id)}
-                userLocation={userLocation}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
               />
             </div>
           </div>
@@ -225,10 +167,10 @@ const PadelCourts = () => {
         {/* Mobile: map first, list below */}
         <section className="md:hidden space-y-4 px-4 py-4">
           <div className="h-80 rounded-lg overflow-hidden border">
-            <PadelMap clubs={sortedClubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} onUserLocation={setUserLocation} />
+            <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} />
           </div>
           <div className="rounded-lg border">
-            <PadelCourtsList clubs={sortedClubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} userLocation={userLocation} sortBy={sortBy} onSortChange={setSortBy} />
+            <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} />
           </div>
         </section>
 
