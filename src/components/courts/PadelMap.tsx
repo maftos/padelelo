@@ -1,7 +1,8 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { LocateFixed } from 'lucide-react';
 import { PadelClub } from '@/pages/PadelCourts';
 
 // Custom styles to override Mapbox's default popup styling
@@ -82,8 +83,6 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
         map.current?.fitBounds(bounds, { padding: 60, animate: true, duration: 800 });
       }
 
-      // Attempt to get and center to user's current location
-      geolocateControl.current?.trigger();
     });
 
     return () => {
@@ -270,6 +269,15 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect }: PadelMapProps)
         className="absolute inset-0 rounded-lg"
         style={{ minHeight: '400px' }}
       />
+      <button
+        type="button"
+        aria-label="Use my location"
+        onClick={() => geolocateControl.current?.trigger()}
+        className="absolute bottom-3 left-3 z-[1] inline-flex items-center gap-2 rounded-full border border-border bg-card text-card-foreground px-3 py-2 shadow-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      >
+        <LocateFixed className="h-4 w-4" />
+        <span className="hidden sm:inline text-sm font-medium">Locate me</span>
+      </button>
     </div>
   );
 };

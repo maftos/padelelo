@@ -28,6 +28,8 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
               <Card
                 onClick={() => onSelectClub?.(club.id)}
                 role="button"
+                aria-pressed={isActive}
+                aria-label={`View ${club.name} on map`}
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {

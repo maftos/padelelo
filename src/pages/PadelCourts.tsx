@@ -146,15 +146,15 @@ const PadelCourts = () => {
       <div className="bg-background">
         {/* Desktop: Full-height split view (no page scroll) */}
         <section aria-label="Padel courts map and list" className="hidden md:block">
-          <div className="h-[calc(100vh-3rem)] overflow-hidden flex">
-            <div className="w-[70%] min-h-0 overflow-hidden">
+          <div className="h-[calc(100dvh-3rem)] overflow-hidden flex">
+            <div className="basis-[70%] min-w-0 min-h-0 overflow-hidden">
               <PadelMap
                 clubs={clubs}
                 selectedClubId={selectedId}
                 onClubSelect={(club) => setSelectedId(club.id)}
               />
             </div>
-            <div className="w-[30%] min-h-0 overflow-hidden border-l">
+            <div className="basis-[30%] min-w-0 min-h-0 overflow-hidden border-l">
               <PadelCourtsList
                 clubs={clubs}
                 selectedClubId={selectedId}
