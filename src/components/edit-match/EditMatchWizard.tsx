@@ -167,6 +167,11 @@ const EditMatchWizard = () => {
           <PlayersStep
             selectedPlayers={wizardData.selectedPlayers}
             onPlayersChange={(players) => updateWizardData({ selectedPlayers: players })}
+            knownPlayers={(booking.participants || []).map(p => ({
+              id: p.player_id,
+              name: `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown',
+              profile_photo: p.profile_photo || undefined,
+            }))}
           />
         );
       case 2:

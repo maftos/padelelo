@@ -11,9 +11,10 @@ import { toast } from "sonner";
 interface PlayersStepProps {
   selectedPlayers: string[];
   onPlayersChange: (players: string[]) => void;
+  knownPlayers?: { id: string; name: string; profile_photo?: string }[];
 }
 
-export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepProps) => {
+export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [] }: PlayersStepProps) => {
   const { playerOptions } = usePlayerSelection();
   const { profile } = useUserProfile();
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +27,7 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
 
   const getPlayerName = (playerId: string) => {
     if (playerId === profile?.id) return "Me";
-    const player = playerOptions.find((p) => p.id === playerId);
+    const player = playerOptions.find((p) => p.id === playerId) || knownPlayers.find((p) => p.id === playerId);
     return player?.name || "Unknown";
   };
 
@@ -34,7 +35,7 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange }: PlayersStepPro
     if (playerId === profile?.id) {
       return profile.profile_photo || "";
     }
-    const player = playerOptions.find((p) => p.id === playerId);
+    const player = playerOptions.find((p) => p.id === playerId) || knownPlayers.find((p) => p.id === playerId);
     return player?.profile_photo || "";
   };
 
