@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Card } from "@/components/ui/card";
-import { MapPin, Star, Users, CreditCard } from "lucide-react";
+import { Star, Users, CreditCard } from "lucide-react";
 import { PadelClub } from "@/pages/PadelCourts";
 
 interface PadelCourtsListProps {
@@ -40,25 +40,22 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                 className={`overflow-hidden transition-shadow cursor-pointer ${isActive ? "ring-2 ring-primary" : "hover:shadow-md"}`}
               >
                 <div className="flex">
-                  <div className="h-20 w-[7.5rem] md:h-24 md:w-[9rem] overflow-hidden shrink-0">
+                  <div className="relative h-20 w-[7.5rem] md:h-24 md:w-[9rem] overflow-hidden shrink-0">
                     <img
                       src={club.image}
                       alt={`${club.name} padel club in ${club.region}`}
                       loading="lazy"
                       className="h-full w-full object-cover"
                     />
+                    <div className="absolute top-1.5 right-1.5 rounded-full border border-border bg-background/80 text-foreground backdrop-blur px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" aria-hidden="true" />
+                      <span className="text-[10px] font-medium leading-none">{club.rating}</span>
+                      <span className="sr-only">Rating</span>
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0 p-3">
-                    <div className="flex items-start justify-between">
+                    <div>
                       <span className="text-sm font-medium" title={club.name}>{club.name}</span>
-                      <div className="ml-2 flex items-center gap-1 shrink-0">
-                        <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                        <span className="text-xs font-medium">{club.rating}</span>
-                      </div>
-                    </div>
-                    <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                      <MapPin className="h-3.5 w-3.5" />
-                      <span>{club.region}</span>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="flex items-center gap-1.5 text-[10px] md:text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
