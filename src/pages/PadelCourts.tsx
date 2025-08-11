@@ -142,21 +142,13 @@ const PadelCourts = () => {
           {JSON.stringify(structuredData)}
         </script>
       </Helmet>
-
+      <h1 className="sr-only">Padel Courts in Mauritius</h1>
       <div className="min-h-screen bg-background">
-        <div className="w-full max-w-7xl mx-auto px-4 py-6 space-y-6">
-          {/* Header */}
-          <header className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold">Padel Courts</h1>
-              <p className="text-muted-foreground">Find your perfect court across Mauritius</p>
-            </div>
-          </header>
-
-          {/* Desktop: Resizable split view (list 40% / map 60%) */}
-          <section aria-label="Padel courts map and list" className="hidden md:block">
-            <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-12rem)] w-full rounded-lg border overflow-hidden">
-              <ResizablePanel defaultSize={40} minSize={28} className="bg-background min-h-0 overflow-hidden">
+        {/* Desktop: Full-height split view (no page scroll) */}
+        <section aria-label="Padel courts map and list" className="hidden md:block">
+          <div className="h-[calc(100vh-3rem)] overflow-hidden">
+            <ResizablePanelGroup direction="horizontal" className="h-full w-full">
+              <ResizablePanel defaultSize={38} minSize={28} className="bg-background min-h-0 overflow-hidden">
                 <PadelCourtsList
                   clubs={clubs}
                   selectedClubId={selectedId}
@@ -164,7 +156,7 @@ const PadelCourts = () => {
                 />
               </ResizablePanel>
               <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={60} minSize={40} className="bg-muted/20 min-h-0">
+              <ResizablePanel defaultSize={62} minSize={40} className="bg-muted/20 min-h-0 overflow-hidden">
                 <div className="h-full">
                   <PadelMap
                     clubs={clubs}
@@ -174,37 +166,37 @@ const PadelCourts = () => {
                 </div>
               </ResizablePanel>
             </ResizablePanelGroup>
-          </section>
+          </div>
+        </section>
 
-          {/* Mobile: temporary simple layout (map first, list below) */}
-          <section className="md:hidden space-y-4">
-            <div className="h-80 rounded-lg overflow-hidden border">
-              <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} />
-            </div>
-            <div className="rounded-lg border">
-              <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} />
-            </div>
-          </section>
+        {/* Mobile: map first, list below */}
+        <section className="md:hidden space-y-4 px-4 py-4">
+          <div className="h-80 rounded-lg overflow-hidden border">
+            <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} />
+          </div>
+          <div className="rounded-lg border">
+            <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} />
+          </div>
+        </section>
 
-          {/* Additional SEO Content */}
-          <section className="space-y-6 bg-muted/50 rounded-lg p-6 md:hidden">
-            <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
-            <div className="prose max-w-none">
-              <p className="text-muted-foreground leading-relaxed">
-                Mauritius offers an ideal setting for padel enthusiasts with its year-round tropical climate 
-                and growing community of passionate players. Whether you're a beginner looking to learn this 
-                exciting racquet sport or an experienced player seeking competitive matches, the island's 
-                padel courts provide excellent facilities and welcoming environments.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mt-4">
-                Padel combines elements of tennis and squash, played on an enclosed court with walls that 
-                are part of the game. It's perfect for players of all ages and skill levels, making it 
-                one of the fastest-growing sports in Mauritius. Book your court today and join the 
-                padel community!
-              </p>
-            </div>
-          </section>
-        </div>
+        {/* Additional SEO Content (mobile only) */}
+        <section className="space-y-6 bg-muted/50 rounded-lg p-6 md:hidden">
+          <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
+          <div className="prose max-w-none">
+            <p className="text-muted-foreground leading-relaxed">
+              Mauritius offers an ideal setting for padel enthusiasts with its year-round tropical climate 
+              and growing community of passionate players. Whether you're a beginner looking to learn this 
+              exciting racquet sport or an experienced player seeking competitive matches, the island's 
+              padel courts provide excellent facilities and welcoming environments.
+            </p>
+            <p className="text-muted-foreground leading-relaxed mt-4">
+              Padel combines elements of tennis and squash, played on an enclosed court with walls that 
+              are part of the game. It's perfect for players of all ages and skill levels, making it 
+              one of the fastest-growing sports in Mauritius. Book your court today and join the 
+              padel community!
+            </p>
+          </div>
+        </section>
       </div>
     </>
   );
