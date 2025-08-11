@@ -2,7 +2,7 @@
 import { ProfileHeroCard } from "./ProfileHeroCard";
 import { ProfileForm } from "./ProfileForm";
 import { StatsGrid } from "./StatsGrid";
-import { ActivityFeed } from "./ActivityFeed";
+import { ProfileRecentActivity } from "./ProfileRecentActivity";
 
 interface ProfileFormState {
   first_name: string;
@@ -85,7 +85,7 @@ export const ProfileContent = ({
       {/* Right Column - Stats and Activity */}
       <div className="lg:col-span-2">
         <div className="space-y-6">
-          <ActivityFeed />
+          <ProfileRecentActivity latestMatches={(profileData as any)?.latest_matches || []} profileId={(profileData as any)?.profile?.id} />
         </div>
       </div>
     </div>
