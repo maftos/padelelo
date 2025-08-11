@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
-
+import { SetCard } from "@/components/match/SetCard";
 interface ProfileRecentActivityProps {
   latestMatches: any[] | undefined;
   profileId?: string;
@@ -51,11 +51,10 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
       date: m.match_date,
       team1,
       team2,
-      setScores,
+      sets,
       setsWon,
       setsLost,
       matchWon,
-      venue: m.venue_name || undefined,
     };
   });
 
@@ -67,69 +66,67 @@ export const ProfileRecentActivity = ({ latestMatches = [], profileId }: Profile
       <CardContent>
         <div className="space-y-4">
           {items.length > 0 ? (
-            items.map((it) => (
-              <div key={it.id} className="p-4 rounded-lg bg-card/50 hover:bg-card/80 transition-colors">
-                <div className="flex items-center justify-between gap-3">
-                  {/* Left: Teams */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      {/* Team 1 */}
-                      <div className="flex items-center gap-1 min-w-0">
-                        {it.team1.map((p, idx) => (
-                          <div key={p.player_id} className="flex items-center gap-1 min-w-0">
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src={p.profile_photo || undefined} />
-                              <AvatarFallback className="text-[10px]">
-                                {getInitials(p.first_name, p.last_name)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-xs truncate max-w-[90px]">
-                              {`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Player"}
-                            </span>
-                            {idx === 0 && <span className="text-xs text-muted-foreground">&</span>}
-                          </div>
-                        ))}
+              <div key={it.id} className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3">
+                {/* Header: time + result */}
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted-foreground">
+                    {it.date ? formatDistanceToNow(new Date(it.date), { addSuffix: true }) : ""}
+                  </span>
+                  <Badge variant={it.matchWon ? "default" : "destructive"}>
+                    {it.matchWon ? "Won" : "Lost"}
+                  </Badge>
+                </div>
+
+                {/* Teams - same structure as /matches */}
+                <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                  {/* Team 1 */}
+                  <div className="flex flex-col space-y-1 flex-1">
+                    {it.team1.map((p) => (
+                      <div key={p.player_id} className="flex items-center space-x-2">
+                        <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+                          <AvatarImage src={p.profile_photo || undefined} />
+                          <AvatarFallback className="text-xs">
+                            {getInitials(p.first_name, p.last_name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <p className="font-medium text-foreground truncate text-xs sm:text-sm">
+                          {`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Player"}
+                        </p>
                       </div>
-
-                      <span className="text-xs text-muted-foreground">vs</span>
-
-                      {/* Team 2 */}
-                      <div className="flex items-center gap-1 min-w-0">
-                        {it.team2.map((p, idx) => (
-                          <div key={p.player_id} className="flex items-center gap-1 min-w-0">
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src={p.profile_photo || undefined} />
-                              <AvatarFallback className="text-[10px]">
-                                {getInitials(p.first_name, p.last_name)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-xs truncate max-w-[90px]">
-                              {`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Player"}
-                            </span>
-                            {idx === 0 && <span className="text-xs text-muted-foreground">&</span>}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Time and venue */}
-                    <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>
-                        {it.date ? formatDistanceToNow(new Date(it.date), { addSuffix: true }) : ""}
-                      </span>
-                      {it.venue && <span>• {it.venue}</span>}
-                    </div>
+                    ))}
                   </div>
 
-                  {/* Right: Result and Score */}
-                  <div className="flex flex-col items-end gap-1 shrink-0">
-                    <Badge variant={it.matchWon ? "default" : "destructive"}>
-                      {it.matchWon ? "Win" : "Loss"}
-                    </Badge>
-                    <div className="text-xs text-muted-foreground">
-                      {it.setsWon}-{it.setsLost} ({it.setScores.join(", ")})
-                    </div>
+                  {/* Team 2 */}
+                  <div className="flex flex-col space-y-1 flex-1">
+                    {it.team2.map((p) => (
+                      <div key={p.player_id} className="flex items-center justify-end space-x-2">
+                        <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">
+                          {`${p.first_name ?? ""} ${p.last_name ?? ""}`.trim() || "Player"}
+                        </p>
+                        <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+                          <AvatarImage src={p.profile_photo || undefined} />
+                          <AvatarFallback className="text-xs">
+                            {getInitials(p.first_name, p.last_name)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                    ))}
                   </div>
+                </div>
+
+                {/* Sets - hide MMR change like /matches when not needed */}
+                <div className="space-y-2">
+                  {it.sets.map((s) => (
+                    <SetCard
+                      key={s.set_number}
+                      set_number={s.set_number}
+                      team1_score={s.team1_score}
+                      team2_score={s.team2_score}
+                      result={null}
+                      change_amount={null}
+                      status="SCORE_RECORDED"
+                    />
+                  ))}
                 </div>
               </div>
             ))
