@@ -156,7 +156,7 @@ const PadelCourts = () => {
           {/* Desktop: Resizable split view (list 40% / map 60%) */}
           <section aria-label="Padel courts map and list" className="hidden md:block">
             <ResizablePanelGroup direction="horizontal" className="h-[calc(100vh-12rem)] w-full rounded-lg border overflow-hidden">
-              <ResizablePanel defaultSize={40} minSize={28} className="bg-background">
+              <ResizablePanel defaultSize={40} minSize={28} className="bg-background min-h-0 overflow-hidden">
                 <PadelCourtsList
                   clubs={clubs}
                   selectedClubId={selectedId}
@@ -164,7 +164,7 @@ const PadelCourts = () => {
                 />
               </ResizablePanel>
               <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={60} minSize={40} className="bg-muted/20">
+              <ResizablePanel defaultSize={60} minSize={40} className="bg-muted/20 min-h-0">
                 <div className="h-full">
                   <PadelMap
                     clubs={clubs}
@@ -187,7 +187,7 @@ const PadelCourts = () => {
           </section>
 
           {/* Additional SEO Content */}
-          <section className="space-y-6 bg-muted/50 rounded-lg p-6">
+          <section className="space-y-6 bg-muted/50 rounded-lg p-6 md:hidden">
             <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
             <div className="prose max-w-none">
               <p className="text-muted-foreground leading-relaxed">
