@@ -72,9 +72,17 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                       <span className="text-sm font-medium" title={club.name}>{club.name}</span>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="flex items-center gap-1.5 text-[10px] md:text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                        <Users className="h-3.5 w-3.5" />
-                        {club.numberOfCourts} court{club.numberOfCourts !== 1 ? "s" : ""}
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 text-[10px] md:text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                          <Users className="h-3.5 w-3.5" />
+                          {club.numberOfCourts} court{club.numberOfCourts !== 1 ? "s" : ""}
+                        </div>
+                        {typeof club.distanceKm === 'number' && (
+                          <div className="flex items-center gap-1.5 text-[10px] md:text-xs bg-accent/10 text-accent-foreground px-2 py-0.5 rounded-full">
+                            <MapPin className="h-3.5 w-3.5" />
+                            {club.distanceKm.toFixed(1)} km
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <CreditCard className="h-4 w-4" />

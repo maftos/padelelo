@@ -27,6 +27,7 @@ export interface PadelClub {
   region: string;
   estimatedFeePerPerson: string;
   image?: string;
+  distanceKm?: number;
 }
 
 const PadelCourts = () => {
@@ -61,7 +62,8 @@ const PadelCourts = () => {
     priceRange: 'Contact for pricing',
     region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800',
-    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    distanceKm: typeof venue.distance_km === 'number' ? venue.distance_km : (typeof venue.distanceKm === 'number' ? venue.distanceKm : undefined)
   })) : [];
 
 const [selectedId, setSelectedId] = useState<string | null>(null);
