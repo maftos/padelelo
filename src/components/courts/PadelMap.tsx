@@ -45,7 +45,7 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }
   const markers = useRef<mapboxgl.Marker[]>([]);
   const markersMap = useRef<Record<string, { marker: mapboxgl.Marker; el: HTMLDivElement }>>({});
   const geolocateControl = useRef<mapboxgl.GeolocateControl | null>(null);
-
+  const geoFiredRef = useRef(false);
   useEffect(() => {
     if (!mapContainer.current) return;
 
@@ -65,18 +65,20 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-// Add geolocation control (shows user location and allows re-centering)
-geolocateControl.current = new mapboxgl.GeolocateControl({
-  positionOptions: { enableHighAccuracy: true },
-  trackUserLocation: true,
-  showUserHeading: true
-});
-map.current.addControl(geolocateControl.current, 'top-left');
+    // Add geolocation control (manual trigger, no continuous tracking)
+    geolocateControl.current = new mapboxgl.GeolocateControl({
+      positionOptions: { enableHighAccuracy: true },
+      trackUserLocation: false,
+      showUserHeading: false
+    });
+    map.current.addControl(geolocateControl.current, 'top-left');
 
-// Emit coords when geolocation succeeds
-geolocateControl.current.on('geolocate', (e: GeolocationPosition) => {
-  onUserLocation?.({ latitude: e.coords.latitude, longitude: e.coords.longitude });
-});
+    // Emit coords once when geolocation succeeds
+    geolocateControl.current.on('geolocate', (e: GeolocationPosition) => {
+      if (geoFiredRef.current) return;
+      geoFiredRef.current = true;
+      onUserLocation?.({ latitude: e.coords.latitude, longitude: e.coords.longitude });
+    });
 
     // Add markers when map loads
     map.current.on('load', () => {

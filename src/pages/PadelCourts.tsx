@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -30,22 +30,20 @@ export interface PadelClub {
 }
 
 const PadelCourts = () => {
-  const { data: venues, isLoading, error } = useQuery({
+  const { data: result, isLoading, error, refetch } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_venues');
-      
       if (error) {
         console.error('Error fetching venues:', error);
         throw error;
       }
-      
-      return data;
+      return data as { venues: any[]; metadata?: { is_authenticated: boolean; has_location: boolean; location_based_sorting: boolean; needs_location_prompt: boolean } };
     },
   });
 
   // Transform venue data to PadelClub format
-  const clubs: PadelClub[] = Array.isArray(venues) ? venues.map((venue: any) => ({
+  const clubs: PadelClub[] = Array.isArray(result?.venues) ? result!.venues.map((venue: any) => ({
     id: venue.venue_id,
     name: venue.name,
     address: 'Mauritius',
@@ -67,15 +65,39 @@ const PadelCourts = () => {
   })) : [];
 
 const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [hasLocalLocation, setHasLocalLocation] = useState<boolean>(() => {
+    try { return !!localStorage.getItem('guest_location'); } catch { return false; }
+  });
+  const locationSavedRef = useRef(false);
 
   const handleUserLocation = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
     try {
-      const { error } = await (supabase as any).rpc('update_user_location', {
-        latitude_param: latitude,
-        longitude_param: longitude,
-      });
-      if (error) throw error;
-      toast.success('Location saved to your profile');
+      if (locationSavedRef.current) return;
+
+      const isAuthenticated = result?.metadata?.is_authenticated === true;
+      const needsPrompt = result?.metadata?.needs_location_prompt === true;
+
+      if (isAuthenticated && needsPrompt) {
+        const { error } = await (supabase as any).rpc('update_user_location', {
+          latitude_param: latitude,
+          longitude_param: longitude,
+        });
+        if (error) throw error;
+        locationSavedRef.current = true;
+        toast.success('Location saved to your profile');
+        // Refetch to get location-based sorting from backend
+        refetch();
+      } else {
+        // Guest or no need to persist remotely: save locally
+        try {
+          localStorage.setItem('guest_location', JSON.stringify({ latitude, longitude, ts: Date.now() }));
+          setHasLocalLocation(true);
+          locationSavedRef.current = true;
+          toast.success('Location saved locally');
+        } catch (e) {
+          console.warn('Local storage unavailable');
+        }
+      }
     } catch (err: any) {
       console.error('Failed to save location', err);
       toast.error(err?.message || 'Could not save your location');
@@ -112,6 +134,8 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
       }
     }))
   };
+
+  const showLocationPrompt = (result?.metadata?.needs_location_prompt === true) || (((result?.metadata?.is_authenticated === false) || result?.metadata?.is_authenticated === undefined) && !hasLocalLocation);
 
   if (isLoading) {
     return (
@@ -159,6 +183,34 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
       </Helmet>
       <h1 className="sr-only">Padel Courts in Mauritius</h1>
       <div className="bg-background">
+        {showLocationPrompt && (
+          <div className="px-4 pt-4 md:px-6">
+            <div className="max-w-7xl mx-auto rounded-lg border bg-card text-card-foreground p-4 flex items-start gap-3">
+              <MapPin className="h-5 w-5 mt-0.5 text-primary" />
+              <div className="flex-1">
+                <p className="text-sm font-medium">Improve results with your location</p>
+                <p className="text-xs text-muted-foreground">We use your location to sort courts by distance. You can change this anytime.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!('geolocation' in navigator)) {
+                    toast.error('Geolocation is not supported by your browser');
+                    return;
+                  }
+                  navigator.geolocation.getCurrentPosition(
+                    (pos) => handleUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+                    (err) => toast.error(err?.message || 'Permission denied'),
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                  );
+                }}
+                className="inline-flex items-center rounded-md border border-border bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-primary/90"
+              >
+                Use my location
+              </button>
+            </div>
+          </div>
+        )}
         {/* Desktop: Full-height split view (no page scroll) */}
         <section aria-label="Padel courts map and list" className="hidden md:block">
           <div className="h-[calc(100dvh-3rem)] overflow-hidden flex">
