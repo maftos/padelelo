@@ -8,6 +8,7 @@ import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
 
 import { PadelCourtsList } from "@/components/courts/PadelCourtsList";
+import { toast } from "sonner";
 
 export interface PadelClub {
   id: string;
@@ -65,7 +66,21 @@ const PadelCourts = () => {
     image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
   })) : [];
 
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  const handleUserLocation = async ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+    try {
+      const { error } = await (supabase as any).rpc('update_user_location', {
+        latitude_param: latitude,
+        longitude_param: longitude,
+      });
+      if (error) throw error;
+      toast.success('Location saved to your profile');
+    } catch (err: any) {
+      console.error('Failed to save location', err);
+      toast.error(err?.message || 'Could not save your location');
+    }
+  };
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -152,6 +167,7 @@ const PadelCourts = () => {
                 clubs={clubs}
                 selectedClubId={selectedId}
                 onClubSelect={(club) => setSelectedId(club.id)}
+                onUserLocation={handleUserLocation}
               />
             </div>
             <div className="w-[clamp(360px,30%,520px)] shrink-0 min-h-0 overflow-hidden border-l">
@@ -167,7 +183,7 @@ const PadelCourts = () => {
         {/* Mobile: map first, list below */}
         <section className="md:hidden space-y-4 px-4 py-4">
           <div className="h-80 rounded-lg overflow-hidden border">
-            <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} />
+            <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} onUserLocation={handleUserLocation} />
           </div>
           <div className="rounded-lg border">
             <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} />
