@@ -1,22 +1,36 @@
 import React from "react";
 
 import { Card } from "@/components/ui/card";
-import { Star, Users, CreditCard } from "lucide-react";
+import { Star, Users, CreditCard, MapPin } from "lucide-react";
 import { PadelClub } from "@/pages/PadelCourts";
 
 interface PadelCourtsListProps {
   clubs: PadelClub[];
   selectedClubId?: string | null;
   onSelectClub?: (clubId: string) => void;
+  showLocationPrompt?: boolean;
+  onRequestLocation?: () => void;
 }
 
-export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selectedClubId, onSelectClub }) => {
+export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selectedClubId, onSelectClub, showLocationPrompt, onRequestLocation }) => {
   return (
     <div className="flex h-full flex-col">
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="px-4 py-3">
           <h2 className="text-lg font-semibold">{clubs.length} padel clubs</h2>
           <p className="text-sm text-muted-foreground">Explore venues across Mauritius</p>
+          {showLocationPrompt && (
+            <div className="mt-2">
+              <button
+                type="button"
+                onClick={onRequestLocation}
+                className="inline-flex items-center rounded-md border border-border bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-primary/90"
+              >
+                <MapPin className="h-4 w-4 mr-2" />
+                Use my location
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

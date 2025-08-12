@@ -104,6 +104,18 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
     }
   };
 
+  const requestLocation = () => {
+    if (!("geolocation" in navigator)) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => handleUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+      (err) => toast.error(err?.message || "Permission denied"),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -183,34 +195,6 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
       </Helmet>
       <h1 className="sr-only">Padel Courts in Mauritius</h1>
       <div className="bg-background">
-        {showLocationPrompt && (
-          <div className="px-4 pt-4 md:px-6">
-            <div className="max-w-7xl mx-auto rounded-lg border bg-card text-card-foreground p-4 flex items-start gap-3">
-              <MapPin className="h-5 w-5 mt-0.5 text-primary" />
-              <div className="flex-1">
-                <p className="text-sm font-medium">Improve results with your location</p>
-                <p className="text-xs text-muted-foreground">We use your location to sort courts by distance. You can change this anytime.</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  if (!('geolocation' in navigator)) {
-                    toast.error('Geolocation is not supported by your browser');
-                    return;
-                  }
-                  navigator.geolocation.getCurrentPosition(
-                    (pos) => handleUserLocation({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
-                    (err) => toast.error(err?.message || 'Permission denied'),
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-                  );
-                }}
-                className="inline-flex items-center rounded-md border border-border bg-primary text-primary-foreground px-3 py-1.5 text-sm font-medium shadow-sm hover:bg-primary/90"
-              >
-                Use my location
-              </button>
-            </div>
-          </div>
-        )}
         {/* Desktop: Full-height split view (no page scroll) */}
         <section aria-label="Padel courts map and list" className="hidden md:block">
           <div className="h-[calc(100dvh-3rem)] overflow-hidden flex">
@@ -227,6 +211,8 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
                 clubs={clubs}
                 selectedClubId={selectedId}
                 onSelectClub={(id) => setSelectedId(id)}
+                showLocationPrompt={showLocationPrompt}
+                onRequestLocation={requestLocation}
               />
             </div>
           </div>
@@ -238,7 +224,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
             <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} onUserLocation={handleUserLocation} />
           </div>
           <div className="rounded-lg border">
-            <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} />
+            <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} showLocationPrompt={showLocationPrompt} onRequestLocation={requestLocation} />
           </div>
         </section>
 
