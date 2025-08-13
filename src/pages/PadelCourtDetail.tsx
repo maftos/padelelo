@@ -12,50 +12,49 @@ import { PhotoGallery } from "@/components/courts/PhotoGallery";
 import { ReviewSection } from "@/components/courts/ReviewSection";
 
 const PadelCourtDetail = () => {
-  const { courtId } = useParams();
+  const { venueId } = useParams();
   const navigate = useNavigate();
 
-  const { data: venues, isLoading, error } = useQuery({
-    queryKey: ['venues'],
+  const { data: venue, isLoading, error } = useQuery({
+    queryKey: ['venue', venueId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc('get_all_venues');
-      
-      if (error) {
-        console.error('Error fetching venues:', error);
-        throw error;
-      }
-      
+      if (!venueId) throw new Error('Venue ID is required');
+      console.log('Fetching venue...', venueId);
+      const { data, error } = await supabase
+        .from('venues')
+        .select('*')
+        .eq('venue_id', venueId)
+        .single();
+      if (error) throw error;
       return data;
     },
+    enabled: !!venueId
   });
 
   // Transform venue data to PadelClub format
-  const clubs: PadelClub[] = Array.isArray(venues) ? venues.map((venue: any) => ({
-    id: venue.venue_id,
-    name: venue.name,
+  const club: PadelClub | null = venue ? {
+    id: (venue as any).venue_id,
+    name: (venue as any).name,
     address: 'Mauritius',
-    coordinates: venue.coordinates ? [venue.coordinates.longitude, venue.coordinates.latitude] : [57.5522, -20.3484],
-    phone: venue.phone_number,
-    email: venue.email_address,
-    website: venue.website_url,
+    coordinates: (venue as any).coordinates ? [(venue as any).coordinates.longitude, (venue as any).coordinates.latitude] : [57.5522, -20.3484],
+    phone: (venue as any).phone_number,
+    email: (venue as any).email_address,
+    website: (venue as any).website_url,
     rating: 4.0,
-    numberOfCourts: Array.isArray(venue.courts) ? venue.courts.length : 1,
-    openingHours: Array.isArray(venue.opening_hours) && venue.opening_hours.length > 0 ? 
-      venue.opening_hours.map((h: any) => `${h.day}: ${h.hours}`).join(', ') : 
+    numberOfCourts: Array.isArray((venue as any).courts) ? (venue as any).courts.length : 1,
+    openingHours: Array.isArray((venue as any).opening_hours) && (venue as any).opening_hours.length > 0 ? 
+      (venue as any).opening_hours.map((h: any) => `${h.day}: ${h.hours}`).join(', ') : 
       'Contact for hours',
     description: `Professional padel facility offering high-quality courts and equipment in Mauritius. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
     amenities: ['Equipment Rental', 'Professional Coaching', 'Parking Available', 'Changing Rooms'],
     priceRange: 'Contact for pricing',
-    region: venue.region || 'CENTRAL',
+    region: (venue as any).region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800-1200',
-    image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-  })) : [];
-
-  const club = clubs.find(c => c.id === courtId);
+    image: (venue as any).photo_gallery && (venue as any).photo_gallery.length > 0 ? Object.values((venue as any).photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+  } : null;
 
   // Extract photo gallery from venue data
-  const venueData = Array.isArray(venues) ? venues.find((v: any) => v.venue_id === courtId) : null;
-  const photoGallery = (venueData as any)?.photo_gallery || [];
+  const photoGallery = (venue as any)?.photo_gallery || [];
 
   if (isLoading) {
     return (
