@@ -84,10 +84,6 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <CreditCard className="h-4 w-4" />
-                        {club.estimatedFeePerPerson}
-                      </div>
                     </div>
                   </div>
                 </div>

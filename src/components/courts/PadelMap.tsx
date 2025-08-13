@@ -67,24 +67,6 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    // Add geolocation control only if user location is not available
-    if (!userLocation) {
-      geolocateControl.current = new mapboxgl.GeolocateControl({
-        positionOptions: { enableHighAccuracy: true },
-        trackUserLocation: false,
-        showUserHeading: false
-      });
-      map.current.addControl(geolocateControl.current, 'top-left');
-    }
-
-    // Emit coords once when geolocation succeeds
-    if (geolocateControl.current) {
-      geolocateControl.current.on('geolocate', (e: GeolocationPosition) => {
-        if (geoFiredRef.current) return;
-        geoFiredRef.current = true;
-        onUserLocation?.({ latitude: e.coords.latitude, longitude: e.coords.longitude });
-      });
-    }
 
     // Add markers when map loads
     map.current.on('load', () => {
@@ -232,12 +214,17 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
         markerElement.addEventListener('click', () => {
           onClubSelect(club);
           
-          // Fly to location
+          // Fly to location and open popup
           map.current?.flyTo({
             center: club.coordinates,
             zoom: 13,
             duration: 1000
           });
+          
+          // Open popup after a short delay to ensure map has moved
+          setTimeout(() => {
+            popup.setLngLat(club.coordinates as [number, number]).addTo(map.current!);
+          }, 500);
         });
       }
 
@@ -333,17 +320,6 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
         className="absolute inset-0 rounded-lg"
         style={{ minHeight: '400px' }}
       />
-      {!userLocation && (
-        <button
-          type="button"
-          aria-label="Use my location"
-          onClick={() => geolocateControl.current?.trigger()}
-          className="absolute bottom-3 left-3 z-[1] inline-flex items-center gap-2 rounded-full border border-border bg-card text-card-foreground px-3 py-2 shadow-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <LocateFixed className="h-4 w-4" />
-          <span className="hidden sm:inline text-sm font-medium">Locate me</span>
-        </button>
-      )}
     </div>
   );
 };
