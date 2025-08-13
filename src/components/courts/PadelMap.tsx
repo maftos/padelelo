@@ -34,18 +34,20 @@ interface PadelMapProps {
   selectedClubId?: string | null;
   onClubSelect?: (club: PadelClub) => void;
   onUserLocation?: (coords: { latitude: number; longitude: number }) => void;
+  userLocation?: { longitude: number; latitude: number } | null;
 }
 
 // Mapbox public token
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFmbWFhZm1hYWFmIiwiYSI6ImNtY29wN3V2ZTBjOHMybXIyYTF6MzlqYm4ifQ.8ijZH3a-tm0juZeb_PW7ig';
 
-export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }: PadelMapProps) => {
+export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, userLocation }: PadelMapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const markers = useRef<mapboxgl.Marker[]>([]);
   const markersMap = useRef<Record<string, { marker: mapboxgl.Marker; el: HTMLDivElement }>>({});
   const geolocateControl = useRef<mapboxgl.GeolocateControl | null>(null);
   const geoFiredRef = useRef(false);
+  const userMarker = useRef<mapboxgl.Marker | null>(null);
   useEffect(() => {
     if (!mapContainer.current) return;
 
@@ -65,37 +67,55 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }
     // Add navigation controls
     map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    // Add geolocation control (manual trigger, no continuous tracking)
-    geolocateControl.current = new mapboxgl.GeolocateControl({
-      positionOptions: { enableHighAccuracy: true },
-      trackUserLocation: false,
-      showUserHeading: false
-    });
-    map.current.addControl(geolocateControl.current, 'top-left');
+    // Add geolocation control only if user location is not available
+    if (!userLocation) {
+      geolocateControl.current = new mapboxgl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: false,
+        showUserHeading: false
+      });
+      map.current.addControl(geolocateControl.current, 'top-left');
+    }
 
     // Emit coords once when geolocation succeeds
-    geolocateControl.current.on('geolocate', (e: GeolocationPosition) => {
-      if (geoFiredRef.current) return;
-      geoFiredRef.current = true;
-      onUserLocation?.({ latitude: e.coords.latitude, longitude: e.coords.longitude });
-    });
+    if (geolocateControl.current) {
+      geolocateControl.current.on('geolocate', (e: GeolocationPosition) => {
+        if (geoFiredRef.current) return;
+        geoFiredRef.current = true;
+        onUserLocation?.({ latitude: e.coords.latitude, longitude: e.coords.longitude });
+      });
+    }
 
     // Add markers when map loads
     map.current.on('load', () => {
       addMarkers();
+      addUserLocationMarker();
 
-      // Fit bounds to all clubs
+      // Fit bounds to all clubs and user location if available
       if (clubs.length > 0) {
         const bounds = new mapboxgl.LngLatBounds();
         clubs.forEach((c) => bounds.extend(c.coordinates as [number, number]));
+        
+        // Include user location in bounds if available
+        if (userLocation) {
+          bounds.extend([userLocation.longitude, userLocation.latitude]);
+        }
+        
         map.current?.fitBounds(bounds, { padding: 60, animate: true, duration: 800 });
+      } else if (userLocation) {
+        // If no clubs but have user location, center on user
+        map.current?.flyTo({
+          center: [userLocation.longitude, userLocation.latitude],
+          zoom: 12,
+          duration: 800
+        });
       }
-
     });
 
     return () => {
       // Clean up
       markers.current.forEach(marker => marker.remove());
+      userMarker.current?.remove();
       map.current?.remove();
     };
   }, []);
@@ -225,12 +245,48 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }
     });
   };
 
+  const addUserLocationMarker = () => {
+    if (!map.current || !userLocation) return;
+
+    // Remove existing user marker
+    userMarker.current?.remove();
+
+    // Create user location marker
+    const userElement = document.createElement('div');
+    userElement.className = 'user-location-marker';
+    userElement.style.width = '20px';
+    userElement.style.height = '20px';
+    userElement.style.borderRadius = '50%';
+    userElement.style.backgroundColor = '#3b82f6';
+    userElement.style.border = '3px solid white';
+    userElement.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+    userElement.style.cursor = 'default';
+
+    userMarker.current = new mapboxgl.Marker(userElement)
+      .setLngLat([userLocation.longitude, userLocation.latitude])
+      .addTo(map.current);
+
+    // Add popup for user location
+    const userPopup = new mapboxgl.Popup({
+      offset: 15,
+      closeButton: false,
+      closeOnClick: true
+    }).setHTML(`
+      <div class="bg-card border border-border rounded-lg p-2 shadow-xl">
+        <p class="text-xs text-card-foreground font-medium">Your Location</p>
+      </div>
+    `);
+
+    userMarker.current.setPopup(userPopup);
+  };
+
   // Re-add markers when clubs change
   useEffect(() => {
     if (map.current) {
       addMarkers();
+      addUserLocationMarker();
     }
-  }, [clubs, onClubSelect, selectedClubId]);
+  }, [clubs, onClubSelect, selectedClubId, userLocation]);
 
   // Update selection styling and fly to
   useEffect(() => {
@@ -277,15 +333,17 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation }
         className="absolute inset-0 rounded-lg"
         style={{ minHeight: '400px' }}
       />
-      <button
-        type="button"
-        aria-label="Use my location"
-        onClick={() => geolocateControl.current?.trigger()}
-        className="absolute bottom-3 left-3 z-[1] inline-flex items-center gap-2 rounded-full border border-border bg-card text-card-foreground px-3 py-2 shadow-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <LocateFixed className="h-4 w-4" />
-        <span className="hidden sm:inline text-sm font-medium">Locate me</span>
-      </button>
+      {!userLocation && (
+        <button
+          type="button"
+          aria-label="Use my location"
+          onClick={() => geolocateControl.current?.trigger()}
+          className="absolute bottom-3 left-3 z-[1] inline-flex items-center gap-2 rounded-full border border-border bg-card text-card-foreground px-3 py-2 shadow-sm hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <LocateFixed className="h-4 w-4" />
+          <span className="hidden sm:inline text-sm font-medium">Locate me</span>
+        </button>
+      )}
     </div>
   );
 };

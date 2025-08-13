@@ -31,7 +31,7 @@ export interface PadelClub {
 }
 
 const PadelCourts = () => {
-  const { data: result, isLoading, error, refetch } = useQuery({
+const { data: result, isLoading, error, refetch } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_venues');
@@ -39,7 +39,16 @@ const PadelCourts = () => {
         console.error('Error fetching venues:', error);
         throw error;
       }
-      return data as { venues: any[]; metadata?: { is_authenticated: boolean; has_location: boolean; location_based_sorting: boolean; needs_location_prompt: boolean } };
+      return data as { 
+        venues: any[]; 
+        metadata: { 
+          is_authenticated: boolean; 
+          has_location: boolean; 
+          location_based_sorting: boolean; 
+          needs_location_prompt: boolean 
+        };
+        user_location?: { longitude: number; latitude: number } | null;
+      };
     },
   });
 
@@ -77,9 +86,9 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
       if (locationSavedRef.current) return;
 
       const isAuthenticated = result?.metadata?.is_authenticated === true;
-      const needsPrompt = result?.metadata?.needs_location_prompt === true;
-
-      if (isAuthenticated && needsPrompt) {
+      
+      if (isAuthenticated) {
+        // Authenticated user: save to database
         const { error } = await (supabase as any).rpc('update_user_location', {
           latitude_param: latitude,
           longitude_param: longitude,
@@ -87,10 +96,10 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
         if (error) throw error;
         locationSavedRef.current = true;
         toast.success('Location saved to your profile');
-        // Refetch to get location-based sorting from backend
+        // Refetch to get updated location-based data
         refetch();
       } else {
-        // Guest or no need to persist remotely: save locally
+        // Guest user: save locally  
         try {
           localStorage.setItem('guest_location', JSON.stringify({ latitude, longitude, ts: Date.now() }));
           setHasLocalLocation(true);
@@ -149,7 +158,11 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
     }))
   };
 
-  const showLocationPrompt = (result?.metadata?.needs_location_prompt === true) || (((result?.metadata?.is_authenticated === false) || result?.metadata?.is_authenticated === undefined) && !hasLocalLocation);
+  const showLocationPrompt = result?.user_location === null && (
+    result?.metadata?.is_authenticated 
+      ? true // Authenticated user without saved location
+      : !hasLocalLocation // Guest user without local location
+  );
 
   if (isLoading) {
     return (
@@ -206,6 +219,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
                 selectedClubId={selectedId}
                 onClubSelect={(club) => setSelectedId(club.id)}
                 onUserLocation={handleUserLocation}
+                userLocation={result?.user_location}
               />
             </div>
             <div className="w-[clamp(360px,30%,520px)] shrink-0 min-h-0 overflow-hidden border-l">
@@ -223,7 +237,13 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
         {/* Mobile: map first, list below */}
         <section className="md:hidden space-y-4 px-4 py-4">
           <div className="h-80 rounded-lg overflow-hidden border">
-            <PadelMap clubs={clubs} onClubSelect={(club) => setSelectedId(club.id)} selectedClubId={selectedId} onUserLocation={handleUserLocation} />
+            <PadelMap 
+              clubs={clubs} 
+              onClubSelect={(club) => setSelectedId(club.id)} 
+              selectedClubId={selectedId} 
+              onUserLocation={handleUserLocation}
+              userLocation={result?.user_location} 
+            />
           </div>
           <div className="rounded-lg border">
             <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} showLocationPrompt={showLocationPrompt} onRequestLocation={requestLocation} />
