@@ -31,30 +31,83 @@ const PadelCourtDetail = () => {
     enabled: !!venueId
   });
 
+  // Helper function to extract amenities from court data
+  function getVenueAmenities(courts: any): string[] {
+    const amenities = ['Professional Courts'];
+    
+    if (courts && Array.isArray(courts) && courts.length > 0) {
+      const hasIndoor = courts.some((court: any) => court.is_indoor);
+      const hasOutdoor = courts.some((court: any) => !court.is_indoor);
+      const surfaceTypes = [...new Set(courts.map((court: any) => court.surface_type))];
+      
+      if (hasIndoor) amenities.push('Indoor Courts');
+      if (hasOutdoor) amenities.push('Outdoor Courts');
+      
+      surfaceTypes.forEach(surface => {
+        if (surface) amenities.push(`${surface} Surface`);
+      });
+    }
+    
+    amenities.push('Equipment Rental', 'Parking Available', 'Changing Rooms');
+    return amenities;
+  }
+
+  // Parse coordinates data
+  const getCoordinatesFromVenue = (venue: any): [number, number] => {
+    try {
+      if (venue.coordinates && venue.coordinates.longitude && venue.coordinates.latitude) {
+        return [venue.coordinates.longitude, venue.coordinates.latitude];
+      }
+      // Fallback to Mauritius center
+      return [57.5522, -20.3484];
+    } catch {
+      return [57.5522, -20.3484];
+    }
+  };
+
+  // Parse photo gallery
+  const parsePhotoGallery = (photoGallery: any): any[] => {
+    try {
+      if (Array.isArray(photoGallery)) {
+        return photoGallery;
+      }
+      return [];
+    } catch {
+      return [];
+    }
+  };
+
   // Transform venue data to PadelClub format
   const club: PadelClub | null = venue ? {
-    id: (venue as any).venue_id,
-    name: (venue as any).name,
-    address: 'Mauritius',
-    coordinates: (venue as any).coordinates ? [(venue as any).coordinates.longitude, (venue as any).coordinates.latitude] : [57.5522, -20.3484],
-    phone: (venue as any).phone_number,
-    email: (venue as any).email_address,
-    website: (venue as any).website_url,
-    rating: 4.0,
-    numberOfCourts: Array.isArray((venue as any).courts) ? (venue as any).courts.length : 1,
-    openingHours: Array.isArray((venue as any).opening_hours) && (venue as any).opening_hours.length > 0 ? 
-      (venue as any).opening_hours.map((h: any) => `${h.day}: ${h.hours}`).join(', ') : 
+    id: venue.venue_id,
+    name: venue.name,
+    address: `${venue.region}, Mauritius`,
+    coordinates: getCoordinatesFromVenue(venue),
+    phone: venue.phone_number,
+    email: venue.email_address,
+    website: venue.website_url,
+    rating: 4.0, // Could be dynamic if you have rating data
+    numberOfCourts: Array.isArray(venue.courts) ? venue.courts.length : 0,
+    openingHours: Array.isArray(venue.opening_hours) && venue.opening_hours.length > 0 ? 
+      venue.opening_hours.map((h: any) => `${h.day}: ${h.open_time || h.hours}-${h.close_time || ''}`).join(', ') : 
       'Contact for hours',
-    description: `Professional padel facility offering high-quality courts and equipment in Mauritius. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
-    amenities: ['Equipment Rental', 'Professional Coaching', 'Parking Available', 'Changing Rooms'],
+    description: `Professional padel facility offering high-quality courts and equipment in ${venue.region}, Mauritius. Perfect for players of all skill levels looking to enjoy this exciting racquet sport.`,
+    amenities: getVenueAmenities(venue.courts),
     priceRange: 'Contact for pricing',
-    region: (venue as any).region || 'CENTRAL',
+    region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800-1200',
-    image: (venue as any).photo_gallery && (venue as any).photo_gallery.length > 0 ? Object.values((venue as any).photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    image: (() => {
+      const photos = parsePhotoGallery(venue.photo_gallery);
+      if (photos.length > 0 && photos[0] && typeof photos[0] === 'object') {
+        const firstPhoto = Object.values(photos[0])[0];
+        return typeof firstPhoto === 'string' ? firstPhoto : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+      }
+      return 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
+    })()
   } : null;
 
   // Extract photo gallery from venue data
-  const photoGallery = (venue as any)?.photo_gallery || [];
+  const photoGallery = parsePhotoGallery(venue?.photo_gallery);
 
   if (isLoading) {
     return (
