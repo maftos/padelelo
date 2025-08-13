@@ -65,16 +65,29 @@ const PadelCourtDetail = () => {
     }
   };
 
-  // Parse photo gallery
-  const parsePhotoGallery = (photoGallery: any): any[] => {
+  // Parse photo gallery - convert from object array to string array
+  const parsePhotoGallery = (photoGallery: any): string[] => {
     try {
-      if (Array.isArray(photoGallery)) {
-        return photoGallery;
+      if (Array.isArray(photoGallery) && photoGallery.length > 0) {
+        return photoGallery.map((photoObj: any) => {
+          if (typeof photoObj === 'object' && photoObj !== null) {
+            // Extract the first value from the object (the URL)
+            const url = Object.values(photoObj)[0];
+            return typeof url === 'string' ? url : '';
+          }
+          return '';
+        }).filter(Boolean); // Remove empty strings
       }
       return [];
     } catch {
       return [];
     }
+  };
+
+  // Extract main image from photo gallery
+  const getMainImage = (photoGallery: any): string => {
+    const photos = parsePhotoGallery(photoGallery);
+    return photos.length > 0 ? photos[0] : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
   };
 
   // Transform venue data to PadelClub format
@@ -96,17 +109,10 @@ const PadelCourtDetail = () => {
     priceRange: 'Contact for pricing',
     region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800-1200',
-    image: (() => {
-      const photos = parsePhotoGallery(venue.photo_gallery);
-      if (photos.length > 0 && photos[0] && typeof photos[0] === 'object') {
-        const firstPhoto = Object.values(photos[0])[0];
-        return typeof firstPhoto === 'string' ? firstPhoto : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-      }
-      return 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80';
-    })()
+    image: getMainImage(venue.photo_gallery)
   } : null;
 
-  // Extract photo gallery from venue data
+  // Extract photo gallery from venue data as string array
   const photoGallery = parsePhotoGallery(venue?.photo_gallery);
 
   if (isLoading) {
