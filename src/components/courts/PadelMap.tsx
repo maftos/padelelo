@@ -200,7 +200,7 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
           </div>
           <div class="px-3 pb-3">
             <button 
-               onclick="window.location.href='/padel-courts/${club.id}'" 
+               onclick="window.location.href='/padel-courts/` + club.id + `'" 
                class="block w-full text-center bg-primary text-primary-foreground px-3 py-1.5 rounded text-xs font-medium hover:bg-primary/90 transition-colors cursor-pointer border-0">
               View Details
             </button>
