@@ -1,23 +1,6 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-
-export interface UserProfile {
-  id: string;
-  first_name: string | null;
-  last_name: string | null;
-  display_name?: string | null;
-  created_at: string | null;
-  gender: string | null;
-  location: string | null;
-  profile_photo: string | null;
-  current_mmr: number | null;
-  nationality: string | null;
-  is_onboarded: boolean | null;
-  friend_requests_count: number | null;
-  rank?: number; // Add rank as optional
-}
 
 export interface UserProfileSummary {
   rank: number;
@@ -26,31 +9,26 @@ export interface UserProfileSummary {
   first_name: string | null;
 }
 
-// Define the type for the friend requests counter response
-interface FriendRequestsCountResponse {
-  count: number;
-}
-
-export const useUserProfile = () => {
+export const useUserProfileSummary = () => {
   const { user } = useAuth();
 
   const { data: profile, isLoading, error } = useQuery({
-    queryKey: ['userProfile', user?.id],
+    queryKey: ['userProfileSummary', user?.id],
     queryFn: async () => {
       if (!user?.id) return null;
       
       try {
-        console.log('Fetching profile for user:', user.id);
+        console.log('Fetching profile summary for user:', user.id);
         // Call the public.user_profile function using raw query since it's not in generated types
         const { data, error } = await supabase
           .rpc('user_profile' as any);
         
         if (error) throw error;
         
-        console.log('User profile response:', data);
-        return data as UserProfile;
+        console.log('User profile summary response:', data);
+        return data as UserProfileSummary;
       } catch (error) {
-        console.error('Profile fetch error:', error);
+        console.error('Profile summary fetch error:', error);
         throw error;
       }
     },

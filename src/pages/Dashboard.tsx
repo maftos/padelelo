@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useUserProfileSummary } from "@/hooks/use-user-profile-summary";
 import { PageContainer } from "@/components/layouts/PageContainer";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
@@ -58,30 +59,13 @@ export default function Dashboard() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-
-  // Mock data for ranking - will be replaced with real data later
-  const ranking = 45;
+  const { profile: profileData } = useUserProfileSummary();
 
   useEffect(() => {
     if (!loading && !user) {
       navigate("/login");
     }
   }, [user, loading, navigate]);
-
-  const { data: profileData } = useQuery({
-    queryKey: ['userProfile', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-      if (error) throw error;
-      return data as UserProfile;
-    },
-    enabled: !!user?.id
-  });
 
   const { data: nextGame } = useQuery({
     queryKey: ['nextGame', user?.id],
@@ -122,13 +106,13 @@ export default function Dashboard() {
                     <Avatar className="h-12 w-12 sm:h-16 sm:w-16 border-2 border-primary/20 flex-shrink-0">
                       <AvatarImage src={profileData?.profile_photo} />
                       <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm sm:text-base">
-                        {`${profileData?.first_name || ''} ${profileData?.last_name || ''}`.trim().substring(0, 2) || 'NP'}
+                        {profileData?.first_name?.substring(0, 2)?.toUpperCase() || 'NP'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <CardTitle className="text-lg sm:text-xl truncate">{`${profileData?.first_name || ''} ${profileData?.last_name || ''}`.trim() || 'User'}</CardTitle>
-                        <span className="text-sm text-muted-foreground">#{ranking}</span>
+                        <CardTitle className="text-lg sm:text-xl truncate">{profileData?.first_name || 'User'}</CardTitle>
+                        <span className="text-sm text-muted-foreground">#{profileData?.rank || 'Unranked'}</span>
                       </div>
                       <div className="flex items-center gap-2 mt-2 bg-background/60 backdrop-blur rounded-lg px-2 sm:px-3 py-1 border w-fit">
                         <div className="text-xs sm:text-sm">

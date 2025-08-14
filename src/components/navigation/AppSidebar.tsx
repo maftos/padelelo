@@ -1,7 +1,7 @@
 import { Home, Trophy, MapPin, Calendar, BarChart3, Settings, Users } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUserProfile } from "@/hooks/use-user-profile";
+import { useUserProfileSummary } from "@/hooks/use-user-profile-summary";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,13 +19,10 @@ const navigationItems = [
 
 export const AppSidebar = () => {
   const { user, signOut } = useAuth();
-  const { profile } = useUserProfile();
+  const { profile } = useUserProfileSummary();
   const location = useLocation();
   const { count: activeBookingsCount } = useActiveBookingsCount();
   const { count: openBookingsCount } = useOpenBookingsCount();
-  
-  // Mock data for ranking - will be replaced with real data later
-  const ranking = 45;
 
   if (!user) return null;
 
@@ -35,15 +32,15 @@ export const AppSidebar = () => {
       <Link to="/profile" className="block p-4 border-b border-border hover:bg-accent/50 transition-colors">
         <div className="flex items-center gap-3 mb-4">
           <Avatar className="h-10 w-10">
-            <AvatarImage src={profile?.profile_photo || ''} alt={(profile?.first_name || profile?.display_name) || undefined} />
+            <AvatarImage src={profile?.profile_photo || ''} alt={profile?.first_name || undefined} />
             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-              {(profile?.first_name || profile?.display_name)?.[0]?.toUpperCase() || '?'}
+              {profile?.first_name?.[0]?.toUpperCase() || '?'}
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold text-foreground text-sm">
-                {(profile?.first_name || profile?.display_name || 'Player')} (#{ranking})
+                {profile?.first_name || 'Player'} (#{profile?.rank || 'Unranked'})
               </span>
             </div>
             <span className="text-xs text-muted-foreground">
