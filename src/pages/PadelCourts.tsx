@@ -158,11 +158,14 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
     }))
   };
 
-  const showLocationPrompt = result?.user_location === null && (
-    result?.metadata?.is_authenticated 
-      ? true // Authenticated user without saved location
-      : !hasLocalLocation // Guest user without local location
-  );
+  // Improved location logic to reduce race conditions
+  const hasUserLocation = result?.user_location !== null || hasLocalLocation;
+  const showLocationPrompt = !hasUserLocation && !locationSavedRef.current;
+  
+  const handleRefreshLocation = () => {
+    locationSavedRef.current = false; // Reset the flag to allow new location updates
+    requestLocation();
+  };
 
   if (isLoading) {
     return (
@@ -229,6 +232,8 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
                 onSelectClub={(id) => setSelectedId(id)}
                 showLocationPrompt={showLocationPrompt}
                 onRequestLocation={requestLocation}
+                onRefreshLocation={handleRefreshLocation}
+                hasUserLocation={hasUserLocation}
               />
             </div>
           </div>
@@ -246,7 +251,15 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
             />
           </div>
           <div className="rounded-lg border">
-            <PadelCourtsList clubs={clubs} selectedClubId={selectedId} onSelectClub={(id) => setSelectedId(id)} showLocationPrompt={showLocationPrompt} onRequestLocation={requestLocation} />
+            <PadelCourtsList 
+              clubs={clubs} 
+              selectedClubId={selectedId} 
+              onSelectClub={(id) => setSelectedId(id)} 
+              showLocationPrompt={showLocationPrompt} 
+              onRequestLocation={requestLocation}
+              onRefreshLocation={handleRefreshLocation}
+              hasUserLocation={hasUserLocation}
+            />
           </div>
         </section>
 
