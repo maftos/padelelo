@@ -34,11 +34,6 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/tournaments" className="text-muted-foreground hover:text-primary transition-colors">
-                  Tournaments
-                </Link>
-              </li>
-              <li>
                 <Link to="/leaderboard" className="text-muted-foreground hover:text-primary transition-colors">
                   Leaderboard
                 </Link>
@@ -83,6 +78,16 @@ export const Footer = () => {
               <li>
                 <Link to="/signup" className="text-muted-foreground hover:text-primary transition-colors">
                   Sign Up
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
+                  Privacy Policy
                 </Link>
               </li>
             </ul>

@@ -27,6 +27,8 @@ import PlayerMatching from "./pages/PlayerMatching";
 import OpenBookingDetail from "./pages/OpenBookingDetail";
 import NotFound from "./pages/NotFound";
 import News from "./pages/News";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import SettingsLayout from "./pages/settings/SettingsLayout";
 import SecuritySettings from "./pages/settings/SecuritySettings";
 import NotificationSettings from "./pages/settings/NotificationSettings";
@@ -89,6 +91,8 @@ function App() {
               <Route path="/open-bookings" element={<PlayerMatching />} />
               <Route path="/open-bookings/:bookingId" element={<OpenBookingDetail />} />
               <Route path="/news" element={<News />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
               {/* Catch-all route for 404 - must be last */}
               <Route path="*" element={<NotFound />} />
             </Routes>

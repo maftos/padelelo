@@ -208,18 +208,18 @@ export const ProductShowcaseSection = () => {
             </div>
           </div>
 
-          {/* Tournament Showcase */}
+          {/* Padel Courts Showcase */}
           <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
             <div className="px-4 sm:px-0">
               <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
-                Join Local Tournaments
+                Discover Padel Courts
               </h3>
               <p className="text-muted-foreground mb-6 text-sm sm:text-base">
-                Compete in organized tournaments and test your skills against the best players. 
-                Win prizes, gain recognition, and climb to the top of competitive play.
+                Explore all padel courts across Mauritius with our comprehensive directory. 
+                Find the perfect venue, check amenities, and book your next game easily.
               </p>
               <Button asChild variant="outline" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
-                <Link to="/tournaments">View Tournaments</Link>
+                <Link to="/padel-courts">Browse Courts</Link>
               </Button>
             </div>
             <div className="relative px-4 sm:px-0">
