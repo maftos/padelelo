@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar, MapPin, Users, Trophy, TrendingUp, TrendingDown, Clock, DollarSign } from "lucide-react";
 import { Link } from "react-router-dom";
-import { CourtsMapShowcase } from "./CourtsMapShowcase";
+
 import avatarJohn from "@/assets/avatar-john.jpg";
 import avatarMaria from "@/assets/avatar-maria.jpg";
 import avatarAlex from "@/assets/avatar-alex.jpg";
@@ -209,65 +209,6 @@ export const ProductShowcaseSection = () => {
             </div>
           </div>
 
-          {/* Padel Courts Showcase */}
-          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 items-center">
-            <div className="px-4 sm:px-0">
-              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
-                Discover Padel Courts
-              </h3>
-              <p className="text-muted-foreground mb-6 text-sm sm:text-base">
-                Explore all padel courts across Mauritius with our comprehensive directory. 
-                Find the perfect venue, check amenities, and book your next game easily.
-              </p>
-              <Button asChild variant="outline" className="text-base px-6 sm:px-8 py-3 w-full sm:w-auto">
-                <Link to="/padel-courts">Browse Courts</Link>
-              </Button>
-            </div>
-            <div className="relative px-4 sm:px-0">
-              <Link to="/padel-courts" className="block group">
-                <Card className="shadow-lg bg-background border overflow-hidden group-hover:shadow-xl transition-shadow cursor-pointer">
-                  <div className="relative h-80 w-full">
-                    <CourtsMapShowcase />
-                  </div>
-                  
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg leading-tight group-hover:text-primary transition-colors">
-                      Padel Courts Across Mauritius
-                    </CardTitle>
-                    
-                    <div className="flex flex-col gap-2 text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>8+ locations island-wide</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Users className="h-4 w-4" />
-                        <span>Premium facilities & equipment</span>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="pt-0">
-                    <CardDescription className="mb-4 text-sm leading-relaxed">
-                      From Port Louis to Mahebourg, discover top-quality padel courts with professional 
-                      facilities, equipment rental, and coaching services.
-                    </CardDescription>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm">
-                        <span className="text-muted-foreground">Starting from: </span>
-                        <span className="font-medium text-primary">Rs 500/session</span>
-                      </div>
-                      <Button size="sm" className="h-8 group-hover:bg-primary/90">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        Explore Map
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
     </section>
