@@ -33,31 +33,13 @@ export const useUserProfile = () => {
       
       try {
         console.log('Fetching profile for user:', user.id);
-        // Get friend requests count and user onboarding status
-        const friendRequestsResponse = await supabase.rpc('friend_requests_counter', { user_a_id: user.id });
+        // Call the public.user_profile function
+        const { data, error } = await supabase.rpc('user_profile');
         
-        console.log('Friend requests response:', friendRequestsResponse);
-
-        // First cast to unknown, then to our defined type, and extract count
-        const requestCount = ((friendRequestsResponse.data as unknown) as FriendRequestsCountResponse)?.count || 0;
-        console.log('Extracted request count:', requestCount);
+        if (error) throw error;
         
-        // Get the user data directly from the users table
-        const { data: tableData, error: tableError } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
-          .maybeSingle();
-        
-        if (tableError) throw tableError;
-        
-        const finalProfile = {
-          ...tableData,
-          friend_requests_count: requestCount
-        } as UserProfile;
-        
-        console.log('Final profile with friend requests:', finalProfile);
-        return finalProfile;
+        console.log('User profile response:', data);
+        return data as UserProfile;
       } catch (error) {
         console.error('Profile fetch error:', error);
         throw error;

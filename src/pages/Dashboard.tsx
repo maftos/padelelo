@@ -61,7 +61,6 @@ export default function Dashboard() {
 
   // Mock data for ranking - will be replaced with real data later
   const ranking = 45;
-  const rankingChange = -3;
 
   useEffect(() => {
     if (!loading && !user) {
@@ -130,17 +129,6 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <CardTitle className="text-lg sm:text-xl truncate">{`${profileData?.first_name || ''} ${profileData?.last_name || ''}`.trim() || 'User'}</CardTitle>
                         <span className="text-sm text-muted-foreground">#{ranking}</span>
-                        <Badge 
-                          variant="secondary" 
-                          className={`${rankingChange < 0 ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"} flex items-center gap-1 text-xs px-1.5 py-0.5 h-5`}
-                        >
-                          {rankingChange < 0 ? (
-                            <TrendingDown className="h-2.5 w-2.5" />
-                          ) : (
-                            <TrendingUp className="h-2.5 w-2.5" />
-                          )}
-                          {rankingChange > 0 ? '+' : ''}{rankingChange}
-                        </Badge>
                       </div>
                       <div className="flex items-center gap-2 mt-2 bg-background/60 backdrop-blur rounded-lg px-2 sm:px-3 py-1 border w-fit">
                         <div className="text-xs sm:text-sm">
