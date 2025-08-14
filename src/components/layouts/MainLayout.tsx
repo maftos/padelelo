@@ -1,6 +1,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useUserProfileSummary } from "@/hooks/use-user-profile-summary";
 import { AppSidebar } from "@/components/navigation/AppSidebar";
 import { MobileHeader } from "@/components/navigation/MobileHeader";
 import { Navigation } from "@/components/Navigation";
@@ -13,6 +14,7 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const { user } = useAuth();
   const { profile, isLoading } = useUserProfile();
+  const { profile: profileSummary } = useUserProfileSummary();
   const isMobile = useIsMobile();
 
   // Don't show navigation until we know onboarding status for authenticated users
