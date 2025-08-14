@@ -3,9 +3,17 @@ import React, { useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-import { MapPin } from "lucide-react";
+import { MapPin, ChevronUp } from "lucide-react";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { 
+  Drawer,
+  DrawerContent, 
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger 
+} from "@/components/ui/drawer";
 
 import { PadelCourtsList } from "@/components/courts/PadelCourtsList";
 import { toast } from "sonner";
@@ -31,7 +39,8 @@ export interface PadelClub {
 }
 
 const PadelCourts = () => {
-const { data: result, isLoading, error, refetch } = useQuery({
+  const isMobile = useIsMobile();
+  const { data: result, isLoading, error, refetch } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_venues');
@@ -239,48 +248,79 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
           </div>
         </section>
 
-        {/* Mobile: map first, list below */}
-        <section className="md:hidden space-y-4 px-4 py-4">
-          <div className="h-80 rounded-lg overflow-hidden border">
-            <PadelMap 
-              clubs={clubs} 
-              onClubSelect={(club) => setSelectedId(club.id)} 
-              selectedClubId={selectedId} 
-              onUserLocation={handleUserLocation}
-              userLocation={result?.user_location} 
-            />
+        {/* Mobile: Map backdrop with bottom drawer */}
+        {isMobile && (
+          <div className="relative h-[100dvh] overflow-hidden">
+            {/* Full-screen map backdrop */}
+            <div className="absolute inset-0">
+              <PadelMap 
+                clubs={clubs} 
+                onClubSelect={(club) => setSelectedId(club.id)} 
+                selectedClubId={selectedId} 
+                onUserLocation={handleUserLocation}
+                userLocation={result?.user_location} 
+              />
+            </div>
+            
+            {/* Bottom drawer */}
+            <Drawer>
+              <DrawerTrigger asChild>
+                <div className="absolute bottom-0 left-0 right-0 z-50">
+                  <div className="bg-background/95 backdrop-blur-sm border-t mx-4 mb-4 rounded-t-xl shadow-lg">
+                    <div className="flex items-center justify-center py-3 cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                        <span className="text-sm font-medium text-muted-foreground">
+                          {clubs.length} Padel Court{clubs.length !== 1 ? 's' : ''} Found
+                        </span>
+                        <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </DrawerTrigger>
+              <DrawerContent className="h-[85vh] bg-background">
+                <DrawerHeader className="border-b pb-3">
+                  <DrawerTitle className="text-left">
+                    Padel Courts in Mauritius
+                  </DrawerTitle>
+                </DrawerHeader>
+                <div className="flex-1 overflow-hidden">
+                  <PadelCourtsList 
+                    clubs={clubs} 
+                    selectedClubId={selectedId} 
+                    onSelectClub={(id) => setSelectedId(id)} 
+                    showLocationPrompt={showLocationPrompt} 
+                    onRequestLocation={requestLocation}
+                    onRefreshLocation={handleRefreshLocation}
+                    hasUserLocation={hasUserLocation}
+                  />
+                </div>
+              </DrawerContent>
+            </Drawer>
           </div>
-          <div className="rounded-lg border">
-            <PadelCourtsList 
-              clubs={clubs} 
-              selectedClubId={selectedId} 
-              onSelectClub={(id) => setSelectedId(id)} 
-              showLocationPrompt={showLocationPrompt} 
-              onRequestLocation={requestLocation}
-              onRefreshLocation={handleRefreshLocation}
-              hasUserLocation={hasUserLocation}
-            />
-          </div>
-        </section>
+        )}
 
-        {/* Additional SEO Content (mobile only) */}
-        <section className="space-y-6 bg-muted/50 rounded-lg p-6 md:hidden">
-          <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
-          <div className="prose max-w-none">
-            <p className="text-muted-foreground leading-relaxed">
-              Mauritius offers an ideal setting for padel enthusiasts with its year-round tropical climate 
-              and growing community of passionate players. Whether you're a beginner looking to learn this 
-              exciting racquet sport or an experienced player seeking competitive matches, the island's 
-              padel courts provide excellent facilities and welcoming environments.
-            </p>
-            <p className="text-muted-foreground leading-relaxed mt-4">
-              Padel combines elements of tennis and squash, played on an enclosed court with walls that 
-              are part of the game. It's perfect for players of all ages and skill levels, making it 
-              one of the fastest-growing sports in Mauritius. Book your court today and join the 
-              padel community!
-            </p>
-          </div>
-        </section>
+        {/* Desktop-only additional SEO content */}
+        {!isMobile && (
+          <section className="space-y-6 bg-muted/50 rounded-lg p-6 m-4">
+            <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
+            <div className="prose max-w-none">
+              <p className="text-muted-foreground leading-relaxed">
+                Mauritius offers an ideal setting for padel enthusiasts with its year-round tropical climate 
+                and growing community of passionate players. Whether you're a beginner looking to learn this 
+                exciting racquet sport or an experienced player seeking competitive matches, the island's 
+                padel courts provide excellent facilities and welcoming environments.
+              </p>
+              <p className="text-muted-foreground leading-relaxed mt-4">
+                Padel combines elements of tennis and squash, played on an enclosed court with walls that 
+                are part of the game. It's perfect for players of all ages and skill levels, making it 
+                one of the fastest-growing sports in Mauritius. Book your court today and join the 
+                padel community!
+              </p>
+            </div>
+          </section>
+        )}
       </div>
     </>
   );
