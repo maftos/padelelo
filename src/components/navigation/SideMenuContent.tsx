@@ -24,9 +24,9 @@ interface SideMenuContentProps {
   onClose: () => void;
   profile?: {
     first_name?: string | null;
-    display_name?: string | null;
     profile_photo?: string | null;
     current_mmr?: number | null;
+    rank?: number;
     friend_requests_count?: number | null;
   };
 }
@@ -37,8 +37,6 @@ export const SideMenuContent = ({
   onClose,
   profile,
 }: SideMenuContentProps) => {
-  // Mock data for ranking - will be replaced with real data later
-  const ranking = 45;
   const { count: activeBookingsCount } = useActiveBookingsCount();
   const { count: openBookingsCount } = useOpenBookingsCount();
 
@@ -73,12 +71,12 @@ export const SideMenuContent = ({
         <SheetClose asChild>
           <Link to="/profile" className="flex items-center gap-3 hover:bg-accent/50 p-2 rounded-lg transition-colors">
             <Avatar className="h-12 w-12">
-              <AvatarImage src={profile?.profile_photo || ''} alt={(profile?.first_name || profile?.display_name) || undefined} />
-              <AvatarFallback>{(profile?.first_name || profile?.display_name)?.[0]?.toUpperCase() || '?'}</AvatarFallback>
+              <AvatarImage src={profile?.profile_photo || ''} alt={profile?.first_name || undefined} />
+              <AvatarFallback>{profile?.first_name?.[0]?.toUpperCase() || '?'}</AvatarFallback>
             </Avatar>
             <div className="flex flex-col flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-medium">{(profile?.first_name || profile?.display_name || 'Player')} (#{ranking})</span>
+                <span className="font-medium">{profile?.first_name || 'Player'} (#{profile?.rank || 'Unranked'})</span>
               </div>
               <span className="text-sm text-muted-foreground">{profile?.current_mmr || 3000} MMR</span>
             </div>
