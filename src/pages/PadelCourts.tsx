@@ -250,7 +250,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
 
         {/* Mobile: Map backdrop with bottom drawer */}
         {isMobile && (
-          <div className="h-[100dvh] overflow-hidden">
+          <div className="fixed inset-0 h-[100dvh] overflow-hidden">
             {/* Full-screen map backdrop with no padding */}
             <div className="absolute inset-0">
               <PadelMap 
@@ -265,8 +265,8 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
             {/* Bottom drawer - fixed to viewport bottom */}
             <Drawer>
               <DrawerTrigger asChild>
-                <div className="fixed bottom-0 left-0 right-0 z-50 safe-area-pb">
-                  <div className="bg-background/95 backdrop-blur-sm border-t mx-4 mb-4 rounded-t-xl shadow-lg">
+                <div className="fixed bottom-0 left-0 right-0 z-50">
+                  <div className="bg-background/95 backdrop-blur-sm border-t rounded-t-xl shadow-lg">
                     <div className="flex items-center justify-center py-3 cursor-pointer">
                       <div className="flex items-center gap-2">
                         <ChevronUp className="h-5 w-5 text-muted-foreground" />
