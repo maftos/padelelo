@@ -267,24 +267,13 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
               <DrawerTrigger asChild>
                 <div className="fixed bottom-0 left-0 right-0 z-50">
                   <div className="bg-background/95 backdrop-blur-sm border-t rounded-t-xl shadow-lg">
-                    <div className="flex items-center justify-center py-3 cursor-pointer">
-                      <div className="flex items-center gap-2">
-                        <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                        <span className="text-sm font-medium text-muted-foreground">
-                          {clubs.length} Padel Court{clubs.length !== 1 ? 's' : ''} Found
-                        </span>
-                        <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                      </div>
+                    <div className="flex items-center justify-center py-4 cursor-pointer">
+                      <div className="w-12 h-1 bg-muted-foreground/50 rounded-full"></div>
                     </div>
                   </div>
                 </div>
               </DrawerTrigger>
               <DrawerContent className="h-[85vh] bg-background">
-                <DrawerHeader className="border-b pb-3">
-                  <DrawerTitle className="text-left">
-                    Padel Courts in Mauritius
-                  </DrawerTitle>
-                </DrawerHeader>
                 <div className="flex-1 overflow-hidden">
                   <PadelCourtsList 
                     clubs={clubs} 

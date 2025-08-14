@@ -64,8 +64,6 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
       maxZoom: 16
     });
 
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
 
     // Add markers when map loads
