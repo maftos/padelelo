@@ -224,55 +224,105 @@ export const ProductShowcaseSection = () => {
             </div>
             <div className="relative px-4 sm:px-0">
               <Card className="shadow-lg bg-background border overflow-hidden">
-                <div className="relative h-32 w-full">
-                  <img
-                    src="/lovable-uploads/ace216a4-b3e4-429e-8b4a-cf1184626be1.png"
-                    alt="Summer Championship Tournament"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative h-64 w-full bg-muted/50">
+                  {/* Static Map Overview */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20">
+                    <svg
+                      viewBox="0 0 400 250"
+                      className="w-full h-full"
+                      preserveAspectRatio="xMidYMid meet"
+                    >
+                      {/* Mauritius Island Shape */}
+                      <path
+                        d="M80 100 C90 90, 120 85, 150 90 C180 95, 220 100, 280 110 C320 120, 340 140, 330 170 C320 200, 290 210, 250 205 C200 200, 150 195, 100 185 C70 175, 60 150, 80 100 Z"
+                        fill="hsl(var(--muted))"
+                        stroke="hsl(var(--border))"
+                        strokeWidth="2"
+                        className="drop-shadow-sm"
+                      />
+                      
+                      {/* Court Markers */}
+                      <g>
+                        {/* Port Louis area */}
+                        <circle cx="140" cy="115" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="140" y="105" textAnchor="middle" className="text-xs fill-foreground font-medium">Port Louis</text>
+                        
+                        {/* Ebène */}
+                        <circle cx="165" cy="130" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="165" y="120" textAnchor="middle" className="text-xs fill-foreground font-medium">Ebène</text>
+                        
+                        {/* Grand Baie */}
+                        <circle cx="180" cy="105" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="180" y="95" textAnchor="middle" className="text-xs fill-foreground font-medium">Grand Baie</text>
+                        
+                        {/* Flic en Flac */}
+                        <circle cx="120" cy="150" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="120" y="140" textAnchor="middle" className="text-xs fill-foreground font-medium">Flic en Flac</text>
+                        
+                        {/* Tamarin */}
+                        <circle cx="105" cy="165" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="105" y="155" textAnchor="middle" className="text-xs fill-foreground font-medium">Tamarin</text>
+                        
+                        {/* Quatre Bornes */}
+                        <circle cx="155" cy="145" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="155" y="135" textAnchor="middle" className="text-xs fill-foreground font-medium">Quatre Bornes</text>
+                        
+                        {/* Mahebourg */}
+                        <circle cx="220" cy="175" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="220" y="165" textAnchor="middle" className="text-xs fill-foreground font-medium">Mahebourg</text>
+                        
+                        {/* Belle Mare */}
+                        <circle cx="260" cy="140" r="6" fill="hsl(var(--primary))" stroke="white" strokeWidth="2" className="drop-shadow-sm" />
+                        <text x="260" y="130" textAnchor="middle" className="text-xs fill-foreground font-medium">Belle Mare</text>
+                      </g>
+                    </svg>
+                  </div>
+                  
                   <div className="absolute top-3 left-3">
-                    <Badge className="bg-green-500 text-white">Open</Badge>
+                    <Badge className="bg-primary text-primary-foreground">Interactive Map</Badge>
+                  </div>
+                  
+                  <div className="absolute bottom-3 right-3">
+                    <div className="bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2 border">
+                      <div className="flex items-center gap-2 text-sm">
+                        <div className="w-3 h-3 rounded-full bg-primary border border-white"></div>
+                        <span className="text-muted-foreground">8+ Courts</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
+                
                 <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start gap-2">
-                    <CardTitle className="text-lg leading-tight">
-                      Summer Championship 2024
-                    </CardTitle>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-md whitespace-nowrap">
-                      Starting Soon
-                    </span>
-                  </div>
+                  <CardTitle className="text-lg leading-tight">
+                    Padel Courts Across Mauritius
+                  </CardTitle>
                   
                   <div className="flex flex-col gap-2 text-sm">
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
-                      <span>Jan 15-16, 2024</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
                       <MapPin className="h-4 w-4" />
-                      <span>Elite Padel Courts, Ebène</span>
+                      <span>8+ locations island-wide</span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Users className="h-4 w-4" />
-                      <span>12/16 teams registered</span>
+                      <span>Premium facilities & equipment</span>
                     </div>
                   </div>
                 </CardHeader>
                 
                 <CardContent className="pt-0">
-                  <p className="text-muted-foreground mb-4 text-sm">
-                    Premier tournament featuring top players competing for a Rs 25,000 prize pool. 
-                    Single elimination format with exciting matches.
-                  </p>
+                  <CardDescription className="mb-4 text-sm leading-relaxed">
+                    From Port Louis to Mahebourg, discover top-quality padel courts with professional 
+                    facilities, equipment rental, and coaching services.
+                  </CardDescription>
                   
                   <div className="flex items-center justify-between">
                     <div className="text-sm">
-                      <span className="text-muted-foreground">Prize Pool: </span>
-                      <span className="font-medium text-primary">Rs 25,000</span>
+                      <span className="text-muted-foreground">Starting from: </span>
+                      <span className="font-medium text-primary">Rs 500/session</span>
                     </div>
                     <Button size="sm" className="h-8">
-                      Register Now
+                      <MapPin className="h-3 w-3 mr-1" />
+                      View Map
                     </Button>
                   </div>
                 </CardContent>
