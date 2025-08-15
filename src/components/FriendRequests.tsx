@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -120,18 +120,11 @@ export const FriendRequests = () => {
       </div>
       
       {!requests?.length ? (
-        <Card className="p-8">
-          <div className="text-center space-y-3">
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto">
-              <UserPlus className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <div>
-              <h3 className="font-medium text-foreground">No pending friend requests</h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                When someone sends you a friend request, it will appear here
-              </p>
-            </div>
-          </div>
+        <Card className="border-dashed">
+          <CardContent className="py-8 text-center">
+            <div className="text-muted-foreground">No pending friend requests</div>
+            <p className="text-sm text-muted-foreground mt-1">When someone sends you a friend request, it will appear here</p>
+          </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
