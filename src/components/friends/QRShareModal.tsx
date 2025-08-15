@@ -94,12 +94,11 @@ export const QRShareModal = ({ children, userId, profileName }: QRShareModalProp
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <QrCode className="w-5 h-5" />
+          <DialogTitle className="text-center">
             Share Your Profile
           </DialogTitle>
-          <DialogDescription>
-            Share your PadelELO profile with other players to connect easily
+          <DialogDescription className="text-center">
+            Other players can scan this to add you as a friend
           </DialogDescription>
         </DialogHeader>
         
@@ -121,36 +120,12 @@ export const QRShareModal = ({ children, userId, profileName }: QRShareModalProp
             )}
           </div>
 
-          {/* Profile Info */}
-          <div className="text-center space-y-2">
-            <h3 className="font-semibold">{displayName}</h3>
-            <p className="text-sm text-muted-foreground break-all">{profileUrl}</p>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="grid grid-cols-2 gap-3">
-            <Button variant="outline" onClick={copyToClipboard} className="w-full">
+          {/* Action Button */}
+          <div className="flex justify-center">
+            <Button variant="outline" onClick={copyToClipboard} className="w-full max-w-xs">
               <Copy className="w-4 h-4 mr-2" />
               Copy Link
             </Button>
-            <Button variant="outline" onClick={shareProfile} className="w-full">
-              <Share2 className="w-4 h-4 mr-2" />
-              Share
-            </Button>
-            {qrCodeUrl && (
-              <>
-                <Button variant="outline" onClick={downloadQRCode} className="w-full col-span-2">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download QR Code
-                </Button>
-              </>
-            )}
-          </div>
-
-          {/* Instructions */}
-          <div className="text-xs text-muted-foreground text-center space-y-1">
-            <p>Other players can scan this QR code to visit your profile</p>
-            <p>or use the link to add you as a friend</p>
           </div>
         </div>
       </DialogContent>
