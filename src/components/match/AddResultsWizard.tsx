@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Users } from "lucide-react";
+
 import { MatchupSelectionStep } from "./MatchupSelectionStep";
 import { ScoreEntryStep } from "./ScoreEntryStep";
 import { ResultsCart } from "./ResultsCart";
@@ -194,7 +194,6 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
                 variant="outline"
                 className="flex-1 md:flex-none"
               >
-                <ArrowLeft className="h-4 w-4 mr-2" />
                 {currentStep === "selection" ? "Cancel" : "Back"}
               </Button>
 
@@ -203,10 +202,9 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
                   onClick={goToNextStep}
                   disabled={selectedMatchups.length === 0}
                   size="lg"
-                  className="flex-1 md:flex-none"
+                  className="flex-1 md:flex-none h-12"
                 >
                   Next
-                  <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
               )}
               
@@ -215,9 +213,8 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
                   onClick={handleSubmit}
                   disabled={queuedResults.length === 0 || isSubmitting}
                   size="lg"
-                  className="flex-1 md:flex-none"
+                  className="flex-1 md:flex-none h-12"
                 >
-                  <Users className="h-4 w-4 mr-2" />
                   {isSubmitting ? "Saving..." : "Save Results"}
                 </Button>
               )}
