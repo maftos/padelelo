@@ -27,9 +27,7 @@ export const FriendRequests = () => {
       if (!userId) return [];
       
       console.log('Fetching friend requests for user:', userId);
-      const { data, error } = await supabase.rpc('view_friend_requests', {
-        user_a_id_public: userId
-      });
+      const { data, error } = await supabase.rpc('view_friend_requests');
       
       if (error) {
         console.error('Error fetching friend requests:', error);
