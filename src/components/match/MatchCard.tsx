@@ -68,27 +68,25 @@ export const MatchCard = ({
           </div>
         </div>
 
-        {/* Team 2 - Compact Layout */}
+        {/* Team 2 */}
         <div className="flex flex-col space-y-1 flex-1">
-          <div className="flex items-center justify-end">
-            <div className="flex items-center space-x-1 mr-2">
-              <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">{team2_player1_display_name}</p>
-              <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
-                <AvatarImage src={team2_player1_profile_photo} />
-                <AvatarFallback className="text-xs">
-                  {getInitials(team2_player1_display_name)}
-                </AvatarFallback>
-              </Avatar>
-            </div>
-            <div className="flex items-center space-x-1">
-              <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">{team2_player2_display_name}</p>
-              <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
-                <AvatarImage src={team2_player2_profile_photo} />
-                <AvatarFallback className="text-xs">
-                  {getInitials(team2_player2_display_name)}
-                </AvatarFallback>
-              </Avatar>
-            </div>
+          <div className="flex items-center justify-end space-x-2">
+            <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">{team2_player1_display_name}</p>
+            <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+              <AvatarImage src={team2_player1_profile_photo} />
+              <AvatarFallback className="text-xs">
+                {getInitials(team2_player1_display_name)}
+              </AvatarFallback>
+            </Avatar>
+          </div>
+          <div className="flex items-center justify-end space-x-2">
+            <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">{team2_player2_display_name}</p>
+            <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
+              <AvatarImage src={team2_player2_profile_photo} />
+              <AvatarFallback className="text-xs">
+                {getInitials(team2_player2_display_name)}
+              </AvatarFallback>
+            </Avatar>
           </div>
         </div>
       </div>
