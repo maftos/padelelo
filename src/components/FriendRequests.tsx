@@ -112,51 +112,64 @@ export const FriendRequests = () => {
     );
   }
 
-  if (!requests?.length) {
-    return null;
-  }
-
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center gap-2">
         <UserPlus className="h-5 w-5 text-primary" />
         <h2 className="text-xl font-semibold">Friend Requests</h2>
       </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {requests.map((request) => (
-          <Card key={request.friend_id} className="p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center space-x-4 mb-4">
-              <Avatar>
-                <AvatarImage src={request.profile_photo || ''} alt={request.display_name} />
-                <AvatarFallback>
-                  {request.display_name?.substring(0, 2).toUpperCase() || 'FR'}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{request.display_name}</p>
-                <p className="text-sm text-muted-foreground">MMR: {request.current_mmr}</p>
+      
+      {!requests?.length ? (
+        <Card className="p-8">
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto">
+              <UserPlus className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <div>
+              <h3 className="font-medium text-foreground">No pending friend requests</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                When someone sends you a friend request, it will appear here
+              </p>
+            </div>
+          </div>
+        </Card>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {requests.map((request) => (
+            <Card key={request.friend_id} className="p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-center space-x-4 mb-4">
+                <Avatar>
+                  <AvatarImage src={request.profile_photo || ''} alt={request.display_name} />
+                  <AvatarFallback>
+                    {request.display_name?.substring(0, 2).toUpperCase() || 'FR'}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{request.display_name}</p>
+                  <p className="text-sm text-muted-foreground">MMR: {request.current_mmr}</p>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                className="flex-1 bg-primary hover:bg-primary/90" 
-                onClick={() => handleRequestResponse(request.friend_id, true)}
-              >
-                <Check className="h-4 w-4 mr-2" />
-                Accept
-              </Button>
-              <Button 
-                variant="outline" 
-                className="flex-1"
-                onClick={() => handleRequestResponse(request.friend_id, false)}
-              >
-                <X className="h-4 w-4 mr-2" />
-                Decline
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+              <div className="flex gap-2">
+                <Button 
+                  className="flex-1 bg-primary hover:bg-primary/90" 
+                  onClick={() => handleRequestResponse(request.friend_id, true)}
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  Accept
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => handleRequestResponse(request.friend_id, false)}
+                >
+                  <X className="h-4 w-4 mr-2" />
+                  Decline
+                </Button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
