@@ -53,17 +53,9 @@ const Friends = () => {
       <div className="w-full max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col space-y-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="h-6 w-6 text-primary" />
-              <h1 className="text-2xl font-bold">Friends</h1>
-            </div>
-            <QRShareModal>
-              <Button variant="outline" className="gap-2">
-                <QrCode className="h-4 w-4" />
-                Share Profile
-              </Button>
-            </QRShareModal>
+          <div className="flex items-center gap-2">
+            <Users className="h-6 w-6 text-primary" />
+            <h1 className="text-2xl font-bold">Friends</h1>
           </div>
 
           {/* Content Sections */}

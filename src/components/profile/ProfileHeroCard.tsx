@@ -151,7 +151,17 @@ export const ProfileHeroCard = ({
   
   return (
     <Card>
-      <CardContent className="p-6">
+      <CardContent className="p-6 relative">
+        {/* Share button in top right */}
+        <div className="absolute top-4 right-4">
+          <SocialShare
+            title={`${displayName} - Padel Player Profile`}
+            description={`Check out ${displayName}'s padel stats and match history in the Mauritius community`}
+            hashtags={["padel", "mauritius", "player", "profile"]}
+            showZapierIntegration={false}
+          />
+        </div>
+        
         <div className="flex flex-col items-center text-center space-y-4">
           <ProfileAvatar
             isEditing={isEditing && isOwnProfile}
@@ -225,16 +235,6 @@ export const ProfileHeroCard = ({
                 </a>
               </div>
             )}
-          </div>
-
-          {/* Share inside hero container */}
-          <div className="flex justify-center">
-            <SocialShare
-              title={`${displayName} - Padel Player Profile`}
-              description={`Check out ${displayName}'s padel stats and match history in the Mauritius community`}
-              hashtags={["padel", "mauritius", "player", "profile"]}
-              showZapierIntegration={false}
-            />
           </div>
 
           {/* Action Controls */}
