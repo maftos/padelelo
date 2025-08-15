@@ -114,17 +114,19 @@ export const RecentMatches = () => {
                   <span className="font-medium">{set.team2_score}</span>
                 </div>
 
-                {/* 4. Change amount */}
-                <Badge 
-                  variant={set.change_type === 'WIN' ? "default" : "destructive"}
-                  className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold ${
-                    set.change_type === 'WIN' 
-                      ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
-                      : ""
-                  }`}
-                >
-                  {set.change_type === 'WIN' ? `+${Math.abs(set.change_amount)}` : `-${Math.abs(set.change_amount)}`}
-                </Badge>
+                {/* 4. Change amount - only show if change_amount is not null or 0 */}
+                {set.change_amount != null && set.change_amount !== 0 && (
+                  <Badge 
+                    variant={set.change_type === 'WIN' ? "default" : "destructive"}
+                    className={`px-1.5 sm:px-2 py-0.5 text-xs font-semibold ${
+                      set.change_type === 'WIN' 
+                        ? "bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white" 
+                        : ""
+                    }`}
+                  >
+                    {set.change_type === 'WIN' ? `+${Math.abs(set.change_amount)}` : `-${Math.abs(set.change_amount)}`}
+                  </Badge>
+                )}
               </div>
             </div>
           </Card>

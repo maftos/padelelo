@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { SuggestedFriends } from "@/components/dashboard/SuggestedFriends";
 import { RecentMatches } from "@/components/RecentMatches";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useFriendRequestsCount } from "@/hooks/use-friend-requests-count";
 
 interface UserProfile {
   first_name: string | null;
@@ -60,6 +61,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { profile: profileData } = useUserProfileSummary();
+  const { count: friendRequestsCount } = useFriendRequestsCount();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -199,12 +201,17 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Suggested Friends */}
+            {/* Friends */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
                 <div className="flex items-center gap-2 min-w-0">
                   <Users className="h-4 w-4 sm:h-5 sm:w-5 text-purple-500 flex-shrink-0" />
-                  <CardTitle className="text-base sm:text-lg truncate">Suggested Friends</CardTitle>
+                  <CardTitle className="text-base sm:text-lg truncate">Friends</CardTitle>
+                  {friendRequestsCount > 0 && (
+                    <Badge variant="destructive" className="h-5 w-5 p-0 text-xs rounded-full flex items-center justify-center">
+                      {friendRequestsCount}
+                    </Badge>
+                  )}
                 </div>
                 <Link to="/friends">
                   <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 text-xs sm:text-sm h-8 sm:h-9 px-2 sm:px-3 flex-shrink-0">
