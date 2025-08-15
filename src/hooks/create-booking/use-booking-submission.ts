@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useUserProfile } from "@/hooks/use-user-profile";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -18,12 +18,12 @@ interface WizardData {
 
 export function useBookingSubmission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { profile } = useUserProfile();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const submitBooking = async (wizardData: WizardData) => {
-    if (!profile?.id) {
+    if (!user) {
       toast.error("You must be logged in to create a booking");
       return false;
     }
@@ -76,7 +76,7 @@ export function useBookingSubmission() {
         };
 
         // Optimistically update the query cache
-        queryClient.setQueryData(['confirmed-bookings', profile.id], (oldData: any) => {
+        queryClient.setQueryData(['confirmed-bookings', user.id], (oldData: any) => {
           return oldData ? [optimisticBooking, ...oldData] : [optimisticBooking];
         });
 
@@ -91,7 +91,7 @@ export function useBookingSubmission() {
         if (error) {
           console.error('Error creating closed booking:', error);
           // Remove optimistic update on error
-          queryClient.setQueryData(['confirmed-bookings', profile.id], (oldData: any) => {
+          queryClient.setQueryData(['confirmed-bookings', user.id], (oldData: any) => {
             return oldData ? oldData.filter((booking: any) => booking.booking_id !== optimisticBooking.booking_id) : [];
           });
           toast.error("Failed to create booking");
