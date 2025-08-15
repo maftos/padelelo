@@ -24,7 +24,7 @@ interface LocationDetailsStepProps {
 
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
   // Fetch venues from database
-  const { data: venues = [], isLoading: isLoadingVenues } = useQuery({
+  const { data: venuesResult, isLoading: isLoadingVenues } = useQuery({
     queryKey: ['venues'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_all_venues');
@@ -32,9 +32,11 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
         console.error('Error fetching venues:', error);
         throw error;
       }
-      return data as Array<{ venue_id: string; name: string }>;
+      return data as { venues: Array<{ venue_id: string; name: string }> };
     }
   });
+
+  const venues = venuesResult?.venues || [];
 
   const requiresDetails = !hasAllPlayers;
 
