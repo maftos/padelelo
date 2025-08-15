@@ -157,6 +157,7 @@ export const ProfileHeroCard = ({
           <QRShareModal 
             userId={profileData?.profile?.id}
             profileName={displayName}
+            profilePhoto={formData.profile_photo}
           >
             <Button variant="outline" size="sm">
               <QrCode className="h-4 w-4" />
