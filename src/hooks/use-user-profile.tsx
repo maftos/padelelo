@@ -41,9 +41,9 @@ export const useUserProfile = () => {
       
       try {
         console.log('Fetching profile for user:', user.id);
-        // Call the public.user_profile function using raw query since it's not in generated types
+        // Call the public.user_profile function with the user_id parameter
         const { data, error } = await supabase
-          .rpc('user_profile' as any);
+          .rpc('user_profile' as any, { p_user_id: user.id });
         
         if (error) throw error;
         
