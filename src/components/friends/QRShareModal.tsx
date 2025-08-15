@@ -8,17 +8,21 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface QRShareModalProps {
   children: React.ReactNode;
+  userId?: string; // Optional userId, if not provided, uses current user
+  profileName?: string; // Optional profile name for display
 }
 
-export const QRShareModal = ({ children }: QRShareModalProps) => {
+export const QRShareModal = ({ children, userId, profileName }: QRShareModalProps) => {
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
   const [isGenerating, setIsGenerating] = useState(false);
   const { profile } = useUserProfile();
 
-  const profileUrl = `${window.location.origin}/profile/${profile?.id}`;
-  const displayName = profile?.first_name && profile?.last_name 
+  // Use provided userId or fall back to current user's profile
+  const targetUserId = userId || profile?.id;
+  const profileUrl = `https://padelelo.com/profile/${targetUserId}`;
+  const displayName = profileName || (profile?.first_name && profile?.last_name 
     ? `${profile.first_name} ${profile.last_name}` 
-    : "My Profile";
+    : "Profile");
 
   const generateQRCode = async () => {
     if (qrCodeUrl) return; // Already generated

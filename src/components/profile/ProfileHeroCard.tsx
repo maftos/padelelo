@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ProfileAvatar } from "./ProfileAvatar";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Instagram, Flag, ExternalLink, Settings } from "lucide-react";
+import { Edit, Check, X, UserPlus, Users, Clock, TrendingUp, TrendingDown, Instagram, Flag, ExternalLink, Settings, QrCode } from "lucide-react";
 import { MutualFriendsModal } from "./MutualFriendsModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,7 +12,7 @@ import { useState } from "react";
 import { countries } from "@/lib/countries";
 import { ReportPlayerModal } from "./ReportPlayerModal";
 import { useNavigate } from "react-router-dom";
-import { SocialShare } from "@/components/seo/SocialShare";
+import { QRShareModal } from "@/components/friends/QRShareModal";
 
 interface ProfileFormState {
   first_name: string;
@@ -154,12 +154,14 @@ export const ProfileHeroCard = ({
       <CardContent className="p-6 relative">
         {/* Share button in top right */}
         <div className="absolute top-4 right-4">
-          <SocialShare
-            title={`${displayName} - Padel Player Profile`}
-            description={`Check out ${displayName}'s padel stats and match history in the Mauritius community`}
-            hashtags={["padel", "mauritius", "player", "profile"]}
-            showZapierIntegration={false}
-          />
+          <QRShareModal 
+            userId={profileData?.profile?.id}
+            profileName={displayName}
+          >
+            <Button variant="outline" size="sm">
+              <QrCode className="h-4 w-4" />
+            </Button>
+          </QRShareModal>
         </div>
         
         <div className="flex flex-col items-center text-center space-y-4">
