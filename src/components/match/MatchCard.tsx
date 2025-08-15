@@ -45,7 +45,7 @@ export const MatchCard = ({
   return (
     <div className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3 sm:space-y-4">
       {/* Match Header with Teams - Mobile Optimized */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         {/* Team 1 */}
         <div className="flex flex-col space-y-1 flex-1">
           <div className="flex items-center space-x-2">
@@ -69,8 +69,8 @@ export const MatchCard = ({
         </div>
 
         {/* Team 2 */}
-        <div className="flex flex-col space-y-1 flex-1">
-          <div className="flex items-center justify-end space-x-2">
+        <div className="flex flex-col space-y-1 flex-1 items-end">
+          <div className="flex items-center space-x-2">
             <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">{team2_player1_display_name}</p>
             <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
               <AvatarImage src={team2_player1_profile_photo} />
@@ -79,7 +79,7 @@ export const MatchCard = ({
               </AvatarFallback>
             </Avatar>
           </div>
-          <div className="flex items-center justify-end space-x-2">
+          <div className="flex items-center space-x-2">
             <p className="font-medium text-foreground truncate text-xs sm:text-sm text-right">{team2_player2_display_name}</p>
             <Avatar className="w-5 h-5 sm:w-6 sm:h-6">
               <AvatarImage src={team2_player2_profile_photo} />
