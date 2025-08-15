@@ -52,12 +52,43 @@ export const BookingCard = ({ booking_id, date, location, matches, status, mmr_b
       {/* Booking Header */}
       <div className="flex flex-col space-y-3 pb-4 border-b border-border/30 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
         <div className="space-y-1 min-w-0 flex-1">
-          <h3 className="text-base sm:text-lg font-semibold text-foreground">
-            {date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : 'Invalid date'}
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">
+              {date ? formatDistanceToNow(new Date(date), { addSuffix: true }) : 'Invalid date'}
+            </h3>
+            <div className="text-right flex-shrink-0 sm:hidden">
+              {status === "SCORE_RECORDED" ? (
+                <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+                  PROCESSING
+                </Badge>
+              ) : status === "MMR_CALCULATED" && mmr_before !== undefined && mmr_after !== undefined ? (
+                <div className="flex items-center gap-2 justify-end">
+                  <span className="text-sm font-medium">{mmr_before}</span>
+                  {mmr_after >= mmr_before ? (
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                  ) : (
+                    <TrendingDown className="w-4 h-4 text-red-600" />
+                  )}
+                  <span className={`text-sm font-bold ${
+                    mmr_after >= mmr_before 
+                      ? "text-green-600" 
+                      : "text-red-600"
+                  }`}>
+                    {mmr_after}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 justify-end">
+                  <span className="text-sm font-medium">{mmr_before || "N/A"}</span>
+                  <Clock className="w-4 h-4 text-amber-600" />
+                  <span className="text-sm font-medium text-amber-600">Pending</span>
+                </div>
+              )}
+            </div>
+          </div>
           <p className="text-sm text-muted-foreground truncate">{location}</p>
         </div>
-        <div className="text-left sm:text-right space-y-1 flex-shrink-0">
+        <div className="text-right space-y-1 flex-shrink-0 hidden sm:block">
           {status === "SCORE_RECORDED" ? (
             <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
               PROCESSING
