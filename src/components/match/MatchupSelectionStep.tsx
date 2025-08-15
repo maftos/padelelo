@@ -103,14 +103,14 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
   );
 
   return (
-    <div className="space-y-4 md:max-w-md md:mx-auto">
+    <div className="space-y-3 md:space-y-4">
       {possibleMatchups.map((matchup) => {
         const matchNumbers = getMatchupNumbers(matchup.id);
         
         return (
           <Card 
             key={matchup.id} 
-            className="border-dashed hover:bg-accent/50 cursor-pointer hover:shadow-md transition-all duration-300 relative"
+            className="border-dashed hover:bg-accent/50 cursor-pointer hover:shadow-md transition-all duration-300 relative active:scale-95 touch-manipulation"
             onClick={() => handleMatchupClick(matchup)}
           >
             {matchNumbers.length > 0 && (
@@ -118,17 +118,17 @@ export const MatchupSelectionStep = ({ players, selectedMatchups, onMatchupSelec
                 {matchNumbers.map((matchNumber, index) => (
                   <Badge 
                     key={index}
-                    className="bg-primary text-primary-foreground min-w-6 h-6 flex items-center justify-center rounded-full"
+                    className="bg-primary text-primary-foreground min-w-6 h-6 flex items-center justify-center rounded-full text-xs"
                   >
                     {matchNumber}
                   </Badge>
                 ))}
               </div>
             )}
-            <CardContent className="p-6">
+            <CardContent className="p-4 md:p-6">
               <div className="flex items-center justify-between">
                 <TeamDisplay team={matchup.team1} />
-                <div className="text-xl font-bold text-muted-foreground px-4">VS</div>
+                <div className="text-lg md:text-xl font-bold text-muted-foreground px-2 md:px-4">VS</div>
                 <TeamDisplay team={matchup.team2} />
               </div>
             </CardContent>

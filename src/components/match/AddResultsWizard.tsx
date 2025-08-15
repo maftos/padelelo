@@ -128,12 +128,12 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-4 px-4 md:px-0">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mb-4">
         <div className="flex-1">
-          <h1 className="text-2xl font-bold">Add Match Results</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="text-xl md:text-2xl font-bold">Add Match Results</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">
             {currentStep === "selection" && "Select which matchups were played in order"}
             {currentStep === "scoring" && "Enter scores for each matchup"}
             {currentStep === "preview" && "Review and save your results"}
@@ -153,8 +153,8 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
       )}
 
       {/* Step Content */}
-      <Card>
-        <CardContent className="p-6">
+      <Card className="mb-20 md:mb-4">
+        <CardContent className="p-3 md:p-6">
           {currentStep === "selection" && (
             <MatchupSelectionStep
               players={players}
@@ -184,42 +184,47 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
         </CardContent>
       </Card>
 
-      {/* Navigation */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex justify-between">
-            <Button
-              onClick={currentStep === "selection" ? onClose : goToPreviousStep}
-              variant="outline"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {currentStep === "selection" ? "Cancel" : "Back"}
-            </Button>
+      {/* Navigation - Fixed at bottom on mobile */}
+      <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto bg-background border-t md:border-t-0 p-4 md:p-0 z-10">
+        <Card className="border-0 md:border shadow-none md:shadow-sm">
+          <CardContent className="p-0 md:p-6">
+            <div className="flex justify-between gap-4">
+              <Button
+                onClick={currentStep === "selection" ? onClose : goToPreviousStep}
+                variant="outline"
+                className="flex-1 md:flex-none"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                {currentStep === "selection" ? "Cancel" : "Back"}
+              </Button>
 
-            {currentStep === "selection" && (
-              <Button
-                onClick={goToNextStep}
-                disabled={selectedMatchups.length === 0}
-                size="lg"
-              >
-                Next
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            )}
-            
-            {currentStep === "preview" && (
-              <Button
-                onClick={handleSubmit}
-                disabled={queuedResults.length === 0 || isSubmitting}
-                size="lg"
-              >
-                <Users className="h-4 w-4 mr-2" />
-                {isSubmitting ? "Saving..." : "Save Results"}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              {currentStep === "selection" && (
+                <Button
+                  onClick={goToNextStep}
+                  disabled={selectedMatchups.length === 0}
+                  size="lg"
+                  className="flex-1 md:flex-none"
+                >
+                  Next
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              )}
+              
+              {currentStep === "preview" && (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={queuedResults.length === 0 || isSubmitting}
+                  size="lg"
+                  className="flex-1 md:flex-none"
+                >
+                  <Users className="h-4 w-4 mr-2" />
+                  {isSubmitting ? "Saving..." : "Save Results"}
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

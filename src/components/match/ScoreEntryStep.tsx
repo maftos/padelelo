@@ -162,7 +162,7 @@ export const ScoreEntryStep = ({
   );
 
   return (
-    <div className="space-y-6 md:max-w-lg md:mx-auto md:px-4">
+    <div className="space-y-4 md:space-y-6">
       <div className="text-center text-sm text-muted-foreground">
         Match {currentIndex + 1} of {selectedMatchups.length}
       </div>
