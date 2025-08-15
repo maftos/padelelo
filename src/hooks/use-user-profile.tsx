@@ -41,9 +41,9 @@ export const useUserProfile = () => {
       
       try {
         console.log('Fetching profile for user:', user.id);
-        // Call the public.user_profile function with the user_id parameter
+        // Call the public.user_profile function - it uses auth.uid() internally
         const { data, error } = await supabase
-          .rpc('user_profile' as any, { p_user_id: user.id });
+          .rpc('user_profile' as any);
         
         if (error) throw error;
         
