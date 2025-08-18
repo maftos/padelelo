@@ -45,12 +45,12 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
   const getAnimationClass = () => {
     if (transitionState === 'transitioning') {
       return transitionDirection === 'forward' 
-        ? 'animate-slide-out-to-left' 
-        : 'animate-slide-out-to-right';
+        ? 'animate-slide-out-left' 
+        : 'animate-slide-out-right';
     }
     return transitionDirection === 'forward' 
-      ? 'animate-slide-in-from-right' 
-      : 'animate-slide-in-from-left';
+      ? 'animate-slide-in-right' 
+      : 'animate-slide-in-left';
   };
 
   const showBackButton = showBack && currentStep > 1;
