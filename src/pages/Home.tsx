@@ -16,8 +16,8 @@ const Home = () => {
     "@type": "Organization",
     "name": "PadelELO",
     "description": "Mauritius's premier padel community platform for tracking matches, rankings, and connecting players",
-    "url": "https://padel-elo.com",
-    "logo": "https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png",
+    "url": "https://padelelo.com",
+    "logo": "https://padelelo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png",
     "address": {
       "@type": "PostalAddress",
       "addressCountry": "MU",
@@ -45,22 +45,24 @@ const Home = () => {
         <meta property="og:title" content="PadelELO - Mauritius Padel Rankings & Community" />
         <meta property="og:description" content="Join Mauritius's leading padel community! Track matches, view rankings, and connect with 500+ active players." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://padel-elo.com" />
-        <meta property="og:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta property="og:url" content="https://padelelo.com" />
+        <meta property="og:image" content="https://padelelo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
         <meta property="og:locale" content="en_MU" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="PadelELO - Mauritius Padel Rankings" />
         <meta name="twitter:description" content="Join Mauritius's leading padel community! Track matches and view rankings." />
-        <meta name="twitter:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta name="twitter:image" content="https://padelelo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta name="twitter:site" content="@padelelo" />
+        <meta name="twitter:creator" content="@padelelo" />
         
         {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
         
-        <link rel="canonical" href="https://padel-elo.com" />
+        <link rel="canonical" href="https://padelelo.com" />
       </Helmet>
       <LocalBusinessSchema />
       <main className="space-y-0">

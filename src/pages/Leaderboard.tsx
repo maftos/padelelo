@@ -32,7 +32,7 @@ const Leaderboard = () => {
     "@type": "SportsOrganization",
     "name": "PadelELO Leaderboard",
     "description": "Official padel rankings for Mauritius players",
-    "url": "https://padel-elo.com/leaderboard",
+    "url": "https://padelelo.com/leaderboard",
     "sport": "Padel",
     "location": {
       "@type": "Place",
@@ -58,20 +58,23 @@ const Leaderboard = () => {
         <meta property="og:title" content="Padel Rankings & Leaderboard - Mauritius" />
         <meta property="og:description" content={`Official padel rankings for ${totalPlayers} players in Mauritius. See who's leading the leaderboard!`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://padel-elo.com/leaderboard" />
-        <meta property="og:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta property="og:url" content="https://padelelo.com/leaderboard" />
+        <meta property="og:image" content="https://padelelo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta property="og:locale" content="en_MU" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Padel Rankings - Mauritius" />
         <meta name="twitter:description" content="Official padel leaderboard for Mauritius players" />
+        <meta name="twitter:site" content="@padelelo" />
+        <meta name="twitter:creator" content="@padelelo" />
         
         {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
         
-        <link rel="canonical" href="https://padel-elo.com/leaderboard" />
+        <link rel="canonical" href="https://padelelo.com/leaderboard" />
       </Helmet>
       
       <main className="container py-6 md:py-12 px-4 max-w-7xl mx-auto">

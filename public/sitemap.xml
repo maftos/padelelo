@@ -43,6 +43,16 @@
     <changefreq>daily</changefreq>
   </url>
   <url>
+    <loc>https://padelelo.com/privacy</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
+    <loc>https://padelelo.com/terms</loc>
+    <priority>0.6</priority>
+    <changefreq>monthly</changefreq>
+  </url>
+  <url>
     <loc>https://padelelo.com/login</loc>
     <priority>0.8</priority>
     <changefreq>monthly</changefreq>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Helmet } from "react-helmet";
 import { Clock, MapPin, Users, Calendar, Bell, ArrowUpDown } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -72,8 +73,48 @@ const handleJoinGame = (postId: string) => {
     );
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Open Padel Games - Find Players",
+    "description": "Find and join open padel games in Mauritius. Connect with players looking for partners and book courts together.",
+    "url": "https://padelelo.com/open-bookings"
+  };
+
   return (
-    <div className="w-full min-h-screen">
+    <>
+      <Helmet>
+        <title>Open Padel Games - Find Players & Join Matches | PadelELO</title>
+        <meta 
+          name="description" 
+          content="Find and join open padel games in Mauritius. Connect with players looking for partners, book courts together, and expand your padel network."
+        />
+        <meta name="keywords" content="open padel games mauritius, find padel players, join padel matches, padel partners mauritius" />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="Open Padel Games - Find Players | PadelELO" />
+        <meta property="og:description" content="Find and join open padel games in Mauritius. Connect with players looking for partners." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://padelelo.com/open-bookings" />
+        <meta property="og:image" content="https://padelelo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta property="og:locale" content="en_MU" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Open Padel Games - Find Players" />
+        <meta name="twitter:description" content="Find and join open padel games in Mauritius" />
+        <meta name="twitter:site" content="@padelelo" />
+        <meta name="twitter:creator" content="@padelelo" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(structuredData)}
+        </script>
+        
+        <link rel="canonical" href="https://padelelo.com/open-bookings" />
+      </Helmet>
+      
+      <div className="w-full min-h-screen">
       
       <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-6 max-w-full sm:max-w-4xl">
         {/* Header - Optimized for mobile */}
@@ -261,5 +302,6 @@ const handleJoinGame = (postId: string) => {
         />
       </div>
     </div>
+    </>
   );
 }

@@ -194,20 +194,23 @@ export default function Tournaments() {
         <meta property="og:title" content="Padel Tournaments in Mauritius - PadelELO" />
         <meta property="og:description" content={`Discover ${tournamentsCount} upcoming padel tournaments in Mauritius. Join competitive events and meet fellow players.`} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://padel-elo.com/tournaments" />
-        <meta property="og:image" content="https://padel-elo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta property="og:url" content="https://padelelo.com/tournaments" />
+        <meta property="og:image" content="https://padelelo.com/lovable-uploads/14a55cb7-6df6-47ec-af26-fab66670c638.png" />
+        <meta property="og:locale" content="en_MU" />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Padel Tournaments in Mauritius" />
         <meta name="twitter:description" content="Join competitive padel tournaments in Mauritius" />
+        <meta name="twitter:site" content="@padelelo" />
+        <meta name="twitter:creator" content="@padelelo" />
         
         {/* Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify(structuredData)}
         </script>
         
-        <link rel="canonical" href="https://padel-elo.com/tournaments" />
+        <link rel="canonical" href="https://padelelo.com/tournaments" />
       </Helmet>
       
       <div className="w-full min-h-screen">

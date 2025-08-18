@@ -58,7 +58,7 @@ export const Breadcrumbs = ({ items, customTitle }: BreadcrumbsProps) => {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": `https://padel-elo.com${item.url}`
+      "item": `https://padelelo.com${item.url}`
     }))
   };
   
