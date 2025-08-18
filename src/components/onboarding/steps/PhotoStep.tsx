@@ -106,38 +106,50 @@ export const PhotoStep = () => {
           <h1 className="text-3xl font-bold tracking-tight">Add a photo</h1>
         </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <Card className="w-full">
-            <CardContent className="p-6 space-y-6">
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage src={photoUrl} />
-                    <AvatarFallback className="text-lg">
-                      {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <label 
-                    htmlFor="photo-upload" 
-                    className="absolute bottom-0 right-0 p-2 bg-background rounded-full border cursor-pointer hover:bg-accent transition-colors"
-                  >
-                    <Camera className="h-4 w-4" />
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoUpload}
-                      disabled={uploading}
-                      className="hidden"
-                      id="photo-upload"
-                    />
-                  </label>
-                </div>
-                {uploading && (
-                  <p className="text-sm text-muted-foreground">Uploading...</p>
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="w-full max-w-sm">
+            <div className="flex flex-col items-center space-y-8">
+              {/* Large photo display area */}
+              <div className="relative">
+                <Avatar className="h-48 w-48 sm:h-56 sm:w-56 border-4 border-border shadow-2xl">
+                  <AvatarImage src={photoUrl} className="object-cover" />
+                  <AvatarFallback className="text-4xl sm:text-5xl font-semibold bg-gradient-to-br from-primary/20 to-primary/5">
+                    {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                
+                {/* Camera button overlay */}
+                <label 
+                  htmlFor="photo-upload" 
+                  className="absolute bottom-4 right-4 p-4 bg-primary text-primary-foreground rounded-full cursor-pointer hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                >
+                  <Camera className="h-6 w-6" />
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoUpload}
+                    disabled={uploading}
+                    className="hidden"
+                    id="photo-upload"
+                  />
+                </label>
+              </div>
+
+              {/* Upload status and description */}
+              <div className="text-center space-y-2">
+                {uploading ? (
+                  <p className="text-base text-muted-foreground animate-pulse">Uploading your photo...</p>
+                ) : photoUrl ? (
+                  <p className="text-base text-foreground font-medium">Looking great! 📸</p>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-base text-foreground font-medium">Add your profile picture</p>
+                    <p className="text-sm text-muted-foreground">Help others recognize you on the court</p>
+                  </div>
                 )}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
         {/* Mobile sticky CTA */}
