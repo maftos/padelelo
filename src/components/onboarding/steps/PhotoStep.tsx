@@ -124,8 +124,8 @@ export const PhotoStep = () => {
               {/* Large photo display area */}
               <div className="relative">
                 <Avatar className="h-48 w-48 sm:h-56 sm:w-56 border-4 border-border shadow-2xl">
-                  <AvatarImage src={photoUrl} className="object-cover" />
-                  <AvatarFallback className="text-4xl sm:text-5xl font-semibold bg-gradient-to-br from-primary/20 to-primary/5">
+                  {photoUrl && <AvatarImage src={photoUrl} className="object-cover" />}
+                  <AvatarFallback className="text-4xl sm:text-5xl font-semibold bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
                     {(() => {
                       const firstName = localStorage.getItem("onboarding_first_name") || "";
                       const lastName = localStorage.getItem("onboarding_last_name") || "";
