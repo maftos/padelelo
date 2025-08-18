@@ -64,8 +64,8 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 
       {/* Main content area */}
       <div className="flex-1 container max-w-md mx-auto px-4 flex flex-col pb-20">
-        <div className={`flex-1 ${getAnimationClass()}`}>
-          <div className="h-full flex flex-col">
+        <div className={`flex-1 w-full ${getAnimationClass()}`}>
+          <div className="h-full flex flex-col w-full">
             {children}
           </div>
         </div>
