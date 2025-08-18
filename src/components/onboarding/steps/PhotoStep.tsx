@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Camera } from "lucide-react";
+import { Camera, ChevronLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -94,7 +94,15 @@ export const PhotoStep = () => {
   return (
     <OnboardingLayout currentStep={4} totalSteps={6}>
       <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="text-center mb-8">
+        <div className="flex items-center justify-center relative mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/onboarding/step-3")}
+            className="absolute left-0 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
           <h1 className="text-3xl font-bold tracking-tight">Add a photo</h1>
         </div>
 

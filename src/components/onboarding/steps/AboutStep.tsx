@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ClipboardEdit, TrendingUp, History, Info } from "lucide-react";
+import { ClipboardEdit, TrendingUp, History, Info, ChevronLeft } from "lucide-react";
 
 export const AboutStep = () => {
   const navigate = useNavigate();
@@ -11,7 +11,15 @@ export const AboutStep = () => {
   return (
     <OnboardingLayout currentStep={5} totalSteps={6}>
       <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="text-center mb-8">
+        <div className="flex items-center justify-center relative mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/onboarding/step-4")}
+            className="absolute left-0 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
           <h1 className="text-3xl font-bold tracking-tight">Welcome to PadelELO</h1>
         </div>
 

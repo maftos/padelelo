@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Globe } from "lucide-react";
+import { Globe, ChevronLeft } from "lucide-react";
 import { countries } from "@/lib/countries";
 
 // Create country data with names and flags
@@ -45,7 +45,15 @@ export const NationalityStep = () => {
   return (
     <OnboardingLayout currentStep={3} totalSteps={6}>
       <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="text-center mb-8">
+        <div className="flex items-center justify-center relative mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/onboarding/step-2")}
+            className="absolute left-0 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
           <h1 className="text-3xl font-bold tracking-tight">Where are you from?</h1>
         </div>
 

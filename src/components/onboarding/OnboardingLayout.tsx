@@ -38,18 +38,6 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
       </div>
       <div className="flex-1 container max-w-md mx-auto px-4 py-8">
         <div className="animate-fade-in">
-          {showBack && (
-            <div className="flex items-center justify-center relative mb-8">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleBack}
-                className="absolute left-0 hover:bg-accent/50"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </Button>
-            </div>
-          )}
           <div className="space-y-8">
             {children}
           </div>

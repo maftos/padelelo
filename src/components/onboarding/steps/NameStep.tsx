@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { User } from "lucide-react";
+import { User, ChevronLeft } from "lucide-react";
 
 export const NameStep = () => {
   const [firstName, setFirstName] = useState("");
@@ -32,7 +32,15 @@ export const NameStep = () => {
   return (
     <OnboardingLayout currentStep={2} totalSteps={6}>
       <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="text-center mb-8">
+        <div className="flex items-center justify-center relative mb-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate("/onboarding/step-1")}
+            className="absolute left-0 hover:bg-accent/50"
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </Button>
           <h1 className="text-3xl font-bold tracking-tight">What's your name?</h1>
         </div>
 
