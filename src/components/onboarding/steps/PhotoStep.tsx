@@ -92,25 +92,24 @@ export const PhotoStep = () => {
     }
   };
 
-
-  const nextButton = (
-    <Button 
-      onClick={handleNext}
-      disabled={uploading}
-      variant={photoUrl ? "default" : "secondary"}
-      className="w-full h-12 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
-    >
-      {photoUrl ? "Continue" : "Skip for now"}
-    </Button>
-  );
-
   return (
     <OnboardingLayout 
       currentStep={4} 
       totalSteps={6}
-      nextButton={nextButton}
+      onNext={handleNext}
+      isNextDisabled={uploading}
       transitionState={transitionState}
       transitionDirection={transitionDirection}
+      nextButton={
+        <Button 
+          onClick={handleNext}
+          disabled={uploading}
+          variant={photoUrl ? "default" : "secondary"}
+          className="w-full h-12 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
+        >
+          {photoUrl ? "Continue" : "Skip for now"}
+        </Button>
+      }
     >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">

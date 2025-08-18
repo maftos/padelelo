@@ -19,7 +19,12 @@ export const GenderStep = () => {
     
     setSelectedGender(gender);
     localStorage.setItem("onboarding_gender", gender);
-    goToNextStep(1);
+  };
+
+  const handleNext = () => {
+    if (transitionState !== 'transitioning' && selectedGender) {
+      goToNextStep(1);
+    }
   };
 
   return (
@@ -27,6 +32,8 @@ export const GenderStep = () => {
       currentStep={1} 
       totalSteps={6} 
       showBack={false}
+      onNext={handleNext}
+      isNextDisabled={!selectedGender}
       transitionState={transitionState}
       transitionDirection={transitionDirection}
     >
