@@ -157,6 +157,7 @@ export const PhotoStep = () => {
           <div className="container mx-auto max-w-md px-4 py-3">
             <Button
               className="w-full h-12 text-base font-semibold"
+              variant={photoUrl ? "default" : "secondary"}
               onClick={handleNext}
               disabled={uploading}
             >
@@ -166,9 +167,10 @@ export const PhotoStep = () => {
         </div>
 
         {/* Desktop CTA */}
-        <div className="hidden sm:block pt-4">
+        <div className="hidden sm:block pt-8">
           <Button
             className="w-full h-12 text-base font-semibold"
+            variant={photoUrl ? "default" : "secondary"}
             onClick={handleNext}
             disabled={uploading}
           >

@@ -4,6 +4,9 @@ import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ClipboardEdit, TrendingUp, History, Info, ChevronLeft } from "lucide-react";
+import openGamesImage from "@/assets/onboarding-open-games.jpg";
+import leaderboardImage from "@/assets/onboarding-leaderboard.jpg";
+import tournamentsImage from "@/assets/onboarding-tournaments.jpg";
 
 export const AboutStep = () => {
   const navigate = useNavigate();
@@ -27,11 +30,15 @@ export const AboutStep = () => {
           <Card>
             <CardContent className="p-6 space-y-6">
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 rounded-lg border">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div 
+                  className="relative flex items-center gap-4 p-6 rounded-lg border overflow-hidden bg-cover bg-center"
+                  style={{ backgroundImage: `url(${openGamesImage})` }}
+                >
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+                  <div className="relative z-10 h-10 w-10 rounded-full bg-primary/20 backdrop-blur flex items-center justify-center">
                     <ClipboardEdit className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="space-y-1">
+                  <div className="relative z-10 space-y-1">
                     <h3 className="font-medium">Open Games</h3>
                     <p className="text-sm text-muted-foreground">
                       Find a last minute player replacement
@@ -39,11 +46,15 @@ export const AboutStep = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 rounded-lg border">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div 
+                  className="relative flex items-center gap-4 p-6 rounded-lg border overflow-hidden bg-cover bg-center"
+                  style={{ backgroundImage: `url(${leaderboardImage})` }}
+                >
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+                  <div className="relative z-10 h-10 w-10 rounded-full bg-primary/20 backdrop-blur flex items-center justify-center">
                     <TrendingUp className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="space-y-1">
+                  <div className="relative z-10 space-y-1">
                     <h3 className="font-medium">Leaderboard</h3>
                     <p className="text-sm text-muted-foreground">
                       Compete against other players of your level
@@ -51,11 +62,15 @@ export const AboutStep = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 p-4 rounded-lg border">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <div 
+                  className="relative flex items-center gap-4 p-6 rounded-lg border overflow-hidden bg-cover bg-center"
+                  style={{ backgroundImage: `url(${tournamentsImage})` }}
+                >
+                  <div className="absolute inset-0 bg-background/80 backdrop-blur-sm"></div>
+                  <div className="relative z-10 h-10 w-10 rounded-full bg-primary/20 backdrop-blur flex items-center justify-center">
                     <History className="h-5 w-5 text-primary" />
                   </div>
-                  <div className="space-y-1">
+                  <div className="relative z-10 space-y-1">
                     <h3 className="font-medium">Tournaments</h3>
                     <p className="text-sm text-muted-foreground">
                       Join a local tournament in your area
