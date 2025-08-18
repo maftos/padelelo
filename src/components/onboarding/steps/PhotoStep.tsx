@@ -98,9 +98,9 @@ export const PhotoStep = () => {
       onClick={handleNext}
       disabled={uploading}
       variant={photoUrl ? "default" : "secondary"}
-      className="h-12 px-8 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
+      className="w-full h-12 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
     >
-      {photoUrl ? "Next" : "Skip for now"}
+      {photoUrl ? "Continue" : "Skip for now"}
     </Button>
   );
 
@@ -126,7 +126,11 @@ export const PhotoStep = () => {
                 <Avatar className="h-48 w-48 sm:h-56 sm:w-56 border-4 border-border shadow-2xl">
                   <AvatarImage src={photoUrl} className="object-cover" />
                   <AvatarFallback className="text-4xl sm:text-5xl font-semibold bg-gradient-to-br from-primary/20 to-primary/5">
-                    {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
+                    {(() => {
+                      const firstName = localStorage.getItem("onboarding_first_name") || "";
+                      const lastName = localStorage.getItem("onboarding_last_name") || "";
+                      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "BS";
+                    })()}
                   </AvatarFallback>
                 </Avatar>
                 
