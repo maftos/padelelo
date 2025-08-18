@@ -11,7 +11,6 @@ import EditProfile from "./pages/EditProfile";
 import Matches from "./pages/Matches";
 import Friends from "./pages/Friends";
 import Leaderboard from "./pages/Leaderboard";
-import Roadmap from "./pages/Roadmap";
 import MatchmakingMath from "./pages/MatchmakingMath";
 import HowItWorks from "./pages/HowItWorks";
 import Dashboard from "./pages/Dashboard";
@@ -26,7 +25,6 @@ import PadelCourtDetail from "./pages/PadelCourtDetail";
 import PlayerMatching from "./pages/PlayerMatching";
 import OpenBookingDetail from "./pages/OpenBookingDetail";
 import NotFound from "./pages/NotFound";
-import News from "./pages/News";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import SettingsLayout from "./pages/settings/SettingsLayout";
@@ -77,7 +75,6 @@ function App() {
               <Route path="/matches" element={<Matches />} />
               <Route path="/friends" element={<Friends />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
-              <Route path="/roadmap" element={<Roadmap />} />
               <Route path="/matchmaking-math" element={<MatchmakingMath />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/dashboard" element={<Dashboard />} />
@@ -90,7 +87,6 @@ function App() {
               <Route path="/padel-courts/:venueId" element={<PadelCourtDetail />} />
               <Route path="/open-bookings" element={<PlayerMatching />} />
               <Route path="/open-bookings/:bookingId" element={<OpenBookingDetail />} />
-              <Route path="/news" element={<News />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />
               {/* Catch-all route for 404 - must be last */}
