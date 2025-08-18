@@ -23,50 +23,36 @@ export const GenderStep = () => {
 
   return (
     <OnboardingLayout currentStep={1} totalSteps={6} showBack={false}>
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">Welcome to PadelELO!</h1>
-          <p className="text-muted-foreground">Let's get your profile set up</p>
+      <div className="flex flex-col min-h-[calc(100vh-200px)]">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">Tell us about you</h1>
         </div>
 
-        <Card>
-          <CardContent className="p-6 space-y-4">
-            <div className="flex items-center gap-2 text-sm font-medium mb-4">
-              <User className="h-4 w-4" />
-              What's your gender?
-            </div>
-            
-            <div className="grid gap-3">
-              <Card
-                className={`p-4 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
-                  selectedGender === "MALE" ? "border-primary bg-primary/5" : ""
-                }`}
-                onClick={() => handleSelect("MALE")}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="font-medium">Male</div>
-                </div>
-              </Card>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full max-w-sm space-y-4">
+            <Card
+              className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
+                selectedGender === "MALE" ? "border-primary bg-primary/5" : ""
+              }`}
+              onClick={() => handleSelect("MALE")}
+            >
+              <div className="text-center">
+                <div className="font-medium text-lg">Male</div>
+              </div>
+            </Card>
 
-              <Card
-                className={`p-4 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
-                  selectedGender === "FEMALE" ? "border-primary bg-primary/5" : ""
-                }`}
-                onClick={() => handleSelect("FEMALE")}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="font-medium">Female</div>
-                </div>
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
+            <Card
+              className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
+                selectedGender === "FEMALE" ? "border-primary bg-primary/5" : ""
+              }`}
+              onClick={() => handleSelect("FEMALE")}
+            >
+              <div className="text-center">
+                <div className="font-medium text-lg">Female</div>
+              </div>
+            </Card>
+          </div>
+        </div>
       </div>
     </OnboardingLayout>
   );
