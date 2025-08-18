@@ -54,17 +54,13 @@ export const NationalityStep = () => {
   };
 
   return (
-    <OnboardingLayout currentStep={3} totalSteps={6}>
-      <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="flex items-center justify-center relative mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/onboarding/step-2")}
-            className="absolute left-0 hover:bg-accent/50"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
+    <OnboardingLayout 
+      currentStep={3} 
+      totalSteps={6}
+      onNext={handleNext}
+    >
+      <div className="flex-1 flex flex-col justify-center space-y-8">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Where are you from?</h1>
         </div>
 
@@ -104,28 +100,6 @@ export const NationalityStep = () => {
                 </Select>
             )}
           </div>
-        </div>
-
-        {/* Mobile sticky CTA */}
-        <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
-          <div className="container mx-auto max-w-md px-4 py-3">
-            <Button
-              className="w-full h-12 text-base font-semibold"
-              onClick={handleNext}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden sm:block pt-4">
-          <Button
-            className="w-full h-12 text-base font-semibold"
-            onClick={handleNext}
-          >
-            Next
-          </Button>
         </div>
 
         {/* Mobile Bottom Drawer */}
