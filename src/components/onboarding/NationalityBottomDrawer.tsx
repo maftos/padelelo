@@ -62,12 +62,12 @@ export const NationalityBottomDrawer = ({
 
   return (
     <Drawer open={open} onOpenChange={onClose}>
-      <DrawerContent className="h-[85vh]">
+      <DrawerContent className="h-[85vh] flex flex-col">
         <DrawerHeader className="border-b border-border pb-4">
           <DrawerTitle className="text-center">Select your country</DrawerTitle>
         </DrawerHeader>
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col min-h-0">
           {/* Search Input */}
           <div className="p-4 border-b border-border">
             <div className="relative">
@@ -93,32 +93,34 @@ export const NationalityBottomDrawer = ({
           </div>
 
           {/* Countries List */}
-          <ScrollArea className="flex-1">
-            <div className="p-2">
-              {filteredCountries.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No countries found
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  {filteredCountries.map((country) => (
-                    <Button
-                      key={country.code}
-                      variant={selectedCountryCode === country.code ? "secondary" : "ghost"}
-                      className="w-full h-14 justify-start p-4 text-left"
-                      onClick={() => handleSelectCountry(country.code)}
-                    >
-                      <span className="text-2xl mr-3">{country.flag}</span>
-                      <span className="text-base">{country.name}</span>
-                      {selectedCountryCode === country.code && (
-                        <div className="ml-auto h-2 w-2 rounded-full bg-primary" />
-                      )}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </ScrollArea>
+          <div className="flex-1 min-h-0">
+            <ScrollArea className="h-full">
+              <div className="p-2">
+                {filteredCountries.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No countries found
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    {filteredCountries.map((country) => (
+                      <Button
+                        key={country.code}
+                        variant={selectedCountryCode === country.code ? "secondary" : "ghost"}
+                        className="w-full h-14 justify-start p-4 text-left"
+                        onClick={() => handleSelectCountry(country.code)}
+                      >
+                        <span className="text-2xl mr-3">{country.flag}</span>
+                        <span className="text-base">{country.name}</span>
+                        {selectedCountryCode === country.code && (
+                          <div className="ml-auto h-2 w-2 rounded-full bg-primary" />
+                        )}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
       </DrawerContent>
     </Drawer>
