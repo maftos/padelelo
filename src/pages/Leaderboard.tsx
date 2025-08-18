@@ -77,11 +77,12 @@ const Leaderboard = () => {
       <main className="container py-6 md:py-12 px-4 max-w-7xl mx-auto">
         
         <div className="space-y-6 md:space-y-8 animate-fade-in">
-          <LeaderboardHeader 
-            filters={filters}
-            onGenderChange={handleGenderChange}
-            onFriendsOnlyChange={handleFriendsOnlyChange}
-          />
+          <div className="text-center space-y-3">
+            <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary via-primary/80 to-secondary bg-clip-text text-transparent leading-tight">
+              Mauritius Padel Rankings
+            </h1>
+            <p className="text-muted-foreground text-lg">Compete with the island's finest players</p>
+          </div>
           
           <LeaderboardTable 
             isLoading={isLoading}

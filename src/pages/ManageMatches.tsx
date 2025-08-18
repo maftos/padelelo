@@ -115,8 +115,8 @@ const ManageMatches = () => {
             <div className="flex flex-col gap-3 sm:gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-xl sm:text-2xl font-bold text-foreground">My Bookings</h1>
-                  <p className="text-sm text-muted-foreground mt-1">Manage your confirmed bookings and open games</p>
+                  <h1 className="text-xl sm:text-2xl font-bold text-foreground hidden sm:block">My Bookings</h1>
+                  <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Manage your confirmed bookings and open games</p>
                 </div>
                 
                 {/* Create Booking Button */}

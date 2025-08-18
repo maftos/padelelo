@@ -1,4 +1,4 @@
-import { Home, Trophy, MapPin, Calendar, BarChart3, Settings, Users } from "lucide-react";
+import { Home, Trophy, MapPin, Calendar, BarChart3, LogOut, Users } from "lucide-react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserProfileSummary } from "@/hooks/use-user-profile-summary";
@@ -94,7 +94,7 @@ export const AppSidebar = () => {
           onClick={signOut}
           className="w-full justify-start text-foreground hover:bg-accent hover:text-accent-foreground"
         >
-          <Settings className="h-5 w-5 mr-3" />
+          <LogOut className="h-5 w-5 mr-3" />
           Sign Out
         </Button>
       </div>
