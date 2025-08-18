@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Globe, ChevronLeft, ChevronDown } from "lucide-react";
 import { countries } from "@/lib/countries";
@@ -62,14 +63,14 @@ export const NationalityStep = () => {
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Where are you from?</h1>
+          <p className="text-muted-foreground">Help us customize your experience</p>
         </div>
 
         <div className="space-y-6">
-          <div className="text-sm font-medium">
-            Nationality
-          </div>
-          
           <div className="space-y-2">
+            <Label className="text-base font-medium">
+              Nationality
+            </Label>
             {isMobile ? (
               <Button
                 variant="outline"
