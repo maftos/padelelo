@@ -1,5 +1,5 @@
 
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -32,6 +32,12 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 }) => {
   const { goToPreviousStep } = useOnboardingNavigation();
   const progress = (currentStep / totalSteps) * 100;
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Track component mount to distinguish fresh mounts from transitions
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleBack = () => {
     if (onBack) {
@@ -44,13 +50,19 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
   // Determine animation classes based on transition state and direction
   const getAnimationClass = () => {
     if (transitionState === 'transitioning') {
+      // Exit animations when leaving a step
       return transitionDirection === 'forward' 
         ? 'animate-slide-out-left' 
         : 'animate-slide-out-right';
     }
-    return transitionDirection === 'forward' 
-      ? 'animate-slide-in-right' 
-      : 'animate-slide-in-left';
+    
+    // For fresh mounts (initial page load), use fade-in to prevent jitter
+    if (!isMounted) {
+      return 'animate-fade-in';
+    }
+    
+    // Only apply slide-in animations for actual transitions between steps
+    return 'animate-fade-in';
   };
 
   const showBackButton = showBack && currentStep > 1;
