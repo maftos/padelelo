@@ -57,11 +57,6 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col relative overflow-hidden">
-      {/* Step indicator */}
-      <div className="absolute top-4 left-4 text-sm font-medium text-muted-foreground z-10">
-        {currentStep} of {totalSteps}
-      </div>
-
       {/* Progress bar */}
       <div className="container max-w-md mx-auto px-4 py-6">
         <Progress value={progress} className="h-1 bg-muted/50" />
@@ -77,14 +72,14 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 
         {/* Bottom action bar */}
         <div className="pb-6 pt-4">
-          <div className="flex items-center justify-between">
+          <div className="w-full flex items-center gap-3">
             {/* Back button */}
             {showBackButton ? (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="icon"
                 onClick={handleBack}
-                className="h-12 w-12 rounded-full hover:bg-muted/50 transition-all duration-200"
+                className="h-12 w-12 rounded-lg border-2 border-border hover:bg-muted/50 transition-all duration-200"
               >
                 <ChevronLeft className="h-6 w-6" />
               </Button>
@@ -93,16 +88,16 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
             )}
 
             {/* Next button */}
-            <div className="flex-1 flex justify-end">
+            <div className="flex-1">
               {nextButton ? (
                 nextButton
               ) : onNext ? (
                 <Button 
                   onClick={onNext}
                   disabled={isNextDisabled}
-                  className="h-12 px-8 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
+                  className="w-full h-12 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
                 >
-                  Next
+                  Continue
                 </Button>
               ) : null}
             </div>
