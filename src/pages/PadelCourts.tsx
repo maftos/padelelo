@@ -290,26 +290,6 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
           </div>
         )}
 
-        {/* Desktop-only additional SEO content */}
-        {!isMobile && (
-          <section className="space-y-6 bg-muted/50 rounded-lg p-6 m-4">
-            <h2 className="text-2xl font-semibold">Why Play Padel in Mauritius?</h2>
-            <div className="prose max-w-none">
-              <p className="text-muted-foreground leading-relaxed">
-                Mauritius offers an ideal setting for padel enthusiasts with its year-round tropical climate 
-                and growing community of passionate players. Whether you're a beginner looking to learn this 
-                exciting racquet sport or an experienced player seeking competitive matches, the island's 
-                padel courts provide excellent facilities and welcoming environments.
-              </p>
-              <p className="text-muted-foreground leading-relaxed mt-4">
-                Padel combines elements of tennis and squash, played on an enclosed court with walls that 
-                are part of the game. It's perfect for players of all ages and skill levels, making it 
-                one of the fastest-growing sports in Mauritius. Book your court today and join the 
-                padel community!
-              </p>
-            </div>
-          </section>
-        )}
       </div>
     </>
   );
