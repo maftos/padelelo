@@ -44,33 +44,31 @@ export const NameStep = () => {
           <h1 className="text-3xl font-bold tracking-tight">What's your name?</h1>
         </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-full space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="first_name" className="text-base font-medium">
-                First name
-              </Label>
-              <Input
-                id="first_name"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Enter your first name"
-                className="h-12"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="last_name" className="text-base font-medium">
-                Last name
-              </Label>
-              <Input
-                id="last_name"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                placeholder="Enter your last name"
-                className="h-12"
-              />
-            </div>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="first_name" className="text-base font-medium">
+              First name
+            </Label>
+            <Input
+              id="first_name"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              placeholder="Enter your first name"
+              className="h-12"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <Label htmlFor="last_name" className="text-base font-medium">
+              Last name
+            </Label>
+            <Input
+              id="last_name"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              placeholder="Enter your last name"
+              className="h-12"
+            />
           </div>
         </div>
 
