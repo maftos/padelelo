@@ -43,7 +43,7 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col relative overflow-hidden">
       {/* Step indicator */}
       <div className="absolute top-4 left-4 text-sm font-medium text-muted-foreground z-10">
-        {currentStep}&gt;
+        {currentStep} of {totalSteps}
       </div>
 
       {/* Progress bar */}
@@ -53,7 +53,7 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 
       {/* Main content area */}
       <div className="flex-1 container max-w-md mx-auto px-4 flex flex-col">
-        <div className="flex-1 animate-slide-in-right">
+        <div className="flex-1 animate-slide-in-from-right">
           <div className="h-full flex flex-col">
             {children}
           </div>
