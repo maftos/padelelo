@@ -115,8 +115,7 @@ const ManageMatches = () => {
             <div className="flex flex-col gap-3 sm:gap-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="min-w-0 flex-1">
-                  <h1 className="text-xl sm:text-2xl font-bold text-foreground hidden sm:block">My Bookings</h1>
-                  <p className="text-sm text-muted-foreground mt-1 hidden sm:block">Manage your confirmed bookings and open games</p>
+                  {/* Header text removed for cleaner look */}
                 </div>
                 
                 {/* Create Booking Button */}
@@ -135,7 +134,7 @@ const ManageMatches = () => {
             {/* Confirmed Matches Section */}
             <div className="space-y-4">
               <div className="space-y-1">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground">Confirmed Bookings</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">Confirmed Bookings</h2>
                 <p className="text-sm text-muted-foreground">Complete your scheduled bookings</p>
               </div>
               <ConfirmedMatchesList 
@@ -147,7 +146,7 @@ const ManageMatches = () => {
             {/* Open Games Section */}
             <div className="space-y-4">
               <div className="space-y-1">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground">My Open Games</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">My Open Games</h2>
                 <p className="text-sm text-muted-foreground">Games you created that are waiting for more players</p>
               </div>
               <UserOpenGamesList onViewApplicants={handleViewApplicants} />
