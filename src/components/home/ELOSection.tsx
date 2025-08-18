@@ -12,7 +12,7 @@ export const ELOSection = () => {
           <div className="relative order-2 lg:order-1">
             <div className="aspect-[4/3] rounded-2xl overflow-hidden">
               <img
-                src="/lovable-uploads/0f4d87a8-c59e-45f9-88a8-042506933063.png"
+                src="/lovable-uploads/2736a565-0c69-4c94-8ba3-c52f7be30465.png"
                 alt="Chess pieces representing strategic ELO rating system"
                 className="w-full h-full object-cover"
               />
