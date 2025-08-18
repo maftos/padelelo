@@ -68,46 +68,44 @@ export const NationalityStep = () => {
           <h1 className="text-3xl font-bold tracking-tight">Where are you from?</h1>
         </div>
 
-        <div className="flex-1">
-          <Card>
-            <CardContent className="p-6 space-y-4">
-              <div className="text-sm font-medium mb-4">
-                Nationality
-              </div>
-              
-              <div className="space-y-2">
-                {isMobile ? (
-                  <Button
-                    variant="outline"
-                    className="w-full h-12 justify-between text-left"
-                    onClick={openDrawer}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{selectedCountry?.flag}</span>
-                      <span className="text-base">{selectedCountry?.name || "Select your country..."}</span>
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                ) : (
-                  <Select value={value} onValueChange={handleValueChange}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select your country..." />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-60 z-50 bg-background">
-                      {countryData.map((country) => (
-                        <SelectItem key={country.code} value={country.code}>
-                          <span className="flex items-center gap-2">
-                            <span className="text-lg">{country.flag}</span>
-                            <span>{country.name}</span>
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="w-full space-y-6">
+            <div className="text-sm font-medium mb-4">
+              Nationality
+            </div>
+            
+            <div className="space-y-2">
+              {isMobile ? (
+                <Button
+                  variant="outline"
+                  className="w-full h-12 justify-between text-left"
+                  onClick={openDrawer}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-xl">{selectedCountry?.flag}</span>
+                    <span className="text-base">{selectedCountry?.name || "Select your country..."}</span>
+                  </div>
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              ) : (
+                <Select value={value} onValueChange={handleValueChange}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select your country..." />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 z-50 bg-background">
+                    {countryData.map((country) => (
+                      <SelectItem key={country.code} value={country.code}>
+                        <span className="flex items-center gap-2">
+                          <span className="text-lg">{country.flag}</span>
+                          <span>{country.name}</span>
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Mobile sticky CTA */}
