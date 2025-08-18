@@ -93,53 +93,54 @@ export const PhotoStep = () => {
 
   return (
     <OnboardingLayout currentStep={4} totalSteps={6}>
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
+      <div className="flex flex-col min-h-[calc(100vh-200px)]">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Add a photo</h1>
-          <p className="text-muted-foreground">
-            Help other players recognize you.
-          </p>
         </div>
 
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={photoUrl} />
-                  <AvatarFallback className="text-lg">
-                    {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <label 
-                  htmlFor="photo-upload" 
-                  className="absolute bottom-0 right-0 p-2 bg-background rounded-full border cursor-pointer hover:bg-accent transition-colors"
-                >
-                  <Camera className="h-4 w-4" />
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoUpload}
-                    disabled={uploading}
-                    className="hidden"
-                    id="photo-upload"
-                  />
-                </label>
+        <div className="flex-1 flex items-center justify-center">
+          <Card className="w-full">
+            <CardContent className="p-6 space-y-6">
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage src={photoUrl} />
+                    <AvatarFallback className="text-lg">
+                      {localStorage.getItem("onboarding_first_name")?.substring(0, 1).toUpperCase()}{localStorage.getItem("onboarding_last_name")?.substring(0, 1).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <label 
+                    htmlFor="photo-upload" 
+                    className="absolute bottom-0 right-0 p-2 bg-background rounded-full border cursor-pointer hover:bg-accent transition-colors"
+                  >
+                    <Camera className="h-4 w-4" />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      disabled={uploading}
+                      className="hidden"
+                      id="photo-upload"
+                    />
+                  </label>
+                </div>
+                {uploading && (
+                  <p className="text-sm text-muted-foreground">Uploading...</p>
+                )}
               </div>
-              {uploading && (
-                <p className="text-sm text-muted-foreground">Uploading...</p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Button
-          className="w-full h-12 text-base font-semibold"
-          onClick={handleNext}
-          disabled={uploading}
-        >
-          {photoUrl ? "Next" : "Skip for now"}
-        </Button>
+        <div className="sticky bottom-0 bg-background pt-4 pb-4 border-t md:border-t-0 md:bg-transparent md:static">
+          <Button
+            className="w-full h-12 text-base font-semibold"
+            onClick={handleNext}
+            disabled={uploading}
+          >
+            {photoUrl ? "Next" : "Skip for now"}
+          </Button>
+        </div>
       </div>
     </OnboardingLayout>
   );

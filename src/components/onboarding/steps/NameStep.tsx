@@ -31,51 +31,54 @@ export const NameStep = () => {
 
   return (
     <OnboardingLayout currentStep={2} totalSteps={6}>
-      <div className="space-y-6">
-        <div className="text-center space-y-2">
+      <div className="flex flex-col min-h-[calc(100vh-200px)]">
+        <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight">What's your name?</h1>
-          <p className="text-muted-foreground">This is how others will see you</p>
         </div>
 
-        <Card>
-          <CardContent className="p-6 space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="first_name" className="text-sm font-medium">
-                  First Name
-                </Label>
-                <Input
-                  id="first_name"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Enter your first name"
-                  className="h-10"
-                />
+        <div className="flex-1">
+          <Card>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="first_name" className="text-sm font-medium">
+                    First Name
+                  </Label>
+                  <Input
+                    id="first_name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Enter your first name"
+                    className="h-10"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="last_name" className="text-sm font-medium">
+                    Last Name
+                  </Label>
+                  <Input
+                    id="last_name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Enter your last name"
+                    className="h-10"
+                  />
+                </div>
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="last_name" className="text-sm font-medium">
-                  Last Name
-                </Label>
-                <Input
-                  id="last_name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Enter your last name"
-                  className="h-10"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Button
-          className="w-full h-12 text-base font-semibold"
-          onClick={handleNext}
-          disabled={!firstName.trim() || !lastName.trim()}
-        >
-          Next
-        </Button>
+        <div className="sticky bottom-0 bg-background pt-4 pb-4 border-t md:border-t-0 md:bg-transparent md:static">
+          <Button
+            className="w-full h-12 text-base font-semibold"
+            onClick={handleNext}
+            disabled={!firstName.trim() || !lastName.trim()}
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </OnboardingLayout>
   );
