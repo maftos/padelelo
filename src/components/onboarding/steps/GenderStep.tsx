@@ -1,12 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Card } from "@/components/ui/card";
+import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 
 export const GenderStep = () => {
-  const navigate = useNavigate();
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
+  const { goToNextStep, transitionState, transitionDirection } = useOnboardingNavigation();
 
   // Load cached data on mount
   useEffect(() => {
@@ -15,16 +15,21 @@ export const GenderStep = () => {
   }, []);
 
   const handleSelect = (gender: string) => {
+    if (transitionState === 'transitioning') return;
+    
     setSelectedGender(gender);
     localStorage.setItem("onboarding_gender", gender);
-    // Add small delay for better UX
-    setTimeout(() => {
-      navigate("/onboarding/step-2");
-    }, 150);
+    goToNextStep(1);
   };
 
   return (
-    <OnboardingLayout currentStep={1} totalSteps={6} showBack={false}>
+    <OnboardingLayout 
+      currentStep={1} 
+      totalSteps={6} 
+      showBack={false}
+      transitionState={transitionState}
+      transitionDirection={transitionDirection}
+    >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Tell us about you</h1>

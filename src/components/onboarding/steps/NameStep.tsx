@@ -1,14 +1,14 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 
 export const NameStep = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const navigate = useNavigate();
+  const { goToNextStep, transitionState, transitionDirection } = useOnboardingNavigation();
 
   // Load cached data on mount
   useEffect(() => {
@@ -19,10 +19,10 @@ export const NameStep = () => {
   }, []);
 
   const handleNext = () => {
-    if (firstName.trim() && lastName.trim()) {
+    if (firstName.trim() && lastName.trim() && transitionState !== 'transitioning') {
       localStorage.setItem("onboarding_first_name", firstName.trim());
       localStorage.setItem("onboarding_last_name", lastName.trim());
-      navigate("/onboarding/step-3");
+      goToNextStep(2);
     }
   };
 
@@ -34,6 +34,8 @@ export const NameStep = () => {
       totalSteps={6}
       onNext={handleNext}
       isNextDisabled={!isFormValid}
+      transitionState={transitionState}
+      transitionDirection={transitionDirection}
     >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">

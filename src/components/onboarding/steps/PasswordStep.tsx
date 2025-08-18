@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
+import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export const PasswordStep = () => {
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const { goToNextStep, transitionState, transitionDirection } = useOnboardingNavigation();
 
   const handleNext = () => {
-    if (password.trim()) {
+    if (password.trim() && transitionState !== 'transitioning') {
       localStorage.setItem("onboarding_password", password);
-      navigate("/onboarding/final");
+      goToNextStep(5);
     }
   };
 
@@ -23,6 +23,8 @@ export const PasswordStep = () => {
       totalSteps={6}
       onNext={handleNext}
       isNextDisabled={!isPasswordValid}
+      transitionState={transitionState}
+      transitionDirection={transitionDirection}
     >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">

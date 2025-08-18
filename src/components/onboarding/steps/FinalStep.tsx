@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
+import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +12,7 @@ import confetti from 'canvas-confetti';
 export const FinalStep = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
+  const { transitionState, transitionDirection } = useOnboardingNavigation();
   const { user } = useAuth();
 
   const handleComplete = async () => {
@@ -74,6 +76,8 @@ export const FinalStep = () => {
       totalSteps={6}
       showBack={false}
       nextButton={nextButton}
+      transitionState={transitionState}
+      transitionDirection={transitionDirection}
     >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-4">

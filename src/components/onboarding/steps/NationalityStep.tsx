@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
+import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -21,7 +21,7 @@ const countryData = countries.map(country => ({
 export const NationalityStep = () => {
   const [value, setValue] = useState("MU"); // Preset to Mauritius (ISO code)
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const navigate = useNavigate();
+  const { goToNextStep, transitionState, transitionDirection } = useOnboardingNavigation();
   const isMobile = useIsMobile();
 
   // Load cached data on mount
@@ -41,9 +41,11 @@ export const NationalityStep = () => {
   };
 
   const handleNext = () => {
-    // Ensure nationality is saved before proceeding
-    localStorage.setItem("onboarding_nationality", value);
-    navigate("/onboarding/step-4");
+    if (transitionState !== 'transitioning') {
+      // Ensure nationality is saved before proceeding
+      localStorage.setItem("onboarding_nationality", value);
+      goToNextStep(3);
+    }
   };
 
   const selectedCountry = countryData.find(country => country.code === value);
@@ -59,6 +61,8 @@ export const NationalityStep = () => {
       currentStep={3} 
       totalSteps={6}
       onNext={handleNext}
+      transitionState={transitionState}
+      transitionDirection={transitionDirection}
     >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">

@@ -3,7 +3,7 @@ import { FC, ReactNode } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useOnboardingNavigation, TransitionDirection, TransitionState } from "@/hooks/use-onboarding-navigation";
 
 interface OnboardingLayoutProps {
   children: ReactNode;
@@ -14,6 +14,8 @@ interface OnboardingLayoutProps {
   nextButton?: ReactNode;
   onNext?: () => void;
   isNextDisabled?: boolean;
+  transitionState?: TransitionState;
+  transitionDirection?: TransitionDirection;
 }
 
 export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
@@ -25,16 +27,30 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
   nextButton,
   onNext,
   isNextDisabled = false,
+  transitionState = 'idle',
+  transitionDirection = 'forward',
 }) => {
-  const navigate = useNavigate();
+  const { goToPreviousStep } = useOnboardingNavigation();
   const progress = (currentStep / totalSteps) * 100;
 
   const handleBack = () => {
     if (onBack) {
       onBack();
     } else if (currentStep > 1) {
-      navigate(`/onboarding/step-${currentStep - 1}`);
+      goToPreviousStep(currentStep);
     }
+  };
+
+  // Determine animation classes based on transition state and direction
+  const getAnimationClass = () => {
+    if (transitionState === 'transitioning') {
+      return transitionDirection === 'forward' 
+        ? 'animate-slide-out-to-left' 
+        : 'animate-slide-out-to-right';
+    }
+    return transitionDirection === 'forward' 
+      ? 'animate-slide-in-from-right' 
+      : 'animate-slide-in-from-left';
   };
 
   const showBackButton = showBack && currentStep > 1;
@@ -53,7 +69,7 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 
       {/* Main content area */}
       <div className="flex-1 container max-w-md mx-auto px-4 flex flex-col">
-        <div className="flex-1 animate-slide-in-from-right">
+        <div className={`flex-1 ${getAnimationClass()}`}>
           <div className="h-full flex flex-col">
             {children}
           </div>

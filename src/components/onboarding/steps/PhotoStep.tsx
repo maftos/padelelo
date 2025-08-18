@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
+import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -11,7 +12,7 @@ import { toast } from "sonner";
 export const PhotoStep = () => {
   const [uploading, setUploading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
-  const navigate = useNavigate();
+  const { goToNextStep, transitionState, transitionDirection } = useOnboardingNavigation();
 
   // Function to convert image to WebP format
   const convertToWebP = (file: File): Promise<File> => {
@@ -86,12 +87,11 @@ export const PhotoStep = () => {
   };
 
   const handleNext = () => {
-    navigate("/onboarding/step-5");
+    if (transitionState !== 'transitioning') {
+      goToNextStep(4);
+    }
   };
 
-  const handleBack = () => {
-    navigate("/onboarding/step-3");
-  };
 
   const nextButton = (
     <Button 
@@ -108,8 +108,9 @@ export const PhotoStep = () => {
     <OnboardingLayout 
       currentStep={4} 
       totalSteps={6}
-      onBack={handleBack}
       nextButton={nextButton}
+      transitionState={transitionState}
+      transitionDirection={transitionDirection}
     >
       <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-2">
