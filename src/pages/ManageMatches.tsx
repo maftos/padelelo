@@ -109,33 +109,24 @@ const ManageMatches = () => {
     <>
       <Navigation />
       <div className="w-full min-h-screen bg-background">
-        <div className="container mx-auto px-3 sm:px-4 pt-4 sm:pt-6 pb-24 sm:pb-6 max-w-full sm:max-w-4xl">
-          {/* Header - Mobile optimized */}
-          <div className="mb-6">
-            <div className="flex flex-col gap-3 sm:gap-4">
+        <div className="container mx-auto px-3 sm:px-4 pt-2 sm:pt-4 pb-24 sm:pb-6 max-w-full sm:max-w-4xl">
+          {/* Main Content */}
+          <div className="space-y-8">
+            {/* Confirmed Matches Section */}
+            <div className="space-y-4">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div className="min-w-0 flex-1">
-                  {/* Header text removed for cleaner look */}
+                <div className="space-y-1">
+                  <h2 className="text-xl sm:text-2xl font-bold text-foreground">Confirmed Bookings</h2>
+                  <p className="text-sm text-muted-foreground">Complete your scheduled bookings</p>
                 </div>
                 
-                {/* Create Booking Button */}
+                {/* Create Booking Button - Desktop */}
                 <Link to="/create-match" className="hidden sm:block">
                   <Button className="flex items-center justify-center gap-2 text-sm h-10 px-4">
                     <Plus className="h-4 w-4" />
                     <span>Create Booking</span>
                   </Button>
                 </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="space-y-8">
-            {/* Confirmed Matches Section */}
-            <div className="space-y-4">
-              <div className="space-y-1">
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground">Confirmed Bookings</h2>
-                <p className="text-sm text-muted-foreground">Complete your scheduled bookings</p>
               </div>
               <ConfirmedMatchesList 
                 onSelectMatch={handleSelectMatch}
