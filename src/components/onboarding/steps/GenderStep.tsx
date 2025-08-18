@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { User } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 export const GenderStep = () => {
   const navigate = useNavigate();
@@ -18,20 +17,24 @@ export const GenderStep = () => {
   const handleSelect = (gender: string) => {
     setSelectedGender(gender);
     localStorage.setItem("onboarding_gender", gender);
-    navigate("/onboarding/step-2");
+    // Add small delay for better UX
+    setTimeout(() => {
+      navigate("/onboarding/step-2");
+    }, 150);
   };
 
   return (
     <OnboardingLayout currentStep={1} totalSteps={6} showBack={false}>
-      <div className="flex flex-col min-h-[calc(100vh-200px)]">
-        <div className="text-center mb-8">
+      <div className="flex-1 flex flex-col justify-center space-y-8">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Tell us about you</h1>
+          <p className="text-muted-foreground">This helps us personalize your experience</p>
         </div>
 
         <div className="w-full max-w-sm mx-auto space-y-4">
           <Card
-            className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
-              selectedGender === "MALE" ? "border-primary bg-primary/5" : ""
+            className={`p-6 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:scale-[1.02] ${
+              selectedGender === "MALE" ? "border-primary bg-primary/5 shadow-lg" : "hover:bg-accent/50"
             }`}
             onClick={() => handleSelect("MALE")}
           >
@@ -41,8 +44,8 @@ export const GenderStep = () => {
           </Card>
 
           <Card
-            className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
-              selectedGender === "FEMALE" ? "border-primary bg-primary/5" : ""
+            className={`p-6 cursor-pointer transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:scale-[1.02] ${
+              selectedGender === "FEMALE" ? "border-primary bg-primary/5 shadow-lg" : "hover:bg-accent/50"
             }`}
             onClick={() => handleSelect("FEMALE")}
           >

@@ -2,11 +2,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { User, ChevronLeft } from "lucide-react";
 
 export const NameStep = () => {
   const [firstName, setFirstName] = useState("");
@@ -29,71 +26,50 @@ export const NameStep = () => {
     }
   };
 
+  const isFormValid = firstName.trim() && lastName.trim();
+
   return (
-    <OnboardingLayout currentStep={2} totalSteps={6}>
-      <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="flex items-center justify-center relative mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/onboarding/step-1")}
-            className="absolute left-0 hover:bg-accent/50"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
+    <OnboardingLayout 
+      currentStep={2} 
+      totalSteps={6}
+      onNext={handleNext}
+      isNextDisabled={!isFormValid}
+    >
+      <div className="flex-1 flex flex-col justify-center space-y-8">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">What's your name?</h1>
+          <p className="text-muted-foreground">We'll use this to personalize your profile</p>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="first_name" className="text-base font-medium">
               First name
             </Label>
             <Input
               id="first_name"
+              type="text"
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               placeholder="Enter your first name"
-              className="h-12"
+              className="h-12 text-base"
+              autoFocus
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="last_name" className="text-base font-medium">
               Last name
             </Label>
             <Input
               id="last_name"
+              type="text"
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               placeholder="Enter your last name"
-              className="h-12"
+              className="h-12 text-base"
             />
           </div>
-        </div>
-
-        {/* Mobile sticky CTA */}
-        <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
-          <div className="container mx-auto max-w-md px-4 py-3">
-            <Button
-              className="w-full h-12 text-base font-semibold"
-              onClick={handleNext}
-              disabled={!firstName.trim() || !lastName.trim()}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden sm:block pt-4">
-          <Button
-            className="w-full h-12 text-base font-semibold"
-            onClick={handleNext}
-            disabled={!firstName.trim() || !lastName.trim()}
-          >
-            Next
-          </Button>
         </div>
       </div>
     </OnboardingLayout>

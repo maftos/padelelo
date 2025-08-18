@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { ChevronLeft, Lock } from "lucide-react";
 
 export const PasswordStep = () => {
   const [password, setPassword] = useState("");
@@ -21,18 +18,16 @@ export const PasswordStep = () => {
   const isPasswordValid = password.length >= 6;
 
   return (
-    <OnboardingLayout currentStep={5} totalSteps={6}>
-      <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="flex items-center justify-center relative mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/onboarding/step-4")}
-            className="absolute left-0 hover:bg-accent/50"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
+    <OnboardingLayout 
+      currentStep={5} 
+      totalSteps={6}
+      onNext={handleNext}
+      isNextDisabled={!isPasswordValid}
+    >
+      <div className="flex-1 flex flex-col justify-center space-y-8">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Set your password</h1>
+          <p className="text-muted-foreground">Keep your account secure</p>
         </div>
 
         <div className="space-y-6">
@@ -46,33 +41,10 @@ export const PasswordStep = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="h-12"
+              className="h-12 text-base"
+              autoFocus
             />
           </div>
-        </div>
-
-        {/* Mobile sticky CTA */}
-        <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
-          <div className="container mx-auto max-w-md px-4 py-3">
-            <Button
-              className="w-full h-12 text-base font-semibold"
-              onClick={handleNext}
-              disabled={!isPasswordValid}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden sm:block pt-4">
-          <Button
-            className="w-full h-12 text-base font-semibold"
-            onClick={handleNext}
-            disabled={!isPasswordValid}
-          >
-            Next
-          </Button>
         </div>
       </div>
     </OnboardingLayout>
