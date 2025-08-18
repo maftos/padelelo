@@ -10,7 +10,7 @@ export const AboutStep = () => {
 
   return (
     <OnboardingLayout currentStep={5} totalSteps={6}>
-      <div className="flex flex-col min-h-[calc(100vh-200px)]">
+      <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight">Welcome to PadelELO</h1>
         </div>
@@ -59,7 +59,20 @@ export const AboutStep = () => {
           </Card>
         </div>
 
-        <div className="sticky bottom-0 bg-background pt-4 pb-4 border-t md:border-t-0 md:bg-transparent md:static">
+        {/* Mobile sticky CTA */}
+        <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
+          <div className="container mx-auto max-w-md px-4 py-3">
+            <Button
+              className="w-full h-12 text-base font-semibold"
+              onClick={() => navigate("/onboarding/final")}
+            >
+              Continue
+            </Button>
+          </div>
+        </div>
+
+        {/* Desktop CTA */}
+        <div className="hidden sm:block pt-4">
           <Button
             className="w-full h-12 text-base font-semibold"
             onClick={() => navigate("/onboarding/final")}
