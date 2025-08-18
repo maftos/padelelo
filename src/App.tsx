@@ -84,7 +84,6 @@ function App() {
               <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
               <Route path="/tournament/create-tournament" element={<CreateTournament />} />
               <Route path="/padel-courts" element={<PadelCourts />} />
-              <Route path="/padel-courts/:venueId" element={<PadelCourtDetail />} />
               <Route path="/open-bookings" element={<PlayerMatching />} />
               <Route path="/open-bookings/:bookingId" element={<OpenBookingDetail />} />
               <Route path="/terms" element={<Terms />} />
