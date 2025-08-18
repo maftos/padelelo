@@ -35,32 +35,20 @@ export const PasswordStep = () => {
           <h1 className="text-3xl font-bold tracking-tight">Set your password</h1>
         </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <Card className="w-full">
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-center gap-2 text-sm font-medium mb-4">
-                <Lock className="h-4 w-4" />
-                Password
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-base font-medium">
-                  Choose a secure password
-                </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="h-12"
-                />
-                <p className="text-sm text-muted-foreground">
-                  Minimum 6 characters. You can always change it later.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-base font-medium">
+              Choose a secure password
+            </Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="h-12"
+            />
+          </div>
         </div>
 
         {/* Mobile sticky CTA */}

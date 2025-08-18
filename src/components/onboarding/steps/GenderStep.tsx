@@ -28,30 +28,28 @@ export const GenderStep = () => {
           <h1 className="text-3xl font-bold tracking-tight">Tell us about you</h1>
         </div>
 
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-sm space-y-4">
-            <Card
-              className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
-                selectedGender === "MALE" ? "border-primary bg-primary/5" : ""
-              }`}
-              onClick={() => handleSelect("MALE")}
-            >
-              <div className="text-center">
-                <div className="font-medium text-lg">Male</div>
-              </div>
-            </Card>
+        <div className="w-full max-w-sm mx-auto space-y-4">
+          <Card
+            className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
+              selectedGender === "MALE" ? "border-primary bg-primary/5" : ""
+            }`}
+            onClick={() => handleSelect("MALE")}
+          >
+            <div className="text-center">
+              <div className="font-medium text-lg">Male</div>
+            </div>
+          </Card>
 
-            <Card
-              className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
-                selectedGender === "FEMALE" ? "border-primary bg-primary/5" : ""
-              }`}
-              onClick={() => handleSelect("FEMALE")}
-            >
-              <div className="text-center">
-                <div className="font-medium text-lg">Female</div>
-              </div>
-            </Card>
-          </div>
+          <Card
+            className={`p-6 cursor-pointer transition-all duration-200 hover:border-primary/50 hover:shadow-md ${
+              selectedGender === "FEMALE" ? "border-primary bg-primary/5" : ""
+            }`}
+            onClick={() => handleSelect("FEMALE")}
+          >
+            <div className="text-center">
+              <div className="font-medium text-lg">Female</div>
+            </div>
+          </Card>
         </div>
       </div>
     </OnboardingLayout>
