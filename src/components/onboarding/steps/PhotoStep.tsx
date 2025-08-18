@@ -1,12 +1,10 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OnboardingLayout } from "../OnboardingLayout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Camera, ChevronLeft } from "lucide-react";
+import { Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -91,22 +89,35 @@ export const PhotoStep = () => {
     navigate("/onboarding/step-5");
   };
 
+  const handleBack = () => {
+    navigate("/onboarding/step-3");
+  };
+
+  const nextButton = (
+    <Button 
+      onClick={handleNext}
+      disabled={uploading}
+      variant={photoUrl ? "default" : "secondary"}
+      className="h-12 px-8 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
+    >
+      {photoUrl ? "Next" : "Skip for now"}
+    </Button>
+  );
+
   return (
-    <OnboardingLayout currentStep={4} totalSteps={6}>
-      <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
-        <div className="flex items-center justify-center relative mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/onboarding/step-3")}
-            className="absolute left-0 hover:bg-accent/50"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
+    <OnboardingLayout 
+      currentStep={4} 
+      totalSteps={6}
+      onBack={handleBack}
+      nextButton={nextButton}
+    >
+      <div className="flex-1 flex flex-col justify-center space-y-8">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">Add a photo</h1>
+          <p className="text-muted-foreground">Help others recognize you on the court</p>
         </div>
 
-        <div className="flex-1 flex items-center justify-center px-4">
+        <div className="flex items-center justify-center px-4">
           <div className="w-full max-w-sm">
             <div className="flex flex-col items-center space-y-8">
               {/* Large photo display area */}
@@ -142,40 +153,11 @@ export const PhotoStep = () => {
                 ) : photoUrl ? (
                   <p className="text-base text-foreground font-medium">Looking great! 📸</p>
                 ) : (
-                  <div className="space-y-2">
-                    <p className="text-base text-foreground font-medium">Add your profile picture</p>
-                    <p className="text-sm text-muted-foreground">Help others recognize you on the court</p>
-                  </div>
+                  <p className="text-base text-foreground font-medium">Add your profile picture</p>
                 )}
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Mobile sticky CTA */}
-        <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
-          <div className="container mx-auto max-w-md px-4 py-3">
-            <Button
-              className="w-full h-12 text-base font-semibold"
-              variant={photoUrl ? "default" : "secondary"}
-              onClick={handleNext}
-              disabled={uploading}
-            >
-              {photoUrl ? "Next" : "Skip for now"}
-            </Button>
-          </div>
-        </div>
-
-        {/* Desktop CTA */}
-        <div className="hidden sm:block pt-8">
-          <Button
-            className="w-full h-12 text-base font-semibold"
-            variant={photoUrl ? "default" : "secondary"}
-            onClick={handleNext}
-            disabled={uploading}
-          >
-            {photoUrl ? "Next" : "Skip for now"}
-          </Button>
         </div>
       </div>
     </OnboardingLayout>

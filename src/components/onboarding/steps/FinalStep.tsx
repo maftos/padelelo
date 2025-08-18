@@ -58,9 +58,24 @@ export const FinalStep = () => {
     }
   };
 
+  const nextButton = (
+    <Button 
+      onClick={handleComplete}
+      disabled={isSubmitting}
+      className="h-12 px-8 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
+    >
+      {isSubmitting ? "Setting up your profile..." : "Let's go! 🚀"}
+    </Button>
+  );
+
   return (
-    <OnboardingLayout currentStep={6} totalSteps={6}>
-      <div className="space-y-8">
+    <OnboardingLayout 
+      currentStep={6} 
+      totalSteps={6}
+      showBack={false}
+      nextButton={nextButton}
+    >
+      <div className="flex-1 flex flex-col justify-center space-y-8">
         <div className="text-center space-y-4">
           <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-2xl">🎉</span>
@@ -72,14 +87,6 @@ export const FinalStep = () => {
             </p>
           </div>
         </div>
-
-        <Button
-          className="w-full h-12 text-base font-semibold"
-          onClick={handleComplete}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Setting up your profile..." : "Let's go! 🚀"}
-        </Button>
       </div>
     </OnboardingLayout>
   );
