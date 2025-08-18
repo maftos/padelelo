@@ -64,14 +64,16 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
 
       {/* Main content area */}
       <div className="flex-1 container max-w-md mx-auto px-4 flex flex-col">
-        <div className={`flex-1 ${getAnimationClass()}`}>
+        <div className={`flex-1 pb-20 ${getAnimationClass()}`}>
           <div className="h-full flex flex-col">
             {children}
           </div>
         </div>
+      </div>
 
-        {/* Bottom action bar */}
-        <div className="pb-6 pt-4">
+      {/* Bottom action bar - Fixed to bottom */}
+      <div className="fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
+        <div className="container max-w-md mx-auto px-4 py-4">
           <div className="w-full flex items-center gap-3">
             {/* Back button */}
             {showBackButton ? (
@@ -83,12 +85,10 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
               >
                 <ChevronLeft className="h-6 w-6" />
               </Button>
-            ) : (
-              <div className="h-12 w-12" />
-            )}
+            ) : null}
 
             {/* Next button */}
-            <div className="flex-1">
+            <div className={showBackButton ? "flex-1" : "w-full"}>
               {nextButton ? (
                 nextButton
               ) : onNext ? (
