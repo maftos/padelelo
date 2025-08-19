@@ -1,47 +1,37 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { OnboardingLayout } from "../OnboardingLayout";
-import { useOnboardingNavigation } from "@/hooks/use-onboarding-navigation";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import confetti from 'canvas-confetti';
+import { OnboardingData } from "@/hooks/use-onboarding-state";
 
-export const FinalStep = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+interface FinalStepProps {
+  data: OnboardingData;
+  onComplete: () => void;
+  isSubmitting: boolean;
+}
+
+export const FinalStep = ({ data, onComplete, isSubmitting }: FinalStepProps) => {
   const navigate = useNavigate();
-  const { transitionState, transitionDirection } = useOnboardingNavigation();
   const { user } = useAuth();
 
   const handleComplete = async () => {
     if (!user) return;
     
-    setIsSubmitting(true);
     try {
       // Complete onboarding with all user data
-      const nationality = localStorage.getItem('onboarding_nationality') || 'MU';
-      if (!localStorage.getItem('onboarding_nationality')) {
-        localStorage.setItem('onboarding_nationality', nationality);
-      }
       const { error: completeError } = await supabase.rpc('complete_onboarding', {
         p_user_a_id: user.id,
-        p_first_name: localStorage.getItem('onboarding_first_name') || '',
-        p_last_name: localStorage.getItem('onboarding_last_name') || '',
-        p_gender: localStorage.getItem('onboarding_gender') || '',
-        p_nationality: nationality,
-        p_profile_photo: localStorage.getItem('onboarding_photo') || ''
+        p_first_name: data.firstName,
+        p_last_name: data.lastName,
+        p_gender: data.gender || '',
+        p_nationality: data.nationality,
+        p_profile_photo: data.profilePhoto || ''
       });
 
       if (completeError) throw completeError;
-
-      // Clear onboarding data
-      localStorage.removeItem('onboarding_first_name');
-      localStorage.removeItem('onboarding_last_name');
-      localStorage.removeItem('onboarding_gender');
-      localStorage.removeItem('onboarding_nationality');
-      localStorage.removeItem('onboarding_photo');
 
       // Show success animation
       confetti({
@@ -51,47 +41,36 @@ export const FinalStep = () => {
       });
 
       toast.success("Welcome to PadelELO!");
-      navigate('/dashboard');
+      onComplete();
     } catch (error) {
       console.error('Error completing onboarding:', error);
       toast.error("Error completing onboarding");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  const nextButton = (
-    <Button 
-      onClick={handleComplete}
-      disabled={isSubmitting}
-      className="h-12 px-8 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
-    >
-      {isSubmitting ? "Setting up your profile..." : "Let's go! 🚀"}
-    </Button>
-  );
-
   return (
-    <OnboardingLayout 
-      currentStep={6} 
-      totalSteps={6}
-      showBack={false}
-      nextButton={nextButton}
-      transitionState={transitionState}
-      transitionDirection={transitionDirection}
-    >
-      <div className="flex-1 flex flex-col justify-center space-y-8">
-        <div className="text-center space-y-4">
-          <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-            <span className="text-2xl">🎉</span>
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold tracking-tight">You're all set!</h1>
-            <p className="text-muted-foreground text-lg">
-              Ready to start your PadelELO journey?
-            </p>
-          </div>
+    <div className="flex-1 flex flex-col justify-center space-y-8">
+      <div className="text-center space-y-4">
+        <div className="h-16 w-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
+          <span className="text-2xl">🎉</span>
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">You're all set!</h1>
+          <p className="text-muted-foreground text-lg">
+            Ready to start your PadelELO journey?
+          </p>
         </div>
       </div>
-    </OnboardingLayout>
+      
+      <div className="flex justify-center">
+        <Button 
+          onClick={handleComplete}
+          disabled={isSubmitting}
+          className="h-12 px-8 rounded-full font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
+        >
+          {isSubmitting ? "Setting up your profile..." : "Let's go! 🚀"}
+        </Button>
+      </div>
+    </div>
   );
 };

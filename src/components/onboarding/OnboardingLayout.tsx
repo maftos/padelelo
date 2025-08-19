@@ -1,118 +1,83 @@
-
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
-import { useOnboardingNavigation, TransitionDirection, TransitionState } from "@/hooks/use-onboarding-navigation";
 
 interface OnboardingLayoutProps {
   children: ReactNode;
   currentStep: number;
   totalSteps: number;
-  onBack?: () => void;
+  progress: number;
   showBack?: boolean;
-  nextButton?: ReactNode;
   onNext?: () => void;
+  onBack?: () => void;
   isNextDisabled?: boolean;
-  transitionState?: TransitionState;
-  transitionDirection?: TransitionDirection;
+  nextButtonText?: string;
+  className?: string;
 }
 
 export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
   children,
   currentStep,
   totalSteps,
-  onBack,
+  progress,
   showBack = true,
-  nextButton,
   onNext,
+  onBack,
   isNextDisabled = false,
-  transitionState = 'idle',
-  transitionDirection = 'forward',
+  nextButtonText = "Next",
+  className = ""
 }) => {
-  const { goToPreviousStep } = useOnboardingNavigation();
-  const progress = (currentStep / totalSteps) * 100;
-  const [isMounted, setIsMounted] = useState(false);
-
-  // Track component mount to distinguish fresh mounts from transitions
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else if (currentStep > 1) {
-      goToPreviousStep(currentStep);
-    }
-  };
-
-  // Determine animation classes based on transition state and direction
-  const getAnimationClass = () => {
-    if (transitionState === 'transitioning') {
-      // Exit animations when leaving a step
-      return transitionDirection === 'forward' 
-        ? 'animate-slide-out-left' 
-        : 'animate-slide-out-right';
-    }
-    
-    // For fresh mounts (initial page load), use fade-in to prevent jitter
-    if (!isMounted) {
-      return 'animate-fade-in';
-    }
-    
-    // Only apply slide-in animations for actual transitions between steps
-    return 'animate-fade-in';
-  };
-
   const showBackButton = showBack && currentStep > 1;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5 flex flex-col relative overflow-hidden">
-      {/* Progress bar */}
-      <div className="container max-w-md mx-auto px-4 py-6">
-        <Progress value={progress} className="h-1 bg-muted/50" />
-      </div>
-
-      {/* Main content area */}
-      <div className="flex-1 container max-w-md mx-auto px-4 flex flex-col pb-20">
-        <div className={`flex-1 ${getAnimationClass()}`}>
-          <div className="h-full flex flex-col">
-            {children}
+    <div className={`min-h-screen bg-background flex flex-col ${className}`}>
+      {/* Progress Bar */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
+        <div className="container max-w-lg mx-auto px-4 py-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              Step {currentStep} of {totalSteps}
+            </span>
+            <span className="text-sm font-medium text-muted-foreground">
+              {Math.round(progress)}%
+            </span>
           </div>
+          <Progress value={progress} className="h-2" />
         </div>
       </div>
 
-      {/* Fixed bottom action bar */}
-      <div className="fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
-        <div className="container max-w-md mx-auto px-4 py-3">
-          <div className="w-full flex items-center gap-3">
-            {/* Back button */}
+      {/* Main Content */}
+      <div className="flex-1 container max-w-lg mx-auto px-4 py-6">
+        <div className="h-full flex flex-col">
+          {children}
+        </div>
+      </div>
+
+      {/* Bottom Action Bar */}
+      <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50">
+        <div className="container max-w-lg mx-auto px-4 py-4">
+          <div className="flex items-center gap-3">
             {showBackButton && (
               <Button
                 variant="outline"
-                size="icon"
-                onClick={handleBack}
-                className="h-12 w-12 rounded-lg border-2 border-border hover:bg-muted/50 transition-all duration-200"
+                size="lg"
+                onClick={onBack}
+                className="flex-shrink-0"
               >
-                <ChevronLeft className="h-6 w-6" />
+                <ChevronLeft className="w-4 h-4" />
               </Button>
             )}
-
-            {/* Next button */}
-            <div className={showBackButton ? "flex-1" : "w-full"}>
-              {nextButton ? (
-                nextButton
-              ) : onNext ? (
-                <Button 
-                  onClick={onNext}
-                  disabled={isNextDisabled}
-                  className="w-full h-12 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-40"
-                >
-                  Continue
-                </Button>
-              ) : null}
-            </div>
+            {onNext && (
+              <Button
+                onClick={onNext}
+                disabled={isNextDisabled}
+                size="lg"
+                className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
+              >
+                {nextButtonText}
+              </Button>
+            )}
           </div>
         </div>
       </div>

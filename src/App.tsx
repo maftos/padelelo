@@ -78,7 +78,7 @@ function App() {
               <Route path="/matchmaking-math" element={<MatchmakingMath />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/onboarding/*" element={<Onboarding />} />
+              <Route path="/onboarding" element={<Onboarding />} />
               <Route path="/tournaments" element={<Tournaments />} />
               <Route path="/tournaments/:tournamentId" element={<TournamentDetail />} />
               <Route path="/tournaments/:tournamentId/edit" element={<EditTournament />} />
