@@ -91,14 +91,14 @@ export const TimePickerDrawer = ({
           </div>
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="h-[85vh] flex flex-col">
-        <DrawerHeader className="border-b border-border pb-4">
+      <DrawerContent className="max-h-[85vh] flex flex-col">
+        <DrawerHeader className="border-b border-border pb-4 flex-shrink-0">
           <DrawerTitle className="text-center">
             Select Time
           </DrawerTitle>
         </DrawerHeader>
         
-        <div className="p-4 space-y-4 overflow-hidden flex flex-col">
+        <div className="p-4 space-y-4 min-h-0 flex flex-col flex-1">
           {/* Search */}
           <div className="relative flex-shrink-0">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -113,7 +113,7 @@ export const TimePickerDrawer = ({
           {/* Time Options */}
           <div 
             ref={scrollContainerRef}
-            className="overflow-y-auto space-y-1 max-h-[60vh]"
+            className="overflow-y-auto space-y-1 flex-1 min-h-0"
           >
             {filteredTimeOptions.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
