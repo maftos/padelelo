@@ -110,13 +110,13 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
               return (
                 <div 
                   key={index} 
-                  className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[50px] sm:min-h-[60px]"
+                  className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-border min-h-[50px] sm:min-h-[60px]"
                 >
                   <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
-                    <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
+                    <AvatarFallback className="text-xs bg-muted text-muted-foreground"></AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-primary text-xs sm:text-sm">Empty Slot</div>
+                    <div className="font-medium text-muted-foreground text-xs sm:text-sm">Empty Slot</div>
                     <div className="text-xs text-muted-foreground hidden sm:block">Available</div>
                   </div>
                 </div>
