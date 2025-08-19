@@ -39,9 +39,22 @@ export const PlayerSelectionBottomDrawer = ({
 }: PlayerSelectionBottomDrawerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filter players based on search term, exclude current user and already selected players
+  // Remove duplicates by ID and filter players based on search term, exclude current user and already selected players
   const filteredPlayers = useMemo(() => {
-    const availablePlayers = playerOptions.filter(player => 
+    // First, deduplicate players by ID to prevent duplicate entries
+    const uniquePlayers = playerOptions.reduce((acc, player) => {
+      const existing = acc.find(p => p.id === player.id);
+      if (!existing) {
+        acc.push(player);
+      } else if (player.name.length > existing.name.length) {
+        // If we find a duplicate, keep the one with the longer (more complete) name
+        const index = acc.findIndex(p => p.id === player.id);
+        acc[index] = player;
+      }
+      return acc;
+    }, [] as PlayerOption[]);
+
+    const availablePlayers = uniquePlayers.filter(player => 
       player.id !== currentUserId && !selectedPlayers.includes(player.id)
     );
     
@@ -70,7 +83,16 @@ export const PlayerSelectionBottomDrawer = ({
   };
 
   const selectedPlayersData = selectedPlayers
-    .map(id => playerOptions.find(p => p.id === id))
+    .map(id => {
+      // Find the player with the complete name (longest name for that ID)
+      const matchingPlayers = playerOptions.filter(p => p.id === id);
+      if (matchingPlayers.length === 0) return null;
+      if (matchingPlayers.length === 1) return matchingPlayers[0];
+      // Return the player with the longest (most complete) name
+      return matchingPlayers.reduce((longest, current) => 
+        current.name.length > longest.name.length ? current : longest
+      );
+    })
     .filter(Boolean) as PlayerOption[];
 
   return (
@@ -83,6 +105,40 @@ export const PlayerSelectionBottomDrawer = ({
         </DrawerHeader>
 
         <div className="flex-1 flex flex-col min-h-0">
+          {/* Selected Players Section */}
+          {selectedPlayersData.length > 0 && (
+            <div className="p-4 border-b border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-sm font-medium">Selected Players</span>
+                <Badge variant="secondary">{selectedPlayersData.length}/{maxPlayers}</Badge>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {selectedPlayersData.map((player) => (
+                  <div
+                    key={player.id}
+                    className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-2 rounded-full text-sm"
+                  >
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={player.profile_photo || ""} />
+                      <AvatarFallback className="text-xs">
+                        {getInitials(player.name)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span>{player.name}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-4 w-4 p-0 hover:bg-destructive/20"
+                      onClick={() => handlePlayerToggle(player.id)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Search Input */}
           <div className="p-4 border-b border-border">
             <div className="relative">
