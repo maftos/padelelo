@@ -288,7 +288,7 @@ const EditMatchWizard = () => {
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
           <div className="container max-w-lg mx-auto px-4 py-4">
             {/* Title and Cancel */}
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <h1 className="text-lg font-bold">Edit Booking</h1>
               <Button 
                 onClick={handleCancelBooking}
@@ -300,12 +300,9 @@ const EditMatchWizard = () => {
             </div>
             
             {/* Step info and progress */}
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-1">
               <span className="text-sm font-medium text-muted-foreground">
                 Step {currentStep} of {totalSteps}: {getStepTitle()}
-              </span>
-              <span className="text-sm font-medium text-muted-foreground">
-                {Math.round((currentStep / totalSteps) * 100)}%
               </span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">

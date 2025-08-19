@@ -92,53 +92,60 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
         >
           <Users className="h-5 w-5 mr-3" />
           <div className="flex-1">
-            {selectedPlayers.length === 0 ? (
-              <span className="text-muted-foreground">Select players for your match</span>
-            ) : (
-              <div>
-                <span className="font-medium">
-                  {selectedPlayers.length} player{selectedPlayers.length === 1 ? '' : 's'} selected
-                </span>
-                <div className="text-sm text-muted-foreground">
-                  {selectedPlayers.slice(0, 2).map(id => getPlayerName(id)).join(', ')}
-                  {selectedPlayers.length > 2 && ` +${selectedPlayers.length - 2} more`}
-                </div>
-              </div>
-            )}
+            <span className="font-medium">
+              {selectedPlayers.length} player{selectedPlayers.length === 1 ? '' : 's'} selected
+            </span>
+            <div className="text-sm text-muted-foreground">
+              Tap to change player selection
+            </div>
           </div>
         </Button>
 
-        {/* Selected Players Display */}
-        {selectedPlayers.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {selectedPlayers.map((playerId) => (
-              <div key={playerId} className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src={getPlayerPhoto(playerId)} />
-                    <AvatarFallback className="text-sm">
-                      {getInitials(getPlayerName(playerId))}
-                    </AvatarFallback>
+        {/* Selected Players Display - Grid Layout */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          {[0, 1, 2, 3].map((index) => {
+            const playerId = selectedPlayers[index];
+            
+            if (!playerId) {
+              return (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-2 sm:gap-3 bg-muted/30 rounded-lg p-2 sm:p-3 border-2 border-dashed border-primary/30 min-h-[50px] sm:min-h-[60px]"
+                >
+                  <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                    <AvatarFallback className="text-xs bg-primary/10 text-primary">+</AvatarFallback>
                   </Avatar>
-                  <span className="font-medium">{getPlayerName(playerId)}</span>
-                  {playerId === profile?.id && (
-                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">You</span>
-                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-primary text-xs sm:text-sm">Empty Slot</div>
+                    <div className="text-xs text-muted-foreground hidden sm:block">Available</div>
+                  </div>
                 </div>
-                {playerId !== profile?.id && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleRemovePlayer(playerId)}
-                    className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+              );
+            }
+            
+            return (
+              <div 
+                key={playerId} 
+                className="flex items-center gap-2 sm:gap-3 bg-muted/50 rounded-lg p-2 sm:p-3 min-h-[50px] sm:min-h-[60px]"
+              >
+                <Avatar className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
+                  <AvatarImage src={getPlayerPhoto(playerId)} />
+                  <AvatarFallback className="text-xs">
+                    {getInitials(getPlayerName(playerId))}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="text-xs sm:text-sm flex-1 min-w-0">
+                  <div className="font-medium truncate">
+                    {getPlayerName(playerId)}
+                    {playerId === profile?.id && (
+                      <span className="text-primary ml-1">(You)</span>
+                    )}
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
 
         {/* Player Selection Drawer */}
         <PlayerSelectionBottomDrawer
