@@ -141,16 +141,6 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
         </div>
       </div>
 
-      {/* Progress Overview - Show only in scoring step, not in preview */}
-      {currentStep === "scoring" && (
-        <MatchupProgressOverview
-          players={players}
-          selectedMatchups={selectedMatchups}
-          queuedResults={queuedResults}
-          currentIndex={currentMatchupIndex}
-          onMatchupClick={handleJumpToMatchup}
-        />
-      )}
 
       {/* Step Content */}
       <Card className="mb-20 md:mb-4">

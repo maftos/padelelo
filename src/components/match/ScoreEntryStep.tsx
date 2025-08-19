@@ -249,11 +249,6 @@ export const ScoreEntryStep = ({
         </CardContent>
       </Card>
       
-      {/* Instructions */}
-      <div className="text-center text-xs sm:text-sm text-muted-foreground space-y-1">
-        <p>Enter scores and press Enter to move to next field</p>
-        <p>Or click Save to confirm this match result</p>
-      </div>
     </div>
   );
 };
