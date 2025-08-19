@@ -36,9 +36,15 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
   useEffect(() => {
     if (isActive) {
       setValues(["", ""]);
+      // Use longer timeout and prevent blur to maintain keyboard on mobile
       setTimeout(() => {
-        inputRefs.current[0]?.focus();
-      }, 100);
+        const firstInput = inputRefs.current[0];
+        if (firstInput) {
+          firstInput.focus();
+          // Trigger click to ensure mobile keyboard stays open
+          firstInput.click();
+        }
+      }, 150);
     }
   }, [isActive]);
 
@@ -60,8 +66,14 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
     // Auto-advance to next input or complete
     if (value !== "") {
       if (index === 0) {
-        // Move to second input
-        inputRefs.current[1]?.focus();
+        // Move to second input immediately to maintain keyboard
+        setTimeout(() => {
+          const secondInput = inputRefs.current[1];
+          if (secondInput) {
+            secondInput.focus();
+            secondInput.click(); // Ensure keyboard stays open on mobile
+          }
+        }, 50);
       } else if (index === 1 && newValues[0] !== "") {
         // Both scores entered, auto-complete immediately with current values
         console.log("Auto-completing with scores:", newValues);
@@ -115,6 +127,13 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
           onKeyDown={(e) => handleKeyDown(0, e)}
           onPaste={handlePaste}
           onFocus={() => handleFocus(0)}
+          onBlur={(e) => {
+            // Prevent blur if we're moving to the next input
+            if (values[0] !== "" && !values[1]) {
+              e.preventDefault();
+              setTimeout(() => inputRefs.current[1]?.focus(), 50);
+            }
+          }}
           placeholder="0"
           className="w-12 text-center text-xl font-bold h-12"
           min="0"
@@ -143,6 +162,18 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
           onKeyDown={(e) => handleKeyDown(1, e)}
           onPaste={handlePaste}
           onFocus={() => handleFocus(1)}
+          onBlur={(e) => {
+            // Only allow blur if both values are complete or we're moving backwards
+            if (values[0] && values[1]) {
+              // Both complete, allow blur
+              return;
+            }
+            if (!values[0]) {
+              // Move back to first input
+              e.preventDefault();
+              setTimeout(() => inputRefs.current[0]?.focus(), 50);
+            }
+          }}
           placeholder="0"
           className="w-12 text-center text-xl font-bold h-12"
           min="0"
