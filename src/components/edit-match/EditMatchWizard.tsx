@@ -331,7 +331,7 @@ const EditMatchWizard = () => {
                   variant="outline"
                   size="lg"
                   onClick={handlePrevious}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 h-12"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
@@ -341,7 +341,7 @@ const EditMatchWizard = () => {
                   variant="outline"
                   size="lg"
                   onClick={() => navigate("/manage-bookings")}
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 h-12"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
