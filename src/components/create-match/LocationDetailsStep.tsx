@@ -3,10 +3,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MapPin, DollarSign } from "lucide-react";
-import { DateTimePickers } from "./DateTimePickers";
+import { DateTimeDrawers } from "./DateTimeDrawers";
+import { VenueSelectionDrawer } from "./VenueSelectionDrawer";
 import { StepHeader } from "./StepHeader";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LocationDetailsData {
   venueId: string;
@@ -23,6 +25,8 @@ interface LocationDetailsStepProps {
 }
 
 export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: LocationDetailsStepProps) => {
+  const isMobile = useIsMobile();
+  
   // Fetch venues from database
   const { data: venuesResult, isLoading: isLoadingVenues } = useQuery({
     queryKey: ['venues'],
@@ -54,37 +58,53 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
           <MapPin className="h-4 w-4" />
           Location {requiresDetails && <span className="text-destructive">*</span>}
         </div>
-        <Select 
-          value={data.venueId} 
-          onValueChange={(value) => {
-            onDataChange({ 
-              venueId: value, 
-              location: value // Pass the venue UUID, not the name
-            });
-          }}
-          disabled={isLoadingVenues}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder={
-              isLoadingVenues 
-                ? "Loading venues..." 
-                : requiresDetails 
-                  ? "Choose a venue" 
-                  : "Choose a venue (optional)"
-            } />
-          </SelectTrigger>
-          <SelectContent>
-            {venues.map((venue) => (
-              <SelectItem key={venue.venue_id} value={venue.venue_id}>
-                {venue.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        
+        {isMobile ? (
+          <VenueSelectionDrawer
+            venues={venues}
+            selectedVenueId={data.venueId}
+            onVenueSelect={(venueId) => {
+              onDataChange({ 
+                venueId: venueId, 
+                location: venueId
+              });
+            }}
+            isLoading={isLoadingVenues}
+            required={requiresDetails}
+          />
+        ) : (
+          <Select 
+            value={data.venueId} 
+            onValueChange={(value) => {
+              onDataChange({ 
+                venueId: value, 
+                location: value
+              });
+            }}
+            disabled={isLoadingVenues}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={
+                isLoadingVenues 
+                  ? "Loading venues..." 
+                  : requiresDetails 
+                    ? "Choose a venue" 
+                    : "Choose a venue (optional)"
+              } />
+            </SelectTrigger>
+            <SelectContent>
+              {venues.map((venue) => (
+                <SelectItem key={venue.venue_id} value={venue.venue_id}>
+                  {venue.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {/* Date & Time */}
-      <DateTimePickers
+      <DateTimeDrawers
         date={data.matchDate}
         time={data.matchTime}
         onDateChange={(date) => onDataChange({ matchDate: date })}
