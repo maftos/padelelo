@@ -255,7 +255,7 @@ const EditMatchWizard = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="container max-w-full sm:max-w-4xl mx-auto px-3 sm:px-4 pt-2 sm:pt-4 pb-24 sm:pb-6 space-y-6">
         <div className="text-center py-8">
           <p className="text-muted-foreground">Loading booking details...</p>
         </div>
@@ -265,7 +265,7 @@ const EditMatchWizard = () => {
 
   if (!booking) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="container max-w-full sm:max-w-4xl mx-auto px-3 sm:px-4 pt-2 sm:pt-4 pb-24 sm:pb-6 space-y-6">
         <div className="text-center py-8">
           <p className="text-muted-foreground">Booking not found</p>
           <Button onClick={() => navigate("/manage-bookings")} className="mt-4">
@@ -282,7 +282,7 @@ const EditMatchWizard = () => {
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header with Progress Bar */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
-          <div className="container max-w-lg mx-auto px-4 pt-2 pb-3 space-y-3">
+          <div className="container max-w-full mx-auto px-3 pt-2 pb-3 space-y-3">
             {/* Title and Cancel */}
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -312,7 +312,7 @@ const EditMatchWizard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 container max-w-lg mx-auto px-4 py-4">
+        <div className="flex-1 container max-w-full mx-auto px-3 py-4">
           <div className="h-full flex flex-col">
             {renderStepContent()}
           </div>
@@ -320,7 +320,7 @@ const EditMatchWizard = () => {
 
         {/* Bottom Action Bar */}
         <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50">
-          <div className="container max-w-lg mx-auto px-4 py-4">
+          <div className="container max-w-full mx-auto px-3 py-4">
             <div className="flex items-center gap-3">
               {currentStep > 1 && (
                 <Button
@@ -368,7 +368,7 @@ const EditMatchWizard = () => {
 
   // Desktop layout
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="container max-w-full sm:max-w-4xl mx-auto px-3 sm:px-4 pt-2 sm:pt-4 pb-24 sm:pb-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex-1">
