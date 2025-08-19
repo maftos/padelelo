@@ -39,16 +39,19 @@ export const PlayerSelectionBottomDrawer = ({
 }: PlayerSelectionBottomDrawerProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Filter players based on search term and exclude current user
+  // Filter players based on search term, exclude current user and already selected players
   const filteredPlayers = useMemo(() => {
+    const availablePlayers = playerOptions.filter(player => 
+      player.id !== currentUserId && !selectedPlayers.includes(player.id)
+    );
+    
     if (!searchTerm) {
-      return playerOptions.filter(player => player.id !== currentUserId);
+      return availablePlayers;
     }
-    return playerOptions.filter(player =>
-      player.id !== currentUserId &&
+    return availablePlayers.filter(player =>
       player.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [playerOptions, searchTerm, currentUserId]);
+  }, [playerOptions, searchTerm, currentUserId, selectedPlayers]);
 
   const handlePlayerToggle = (playerId: string) => {
     if (selectedPlayers.includes(playerId)) {
@@ -74,47 +77,12 @@ export const PlayerSelectionBottomDrawer = ({
     <Drawer open={open} onOpenChange={onClose}>
       <DrawerContent className="h-[85vh] flex flex-col">
         <DrawerHeader className="border-b border-border pb-4">
-          <DrawerTitle className="text-center flex items-center justify-center gap-2">
-            <Users className="h-5 w-5" />
+          <DrawerTitle className="text-center">
             Select Players
           </DrawerTitle>
         </DrawerHeader>
 
         <div className="flex-1 flex flex-col min-h-0">
-          {/* Selected Players Section */}
-          {selectedPlayersData.length > 0 && (
-            <div className="p-4 border-b border-border">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm font-medium">Selected Players</span>
-                <Badge variant="secondary">{selectedPlayersData.length}/{maxPlayers}</Badge>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {selectedPlayersData.map((player) => (
-                  <div
-                    key={player.id}
-                    className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-2 rounded-full text-sm"
-                  >
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={player.profile_photo || ""} />
-                      <AvatarFallback className="text-xs">
-                        {getInitials(player.name)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span>{player.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-4 w-4 p-0 hover:bg-destructive/20"
-                      onClick={() => handlePlayerToggle(player.id)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Search Input */}
           <div className="p-4 border-b border-border">
             <div className="relative">
@@ -150,13 +118,12 @@ export const PlayerSelectionBottomDrawer = ({
                 ) : (
                   <div className="space-y-1">
                     {filteredPlayers.map((player) => {
-                      const isSelected = selectedPlayers.includes(player.id);
-                      const isDisabled = !isSelected && selectedPlayers.length >= maxPlayers;
+                      const isDisabled = selectedPlayers.length >= maxPlayers;
 
                       return (
                         <Button
                           key={player.id}
-                          variant={isSelected ? "secondary" : "ghost"}
+                          variant="ghost"
                           className="w-full h-14 justify-start p-4 text-left"
                           onClick={() => handlePlayerToggle(player.id)}
                           disabled={isDisabled}
@@ -168,9 +135,6 @@ export const PlayerSelectionBottomDrawer = ({
                             </AvatarFallback>
                           </Avatar>
                           <span className="text-base flex-1">{player.name}</span>
-                          {isSelected && (
-                            <div className="h-2 w-2 rounded-full bg-primary" />
-                          )}
                         </Button>
                       );
                     })}
