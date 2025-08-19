@@ -69,9 +69,6 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
     if (e.key === "Backspace" && values[index] === "" && index > 0) {
       // Move to previous input on backspace if current is empty
       inputRefs.current[index - 1]?.focus();
-    } else if (e.key === "Enter" && values[0] !== "" && values[1] !== "") {
-      // Complete on Enter if both scores are filled
-      onComplete?.();
     } else if (e.key === "ArrowLeft" && index > 0) {
       inputRefs.current[index - 1]?.focus();
     } else if (e.key === "ArrowRight" && index < 1) {
