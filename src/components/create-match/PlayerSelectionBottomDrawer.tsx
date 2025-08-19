@@ -67,6 +67,11 @@ export const PlayerSelectionBottomDrawer = ({
   }, [playerOptions, searchTerm, currentUserId, selectedPlayers]);
 
   const handlePlayerToggle = (playerId: string) => {
+    // Prevent removing current user in edit booking mode
+    if (playerId === currentUserId) {
+      return; // Do nothing - current user should always be selected
+    }
+    
     if (selectedPlayers.includes(playerId)) {
       onPlayersChange(selectedPlayers.filter(p => p !== playerId));
     } else if (selectedPlayers.length < maxPlayers) {
@@ -125,14 +130,16 @@ export const PlayerSelectionBottomDrawer = ({
                       </AvatarFallback>
                     </Avatar>
                     <span>{player.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-4 w-4 p-0 hover:bg-destructive/20"
-                      onClick={() => handlePlayerToggle(player.id)}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
+                    {player.id !== currentUserId && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-4 w-4 p-0 hover:bg-destructive/20"
+                        onClick={() => handlePlayerToggle(player.id)}
+                      >
+                        <X className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
                 ))}
               </div>

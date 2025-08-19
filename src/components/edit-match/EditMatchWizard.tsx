@@ -52,7 +52,7 @@ const EditMatchWizard = () => {
   console.log('EditMatchWizard: isOpenGame:', isOpenGame, 'totalSteps:', totalSteps, 'booking status:', booking?.status, 'selectedPlayers:', wizardData.selectedPlayers.length);
 
   useEffect(() => {
-    if (booking && booking.start_time) {
+    if (booking && booking.start_time && user?.id) {
       console.log('EditMatchWizard: Booking data received:', booking);
       
       // Add null checks for all required fields
@@ -65,8 +65,14 @@ const EditMatchWizard = () => {
       const [date, timeWithZ] = mauritiusDate.toISOString().split('T');
       const time = timeWithZ ? timeWithZ.substring(0, 5) : '';
       
+      // Get participants and ensure current user is always included
+      const participants = booking.participants?.map(p => p.player_id) || [];
+      const selectedPlayers = participants.includes(user.id) 
+        ? participants 
+        : [user.id, ...participants];
+      
       const updatedData = {
-        selectedPlayers: booking.participants?.map(p => p.player_id) || [],
+        selectedPlayers,
         location: booking.venue_id || '',
         matchDate: date || '',
         matchTime: time || '',
@@ -77,7 +83,7 @@ const EditMatchWizard = () => {
       console.log('EditMatchWizard: Setting wizard data:', updatedData);
       setWizardData(updatedData);
     }
-  }, [booking]);
+  }, [booking, user?.id]);
 
   const updateWizardData = (data: Partial<WizardData>) => {
     setWizardData(prev => ({ ...prev, ...data }));

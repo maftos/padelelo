@@ -24,10 +24,11 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    // In edit booking mode, always ensure current user is included and can't be removed
     if (profile?.id && !selectedPlayers.includes(profile.id)) {
-      onPlayersChange([profile.id]);
+      onPlayersChange([profile.id, ...selectedPlayers]);
     }
-  }, [profile?.id]);
+  }, [profile?.id, selectedPlayers.length]);
 
   const getPlayerName = (playerId: string) => {
     if (playerId === profile?.id) return "Me";
@@ -48,7 +49,11 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
   };
 
   const handlePlayerToggle = (playerId: string) => {
-    if (playerId === profile?.id) return; // Can't remove current user
+    // Prevent removing current user in edit booking mode
+    if (playerId === profile?.id) {
+      toast.error("You cannot remove yourself from the booking");
+      return;
+    }
     
     if (selectedPlayers.includes(playerId)) {
       onPlayersChange(selectedPlayers.filter(p => p !== playerId));
@@ -60,7 +65,11 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
   };
 
   const handleRemovePlayer = (playerId: string) => {
-    if (playerId === profile?.id) return; // Can't remove current user
+    // Prevent removing current user in edit booking mode  
+    if (playerId === profile?.id) {
+      toast.error("You cannot remove yourself from the booking");
+      return;
+    }
     onPlayersChange(selectedPlayers.filter(p => p !== playerId));
   };
 
