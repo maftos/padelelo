@@ -286,10 +286,16 @@ const EditMatchWizard = () => {
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header with Progress Bar */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
-          <div className="container max-w-lg mx-auto px-4 py-4">
+          <div className="container max-w-lg mx-auto px-4 py-4 space-y-4">
             {/* Title and Cancel */}
-            <div className="flex items-center justify-between mb-2">
-              <h1 className="text-lg font-bold">Edit Booking</h1>
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h1 className="text-xl font-bold">Edit Booking</h1>
+                <p className="text-sm text-muted-foreground">
+                  Step {currentStep} of {totalSteps}: {getStepTitle()}
+                </p>
+              </div>
+              
               <Button 
                 onClick={handleCancelBooking}
                 variant="destructive" 
@@ -299,12 +305,7 @@ const EditMatchWizard = () => {
               </Button>
             </div>
             
-            {/* Step info and progress */}
-            <div className="mb-1">
-              <span className="text-sm font-medium text-muted-foreground">
-                Step {currentStep} of {totalSteps}: {getStepTitle()}
-              </span>
-            </div>
+            {/* Progress Bar */}
             <div className="w-full bg-muted rounded-full h-2">
               <div 
                 className="bg-primary h-2 rounded-full transition-all duration-300"
