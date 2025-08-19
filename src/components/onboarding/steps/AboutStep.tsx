@@ -12,7 +12,7 @@ export const AboutStep = () => {
   const navigate = useNavigate();
 
   return (
-    <OnboardingLayout currentStep={5} totalSteps={6}>
+    <OnboardingLayout currentStep={5} totalSteps={6} progress={83.33}>
       <div className="flex flex-col min-h-[calc(100vh-200px)] pb-20 sm:pb-0">
         <div className="flex items-center justify-center relative mb-8">
           <Button
