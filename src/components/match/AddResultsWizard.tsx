@@ -66,18 +66,15 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
   };
 
   const handleAddResult = (result: QueuedResult) => {
-    setQueuedResults(prev => [...prev, result]);
+    const newResults = [...queuedResults, result];
+    setQueuedResults(newResults);
     
     // Check if all scores are entered
-    if (queuedResults.length + 1 >= selectedMatchups.length) {
-      setCurrentStep("preview");
-    } else {
-      // Move to next incomplete matchup
-      const nextIndex = currentMatchupIndex + 1;
-      if (nextIndex < selectedMatchups.length) {
-        setCurrentMatchupIndex(nextIndex);
-      }
+    if (newResults.length >= selectedMatchups.length) {
+      // All matches completed, enable Next button by not changing step yet
+      // The Next button will be enabled automatically when all results are in
     }
+    // The ScoreEntryStep will handle moving to next matchup automatically
   };
 
   const handleRemoveResult = (resultId: string) => {
