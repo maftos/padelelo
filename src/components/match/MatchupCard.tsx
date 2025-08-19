@@ -61,11 +61,15 @@ export const MatchupCard = ({
     setTeam2Score(score2);
   };
 
-  const handleScoreComplete = async () => {
-    const score1 = parseInt(team1Score) || 0;
-    const score2 = parseInt(team2Score) || 0;
+  const handleScoreComplete = async (score1?: string, score2?: string) => {
+    // Use passed scores if available, otherwise fall back to state
+    const finalScore1 = score1 ?? team1Score;
+    const finalScore2 = score2 ?? team2Score;
     
-    if (team1Score.trim() === "" || team2Score.trim() === "") {
+    console.log("handleScoreComplete called with:", { finalScore1, finalScore2, fromState: { team1Score, team2Score } });
+    
+    if (finalScore1.trim() === "" || finalScore2.trim() === "") {
+      console.log("Scores empty, not submitting:", { finalScore1, finalScore2 });
       return; // Don't submit if either score is empty
     }
 
@@ -75,11 +79,13 @@ export const MatchupCard = ({
       id: `${matchup.id}-${matchup.order}-${Date.now()}`,
       team1: matchup.team1,
       team2: matchup.team2,
-      team1Score: score1,
-      team2Score: score2
+      team1Score: parseInt(finalScore1) || 0,
+      team2Score: parseInt(finalScore2) || 0
     };
     
+    console.log("Adding result:", result);
     onAddResult(result);
+    console.log("Calling onComplete");
     onComplete();
     setIsSubmitting(false);
   };

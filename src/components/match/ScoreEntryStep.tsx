@@ -40,8 +40,10 @@ export const ScoreEntryStep = ({
 }: ScoreEntryStepProps) => {
 
   const handleMatchupComplete = () => {
+    console.log("handleMatchupComplete called, currentIndex:", currentIndex, "total:", selectedMatchups.length);
     // Move to next matchup immediately if available
     if (currentIndex < selectedMatchups.length - 1 && onIndexChange) {
+      console.log("Moving to next matchup:", currentIndex + 1);
       onIndexChange(currentIndex + 1);
     }
   };

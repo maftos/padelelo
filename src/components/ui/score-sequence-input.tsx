@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface ScoreSequenceInputProps {
   onScoresChange: (team1Score: string, team2Score: string) => void;
-  onComplete?: () => void;
+  onComplete?: (team1Score?: string, team2Score?: string) => void;
   disabled?: boolean;
   isActive?: boolean;
   className?: string;
@@ -52,6 +52,8 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
     newValues[index] = value;
     setValues(newValues);
 
+    console.log("Score input:", { index, value, newValues, isActive });
+
     // Update parent component
     onScoresChange(newValues[0], newValues[1]);
 
@@ -61,8 +63,9 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
         // Move to second input
         inputRefs.current[1]?.focus();
       } else if (index === 1 && newValues[0] !== "") {
-        // Both scores entered, auto-complete immediately
-        onComplete?.();
+        // Both scores entered, auto-complete immediately with current values
+        console.log("Auto-completing with scores:", newValues);
+        onComplete?.(newValues[0], newValues[1]);
       }
     }
   };
@@ -90,7 +93,7 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
       
       // Focus second input and complete if both filled
       inputRefs.current[1]?.focus();
-      onComplete?.();
+      onComplete?.(newValues[0], newValues[1]);
     }
   };
 
