@@ -104,6 +104,12 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
     navigate(`/edit-booking/${bookingId}`);
   };
 
+  const handleLeave = (bookingId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // TODO: Implement leave functionality
+    console.log('Leave booking:', bookingId);
+  };
+
   // Get applicants count from the actual game data
   const getApplicantsCount = (gameId: string) => {
     const game = openGames.find(g => g.booking_id === gameId);
@@ -166,6 +172,7 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
         ...Array(4 - game.player_count).fill(null)
       ],
       createdBy: game.created_by,
+      isCreator: game.is_creator,
       price: `Rs ${game.booking_fee_per_player || 400}`,
       startTime: format(gameDate, "HH:mm"),
       createdAt
@@ -271,16 +278,27 @@ export const UserOpenGamesList = ({ onViewApplicants }: UserOpenGamesListProps) 
                 })}
               </div>
 
-              {/* Edit button */}
+              {/* Edit/Leave button */}
               <div className="pt-3 border-t">
-                <Button 
-                  onClick={(e) => handleEdit(post.id, e)}
-                  variant="outline"
-                  className="w-full h-8 sm:h-9"
-                  size="sm"
-                >
-                  <span className="text-xs sm:text-sm">Edit</span>
-                </Button>
+                {post.isCreator ? (
+                  <Button 
+                    onClick={(e) => handleEdit(post.id, e)}
+                    variant="outline"
+                    className="w-full h-8 sm:h-9"
+                    size="sm"
+                  >
+                    <span className="text-xs sm:text-sm">Edit</span>
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={(e) => handleLeave(post.id, e)}
+                    variant="outline"
+                    className="w-full h-8 sm:h-9"
+                    size="sm"
+                  >
+                    <span className="text-xs sm:text-sm">Leave</span>
+                  </Button>
+                )}
               </div>
             </div>
           </CardContent>

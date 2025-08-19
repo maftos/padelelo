@@ -45,9 +45,7 @@ export const useOpenGames = () => {
       if (!user?.id) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
-        .rpc('get_bookings_open', {
-          p_user_id: user.id
-        });
+        .rpc('get_bookings_open' as any);
 
       if (error) throw error;
 
