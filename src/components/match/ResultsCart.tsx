@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface Player {
   id: string;
@@ -105,7 +106,7 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
   }
 
   return (
-    <div className="space-y-4 md:max-w-2xl md:mx-auto md:px-4">
+    <div className="space-y-4">
       <div className="text-center text-sm text-muted-foreground mb-4">
         {Object.keys(groupedResults).length} matchup{Object.keys(groupedResults).length > 1 ? 's' : ''} ready to save
       </div>
@@ -114,52 +115,97 @@ export const ResultsCart = ({ queuedResults, players, selectedMatchups, onRemove
         const unifiedOrderNumbers = getUnifiedOrderNumbers(key);
         
         return (
-          <Card key={key} className="border-primary bg-primary/5 shadow-lg">          
-            <CardContent className="p-6">
-              <div className="grid grid-cols-[1fr,auto] gap-6 items-center">
-                {/* Team players section */}
-                <div className="space-y-2">
-                  {/* Team 1 players */}
-                  <div className="flex items-center gap-4 h-10 border-b border-border pb-2">
-                    <PlayerDisplay playerId={group.team1[0]} />
-                    <PlayerDisplay playerId={group.team1[1]} />
-                  </div>
-                  
-                  {/* Team 2 players */}
-                  <div className="flex items-center gap-4 h-10 pt-2">
-                    <PlayerDisplay playerId={group.team2[0]} />
-                    <PlayerDisplay playerId={group.team2[1]} />
-                  </div>
+          <div key={key} className="bg-accent/5 rounded-xl border border-accent/20 p-3 sm:p-4 space-y-3">
+            {/* Teams - using same layout as ProfileRecentActivity */}
+            <div className="flex flex-col gap-2">
+              {/* Row 1: First players */}
+              <div className="flex items-center justify-between gap-2">
+                {/* Team 1 Player 1 (left) */}
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                    <AvatarImage src={getPlayerPhoto(group.team1[0])} />
+                    <AvatarFallback className="text-[10px]">
+                      {getInitials(getPlayerName(group.team1[0]))}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs sm:text-sm font-medium truncate">
+                    {getPlayerName(group.team1[0]) === "Me" ? "You" : getPlayerName(group.team1[0])}
+                  </span>
                 </div>
-                
-                {/* Scores section */}
-                <div className="flex gap-4">
-                  {group.results.map((result, index) => (
-                    <div key={index} className="flex flex-col items-center">
-                      {/* Unified order number */}
-                      <div className="text-[10px] text-muted-foreground/60 font-light mb-1 h-3 flex items-center">
-                        {unifiedOrderNumbers[index] || ''}
-                      </div>
-                      
-                      {/* Team 1 Score */}
-                      <div className="flex items-center justify-center h-10 border-b border-border pb-2 mb-2">
-                        <span className="text-lg font-bold text-green-700">
-                          {result.team1Score}
-                        </span>
-                      </div>
-                      
-                      {/* Team 2 Score */}
-                      <div className="flex items-center justify-center h-10 pt-2">
-                        <span className="text-lg font-bold text-green-700">
-                          {result.team2Score}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                {/* Team 2 Player 1 (right) */}
+                <div className="flex items-center gap-1.5 min-w-0 justify-end">
+                  <span className="text-xs sm:text-sm font-medium truncate text-right">
+                    {getPlayerName(group.team2[0]) === "Me" ? "You" : getPlayerName(group.team2[0])}
+                  </span>
+                  <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                    <AvatarImage src={getPlayerPhoto(group.team2[0])} />
+                    <AvatarFallback className="text-[10px]">
+                      {getInitials(getPlayerName(group.team2[0]))}
+                    </AvatarFallback>
+                  </Avatar>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Row 2: Second players */}
+              <div className="flex items-center justify-between gap-2">
+                {/* Team 1 Player 2 (left) */}
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                    <AvatarImage src={getPlayerPhoto(group.team1[1])} />
+                    <AvatarFallback className="text-[10px]">
+                      {getInitials(getPlayerName(group.team1[1]))}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-xs sm:text-sm font-medium truncate">
+                    {getPlayerName(group.team1[1]) === "Me" ? "You" : getPlayerName(group.team1[1])}
+                  </span>
+                </div>
+                {/* Team 2 Player 2 (right) */}
+                <div className="flex items-center gap-1.5 min-w-0 justify-end">
+                  <span className="text-xs sm:text-sm font-medium truncate text-right">
+                    {getPlayerName(group.team2[1]) === "Me" ? "You" : getPlayerName(group.team2[1])}
+                  </span>
+                  <Avatar className="w-5 h-5 sm:w-6 sm:h-6 border border-background">
+                    <AvatarImage src={getPlayerPhoto(group.team2[1])} />
+                    <AvatarFallback className="text-[10px]">
+                      {getInitials(getPlayerName(group.team2[1]))}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
+            </div>
+
+            {/* Sets/Results - similar to profile layout */}
+            <div className="space-y-2">
+              {group.results.map((result, index) => {
+                const team1Won = result.team1Score > result.team2Score;
+                return (
+                  <div key={index} className="grid grid-cols-3 items-center p-3 rounded-lg bg-background/50 border border-border/30">
+                    <div className="text-xs text-muted-foreground">
+                      Match {unifiedOrderNumbers[index] || index + 1}
+                    </div>
+                    <div className="flex items-center justify-center space-x-2">
+                      <span className={`text-sm ${result.team1Score > result.team2Score ? 'font-bold' : 'font-medium'}`}>
+                        {result.team1Score}
+                      </span>
+                      <span className="text-muted-foreground text-sm">-</span>
+                      <span className={`text-sm ${result.team2Score > result.team1Score ? 'font-bold' : 'font-medium'}`}>
+                        {result.team2Score}
+                      </span>
+                    </div>
+                    <div className="flex justify-end">
+                      <Badge 
+                        variant={team1Won ? 'default' : 'destructive'} 
+                        className={team1Won ? 'px-2 py-0.5 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white' : ''}
+                      >
+                        {team1Won ? 'Won' : 'Lost'}
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         );
       })}
     </div>
