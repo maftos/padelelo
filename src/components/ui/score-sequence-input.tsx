@@ -6,6 +6,7 @@ interface ScoreSequenceInputProps {
   onScoresChange: (team1Score: string, team2Score: string) => void;
   onComplete?: () => void;
   disabled?: boolean;
+  isActive?: boolean;
   className?: string;
 }
 
@@ -13,6 +14,7 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
   onScoresChange,
   onComplete,
   disabled = false,
+  isActive = false,
   className
 }) => {
   const [values, setValues] = useState<string[]>(["", ""]);
@@ -30,15 +32,15 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
     }, 100);
   }, []);
 
-  // Reset values and focus first input when disabled changes (for new matchup)
+  // Reset values and focus first input when this matchup becomes active
   useEffect(() => {
-    if (!disabled) {
+    if (isActive) {
       setValues(["", ""]);
       setTimeout(() => {
         inputRefs.current[0]?.focus();
       }, 100);
     }
-  }, [disabled]);
+  }, [isActive]);
 
   const handleChange = (index: number, value: string) => {
     // Only allow single digits 0-9

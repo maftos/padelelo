@@ -133,6 +133,7 @@ export const MatchupCard = ({
             onScoresChange={handleScoresChange}
             onComplete={handleScoreComplete}
             disabled={isSubmitting || !isActive}
+            isActive={isActive}
           />
         </div>
       </CardContent>
