@@ -193,44 +193,42 @@ const CreateBookingWizard = () => {
         {/* Main Content */}
         <div className="flex-1 container max-w-lg mx-auto px-4 py-4">
           <div className="h-full flex flex-col">
-            <div className="flex-1">
-              {renderStepContent()}
-            </div>
+            {renderStepContent()}
+          </div>
+        </div>
 
-            {/* Bottom Action Bar */}
-            <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50">
-              <div className="container max-w-lg mx-auto px-4 py-4">
-                <div className="flex items-center gap-3">
-                  {currentStep > 1 && (
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      onClick={handlePrevious}
-                      className="flex-shrink-0 h-12"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                  )}
-                  {currentStep === 1 && (
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      onClick={() => navigate("/manage-bookings")}
-                      className="flex-shrink-0 h-12"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                  )}
-                  <Button
-                    onClick={handleButtonClick}
-                    disabled={!canProceed() || isSubmitting}
-                    size="lg"
-                    className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
-                  >
-                    {isSubmitting ? "Creating..." : getNextButtonContent()}
-                  </Button>
-                </div>
-              </div>
+        {/* Bottom Action Bar */}
+        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50">
+          <div className="container max-w-lg mx-auto px-4 py-4">
+            <div className="flex items-center gap-3">
+              {currentStep > 1 && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handlePrevious}
+                  className="flex-shrink-0 h-12"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+              )}
+              {currentStep === 1 && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => navigate("/manage-bookings")}
+                  className="flex-shrink-0 h-12"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+              )}
+              <Button
+                onClick={handleButtonClick}
+                disabled={!canProceed() || isSubmitting}
+                size="lg"
+                className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
+              >
+                {isSubmitting ? "Creating..." : getNextButtonContent()}
+              </Button>
             </div>
           </div>
         </div>
