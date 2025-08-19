@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
 
 import { MatchupSelectionStep } from "./MatchupSelectionStep";
 import { ScoreEntryStep } from "./ScoreEntryStep";
@@ -128,9 +129,9 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-4 px-4 md:px-0">
+    <div className="container max-w-full sm:max-w-4xl mx-auto px-3 sm:px-4 pt-2 sm:pt-4 pb-24 sm:pb-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4 mb-4">
+      <div className="flex items-center gap-4">
         <div className="flex-1">
           <h1 className="text-xl md:text-2xl font-bold">Add Match Results</h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">
@@ -141,19 +142,18 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
         </div>
       </div>
 
-
       {/* Step Content */}
-      <Card className="mb-20 md:mb-4">
-        <CardContent className="p-3 md:p-6">
-          {currentStep === "selection" && (
-            <MatchupSelectionStep
-              players={players}
-              selectedMatchups={selectedMatchups}
-              onMatchupSelect={handleMatchupSelect}
-            />
-          )}
-          
-          {currentStep === "scoring" && (
+      {currentStep === "selection" && (
+        <MatchupSelectionStep
+          players={players}
+          selectedMatchups={selectedMatchups}
+          onMatchupSelect={handleMatchupSelect}
+        />
+      )}
+      
+      {currentStep === "scoring" && (
+        <Card className="mb-20 md:mb-4">
+          <CardContent className="p-3 md:p-6">
             <ScoreEntryStep
               players={players}
               selectedMatchups={selectedMatchups}
@@ -161,18 +161,22 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
               onAddResult={handleAddResult}
               onIndexChange={setCurrentMatchupIndex}
             />
-          )}
-          
-          {currentStep === "preview" && (
+          </CardContent>
+        </Card>
+      )}
+      
+      {currentStep === "preview" && (
+        <Card className="mb-20 md:mb-4">
+          <CardContent className="p-3 md:p-6">
             <ResultsCart
               queuedResults={queuedResults}
               players={players}
               selectedMatchups={selectedMatchups}
               onRemoveResult={handleRemoveResult}
             />
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Navigation - Fixed at bottom on mobile */}
       <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto bg-background border-t md:border-t-0 p-4 md:p-0 z-10">
@@ -182,9 +186,14 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
               <Button
                 onClick={currentStep === "selection" ? onClose : goToPreviousStep}
                 variant="outline"
-                className="flex-1 md:flex-none"
+                size="lg"
+                className="flex-1 md:flex-none h-12"
               >
-                {currentStep === "selection" ? "Cancel" : "Back"}
+                {currentStep === "selection" ? (
+                  <ArrowLeft className="h-4 w-4" />
+                ) : (
+                  "Back"
+                )}
               </Button>
 
               {currentStep === "selection" && (
