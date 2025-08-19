@@ -143,6 +143,7 @@ export const ScoreEntryStep = ({
         
         {/* Sequential score input */}
         <ScoreSequenceInput
+          key={`matchup-${currentIndex}`}
           onScoresChange={handleScoresChange}
           onComplete={handleComplete}
           disabled={isSubmitting}
