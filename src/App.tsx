@@ -5,7 +5,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import ManageMatches from "./pages/ManageMatches";
-import CreateMatch from "./pages/CreateMatch";
+import CreateBooking from "./pages/CreateBooking";
 import EditMatch from "./pages/EditMatch";
 import EditProfile from "./pages/EditProfile";
 import Matches from "./pages/Matches";
@@ -70,7 +70,7 @@ function App() {
                 <Route path="privacy" element={<PrivacySettings />} />
               </Route>
               <Route path="/manage-bookings" element={<ManageMatches />} />
-              <Route path="/create-match" element={<CreateMatch />} />
+              <Route path="/create-booking" element={<CreateBooking />} />
               <Route path="/edit-booking/:bookingId" element={<EditMatch />} />
               <Route path="/matches" element={<Matches />} />
               <Route path="/friends" element={<Friends />} />

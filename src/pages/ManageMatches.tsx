@@ -121,7 +121,7 @@ const ManageMatches = () => {
                 </div>
                 
                 {/* Create Booking Button - Desktop */}
-                <Link to="/create-match" className="hidden sm:block">
+                <Link to="/create-booking" className="hidden sm:block">
                   <Button className="flex items-center justify-center gap-2 text-sm h-10 px-4">
                     <Plus className="h-4 w-4" />
                     <span>Create Booking</span>
@@ -149,7 +149,7 @@ const ManageMatches = () => {
       {/* Mobile sticky Create Booking CTA */}
       <div className="sm:hidden fixed inset-x-0 bottom-0 z-50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-t">
         <div className="container mx-auto max-w-4xl px-3 py-3">
-          <Link to="/create-match">
+          <Link to="/create-booking">
             <Button className="w-full h-12 text-base">
               <Plus className="h-5 w-5 mr-2" />
               Create Booking

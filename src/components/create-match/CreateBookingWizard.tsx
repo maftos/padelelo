@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Megaphone, Users } from "lucide-react";
+import { ArrowLeft, ArrowRight, Megaphone, Users, ChevronLeft } from "lucide-react";
 import { PlayersStep } from "./PlayersStep";
 import { LocationDetailsStep } from "./LocationDetailsStep";
 import { GameAnnouncementStep } from "./GameAnnouncementStep";
 import { toast } from "sonner";
 import { useBookingSubmission } from "@/hooks/create-booking/use-booking-submission";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface WizardData {
   selectedPlayers: string[];
@@ -161,6 +162,83 @@ const CreateBookingWizard = () => {
     }
   };
 
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        {/* Header with Progress Bar */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
+          <div className="container max-w-lg mx-auto px-4 pt-2 pb-3 space-y-3">
+            {/* Title */}
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h1 className="text-xl font-bold">Create New Booking</h1>
+                <p className="text-sm text-muted-foreground">
+                  Step {currentStep} of {totalSteps}: {getStepTitle()}
+                </p>
+              </div>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 container max-w-lg mx-auto px-4 py-4">
+          <div className="h-full flex flex-col">
+            <div className="flex-1">
+              {renderStepContent()}
+            </div>
+
+            {/* Bottom Action Bar */}
+            <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50">
+              <div className="container max-w-lg mx-auto px-4 py-4">
+                <div className="flex items-center gap-3">
+                  {currentStep > 1 && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={handlePrevious}
+                      className="flex-shrink-0 h-12"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+                  )}
+                  {currentStep === 1 && (
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={() => navigate("/manage-bookings")}
+                      className="flex-shrink-0 h-12"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleButtonClick}
+                    disabled={!canProceed() || isSubmitting}
+                    size="lg"
+                    className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
+                  >
+                    {isSubmitting ? "Creating..." : getNextButtonContent()}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop layout
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
@@ -195,6 +273,7 @@ const CreateBookingWizard = () => {
             <Button
               onClick={currentStep === 1 ? () => navigate("/manage-bookings") : handlePrevious}
               variant="outline"
+              size="lg"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {currentStep === 1 ? "Back" : "Previous"}

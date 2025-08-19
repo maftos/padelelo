@@ -71,7 +71,7 @@ export const MatchForm = () => {
   };
 
   const handleCreateNewMatch = () => {
-    navigate("/create-match");
+    navigate("/create-booking");
   };
 
   const handleBackToPendingMatches = () => {
