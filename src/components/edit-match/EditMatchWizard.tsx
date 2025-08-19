@@ -415,6 +415,7 @@ const EditMatchWizard = () => {
             <Button
               onClick={currentStep === 1 ? () => navigate("/manage-bookings") : handlePrevious}
               variant="outline"
+              size="lg"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               {currentStep === 1 ? "Back" : "Previous"}
