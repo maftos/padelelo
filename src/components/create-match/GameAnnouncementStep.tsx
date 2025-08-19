@@ -2,11 +2,12 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { FileText } from "lucide-react";
+import { FileText, DollarSign } from "lucide-react";
 import { StepHeader } from "./StepHeader";
 
 interface GameAnnouncementData {
   gameDescription: string;
+  feePerPlayer: string;
 }
 
 interface GameAnnouncementStepProps {
@@ -19,11 +20,19 @@ export const GameAnnouncementStep = ({ data, onDataChange }: GameAnnouncementSte
   
   return (
     <div className="space-y-6">
-      <StepHeader 
-        title="Match Details"
-        description="This game will be publicly visible for 24h"
-        showOpenGameBadge={true}
-      />
+
+      {/* Fee Per Player */}
+      <div className="space-y-3">
+        <div className="flex items-center gap-2 text-sm font-medium">
+          <DollarSign className="h-4 w-4" />
+          Fee per Player <span className="text-destructive">*</span>
+        </div>
+        <Input
+          value={data.feePerPlayer}
+          onChange={(e) => onDataChange({ feePerPlayer: e.target.value })}
+          placeholder="Enter fee amount"
+        />
+      </div>
 
       {/* Game Description */}
       <div className="space-y-3">

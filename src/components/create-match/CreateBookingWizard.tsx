@@ -103,7 +103,8 @@ const CreateBookingWizard = () => {
         return (
           <GameAnnouncementStep
             data={{
-              gameDescription: wizardData.gameDescription
+              gameDescription: wizardData.gameDescription,
+              feePerPlayer: wizardData.feePerPlayer
             }}
             onDataChange={(data) => updateWizardData(data)}
           />

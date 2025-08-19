@@ -200,7 +200,8 @@ const EditMatchWizard = () => {
         return (
           <GameAnnouncementStep
             data={{
-              gameDescription: wizardData.gameDescription
+              gameDescription: wizardData.gameDescription,
+              feePerPlayer: wizardData.feePerPlayer
             }}
             onDataChange={(data) => updateWizardData(data)}
           />
@@ -226,12 +227,7 @@ const EditMatchWizard = () => {
   const getNextButtonContent = () => {
     if (currentStep === totalSteps) {
       if (isOpenGame) {
-        return (
-          <>
-            <Users className="h-4 w-4 mr-2" />
-            Update Open Game
-          </>
-        );
+        return "Publish Open Game";
       } else {
         return (
           <>
@@ -286,7 +282,7 @@ const EditMatchWizard = () => {
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header with Progress Bar */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
-          <div className="container max-w-lg mx-auto px-4 py-4 space-y-4">
+          <div className="container max-w-lg mx-auto px-4 py-3 space-y-3">
             {/* Title and Cancel */}
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -316,7 +312,7 @@ const EditMatchWizard = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 container max-w-lg mx-auto px-4 py-6">
+        <div className="flex-1 container max-w-lg mx-auto px-4 py-4">
           <div className="h-full flex flex-col">
             {renderStepContent()}
           </div>

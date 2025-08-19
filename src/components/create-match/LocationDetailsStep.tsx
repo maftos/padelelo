@@ -46,11 +46,6 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
   return (
     <div className="space-y-6">
-      <StepHeader 
-        title="Match Details"
-        description="Set location, date, time, and fee details"
-        showOpenGameBadge={!hasAllPlayers}
-      />
 
       {/* Location */}
       <div className="space-y-3">
@@ -121,18 +116,6 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
         required={requiresDetails}
       />
 
-      {/* Fee Per Player */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <DollarSign className="h-4 w-4" />
-          Fee per Player {requiresDetails && <span className="text-destructive">*</span>}
-        </div>
-        <Input
-          value={data.feePerPlayer}
-          onChange={(e) => onDataChange({ feePerPlayer: e.target.value })}
-          placeholder={requiresDetails ? "Enter fee amount" : "Enter fee amount (optional)"}
-        />
-      </div>
     </div>
   );
 };
