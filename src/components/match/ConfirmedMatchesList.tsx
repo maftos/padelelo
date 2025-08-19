@@ -82,6 +82,12 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
     navigate(`/edit-booking/${bookingId}`);
   };
 
+  const handleLeave = (bookingId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    // TODO: Implement leave functionality
+    console.log('Leave booking:', bookingId);
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-3">
@@ -176,14 +182,25 @@ export const ConfirmedMatchesList = ({ onSelectMatch, selectedMatchId }: Confirm
                       >
                         <span className="text-xs sm:text-sm">Add Scores</span>
                       </Button>
-                      <Button 
-                        onClick={(e) => handleEdit(booking.booking_id, e)}
-                        variant="outline"
-                        className="flex-1 h-8 sm:h-9"
-                        size="sm"
-                      >
-                        <span className="text-xs sm:text-sm">Edit</span>
-                      </Button>
+                      {booking.is_creator ? (
+                        <Button 
+                          onClick={(e) => handleEdit(booking.booking_id, e)}
+                          variant="outline"
+                          className="flex-1 h-8 sm:h-9"
+                          size="sm"
+                        >
+                          <span className="text-xs sm:text-sm">Edit</span>
+                        </Button>
+                      ) : (
+                        <Button 
+                          onClick={(e) => handleLeave(booking.booking_id, e)}
+                          variant="outline"
+                          className="flex-1 h-8 sm:h-9"
+                          size="sm"
+                        >
+                          <span className="text-xs sm:text-sm">Leave</span>
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>

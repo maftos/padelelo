@@ -7,6 +7,7 @@ export interface ConfirmedBooking {
   start_time: string;
   venue_name: string;
   status: string;
+  is_creator: boolean;
   participants: Array<{
     player_id: string;
     first_name: string;
@@ -24,9 +25,7 @@ export const useConfirmedBookings = () => {
       if (!user?.id) throw new Error('User not authenticated');
 
       // Use the get_bookings_closed function to get proper data
-      const { data, error } = await supabase.rpc('get_bookings_closed', {
-        p_user_id: user.id
-      });
+      const { data, error } = await supabase.rpc('get_bookings_closed' as any);
 
       if (error) throw error;
 
@@ -39,6 +38,7 @@ export const useConfirmedBookings = () => {
         start_time: booking.start_time,
         venue_name: booking.venue_name || 'Unknown Venue',
         status: booking.status,
+        is_creator: booking.is_creator,
         participants: booking.participants?.map((participant: any) => ({
           player_id: participant.player_id,
           first_name: participant.first_name,
