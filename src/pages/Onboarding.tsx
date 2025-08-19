@@ -91,6 +91,8 @@ export default function Onboarding() {
             onPasswordChange={(password) => saveData({ password })}
             onNext={nextStep}
             canGoNext={canGoNext}
+            data={data}
+            isSubmitting={isSubmitting}
           />
         );
       case 6:
@@ -122,9 +124,9 @@ export default function Onboarding() {
       currentStep={currentStep}
       totalSteps={totalSteps}
       progress={progress}
-      showBack={canGoBack}
-      onNext={currentStep < 6 ? nextStep : undefined}
-      onBack={canGoBack ? previousStep : undefined}
+      showBack={canGoBack && currentStep < 6} // Hide back button on final step
+      onNext={currentStep < 5 ? nextStep : undefined} // Hide next button from step 5 onwards
+      onBack={canGoBack && currentStep < 6 ? previousStep : undefined}
       isNextDisabled={!canGoNext || isSubmitting}
       nextButtonText={getNextButtonText()}
     >
