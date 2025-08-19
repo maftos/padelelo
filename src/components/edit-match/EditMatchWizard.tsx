@@ -278,12 +278,25 @@ const EditMatchWizard = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        {/* Progress Bar */}
+        {/* Header with Progress Bar */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
           <div className="container max-w-lg mx-auto px-4 py-4">
+            {/* Title and Cancel */}
+            <div className="flex items-center justify-between mb-3">
+              <h1 className="text-lg font-bold">Edit Booking</h1>
+              <Button 
+                onClick={handleCancelBooking}
+                variant="destructive" 
+                size="sm"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Step info and progress */}
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium text-muted-foreground">
-                Step {currentStep} of {totalSteps}
+                Step {currentStep} of {totalSteps}: {getStepTitle()}
               </span>
               <span className="text-sm font-medium text-muted-foreground">
                 {Math.round((currentStep / totalSteps) * 100)}%
@@ -295,22 +308,6 @@ const EditMatchWizard = () => {
                 style={{ width: `${(currentStep / totalSteps) * 100}%` }}
               />
             </div>
-          </div>
-        </div>
-
-        {/* Header with Cancel Button */}
-        <div className="container max-w-lg mx-auto px-4 py-4 border-b border-border/50">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <h1 className="text-xl font-bold">{getStepTitle()}</h1>
-            </div>
-            <Button 
-              onClick={handleCancelBooking}
-              variant="destructive" 
-              size="sm"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </div>
 
