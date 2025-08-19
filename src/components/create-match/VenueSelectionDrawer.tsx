@@ -78,9 +78,9 @@ export const VenueSelectionDrawer = ({
           </DrawerTitle>
         </DrawerHeader>
         
-        <div className="flex-1 overflow-hidden p-4 space-y-4">
+        <div className="p-4 space-y-4 overflow-hidden flex flex-col">
           {/* Search */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search venues..."
@@ -91,7 +91,7 @@ export const VenueSelectionDrawer = ({
           </div>
 
           {/* Venues List */}
-          <div className="flex-1 overflow-y-auto space-y-2">
+          <div className="overflow-y-auto space-y-2 max-h-[60vh]">
             {filteredVenues.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 No venues found
@@ -108,7 +108,6 @@ export const VenueSelectionDrawer = ({
                   onClick={() => handleVenueSelect(venue.venue_id)}
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                     <span className="truncate">{venue.name}</span>
                   </div>
                   {selectedVenueId === venue.venue_id && (

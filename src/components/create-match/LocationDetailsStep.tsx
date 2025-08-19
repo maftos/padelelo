@@ -54,10 +54,19 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
 
       {/* Location */}
       <div className="space-y-3">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <MapPin className="h-4 w-4" />
-          Location {requiresDetails && <span className="text-destructive">*</span>}
-        </div>
+        {!isMobile && (
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <MapPin className="h-4 w-4" />
+            Location {requiresDetails && <span className="text-destructive">*</span>}
+          </div>
+        )}
+        
+        {isMobile && (
+          <div className="flex items-center gap-2 text-sm font-medium">
+            <MapPin className="h-4 w-4" />
+            Booking Details
+          </div>
+        )}
         
         {isMobile ? (
           <VenueSelectionDrawer

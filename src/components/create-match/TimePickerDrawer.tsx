@@ -98,9 +98,9 @@ export const TimePickerDrawer = ({
           </DrawerTitle>
         </DrawerHeader>
         
-        <div className="flex-1 overflow-hidden p-4 space-y-4">
+        <div className="p-4 space-y-4 overflow-hidden flex flex-col">
           {/* Search */}
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search time..."
@@ -113,7 +113,7 @@ export const TimePickerDrawer = ({
           {/* Time Options */}
           <div 
             ref={scrollContainerRef}
-            className="flex-1 overflow-y-auto space-y-1"
+            className="overflow-y-auto space-y-1 max-h-[60vh]"
           >
             {filteredTimeOptions.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
