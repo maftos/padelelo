@@ -39,13 +39,12 @@ export const PasswordStep = ({ password, onPasswordChange, onNext, canGoNext, da
 
       // Then complete onboarding with all user data
       const { error: completeError } = await supabase.rpc('complete_onboarding', {
-        p_user_a_id: user.id,
         p_first_name: data.firstName,
         p_last_name: data.lastName,
         p_gender: data.gender || '',
         p_nationality: data.nationality,
         p_profile_photo: data.profilePhoto || ''
-      });
+      } as any);
 
       if (completeError) throw completeError;
 
