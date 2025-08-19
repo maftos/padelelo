@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, Users } from "lucide-react";
 import { usePlayerSelection } from "@/hooks/match/use-player-selection";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { PlayerSelectionBottomDrawer } from "./PlayerSelectionBottomDrawer";
 import { toast } from "sonner";
 
 interface PlayersStepProps {
@@ -18,6 +20,8 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
   const { playerOptions } = usePlayerSelection();
   const { profile } = useUserProfile();
   const [searchQuery, setSearchQuery] = useState("");
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (profile?.id && !selectedPlayers.includes(profile.id)) {
@@ -67,6 +71,81 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
     !selectedPlayers.includes(player.id)
   );
 
+  // Mobile: Show trigger button and drawer
+  if (isMobile) {
+    return (
+      <div className="space-y-6">
+        {/* Player Selection Trigger */}
+        <Button
+          variant="outline"
+          className="w-full h-14 justify-start text-left"
+          onClick={() => setIsDrawerOpen(true)}
+        >
+          <Users className="h-5 w-5 mr-3" />
+          <div className="flex-1">
+            {selectedPlayers.length === 0 ? (
+              <span className="text-muted-foreground">Select players for your match</span>
+            ) : (
+              <div>
+                <span className="font-medium">
+                  {selectedPlayers.length} player{selectedPlayers.length === 1 ? '' : 's'} selected
+                </span>
+                <div className="text-sm text-muted-foreground">
+                  {selectedPlayers.slice(0, 2).map(id => getPlayerName(id)).join(', ')}
+                  {selectedPlayers.length > 2 && ` +${selectedPlayers.length - 2} more`}
+                </div>
+              </div>
+            )}
+          </div>
+        </Button>
+
+        {/* Selected Players Display */}
+        {selectedPlayers.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {selectedPlayers.map((playerId) => (
+              <div key={playerId} className="flex items-center justify-between p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10">
+                    <AvatarImage src={getPlayerPhoto(playerId)} />
+                    <AvatarFallback className="text-sm">
+                      {getInitials(getPlayerName(playerId))}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">{getPlayerName(playerId)}</span>
+                  {playerId === profile?.id && (
+                    <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">You</span>
+                  )}
+                </div>
+                {playerId !== profile?.id && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRemovePlayer(playerId)}
+                    className="h-8 w-8 p-0 hover:bg-destructive/10 hover:text-destructive"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Player Selection Drawer */}
+        <PlayerSelectionBottomDrawer
+          open={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          selectedPlayers={selectedPlayers}
+          onPlayersChange={onPlayersChange}
+          playerOptions={[...playerOptions, ...knownPlayers]}
+          currentUserId={profile?.id}
+          maxPlayers={4}
+        />
+      </div>
+    );
+  }
+
+  // Desktop: Show inline selection
   return (
     <div className="space-y-6">
       {/* Search */}
