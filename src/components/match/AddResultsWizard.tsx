@@ -182,18 +182,14 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
       <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto bg-background border-t md:border-t-0 p-4 md:p-0 z-10">
         <Card className="border-0 md:border shadow-none md:shadow-sm">
           <CardContent className="p-0 md:p-6">
-            <div className="flex justify-between gap-4">
+            <div className="flex items-center gap-3">
               <Button
                 onClick={currentStep === "selection" ? onClose : goToPreviousStep}
                 variant="outline"
                 size="lg"
-                className="flex-1 md:flex-none h-12"
+                className="flex-shrink-0 h-12"
               >
-                {currentStep === "selection" ? (
-                  <ArrowLeft className="h-4 w-4" />
-                ) : (
-                  "Back"
-                )}
+                <ArrowLeft className="h-4 w-4" />
               </Button>
 
               {currentStep === "selection" && (
@@ -201,7 +197,23 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
                   onClick={goToNextStep}
                   disabled={selectedMatchups.length === 0}
                   size="lg"
-                  className="flex-1 md:flex-none h-12"
+                  className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
+                >
+                  Next
+                </Button>
+              )}
+
+              {currentStep === "scoring" && (
+                <Button
+                  onClick={() => {
+                    // Check if all scores are entered
+                    if (queuedResults.length >= selectedMatchups.length) {
+                      setCurrentStep("preview");
+                    }
+                  }}
+                  disabled={queuedResults.length < selectedMatchups.length}
+                  size="lg"
+                  className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
                 >
                   Next
                 </Button>
@@ -212,7 +224,7 @@ export const AddResultsWizard = ({ bookingId, players, onClose }: AddResultsWiza
                   onClick={handleSubmit}
                   disabled={queuedResults.length === 0 || isSubmitting}
                   size="lg"
-                  className="flex-1 md:flex-none h-12"
+                  className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
                 >
                   {isSubmitting ? "Saving..." : "Save Results"}
                 </Button>
