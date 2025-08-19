@@ -87,7 +87,7 @@ export const PlayersStep = ({ selectedPlayers, onPlayersChange, knownPlayers = [
         {/* Player Selection Trigger */}
         <Button
           variant="outline"
-          className="w-full h-14 justify-start text-left"
+          className="w-full h-14 justify-start text-left border-2 border-dashed"
           onClick={() => setIsDrawerOpen(true)}
         >
           <Users className="h-5 w-5 mr-3" />

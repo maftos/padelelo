@@ -52,7 +52,7 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
         {!isMobile && (
           <div className="flex items-center gap-2 text-sm font-medium">
             <MapPin className="h-4 w-4" />
-            Location {requiresDetails && <span className="text-destructive">*</span>}
+            Location
           </div>
         )}
         
