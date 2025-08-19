@@ -8,18 +8,20 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
-import { MapPin, Search, Check } from "lucide-react";
+import { MapPin, Search, Check, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Venue {
   venue_id: string;
   name: string;
+  distance?: number; // distance in km
 }
 
 interface VenueSelectionDrawerProps {
   venues: Venue[];
   selectedVenueId: string;
   onVenueSelect: (venueId: string) => void;
+  onUpdateLocation?: () => void;
   isLoading?: boolean;
   required?: boolean;
 }
@@ -28,6 +30,7 @@ export const VenueSelectionDrawer = ({
   venues,
   selectedVenueId,
   onVenueSelect,
+  onUpdateLocation,
   isLoading = false,
   required = false
 }: VenueSelectionDrawerProps) => {
@@ -79,6 +82,21 @@ export const VenueSelectionDrawer = ({
         </DrawerHeader>
         
         <div className="p-4 space-y-4 min-h-0 flex flex-col flex-1">
+          {/* Update Location Button */}
+          {onUpdateLocation && (
+            <div className="flex-shrink-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onUpdateLocation}
+                className="w-full"
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Update Location
+              </Button>
+            </div>
+          )}
+
           {/* Search */}
           <div className="relative flex-shrink-0">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -107,8 +125,16 @@ export const VenueSelectionDrawer = ({
                   )}
                   onClick={() => handleVenueSelect(venue.venue_id)}
                 >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <span className="truncate">{venue.name}</span>
+                  <div className="flex flex-col items-start gap-1 flex-1 min-w-0">
+                    <span className="truncate font-medium">{venue.name}</span>
+                    {venue.distance !== undefined && (
+                      <span className="text-xs text-muted-foreground">
+                        {venue.distance < 1 
+                          ? `${Math.round(venue.distance * 1000)}m away`
+                          : `${venue.distance.toFixed(1)}km away`
+                        }
+                      </span>
+                    )}
                   </div>
                   {selectedVenueId === venue.venue_id && (
                     <Check className="h-4 w-4 text-primary flex-shrink-0" />
