@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Users, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Users, X, ChevronLeft } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { PlayersStep } from "../create-match/PlayersStep";
 import { LocationDetailsStep } from "../create-match/LocationDetailsStep";
 import { GameAnnouncementStep } from "../create-match/GameAnnouncementStep";
@@ -30,6 +31,7 @@ const EditMatchWizard = () => {
   const { booking, isLoading, error } = useBookingDetails(bookingId);
   const { user } = useAuth();
   const { editBooking } = useEditBooking();
+  const isMobile = useIsMobile();
   
   const [currentStep, setCurrentStep] = useState(1);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -273,6 +275,101 @@ const EditMatchWizard = () => {
     );
   }
 
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        {/* Progress Bar */}
+        <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
+          <div className="container max-w-lg mx-auto px-4 py-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-muted-foreground">
+                Step {currentStep} of {totalSteps}
+              </span>
+              <span className="text-sm font-medium text-muted-foreground">
+                {Math.round((currentStep / totalSteps) * 100)}%
+              </span>
+            </div>
+            <div className="w-full bg-muted rounded-full h-2">
+              <div 
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Header with Cancel Button */}
+        <div className="container max-w-lg mx-auto px-4 py-4 border-b border-border/50">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h1 className="text-xl font-bold">{getStepTitle()}</h1>
+            </div>
+            <Button 
+              onClick={handleCancelBooking}
+              variant="destructive" 
+              size="sm"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 container max-w-lg mx-auto px-4 py-6">
+          <div className="h-full flex flex-col">
+            {renderStepContent()}
+          </div>
+        </div>
+
+        {/* Bottom Action Bar */}
+        <div className="sticky bottom-0 bg-background/95 backdrop-blur-sm border-t border-border/50">
+          <div className="container max-w-lg mx-auto px-4 py-4">
+            <div className="flex items-center gap-3">
+              {currentStep > 1 && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handlePrevious}
+                  className="flex-shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+              )}
+              {currentStep === 1 && (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={() => navigate("/manage-bookings")}
+                  className="flex-shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+              )}
+              <Button
+                onClick={handleButtonClick}
+                disabled={!canProceed() || isSubmitting}
+                size="lg"
+                className="flex-1 h-12 rounded-lg font-medium transition-all duration-200"
+              >
+                {isSubmitting ? "Saving..." : getNextButtonContent()}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Cancel Booking Dialog */}
+        {bookingId && (
+          <CancelBookingDialog
+            bookingId={bookingId}
+            isOpen={showCancelDialog}
+            onOpenChange={setShowCancelDialog}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Desktop layout
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
