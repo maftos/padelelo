@@ -59,10 +59,8 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
         // Move to second input
         inputRefs.current[1]?.focus();
       } else if (index === 1 && newValues[0] !== "") {
-        // Both scores entered, auto-complete
-        setTimeout(() => {
-          onComplete?.();
-        }, 100);
+        // Both scores entered, auto-complete immediately
+        onComplete?.();
       }
     }
   };
@@ -93,9 +91,7 @@ export const ScoreSequenceInput: React.FC<ScoreSequenceInputProps> = ({
       
       // Focus second input and complete if both filled
       inputRefs.current[1]?.focus();
-      setTimeout(() => {
-        onComplete?.();
-      }, 100);
+      onComplete?.();
     }
   };
 

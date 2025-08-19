@@ -90,14 +90,11 @@ export const ScoreEntryStep = ({
     
     onAddResult(result);
     
-    // Automatically move to next matchup or complete
-    setTimeout(() => {
-      if (currentIndex < selectedMatchups.length - 1 && onIndexChange) {
-        // Move to next matchup automatically
-        onIndexChange(currentIndex + 1);
-      }
-      setIsSubmitting(false);
-    }, 150);
+    // Move to next matchup immediately if available
+    if (currentIndex < selectedMatchups.length - 1 && onIndexChange) {
+      onIndexChange(currentIndex + 1);
+    }
+    setIsSubmitting(false);
   };
 
   const TeamDisplay = ({ team }: { team: [string, string] }) => (
