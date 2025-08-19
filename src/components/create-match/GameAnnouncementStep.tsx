@@ -36,7 +36,7 @@ export const GameAnnouncementStep = ({ data, onDataChange }: GameAnnouncementSte
 
       {/* Game Description */}
       <div className="space-y-3">
-        <Label htmlFor="description">
+        <Label htmlFor="description" className="text-sm font-medium">
           Description (optional)
         </Label>
         <Textarea

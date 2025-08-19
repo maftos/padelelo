@@ -282,7 +282,7 @@ const EditMatchWizard = () => {
       <div className="min-h-screen bg-background flex flex-col">
         {/* Header with Progress Bar */}
         <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border/50">
-          <div className="container max-w-lg mx-auto px-4 py-3 space-y-3">
+          <div className="container max-w-lg mx-auto px-4 pt-2 pb-3 space-y-3">
             {/* Title and Cancel */}
             <div className="flex items-center justify-between">
               <div className="flex-1">

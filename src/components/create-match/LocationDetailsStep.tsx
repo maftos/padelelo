@@ -56,12 +56,6 @@ export const LocationDetailsStep = ({ data, hasAllPlayers, onDataChange }: Locat
           </div>
         )}
         
-        {isMobile && (
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <MapPin className="h-4 w-4" />
-            Booking Details
-          </div>
-        )}
         
         {isMobile ? (
           <VenueSelectionDrawer
