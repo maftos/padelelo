@@ -26,7 +26,6 @@ export interface PadelClub {
   phone?: string;
   email?: string;
   website?: string;
-  rating: number;
   numberOfCourts: number;
   openingHours: string;
   description: string;
@@ -36,6 +35,7 @@ export interface PadelClub {
   estimatedFeePerPerson: string;
   image?: string;
   distanceKm?: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'COMING_SOON';
 }
 
 const PadelCourts = () => {
@@ -70,8 +70,7 @@ const PadelCourts = () => {
     phone: venue.phone_number,
     email: venue.email_address,
     website: venue.website_url,
-    rating: 4.0,
-    numberOfCourts: Array.isArray(venue.courts) ? venue.courts.length : 1,
+    numberOfCourts: venue.courts?.total_count || 1,
     openingHours: Array.isArray(venue.opening_hours) && venue.opening_hours.length > 0 ? 
       venue.opening_hours.map((h: any) => `${h.day}: ${h.hours}`).join(', ') : 
       'Contact for hours',
@@ -81,7 +80,8 @@ const PadelCourts = () => {
     region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800',
     image: venue.photo_gallery && venue.photo_gallery.length > 0 ? Object.values(venue.photo_gallery[0])[0] as string : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    distanceKm: typeof venue.distance === 'number' ? venue.distance : undefined
+    distanceKm: typeof venue.distance === 'number' ? venue.distance : undefined,
+    status: venue.status || 'ACTIVE'
   })) : [];
 
 const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -159,10 +159,10 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
         "latitude": club.coordinates[1],
         "longitude": club.coordinates[0]
       },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": club.rating,
-        "bestRating": 5
+      "additionalProperty": {
+        "@type": "PropertyValue",
+        "name": "status",
+        "value": club.status
       }
     }))
   };

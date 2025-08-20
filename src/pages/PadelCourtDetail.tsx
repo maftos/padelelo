@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, MapPin, Clock, Phone, Mail, Star, Globe, Users } from "lucide-react";
 import { Helmet } from "react-helmet";
 import { PadelClub } from "./PadelCourts";
@@ -99,8 +100,7 @@ const PadelCourtDetail = () => {
     phone: venue.phone_number,
     email: venue.email_address,
     website: venue.website_url,
-    rating: 4.0, // Could be dynamic if you have rating data
-    numberOfCourts: Array.isArray(venue.courts) ? venue.courts.length : 0,
+    numberOfCourts: (venue.courts && typeof venue.courts === 'object' && !Array.isArray(venue.courts) && 'total_count' in venue.courts) ? Number(venue.courts.total_count) : Array.isArray(venue.courts) ? venue.courts.length : 1,
     openingHours: Array.isArray(venue.opening_hours) && venue.opening_hours.length > 0 ? 
       venue.opening_hours.map((h: any) => `${h.day}: ${h.open_time || h.hours}-${h.close_time || ''}`).join(', ') : 
       'Contact for hours',
@@ -109,7 +109,8 @@ const PadelCourtDetail = () => {
     priceRange: 'Contact for pricing',
     region: venue.region || 'CENTRAL',
     estimatedFeePerPerson: 'Rs 800-1200',
-    image: getMainImage(venue.photo_gallery)
+    image: getMainImage(venue.photo_gallery),
+    status: (venue as any).status || 'ACTIVE'
   } : null;
 
   // Extract photo gallery from venue data as string array
@@ -182,10 +183,14 @@ const PadelCourtDetail = () => {
               <div className="space-y-3">
                 <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex flex-col sm:flex-row sm:items-center gap-3">
                   <span>{club.name}</span>
-                  <div className="flex items-center gap-1">
-                    <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    <span className="text-lg font-medium">{club.rating}</span>
-                  </div>
+                  {(club.status === 'COMING_SOON' || club.status === 'INACTIVE') && (
+                    <Badge 
+                      variant={club.status === 'COMING_SOON' ? 'secondary' : 'destructive'}
+                      className="text-sm px-3 py-1"
+                    >
+                      {club.status === 'COMING_SOON' ? 'Coming Soon' : 'Inactive'}
+                    </Badge>
+                  )}
                 </h1>
                 <p className="text-muted-foreground flex items-center gap-1">
                   <MapPin className="h-4 w-4" />

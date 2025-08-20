@@ -1,7 +1,8 @@
 import React from "react";
 
 import { Card } from "@/components/ui/card";
-import { Star, Users, CreditCard, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Users, MapPin } from "lucide-react";
 import { PadelClub } from "@/pages/PadelCourts";
 
 interface PadelCourtsListProps {
@@ -75,11 +76,16 @@ export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selecte
                       loading="lazy"
                       className="h-full w-full object-cover"
                     />
-                    <div className="absolute top-1.5 right-1.5 rounded-full border border-border bg-background/80 text-foreground backdrop-blur px-1.5 py-0.5 flex items-center gap-1 shadow-sm">
-                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                      <span className="text-[10px] font-medium leading-none">{club.rating}</span>
-                      <span className="sr-only">Rating</span>
-                    </div>
+                    {(club.status === 'COMING_SOON' || club.status === 'INACTIVE') && (
+                      <div className="absolute top-1.5 right-1.5">
+                        <Badge 
+                          variant={club.status === 'COMING_SOON' ? 'secondary' : 'destructive'}
+                          className="text-[10px] px-1.5 py-0.5 h-auto"
+                        >
+                          {club.status === 'COMING_SOON' ? 'Coming Soon' : 'Inactive'}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0 p-3">
                     <div>

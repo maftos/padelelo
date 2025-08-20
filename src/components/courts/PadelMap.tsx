@@ -183,14 +183,17 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
             `}
             <div class="flex-1 p-3 min-w-0">
               <h3 class="font-semibold text-sm text-card-foreground truncate mb-1">${club.name}</h3>
-              <div class="flex items-center gap-1 mb-1">
-                ${Array.from({length: 5}, (_, i) => 
-                  i < Math.floor(club.rating || 0) 
-                    ? '<span class="text-yellow-400 text-xs leading-none">★</span>' 
-                    : '<span class="text-muted-foreground text-xs leading-none">☆</span>'
-                ).join('')}
-                <span class="text-xs text-muted-foreground ml-1">${club.rating || 'N/A'}</span>
-              </div>
+              ${club.status === 'COMING_SOON' || club.status === 'INACTIVE' ? 
+                `<div class="mb-1">
+                  <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                    club.status === 'COMING_SOON' 
+                      ? 'bg-secondary text-secondary-foreground' 
+                      : 'bg-destructive text-destructive-foreground'
+                  }">
+                    ${club.status === 'COMING_SOON' ? 'Coming Soon' : 'Inactive'}
+                  </span>
+                </div>` : ''
+              }
               <p class="text-xs text-muted-foreground mb-2">
                 ${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}
               </p>
