@@ -13,15 +13,16 @@ interface PadelCourtsListProps {
   onRequestLocation?: () => void;
   onRefreshLocation?: () => void;
   hasUserLocation?: boolean;
+  subtitle?: string;
 }
 
-export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selectedClubId, onSelectClub, showLocationPrompt, onRequestLocation, onRefreshLocation, hasUserLocation }) => {
+export const PadelCourtsList: React.FC<PadelCourtsListProps> = ({ clubs, selectedClubId, onSelectClub, showLocationPrompt, onRequestLocation, onRefreshLocation, hasUserLocation, subtitle }) => {
   return (
     <div className="flex h-full flex-col">
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="px-4 py-3">
           <h2 className="text-lg font-semibold">{clubs.length} padel clubs</h2>
-          <p className="text-sm text-muted-foreground">Explore venues across Mauritius</p>
+          <p className="text-sm text-muted-foreground">{subtitle || "Explore venues across Mauritius"}</p>
           
           <div className="mt-2 flex gap-2">
             {showLocationPrompt && (

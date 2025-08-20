@@ -226,7 +226,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
               />
             </div>
             <div className="w-[clamp(360px,30%,520px)] shrink-0 min-h-0 overflow-hidden border-l">
-              <PadelCourtsList
+                <PadelCourtsList
                 clubs={clubs}
                 selectedClubId={selectedId}
                 onSelectClub={(id) => setSelectedId(id)}
@@ -258,8 +258,12 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
               <DrawerTrigger asChild>
                 <div className="fixed bottom-0 left-0 right-0 z-50">
                   <div className="bg-background/95 backdrop-blur-sm border-t rounded-t-xl shadow-lg">
-                    <div className="flex items-center justify-center py-4 cursor-pointer">
-                      <div className="w-12 h-1 bg-muted-foreground/50 rounded-full"></div>
+                    <div className="px-4 py-3 cursor-pointer">
+                      <div className="flex items-center justify-center mb-2">
+                        <div className="w-12 h-1 bg-muted-foreground/50 rounded-full"></div>
+                      </div>
+                      <h2 className="text-lg font-semibold text-center">{clubs.length} padel clubs</h2>
+                      <p className="text-sm text-muted-foreground text-center">Swipe up to view clubs</p>
                     </div>
                   </div>
                 </div>
@@ -274,6 +278,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
                     onRequestLocation={requestLocation}
                     onRefreshLocation={handleRefreshLocation}
                     hasUserLocation={hasUserLocation}
+                    subtitle="Swipe down to close list"
                   />
                 </div>
               </DrawerContent>
