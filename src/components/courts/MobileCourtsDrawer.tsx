@@ -22,28 +22,30 @@ export const MobileCourtsDrawer: React.FC<MobileCourtsDrawerProps> = ({
   onRefreshLocation,
   hasUserLocation,
 }) => {
-  const [snap, setSnap] = useState<number | string | null>(0.15);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Drawer
-      open={true}
-      snapPoints={[0.15, 0.85]}
-      activeSnapPoint={snap}
-      setActiveSnapPoint={setSnap}
-      dismissible={false}
-    >
-      <DrawerContent className="bg-background">
-        {snap === 0.15 ? (
-          // Minimized view
-          <div className="px-4 py-3">
+    <>
+      {/* Always-visible minimized bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 pointer-events-none">
+        <div className="bg-background/95 backdrop-blur-sm border-t rounded-t-xl shadow-lg pointer-events-auto">
+          <div 
+            className="px-4 py-3 cursor-pointer touch-manipulation"
+            onClick={() => setIsOpen(true)}
+            onTouchStart={() => setIsOpen(true)}
+          >
             <div className="flex items-center justify-center mb-2">
               <div className="w-12 h-1 bg-muted-foreground/50 rounded-full"></div>
             </div>
             <h2 className="text-lg font-semibold text-center">{clubs.length} padel clubs</h2>
-            <p className="text-sm text-muted-foreground text-center">Swipe up to view clubs</p>
+            <p className="text-sm text-muted-foreground text-center">Tap to view clubs</p>
           </div>
-        ) : (
-          // Expanded view
+        </div>
+      </div>
+
+      {/* Full screen drawer for expanded view */}
+      <Drawer open={isOpen} onOpenChange={setIsOpen}>
+        <DrawerContent className="h-[85vh] bg-background">
           <div className="flex-1 overflow-hidden">
             <PadelCourtsList 
               clubs={clubs} 
@@ -56,8 +58,8 @@ export const MobileCourtsDrawer: React.FC<MobileCourtsDrawerProps> = ({
               subtitle="Swipe down to close list"
             />
           </div>
-        )}
-      </DrawerContent>
-    </Drawer>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 };
