@@ -107,17 +107,8 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
         toast.success('Location saved to your profile');
         // Refetch to get updated location-based data
         refetch();
-      } else {
-        // Guest user: save locally  
-        try {
-          localStorage.setItem('guest_location', JSON.stringify({ latitude, longitude, ts: Date.now() }));
-          setHasLocalLocation(true);
-          locationSavedRef.current = true;
-          toast.success('Location saved locally');
-        } catch (e) {
-          console.warn('Local storage unavailable');
-        }
       }
+      // Remove guest user local storage behavior for non-authenticated users
     } catch (err: any) {
       console.error('Failed to save location', err);
       toast.error(err?.message || 'Could not save your location');
@@ -169,7 +160,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
 
   // Improved location logic to reduce race conditions
   const hasUserLocation = result?.user_location !== null || hasLocalLocation;
-  const showLocationPrompt = !hasUserLocation && !locationSavedRef.current;
+  const showLocationPrompt = !hasUserLocation && !locationSavedRef.current && result?.metadata?.is_authenticated;
   
   const handleRefreshLocation = () => {
     locationSavedRef.current = false; // Reset the flag to allow new location updates

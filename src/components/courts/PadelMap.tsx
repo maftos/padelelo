@@ -194,9 +194,15 @@ export const PadelMap = ({ clubs, selectedClubId, onClubSelect, onUserLocation, 
                   </span>
                 </div>` : ''
               }
-              <p class="text-xs text-muted-foreground mb-2">
-                ${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}
-              </p>
+              <div class="text-xs text-muted-foreground mb-2 space-y-1">
+                <p>${club.numberOfCourts} court${club.numberOfCourts !== 1 ? 's' : ''}</p>
+                ${typeof club.distanceKm === 'number' ? 
+                  `<p class="flex items-center gap-1">
+                    <span>📍</span>
+                    ${club.distanceKm.toFixed(1)} km away
+                  </p>` : ''
+                }
+              </div>
             </div>
           </div>
         </div>
