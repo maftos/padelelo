@@ -7,15 +7,10 @@ import { MapPin, ChevronUp } from "lucide-react";
 import { PadelMap } from "@/components/courts/PadelMap";
 import { Helmet } from "react-helmet";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  Drawer,
-  DrawerContent, 
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger 
-} from "@/components/ui/drawer";
+// Drawer imports removed - now handled by MobileCourtsDrawer component
 
 import { PadelCourtsList } from "@/components/courts/PadelCourtsList";
+import { MobileCourtsDrawer } from "@/components/courts/MobileCourtsDrawer";
 import { toast } from "sonner";
 
 export interface PadelClub {
@@ -239,7 +234,7 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
           </div>
         </section>
 
-        {/* Mobile: Map backdrop with bottom drawer */}
+        {/* Mobile: Map backdrop with unified drawer */}
         {isMobile && (
           <div className="fixed inset-0 h-[100dvh] overflow-hidden">
             {/* Full-screen map backdrop with no padding */}
@@ -253,36 +248,16 @@ const [selectedId, setSelectedId] = useState<string | null>(null);
               />
             </div>
             
-            {/* Bottom drawer - fixed to viewport bottom */}
-            <Drawer>
-              <DrawerTrigger asChild>
-                <div className="fixed bottom-0 left-0 right-0 z-50">
-                  <div className="bg-background/95 backdrop-blur-sm border-t rounded-t-xl shadow-lg">
-                    <div className="px-4 py-3 cursor-pointer">
-                      <div className="flex items-center justify-center mb-2">
-                        <div className="w-12 h-1 bg-muted-foreground/50 rounded-full"></div>
-                      </div>
-                      <h2 className="text-lg font-semibold text-center">{clubs.length} padel clubs</h2>
-                      <p className="text-sm text-muted-foreground text-center">Swipe up to view clubs</p>
-                    </div>
-                  </div>
-                </div>
-              </DrawerTrigger>
-              <DrawerContent className="h-[85vh] bg-background">
-                <div className="flex-1 overflow-hidden">
-                  <PadelCourtsList 
-                    clubs={clubs} 
-                    selectedClubId={selectedId} 
-                    onSelectClub={(id) => setSelectedId(id)} 
-                    showLocationPrompt={showLocationPrompt} 
-                    onRequestLocation={requestLocation}
-                    onRefreshLocation={handleRefreshLocation}
-                    hasUserLocation={hasUserLocation}
-                    subtitle="Swipe down to close list"
-                  />
-                </div>
-              </DrawerContent>
-            </Drawer>
+            {/* Unified mobile drawer */}
+            <MobileCourtsDrawer
+              clubs={clubs}
+              selectedClubId={selectedId}
+              onSelectClub={(id) => setSelectedId(id)}
+              showLocationPrompt={showLocationPrompt}
+              onRequestLocation={requestLocation}
+              onRefreshLocation={handleRefreshLocation}
+              hasUserLocation={hasUserLocation}
+            />
           </div>
         )}
 
