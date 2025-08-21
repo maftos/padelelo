@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bell, Settings } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NotificationsStepProps {
   onNext: () => void;
@@ -26,8 +27,17 @@ export const NotificationsStep = ({
   const handleContinue = async () => {
     setIsLoading(true);
     try {
-      // Here we could save the notification preference to the database
-      // For now, just show a success message and continue
+      // Save notification preference to the database
+      const { data, error } = await supabase.rpc('toggle_open_bookings_notifications' as any, {
+        p_open_bookings: openBookingsNotifications
+      });
+
+      if (error) {
+        console.error('Error saving notification preferences:', error);
+        toast.error("Error saving notification preferences");
+        return;
+      }
+
       toast.success("Notification preferences saved!");
       onNext();
     } catch (error) {
