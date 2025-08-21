@@ -198,9 +198,9 @@ export default function Onboarding() {
       currentStep={currentStep}
       totalSteps={totalSteps}
       progress={progress}
-      showBack={canGoBack && currentStep < 7} // Hide back button on final step
+      showBack={canGoBack && currentStep < 6} // Hide back button on notifications and final steps
       onNext={currentStep === 5 ? handlePasswordStepComplete : currentStep === 6 ? handleNotificationsStepComplete : currentStep < 7 ? nextStep : undefined}
-      onBack={canGoBack && currentStep < 7 ? previousStep : undefined}
+      onBack={canGoBack && currentStep < 6 ? previousStep : undefined}
       isNextDisabled={!canGoNext || isSubmitting}
       nextButtonText={getNextButtonText()}
     >
