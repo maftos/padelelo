@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -29,6 +29,15 @@ export const OnboardingLayout: FC<OnboardingLayoutProps> = ({
   className = ""
 }) => {
   const showBackButton = showBack && currentStep > 1;
+
+  // Auto-scroll to top when step changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [currentStep]);
 
   return (
     <div className={`min-h-screen bg-background flex flex-col ${className}`}>
