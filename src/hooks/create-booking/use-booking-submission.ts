@@ -38,6 +38,7 @@ export function useBookingSubmission() {
         const startDateTime = new Date(`${wizardData.matchDate}T${wizardData.matchTime}`);
         
         const { data, error } = await supabase.rpc('create_booking_open' as any, {
+          p_user_a_id: user.id,
           p_user_ids: wizardData.selectedPlayers,
           p_venue_id: wizardData.venueId,
           p_start_time: startDateTime.toISOString(),
