@@ -77,11 +77,32 @@ export default function Onboarding() {
         origin: { y: 0.6 }
       });
 
-      toast.success("Welcome to PadelELO!");
       nextStep(); // Move to notifications step
     } catch (error) {
       console.error('Error completing onboarding:', error);
       toast.error("Error completing onboarding");
+    }
+  };
+
+  const handleNotificationsStepComplete = async () => {
+    if (!canGoNext) return;
+    
+    try {
+      // Save notification preference to the database
+      const { error } = await supabase.rpc('toggle_open_bookings_notifications' as any, {
+        p_open_bookings: data.openBookingsNotifications
+      });
+
+      if (error) {
+        console.error('Error saving notification preferences:', error);
+        toast.error("Error saving notification preferences");
+        return;
+      }
+
+      nextStep();
+    } catch (error) {
+      console.error('Error saving notification preferences:', error);
+      toast.error("Error saving preferences");
     }
   };
 
@@ -139,12 +160,9 @@ export default function Onboarding() {
         );
       case 6:
         return (
-          <NotificationsStep
+         <NotificationsStep
             openBookingsNotifications={data.openBookingsNotifications}
             onOpenBookingsChange={(openBookingsNotifications) => saveData({ openBookingsNotifications })}
-            onNext={nextStep}
-            canGoNext={canGoNext}
-            isSubmitting={isSubmitting}
           />
         );
       case 7:
@@ -166,6 +184,8 @@ export default function Onboarding() {
         return data.profilePhoto ? "Continue" : "Skip for now";
       case 5:
         return isSubmitting ? "Setting up your profile..." : "Complete";
+      case 6:
+        return isSubmitting ? "Saving preferences..." : "Continue";
       case 7:
         return isSubmitting ? "Setting up your profile..." : "Let's go! 🚀";
       default:
@@ -179,7 +199,7 @@ export default function Onboarding() {
       totalSteps={totalSteps}
       progress={progress}
       showBack={canGoBack && currentStep < 7} // Hide back button on final step
-      onNext={currentStep === 5 ? handlePasswordStepComplete : currentStep < 6 ? nextStep : undefined} // Handle password step completion
+      onNext={currentStep === 5 ? handlePasswordStepComplete : currentStep === 6 ? handleNotificationsStepComplete : currentStep < 7 ? nextStep : undefined}
       onBack={canGoBack && currentStep < 7 ? previousStep : undefined}
       isNextDisabled={!canGoNext || isSubmitting}
       nextButtonText={getNextButtonText()}

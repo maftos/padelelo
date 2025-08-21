@@ -1,52 +1,17 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Bell, Settings } from "lucide-react";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 
 interface NotificationsStepProps {
-  onNext: () => void;
-  canGoNext: boolean;
-  isSubmitting: boolean;
   openBookingsNotifications: boolean;
   onOpenBookingsChange: (value: boolean) => void;
 }
 
 export const NotificationsStep = ({
-  onNext,
-  canGoNext,
-  isSubmitting,
   openBookingsNotifications,
   onOpenBookingsChange,
 }: NotificationsStepProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleContinue = async () => {
-    setIsLoading(true);
-    try {
-      // Save notification preference to the database
-      const { data, error } = await supabase.rpc('toggle_open_bookings_notifications' as any, {
-        p_open_bookings: openBookingsNotifications
-      });
-
-      if (error) {
-        console.error('Error saving notification preferences:', error);
-        toast.error("Error saving notification preferences");
-        return;
-      }
-
-      toast.success("Notification preferences saved!");
-      onNext();
-    } catch (error) {
-      console.error('Error saving notification preferences:', error);
-      toast.error("Error saving preferences");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -84,15 +49,6 @@ export const NotificationsStep = ({
         <Settings className="w-4 h-4 flex-shrink-0" />
         <span>You can customize all notification settings later in your profile</span>
       </div>
-
-      <Button
-        onClick={handleContinue}
-        disabled={!canGoNext || isSubmitting || isLoading}
-        className="w-full"
-        size="lg"
-      >
-        {isLoading ? "Saving preferences..." : "Continue"}
-      </Button>
     </div>
   );
 };
