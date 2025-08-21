@@ -8,6 +8,7 @@ export interface OnboardingData {
   nationality: string;
   profilePhoto: string | null;
   password: string;
+  openBookingsNotifications: boolean;
 }
 
 export interface OnboardingState {
@@ -17,7 +18,7 @@ export interface OnboardingState {
   errors: Record<string, string>;
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 const STORAGE_KEY = "onboarding_data";
 
 const initialData: OnboardingData = {
@@ -27,6 +28,7 @@ const initialData: OnboardingData = {
   nationality: "MU", // Default to Mauritius
   profilePhoto: null,
   password: "",
+  openBookingsNotifications: true, // Default to enabled
 };
 
 export const useOnboardingState = () => {
@@ -89,6 +91,8 @@ export const useOnboardingState = () => {
       case 5:
         return data.password.length >= 6;
       case 6:
+        return true; // Notifications step
+      case 7:
         return true; // Final step
       default:
         return false;

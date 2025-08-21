@@ -9,6 +9,7 @@ import { NameStep } from "@/components/onboarding/steps/NameStep";
 import { NationalityStep } from "@/components/onboarding/steps/NationalityStep";
 import { PhotoStep } from "@/components/onboarding/steps/PhotoStep";
 import { PasswordStep } from "@/components/onboarding/steps/PasswordStep";
+import { NotificationsStep } from "@/components/onboarding/steps/NotificationsStep";
 import { FinalStep } from "@/components/onboarding/steps/FinalStep";
 
 export default function Onboarding() {
@@ -97,6 +98,16 @@ export default function Onboarding() {
         );
       case 6:
         return (
+          <NotificationsStep
+            openBookingsNotifications={data.openBookingsNotifications}
+            onOpenBookingsChange={(openBookingsNotifications) => saveData({ openBookingsNotifications })}
+            onNext={nextStep}
+            canGoNext={canGoNext}
+            isSubmitting={isSubmitting}
+          />
+        );
+      case 7:
+        return (
           <FinalStep
             data={data}
             onComplete={completeOnboarding}
@@ -112,7 +123,7 @@ export default function Onboarding() {
     switch (currentStep) {
       case 4:
         return data.profilePhoto ? "Continue" : "Skip for now";
-      case 6:
+      case 7:
         return isSubmitting ? "Setting up your profile..." : "Let's go! 🚀";
       default:
         return "Next";
@@ -124,9 +135,9 @@ export default function Onboarding() {
       currentStep={currentStep}
       totalSteps={totalSteps}
       progress={progress}
-      showBack={canGoBack && currentStep < 6} // Hide back button on final step
-      onNext={currentStep < 5 ? nextStep : undefined} // Hide next button from step 5 onwards
-      onBack={canGoBack && currentStep < 6 ? previousStep : undefined}
+      showBack={canGoBack && currentStep < 7} // Hide back button on final step
+      onNext={currentStep < 6 ? nextStep : undefined} // Hide next button from step 6 onwards
+      onBack={canGoBack && currentStep < 7 ? previousStep : undefined}
       isNextDisabled={!canGoNext || isSubmitting}
       nextButtonText={getNextButtonText()}
     >
