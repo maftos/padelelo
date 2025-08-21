@@ -79,17 +79,37 @@ const SignUp = () => {
             <SignUpForm />
             
             {!isVerificationStep && (
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Already have an account?
-                </p>
-                <Link 
-                  to="/login" 
-                  className="text-sm text-primary hover:underline underline-offset-4"
-                >
-                  Sign in
-                </Link>
-              </div>
+              <>
+                <div className="text-center">
+                  <p className="text-xs text-muted-foreground mb-4">
+                    By signing up, you agree to our{" "}
+                    <Link 
+                      to="/terms" 
+                      className="text-primary hover:underline underline-offset-4"
+                    >
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link 
+                      to="/privacy" 
+                      className="text-primary hover:underline underline-offset-4"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Already have an account?
+                  </p>
+                  <Link 
+                    to="/login" 
+                    className="text-sm text-primary hover:underline underline-offset-4"
+                  >
+                    Sign in
+                  </Link>
+                </div>
+              </>
             )}
           </div>
         </div>
