@@ -2,6 +2,10 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { useOnboardingState } from "@/hooks/use-onboarding-state";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import confetti from 'canvas-confetti';
 import { OnboardingLayout } from "@/components/onboarding/OnboardingLayout";
 import { StepTransition } from "@/components/onboarding/StepTransition";
 import { GenderStep } from "@/components/onboarding/steps/GenderStep";
@@ -14,6 +18,7 @@ import { FinalStep } from "@/components/onboarding/steps/FinalStep";
 
 export default function Onboarding() {
   const { profile, isLoading } = useUserProfile();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const {
     currentStep,
@@ -42,6 +47,43 @@ export default function Onboarding() {
     console.log("Onboarding.tsx - Loading...");
     return null;
   }
+
+  const handlePasswordStepComplete = async () => {
+    if (!user || !canGoNext) return;
+    
+    try {
+      // First, set the password in the auth system
+      const { error: passwordError } = await supabase.auth.updateUser({
+        password: data.password
+      });
+
+      if (passwordError) throw passwordError;
+
+      // Then complete onboarding with all user data
+      const { error: completeError } = await supabase.rpc('complete_onboarding', {
+        p_first_name: data.firstName,
+        p_last_name: data.lastName,
+        p_gender: data.gender || '',
+        p_nationality: data.nationality,
+        p_profile_photo: data.profilePhoto || ''
+      } as any);
+
+      if (completeError) throw completeError;
+
+      // Show success animation
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+
+      toast.success("Welcome to PadelELO!");
+      nextStep(); // Move to notifications step
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      toast.error("Error completing onboarding");
+    }
+  };
 
   const renderCurrentStep = () => {
     switch (currentStep) {
@@ -92,7 +134,6 @@ export default function Onboarding() {
             onPasswordChange={(password) => saveData({ password })}
             onNext={nextStep}
             canGoNext={canGoNext}
-            data={data}
             isSubmitting={isSubmitting}
           />
         );
@@ -123,6 +164,8 @@ export default function Onboarding() {
     switch (currentStep) {
       case 4:
         return data.profilePhoto ? "Continue" : "Skip for now";
+      case 5:
+        return isSubmitting ? "Setting up your profile..." : "Complete";
       case 7:
         return isSubmitting ? "Setting up your profile..." : "Let's go! 🚀";
       default:
@@ -136,7 +179,7 @@ export default function Onboarding() {
       totalSteps={totalSteps}
       progress={progress}
       showBack={canGoBack && currentStep < 7} // Hide back button on final step
-      onNext={currentStep < 6 ? nextStep : undefined} // Hide next button from step 6 onwards
+      onNext={currentStep === 5 ? handlePasswordStepComplete : currentStep < 6 ? nextStep : undefined} // Handle password step completion
       onBack={canGoBack && currentStep < 7 ? previousStep : undefined}
       isNextDisabled={!canGoNext || isSubmitting}
       nextButtonText={getNextButtonText()}
