@@ -65,9 +65,9 @@ const CreateBookingWizard = () => {
       case 1:
         return wizardData.selectedPlayers.length > 0;
       case 2:
-        // For incomplete matches (less than 4 players), require all fields
+        // For incomplete matches (less than 4 players), require venue, date and time
         if (isOpenGame) {
-          return wizardData.venueId && wizardData.matchDate && wizardData.matchTime && wizardData.feePerPlayer;
+          return wizardData.venueId && wizardData.matchDate && wizardData.matchTime;
         }
         return true; // For complete matches, details are optional
       case 3:
