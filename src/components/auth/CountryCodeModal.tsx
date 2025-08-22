@@ -4,27 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerFooter,
-} from "@/components/ui/drawer";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { countries, countryNames } from "@/lib/countries";
 
-interface CountryCodeBottomDrawerProps {
+interface CountryCodeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelect: (dialCode: string) => void;
   selectedCode: string;
 }
 
-export const CountryCodeBottomDrawer = ({
+export const CountryCodeModal = ({
   open,
   onOpenChange,
   onSelect,
   selectedCode,
-}: CountryCodeBottomDrawerProps) => {
+}: CountryCodeModalProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredCountries = countries.filter((country) => {
@@ -45,13 +45,13 @@ export const CountryCodeBottomDrawer = ({
   };
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]" onOpenAutoFocus={(e) => e.preventDefault()}>
-        <DrawerHeader>
-          <DrawerTitle>Select Country Code</DrawerTitle>
-        </DrawerHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md max-h-[80vh] p-0">
+        <DialogHeader className="p-6 pb-4">
+          <DialogTitle>Select Country Code</DialogTitle>
+        </DialogHeader>
         
-        <div className="px-4 pb-4">
+        <div className="px-6 pb-4">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
@@ -63,7 +63,7 @@ export const CountryCodeBottomDrawer = ({
           </div>
         </div>
 
-        <ScrollArea className="flex-1 px-4 overscroll-contain">
+        <ScrollArea className="flex-1 px-6 max-h-[400px]">
           <div className="space-y-1 pb-4">
             {filteredCountries.map((country) => {
               const countryName = countryNames[country.code] || country.code;
@@ -89,7 +89,7 @@ export const CountryCodeBottomDrawer = ({
           </div>
         </ScrollArea>
 
-        <DrawerFooter>
+        <DialogFooter className="p-6 pt-4">
           <Button
             variant="outline"
             className="w-full"
@@ -97,8 +97,8 @@ export const CountryCodeBottomDrawer = ({
           >
             Cancel
           </Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

@@ -7,12 +7,12 @@ import { AuthError, AuthApiError } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { countries, countryNames } from "@/lib/countries";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { SignInFormData } from "@/types/auth";
 import { OTPInput } from "@/components/ui/otp-input";
 import { CountryCodeBottomDrawer } from "./CountryCodeBottomDrawer";
+import { CountryCodeModal } from "./CountryCodeModal";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 
@@ -30,6 +30,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
   const [isVerificationStep, setIsVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
   
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -89,8 +90,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
   const getSelectedCountryInfo = () => {
     const country = countries.find(c => c.dial_code === countryCode);
     if (!country) return countryCode;
-    const countryName = countryNames[country.code] || country.code;
-    return `${country.flag} ${country.dial_code} ${country.code}`;
+    return `${country.flag} ${country.dial_code}`;
   };
 
   const handleAuthError = (error: AuthError) => {
@@ -324,48 +324,15 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
         <div className="space-y-2">
           <Label>WhatsApp Number</Label>
           <div className="flex gap-2">
-            {isMobile ? (
-              <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="min-w-[140px] justify-start"
-                  onClick={() => setDrawerOpen(true)}
-                  disabled={loading || passwordlessLoading}
-                >
-                  {getSelectedCountryInfo()}
-                </Button>
-                <CountryCodeBottomDrawer
-                  open={drawerOpen}
-                  onOpenChange={setDrawerOpen}
-                  onSelect={handleCountryCodeChange}
-                  selectedCode={countryCode}
-                />
-              </>
-            ) : (
-              <Select 
-                value={countryCode} 
-                onValueChange={handleCountryCodeChange}
-                disabled={loading || passwordlessLoading}
-              >
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="Code" />
-                </SelectTrigger>
-                <SelectContent className="max-h-[300px] z-50 bg-popover">
-                  {countries.map((country) => {
-                    const countryName = countryNames[country.code] || country.code;
-                    return (
-                      <SelectItem 
-                        key={`${country.code}-${country.dial_code}`}
-                        value={country.dial_code}
-                      >
-                        {country.flag} {country.dial_code} {country.code}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            )}
+            <Button
+              type="button"
+              variant="outline"
+              className="min-w-[80px] justify-center"
+              onClick={() => isMobile ? setDrawerOpen(true) : setModalOpen(true)}
+              disabled={loading || passwordlessLoading}
+            >
+              {getSelectedCountryInfo()}
+            </Button>
             
             <Input
               type="tel"
@@ -375,6 +342,22 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
               className="flex-1"
               disabled={loading || passwordlessLoading}
             />
+            
+            {isMobile ? (
+              <CountryCodeBottomDrawer
+                open={drawerOpen}
+                onOpenChange={setDrawerOpen}
+                onSelect={handleCountryCodeChange}
+                selectedCode={countryCode}
+              />
+            ) : (
+              <CountryCodeModal
+                open={modalOpen}
+                onOpenChange={setModalOpen}
+                onSelect={handleCountryCodeChange}
+                selectedCode={countryCode}
+              />
+            )}
           </div>
         </div>
 
