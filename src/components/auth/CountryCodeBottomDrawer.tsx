@@ -46,12 +46,12 @@ export const CountryCodeBottomDrawer = ({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="max-h-[85vh]" onOpenAutoFocus={(e) => e.preventDefault()}>
-        <DrawerHeader>
+      <DrawerContent className="h-[85vh] flex flex-col">
+        <DrawerHeader className="flex-shrink-0">
           <DrawerTitle>Select Country Code</DrawerTitle>
         </DrawerHeader>
         
-        <div className="px-4 pb-4">
+        <div className="px-4 pb-4 flex-shrink-0">
           <div className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
@@ -63,7 +63,7 @@ export const CountryCodeBottomDrawer = ({
           </div>
         </div>
 
-        <ScrollArea className="flex-1 px-4 overscroll-contain">
+        <div className="flex-1 overflow-y-auto px-4">
           <div className="space-y-1 pb-4">
             {filteredCountries.map((country) => {
               const countryName = countryNames[country.code] || country.code;
@@ -80,16 +80,16 @@ export const CountryCodeBottomDrawer = ({
                     <span className="text-xl">{country.flag}</span>
                     <span className="font-medium min-w-[60px]">{country.dial_code}</span>
                     <span className="text-sm text-muted-foreground truncate">
-                      {countryName} ({country.code})
+                      {countryName}
                     </span>
                   </div>
                 </Button>
               );
             })}
           </div>
-        </ScrollArea>
+        </div>
 
-        <DrawerFooter>
+        <DrawerFooter className="flex-shrink-0">
           <Button
             variant="outline"
             className="w-full"

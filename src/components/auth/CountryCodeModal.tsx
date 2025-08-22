@@ -80,7 +80,7 @@ export const CountryCodeModal = ({
                     <span className="text-xl">{country.flag}</span>
                     <span className="font-medium min-w-[60px]">{country.dial_code}</span>
                     <span className="text-sm text-muted-foreground truncate">
-                      {countryName} ({country.code})
+                      {countryName}
                     </span>
                   </div>
                 </Button>
