@@ -3,9 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { countries } from "@/lib/countries";
+import { countries, countryNames } from "@/lib/countries";
 import { SignUpFormData } from "@/types/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CountryCodeBottomDrawer } from "./CountryCodeBottomDrawer";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+import { useState } from "react";
 
 interface PhoneStepProps {
   phoneNumber: string;
@@ -38,6 +42,9 @@ export const PhoneStep = ({
   error, 
   loading
 }: PhoneStepProps) => {
+  const isMobile = useIsMobile();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = e.target.value.replace(/\D/g, '');
     setPhoneNumber(cleaned);
@@ -47,6 +54,13 @@ export const PhoneStep = ({
     if (phone.length <= 1) return phone;
     if (phone.length <= 4) return phone.replace(/(\d{1})(\d{0,3})/, '$1 $2').trim();
     return phone.replace(/(\d{1})(\d{3})(\d{0,4})/, '$1 $2 $3').trim();
+  };
+
+  const getSelectedCountryInfo = () => {
+    const country = countries.find(c => c.dial_code === countryCode);
+    if (!country) return countryCode;
+    const countryName = countryNames[country.code] || country.code;
+    return `${country.flag} ${country.dial_code} ${country.code}`;
   };
 
   if (isVerificationStep) {
@@ -102,25 +116,48 @@ export const PhoneStep = ({
       <div className="space-y-2">
         <Label>WhatsApp Number</Label>
         <div className="flex gap-2">
-          <Select 
-            value={countryCode} 
-            onValueChange={setCountryCode}
-            disabled={loading}
-          >
-            <SelectTrigger className="w-[110px]">
-              <SelectValue placeholder="Code" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[300px]">
-              {countries.map((country) => (
-                <SelectItem 
-                  key={country.code} 
-                  value={country.dial_code}
-                >
-                  {country.flag} {country.dial_code}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {isMobile ? (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                className="min-w-[140px] justify-start"
+                onClick={() => setDrawerOpen(true)}
+                disabled={loading}
+              >
+                {getSelectedCountryInfo()}
+              </Button>
+              <CountryCodeBottomDrawer
+                open={drawerOpen}
+                onOpenChange={setDrawerOpen}
+                onSelect={setCountryCode}
+                selectedCode={countryCode}
+              />
+            </>
+          ) : (
+            <Select 
+              value={countryCode} 
+              onValueChange={setCountryCode}
+              disabled={loading}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Code" />
+              </SelectTrigger>
+              <SelectContent className="max-h-[300px] z-50 bg-popover">
+                {countries.map((country) => {
+                  const countryName = countryNames[country.code] || country.code;
+                  return (
+                    <SelectItem 
+                      key={`${country.code}-${country.dial_code}`}
+                      value={country.dial_code}
+                    >
+                      {country.flag} {country.dial_code} {country.code}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          )}
           
           <Input
             type="tel"

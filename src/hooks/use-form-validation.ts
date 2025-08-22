@@ -1,7 +1,8 @@
 
 export const useFormValidation = () => {
   const validatePhoneNumber = (phone: string) => {
-    return phone.length > 0;
+    const digits = phone.replace(/\D/g, '');
+    return digits.length >= 7 && digits.length <= 15; // International standard
   };
 
   const validatePassword = (password: string) => {

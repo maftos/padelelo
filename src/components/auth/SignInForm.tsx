@@ -8,10 +8,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { countries } from "@/lib/countries";
+import { countries, countryNames } from "@/lib/countries";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { SignInFormData } from "@/types/auth";
 import { OTPInput } from "@/components/ui/otp-input";
+import { CountryCodeBottomDrawer } from "./CountryCodeBottomDrawer";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 
 interface SignInFormProps {
@@ -27,8 +29,10 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
   const [error, setError] = useState<string | null>(null);
   const [isVerificationStep, setIsVerificationStep] = useState(false);
   const [verificationCode, setVerificationCode] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
   
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { validatePhoneNumber, validatePassword, validateVerificationCode } = useFormValidation();
 
   // Load cached phone number and country code on component mount
@@ -61,7 +65,7 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const cleaned = e.target.value.replace(/\D/g, '');
-    if (cleaned.length <= 8) {
+    if (cleaned.length <= 15) { // Allow up to 15 digits (international standard)
       setPhoneNumber(cleaned);
       // Cache the phone number as user types (but only if it's valid length)
       if (cleaned.length >= 3) {
@@ -80,6 +84,13 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
     if (phone.length <= 1) return phone;
     if (phone.length <= 4) return phone.replace(/(\d{1})(\d{0,3})/, '$1 $2').trim();
     return phone.replace(/(\d{1})(\d{3})(\d{0,4})/, '$1 $2 $3').trim();
+  };
+
+  const getSelectedCountryInfo = () => {
+    const country = countries.find(c => c.dial_code === countryCode);
+    if (!country) return countryCode;
+    const countryName = countryNames[country.code] || country.code;
+    return `${country.flag} ${country.dial_code} ${country.code}`;
   };
 
   const handleAuthError = (error: AuthError) => {
@@ -313,25 +324,48 @@ export const SignInForm = ({ onVerificationStepChange }: SignInFormProps = {}) =
         <div className="space-y-2">
           <Label>WhatsApp Number</Label>
           <div className="flex gap-2">
-            <Select 
-              value={countryCode} 
-              onValueChange={handleCountryCodeChange}
-              disabled={loading || passwordlessLoading}
-            >
-              <SelectTrigger className="w-[110px]">
-                <SelectValue placeholder="Code" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px]">
-                {countries.map((country) => (
-                  <SelectItem 
-                    key={country.code} 
-                    value={country.dial_code}
-                  >
-                    {country.flag} {country.dial_code}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isMobile ? (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="min-w-[140px] justify-start"
+                  onClick={() => setDrawerOpen(true)}
+                  disabled={loading || passwordlessLoading}
+                >
+                  {getSelectedCountryInfo()}
+                </Button>
+                <CountryCodeBottomDrawer
+                  open={drawerOpen}
+                  onOpenChange={setDrawerOpen}
+                  onSelect={handleCountryCodeChange}
+                  selectedCode={countryCode}
+                />
+              </>
+            ) : (
+              <Select 
+                value={countryCode} 
+                onValueChange={handleCountryCodeChange}
+                disabled={loading || passwordlessLoading}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Code" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px] z-50 bg-popover">
+                  {countries.map((country) => {
+                    const countryName = countryNames[country.code] || country.code;
+                    return (
+                      <SelectItem 
+                        key={`${country.code}-${country.dial_code}`}
+                        value={country.dial_code}
+                      >
+                        {country.flag} {country.dial_code} {country.code}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            )}
             
             <Input
               type="tel"
