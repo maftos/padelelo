@@ -27,7 +27,7 @@ const Leaderboard = () => {
   const { userId } = useUserProfile();
   const { filters, handleGenderChange, handleFriendsOnlyChange } = useLeaderboardFilters();
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: leaderboardResponse, isLoading } = useLeaderboardData({ page: currentPage, limit: 10 });
+  const { data: leaderboardResponse, isLoading } = useLeaderboardData({ page: currentPage, limit: 25 });
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 

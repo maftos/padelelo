@@ -96,7 +96,7 @@ export const LeaderboardTable = ({
               </TableCell>
             </TableRow>
           ) : leaderboardData?.map((player, index) => {
-            const globalRank = (currentPage - 1) * 10 + index + 1;
+            const globalRank = (currentPage - 1) * 25 + index + 1;
             return (
               <TableRow 
                 key={player.id} 
