@@ -110,7 +110,7 @@ const Leaderboard = () => {
             currentPage={currentPage}
           />
 
-          {!isLoading && totalPages > 1 && (
+          {!isLoading && (
             <div className="mt-8 flex justify-center">
               <Pagination>
                 <PaginationContent>
