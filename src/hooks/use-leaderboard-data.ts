@@ -8,7 +8,7 @@ interface UseLeaderboardDataProps {
   limit?: number;
 }
 
-export const useLeaderboardData = ({ page = 1, limit = 10 }: UseLeaderboardDataProps = {}) => {
+export const useLeaderboardData = ({ page = 1, limit = 25 }: UseLeaderboardDataProps = {}) => {
   const offset = (page - 1) * limit;
   
   return useQuery({
