@@ -28,21 +28,17 @@ interface LeaderboardTableProps {
   data: LeaderboardPlayer[] | undefined;
   userId: string | undefined;
   onPlayerSelect: (player: LeaderboardPlayer) => void;
+  currentPage?: number;
 }
 
 export const LeaderboardTable = ({ 
   isLoading, 
   data: leaderboardData,
   userId,
-  onPlayerSelect
+  onPlayerSelect,
+  currentPage = 1
 }: LeaderboardTableProps) => {
   const isMobile = useIsMobile();
-
-  // Mock rank changes for each player - will be replaced with real data later
-  const getMockRankChange = (index: number) => {
-    const changes = [2, -1, 1, -3, 0, 4, -2, 1, -1, 3, 0, -4, 2, -1, 1, -2, 3, 0, -1, 2, -3, 1, 0, -2, 4];
-    return changes[index] || 0;
-  };
 
   const getInitials = (firstName: string | null, lastName: string | null) => {
     const name = `${firstName || ''} ${lastName || ''}`.trim();
@@ -100,7 +96,7 @@ export const LeaderboardTable = ({
               </TableCell>
             </TableRow>
           ) : leaderboardData?.map((player, index) => {
-            const rankChange = getMockRankChange(index);
+            const globalRank = (currentPage - 1) * 10 + index + 1;
             return (
               <TableRow 
                 key={player.id} 
@@ -112,13 +108,8 @@ export const LeaderboardTable = ({
                 <TableCell className="font-medium px-2 md:px-4">
                   <div className="flex items-center gap-2">
                     <div className="inline-flex items-center justify-center w-8 h-8 md:w-12 md:h-12 rounded-xl bg-muted text-foreground">
-                      <span className="text-xs md:text-sm">#{index + 1}</span>
+                      <span className="text-xs md:text-sm">#{globalRank}</span>
                     </div>
-                    {rankChange !== 0 && (
-                      <span className={`hidden md:inline-block text-xs px-1 py-0.5 rounded ${rankChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        ({rankChange > 0 ? '+' : ''}{rankChange})
-                      </span>
-                    )}
                   </div>
                 </TableCell>
                 <TableCell className="px-2 md:px-4">

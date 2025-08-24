@@ -1,5 +1,6 @@
 
 import * as React from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -10,6 +11,14 @@ import { useLeaderboardFilters } from "@/hooks/use-leaderboard-filters";
 import { useLeaderboardData } from "@/hooks/use-leaderboard-data";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 
 
@@ -17,7 +26,8 @@ const Leaderboard = () => {
   const { user } = useAuth();
   const { userId } = useUserProfile();
   const { filters, handleGenderChange, handleFriendsOnlyChange } = useLeaderboardFilters();
-  const { data: leaderboardData, isLoading } = useLeaderboardData();
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: leaderboardResponse, isLoading } = useLeaderboardData({ page: currentPage, limit: 10 });
   const isMobile = useIsMobile();
   const navigate = useNavigate();
 
@@ -25,8 +35,13 @@ const Leaderboard = () => {
     navigate(`/profile/${player.id}`);
   };
 
-  const topPlayers = leaderboardData?.slice(0, 3);
-  const totalPlayers = leaderboardData?.length || 0;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const totalPlayers = leaderboardResponse?.totalCount || 0;
+  const totalPages = leaderboardResponse?.totalPages || 1;
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "SportsOrganization",
@@ -89,10 +104,45 @@ const Leaderboard = () => {
           
           <LeaderboardTable 
             isLoading={isLoading}
-            data={leaderboardData}
+            data={leaderboardResponse?.players}
             userId={userId}
             onPlayerSelect={handlePlayerSelect}
+            currentPage={currentPage}
           />
+
+          {!isLoading && totalPages > 1 && (
+            <div className="mt-8 flex justify-center">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
+                      className={currentPage <= 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <PaginationItem key={page}>
+                      <PaginationLink
+                        onClick={() => handlePageChange(page)}
+                        isActive={page === currentPage}
+                        className="cursor-pointer"
+                      >
+                        {page}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
+                      className={currentPage >= totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
         </div>
       </main>
     </div>
