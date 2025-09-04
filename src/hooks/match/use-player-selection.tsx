@@ -42,18 +42,20 @@ export function usePlayerSelection() {
     }
   }, [player1, player2, player3, player4]);
 
-  const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
-    queryKey: ['friends', userId],
+  const { data: leaderboardPlayers = [], isLoading: isLoadingFriends } = useQuery({
+    queryKey: ['leaderboard-players', userId],
     queryFn: async () => {
       if (!userId) return [];
       try {
-        const { data, error } = await supabase.rpc('get_my_friends', {
-          p_user_a_id: userId
-        });
+        const { data, error } = await supabase
+          .from('users_sorted_by_mmr' as any)
+          .select('id, first_name, last_name, profile_photo, current_mmr')
+          .neq('id', userId); // Exclude current user from the list
+          
         if (error) throw error;
-        return data as unknown as any[];
+        return data || [];
       } catch (error) {
-        console.error('Error fetching friends:', error);
+        console.error('Error fetching leaderboard players:', error);
         throw error;
       }
     },
@@ -63,22 +65,22 @@ export function usePlayerSelection() {
   // Filter player options based on search query
   const playerOptions: PlayerOption[] = [
     { id: userId || "current-user", name: "Me" },
-    ...((friends as any[]) || [])
-      .filter((friend: any) => {
-        const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
+    ...((leaderboardPlayers as any[]) || [])
+      .filter((player: any) => {
+        const displayName = `${player.first_name || ''} ${player.last_name || ''}`.trim();
         return displayName.toLowerCase().includes(searchQuery.toLowerCase());
       })
-      .map((friend: any) => ({
-        id: friend.friend_id,
-        name: `${friend.first_name || ''} ${friend.last_name || ''}`.trim(),
-        profile_photo: friend.profile_photo
+      .map((player: any) => ({
+        id: player.id,
+        name: `${player.first_name || ''} ${player.last_name || ''}`.trim(),
+        profile_photo: player.profile_photo
       }))
   ];
 
   const getPlayerName = (playerId: string) => {
     if (playerId === userId) return "Me";
-    const friend = ((friends as any[]) || []).find((f: any) => f.friend_id === playerId);
-    return friend ? `${friend.first_name || ''} ${friend.last_name || ''}`.trim() : "Unknown";
+    const player = ((leaderboardPlayers as any[]) || []).find((p: any) => p.id === playerId);
+    return player ? `${player.first_name || ''} ${player.last_name || ''}`.trim() : "Unknown";
   };
 
   return {
