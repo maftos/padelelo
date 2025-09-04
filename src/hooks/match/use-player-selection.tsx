@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserProfile } from "@/hooks/use-user-profile";
@@ -42,43 +42,59 @@ export function usePlayerSelection() {
     }
   }, [player1, player2, player3, player4]);
 
-  const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
-    queryKey: ['friends', userId],
+  const { data: leaderboardData, isLoading: isLoadingPlayers } = useQuery({
+    queryKey: ['leaderboard-players', searchQuery],
     queryFn: async () => {
-      if (!userId) return [];
-      try {
-        const { data, error } = await supabase.rpc('get_my_friends', {
-          p_user_a_id: userId
-        });
-        if (error) throw error;
-        return data as unknown as any[];
-      } catch (error) {
-        console.error('Error fetching friends:', error);
-        throw error;
+      let query = supabase
+        .from('users_sorted_by_mmr' as any)
+        .select('id, first_name, last_name, profile_photo, current_mmr, nationality, gender')
+        .limit(100); // Limit to 100 players for performance
+
+      // Add search filter if query exists
+      if (searchQuery.trim()) {
+        const searchTerm = `%${searchQuery.trim()}%`;
+        query = query.or(`first_name.ilike.${searchTerm},last_name.ilike.${searchTerm}`);
       }
+
+      const { data, error } = await query as any;
+      if (error) throw error;
+      
+      return data || [];
     },
-    enabled: !!userId,
+    enabled: true,
   });
 
-  // Filter player options based on search query
-  const playerOptions: PlayerOption[] = [
-    { id: userId || "current-user", name: "Me" },
-    ...((friends as any[]) || [])
-      .filter((friend: any) => {
-        const displayName = `${friend.first_name || ''} ${friend.last_name || ''}`.trim();
-        return displayName.toLowerCase().includes(searchQuery.toLowerCase());
-      })
-      .map((friend: any) => ({
-        id: friend.friend_id,
-        name: `${friend.first_name || ''} ${friend.last_name || ''}`.trim(),
-        profile_photo: friend.profile_photo
-      }))
-  ];
+  // Create player options with "Me" first, then leaderboard players
+  const playerOptions: PlayerOption[] = useMemo(() => {
+    const players = leaderboardData || [];
+    const options: PlayerOption[] = [];
+    
+    // Always add "Me" first if user is authenticated
+    if (userId) {
+      options.push({ id: userId, name: "Me" });
+    }
+    
+    // Add leaderboard players (exclude current user to avoid duplication)
+    players
+      .filter((player: any) => player.id !== userId)
+      .forEach((player: any) => {
+        const displayName = `${player.first_name || ''} ${player.last_name || ''}`.trim();
+        if (displayName) {
+          options.push({
+            id: player.id,
+            name: displayName,
+            profile_photo: player.profile_photo
+          });
+        }
+      });
+
+    return options;
+  }, [leaderboardData, userId]);
 
   const getPlayerName = (playerId: string) => {
     if (playerId === userId) return "Me";
-    const friend = ((friends as any[]) || []).find((f: any) => f.friend_id === playerId);
-    return friend ? `${friend.first_name || ''} ${friend.last_name || ''}`.trim() : "Unknown";
+    const player = (leaderboardData || []).find((p: any) => p.id === playerId);
+    return player ? `${player.first_name || ''} ${player.last_name || ''}`.trim() : "Unknown";
   };
 
   return {
@@ -94,6 +110,6 @@ export function usePlayerSelection() {
     setSearchQuery,
     playerOptions,
     getPlayerName,
-    isLoadingFriends
+    isLoadingFriends: isLoadingPlayers
   };
 }
