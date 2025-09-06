@@ -9,13 +9,9 @@ export const useFriendRequests = (userId: string | undefined) => {
   const handleSendFriendRequest = async () => {
     if (!userId || !selectedPlayer) return { error: null };
 
-    const { error } = await supabase
-      .from('friendships')
-      .insert({
-        user_id: userId,
-        friend_id: selectedPlayer.id,
-        status: 'INVITED'
-      });
+    const { data, error } = await supabase.rpc('send_friend_request' as any, {
+      user_b_id: selectedPlayer.id
+    });
     
     return { error };
   };

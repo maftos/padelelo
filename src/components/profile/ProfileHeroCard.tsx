@@ -77,13 +77,9 @@ export const ProfileHeroCard = ({
 
     setSendingRequest(true);
     try {
-      const { error } = await supabase
-        .from('friendships')
-        .insert({
-          user_id: user.id,
-          friend_id: profileData.profile.id,
-          status: 'INVITED'
-        });
+      const { data, error } = await supabase.rpc('send_friend_request' as any, {
+        user_b_id: profileData.profile.id
+      });
 
       if (error) throw error;
 
